@@ -8,7 +8,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="libs\" />
+      <Folder Include="src\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ClCompile Include="res\shaders\loadpng\compiled\_loadpng_hlsl4_fs.hlsl" />
+      <ClCompile Include="res\shaders\loadpng\compiled\_loadpng_hlsl4_vs.hlsl" />
     </ItemGroup>
 
 </Project>

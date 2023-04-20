@@ -1,0 +1,9 @@
+﻿--config
+latest-codegen
+single-file
+exclude-funcs-with-body
+generate-aggressive-inlining
+generate-file-scoped-namespaces
+log-exclusions
+log-potential-typedef-remappings
+log-visited-files

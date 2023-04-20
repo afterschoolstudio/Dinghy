@@ -1,0 +1,12 @@
+﻿--define-macro
+SOKOL_DLL
+--file
+./sokol_gp/sokol_gp.h
+--namespace
+Sokol_CSPGEN
+--methodClassName
+Sokol
+--libraryPath
+sokol_gp
+--output
+./out/clangsharp/sokol_gp.cs
