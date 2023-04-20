@@ -1,3 +1,6 @@
 [submodule "Dinghy.Bootstrapper/sokol"]
 	path = Dinghy.Bootstrapper/sokol
 	url = https://github.com/floooh/sokol
+[submodule "Dinghy.Bootstrapper/sokol_gp"]
+	path = Dinghy.Bootstrapper/sokol_gp
+	url = https://github.com/edubart/sokol_gp
