@@ -9,6 +9,8 @@
 
     <ItemGroup>
       <Folder Include="generators\sokol\" />
+      <Folder Include="generators\sokol_gp\" />
+      <Folder Include="libs\" />
     </ItemGroup>
 
 </Project>
