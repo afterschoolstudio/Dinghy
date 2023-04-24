@@ -3,7 +3,14 @@ todo:
 - add in console application that runs the ClangSharpPInvokeGenerator global against sokol wtih rsp  
 - maybe this is added in as nuget instead of a global tool?  
 - these bindings get spit out to an out directory and copied  
-  
+* bootstrapper could also use zig to build deps?
+	* zig
+	* fips
+	* fibs (maybe use this for everything?)
+
+need to build DLLs first
+then generate bindings against those DLLs
+then export those generated DLLs + bindings into Dinghy.Core
   
 generate bindings by running the global ClangSharpPinvokeGenerator tool against these rsp files: 
   

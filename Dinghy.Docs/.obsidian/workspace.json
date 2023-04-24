@@ -37,7 +37,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "dev/manual adds.md",
+                "file": "dev/bootstrapper.md",
                 "mode": "source",
                 "source": false
               }
@@ -110,7 +110,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "dev/manual adds.md",
+                "file": "dev/bootstrapper.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -127,7 +127,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "dev/manual adds.md",
+                "file": "dev/bootstrapper.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -150,7 +150,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "dev/manual adds.md"
+                "file": "dev/bootstrapper.md"
               }
             }
           }
@@ -173,8 +173,8 @@
   },
   "active": "db5e79cd15494cc2",
   "lastOpenFiles": [
-    "todo.md",
     "dev/manual adds.md",
+    "todo.md",
     "dev/bootstrapper.md",
     "bootstrapper.md",
     "dev.md",

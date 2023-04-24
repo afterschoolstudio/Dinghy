@@ -1,15 +1,15 @@
 ﻿using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
-namespace Dinghy.Core;
+namespace Dinghy.NativeInterop;
 
-internal static class NativeUtils
+internal static class Utils
 {
     public class NativeArray<T> where T : unmanaged
     {
         public unsafe T* Ptr {get; protected set;}
         int len;
-        public NativeArray(int size)
+        public NativeArray(int size, bool defaultInit = true)
         {
             len = size;
             if(len < 0)
@@ -18,7 +18,15 @@ internal static class NativeUtils
             }
             unsafe {
                 Ptr = (T*)NativeMemory.Alloc((nuint)size,(nuint)sizeof(T));
+                if (defaultInit)
+                {
+                    for (int i = 0; i < size; i++)
+                    {
+                        Ptr[i] = default(T);
+                    }
+                }
             }
+
         }
 
         public void Free()
