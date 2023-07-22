@@ -8,6 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Folder Include="generators\sokol\out\" />
+      <Folder Include="generators\sokol\out\bindings\" />
       <Folder Include="libs\" />
     </ItemGroup>
 

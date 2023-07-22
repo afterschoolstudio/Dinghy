@@ -1,0 +1,9 @@
+@settings.rsp
+--file
+../../libs/sokol/sokol_time.h
+--prefixStrip
+stm_
+--methodClassName
+Time
+--output
+./out/bindings/Sokol.Time.cs

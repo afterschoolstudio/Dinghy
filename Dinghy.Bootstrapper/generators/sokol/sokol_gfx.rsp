@@ -1,0 +1,9 @@
+@settings.rsp
+--file
+../../libs/sokol/sokol_gfx.h
+--prefixStrip
+sg_
+--methodClassName
+Gfx
+--output
+./out/bindings/Sokol.Graphics.cs

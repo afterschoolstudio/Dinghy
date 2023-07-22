@@ -1,0 +1,9 @@
+﻿@settings.rsp
+--file
+../../libs/sokol/sokol_audio.h
+--prefixStrip
+saudio_
+--methodClassName
+Audio
+--output
+./out/bindings/Sokol.Audio.cs

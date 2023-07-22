@@ -1,0 +1,17 @@
+﻿--include-directory
+../../libs/sokol
+--define-macro
+SOKOL_DLL
+--namespace
+Dinghy.Internal.Sokol
+--libraryPath
+libs/sokol
+--config
+latest-codegen
+generate-file-scoped-namespaces
+log-exclusions
+log-potential-typedef-remappings
+log-visited-files
+generate-aggressive-inlining
+exclude-funcs-with-body
+single-file
