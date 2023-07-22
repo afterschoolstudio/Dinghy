@@ -10,7 +10,9 @@
     <ItemGroup>
       <Folder Include="generators\sokol\out\" />
       <Folder Include="generators\sokol\out\bindings\" />
-      <Folder Include="libs\" />
+      <Folder Include="libraries\sokol\bindgen\" />
+      <Folder Include="libraries\sokol\builder\" />
+      <Folder Include="libraries\sokol\src\" />
     </ItemGroup>
 
 </Project>
