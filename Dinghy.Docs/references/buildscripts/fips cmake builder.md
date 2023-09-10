@@ -1,0 +1,53 @@
+```
+CMakeLists.txt
+
+# a dummy library with the system library dependencies  
+macro(sokol_system_deps)  
+if (FIPS_OSX)  
+if (FIPS_IOS)  
+fips_frameworks_osx(UIKit AudioToolbox AVFoundation)  
+if (SOKOL_USE_METAL)  
+fips_frameworks_osx(Metal MetalKit)  
+else()  
+fips_frameworks_osx(OpenGLES GLKit)  
+endif()  
+else()  
+if (SOKOL_USE_METAL)  
+fips_frameworks_osx(Cocoa QuartzCore Metal MetalKit AudioToolbox)  
+else()  
+fips_frameworks_osx(Cocoa QuartzCore OpenGL AudioToolbox)  
+endif()  
+endif()  
+else()  
+if (FIPS_ANDROID)  
+fips_libs(GLESv3 EGL OpenSLES log android)  
+elseif (FIPS_LINUX)  
+fips_libs(X11 Xi Xcursor GL m dl asound)  
+endif()  
+endif()  
+endmacro()  
+  
+# the sokol implementations library as DLL  
+# FIXME: implement this also for other platforms  
+if ((FIPS_WINDOWS OR FIPS_MACOS OR FIPS_LINUX) AND NOT FIPS_UWP)  
+fips_begin_sharedlib(sokol)  
+fips_vs_warning_level(4)  
+fips_files(sokol-dll.c)  
+sokol_system_deps()  
+fips_end_sharedlib()  
+if (FIPS_OSX)  
+target_compile_options("sokol" PRIVATE -x objective-c)  
+endif()  
+endif()  
+  
+if ((FIPS_WINDOWS OR FIPS_MACOS OR FIPS_LINUX) AND NOT FIPS_UWP)  
+fips_begin_sharedlib(sokol_gp)  
+fips_vs_warning_level(4)  
+fips_files(sokol_gp-dll.c)  
+sokol_system_deps()  
+fips_end_sharedlib()  
+if (FIPS_OSX)  
+target_compile_options("sokol_gp" PRIVATE -x objective-c)  
+endif()  
+endif()
+```

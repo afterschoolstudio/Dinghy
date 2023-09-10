@@ -49,14 +49,38 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "how.md",
+                "file": "todo.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "ca84b5c7aff75c54",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ideas.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "7330355a7f7645ff",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "resource pipelines.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 5
       }
     ],
     "direction": "vertical"
@@ -114,7 +138,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 425.5
   },
   "right": {
     "id": "e041d2bd72f7b530",
@@ -130,7 +154,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "how.md",
+                "file": "resource pipelines.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -147,7 +171,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "how.md",
+                "file": "resource pipelines.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -170,7 +194,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "how.md"
+                "file": "resource pipelines.md"
               }
             }
           }
@@ -191,12 +215,27 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "923059a93a2d9cad",
+  "active": "7330355a7f7645ff",
   "lastOpenFiles": [
-    "dev/bootstrapper.md",
+    "lygia.md",
+    "resource pipelines.md",
+    "scriban.md",
+    "data description formats.md",
+    "dotnet releaser.md",
+    "ideas.md",
     "how.md",
+    "ui/razor refs.md",
+    "ui",
     "todo.md",
+    "dev/bootstrapper.md",
     "dev/manual adds.md",
+    "references/buildscripts/sokol zig build ref.md",
+    "references/buildscripts/fips cmake builder.md",
+    "references/buildscripts/sokol dll builder from sokol-samples.md",
+    "references/buildscripts/basic-lib-build.zig.md",
+    "references/buildscripts.md",
+    "references/buildscripts",
+    "references",
     "bootstrapper.md",
     "dev.md",
     "dev"

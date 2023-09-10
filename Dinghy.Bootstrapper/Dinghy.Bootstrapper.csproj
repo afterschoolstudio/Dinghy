@@ -8,11 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="generators\sokol\out\" />
-      <Folder Include="generators\sokol\out\bindings\" />
-      <Folder Include="libs\sokol\bindgen\" />
-      <Folder Include="libs\sokol\builder\" />
       <Folder Include="libs\sokol\src\" />
+      <Folder Include="shared\builder\" />
     </ItemGroup>
 
 </Project>
