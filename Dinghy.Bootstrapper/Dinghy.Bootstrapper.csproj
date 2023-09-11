@@ -9,8 +9,13 @@
 
     <ItemGroup>
       <Folder Include="libs\sokol\src\" />
+      <Folder Include="libs\stb\bindgen\" />
       <Folder Include="libs\stb\src\" />
       <Folder Include="shared\builder\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ClCompile Include="libs\stb\build\stb.c" />
     </ItemGroup>
 
 </Project>
