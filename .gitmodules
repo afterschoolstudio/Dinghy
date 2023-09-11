@@ -4,3 +4,6 @@
 [submodule "Dinghy.Bootstrapper/sokol_gp"]
 	path = Dinghy.Bootstrapper/libs/sokol/src/sokol_gp
 	url = https://github.com/edubart/sokol_gp
+[submodule "Dinghy.Bootstrapper/libs/stb/src/stb"]
+	path = Dinghy.Bootstrapper/libs/stb/src/stb
+	url = https://github.com/nothings/stb

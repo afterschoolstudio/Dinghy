@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <Folder Include="libs\sokol\src\" />
+      <Folder Include="libs\stb\src\" />
       <Folder Include="shared\builder\" />
     </ItemGroup>
 
