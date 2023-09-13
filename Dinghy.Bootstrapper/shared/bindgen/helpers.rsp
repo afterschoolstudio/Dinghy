@@ -1,0 +1,9 @@
+﻿@base.rsp
+--namespace
+Dinghy.Internal
+--file
+helpers.h
+--output
+../../../Dinghy.Core/src/generated/lib/helpers/Interop_Helpers.cs
+--config
+generate-helper-types

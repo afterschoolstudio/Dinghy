@@ -1,9 +1,7 @@
 ﻿@../../../shared/bindgen/base.rsp
 --include-directory
-../src/sokol
---define-macro
-SOKOL_DLL
+../src/stb
 --namespace
-Dinghy.Internal.Sokol
+Dinghy.Internal.STB
 --libraryPath
-libs/sokol
+libs/stb

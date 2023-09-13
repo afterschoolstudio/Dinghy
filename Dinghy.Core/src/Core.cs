@@ -1,4 +1,9 @@
-﻿namespace Dinghy;
+﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using Dinghy.NativeInterop;
+
+namespace Dinghy;
+using Internal.Sokol;
 
 public static class Engine
 {
@@ -24,8 +29,8 @@ public static class Engine
                 desc.event_cb = &Event;
                 desc.frame_cb = &Frame;
                 desc.cleanup_cb = &Cleanup;
-                desc.logger.func = &Sokol.slog_func;
-                Sokol.sapp_run(&desc);
+                desc.logger.func = &Log.slog_func;
+                App.run(&desc);
             }
         }
     }
@@ -33,8 +38,8 @@ public static class Engine
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
     private static unsafe void Event(sapp_event* e)
     {
-        // var width = Sokol.sapp_width();
-        // var height = Sokol.sapp_height();
+        // var width = App.width();
+        // var height = App.height();
         // Console.WriteLine(e->type);
     }
     
@@ -43,14 +48,14 @@ public static class Engine
     {
         //sokol init
         var desc = default(sg_desc);
-        desc.context = Sokol.sapp_sgcontext();
-        Sokol.sg_setup(&desc);
+        desc.context = Glue.sapp_sgcontext();
+        Gfx.setup(&desc);
 
         //sokol_gp init
         var sgp_desc = default(sgp_desc);
-        Sokol.sgp_setup(&sgp_desc);
+        GP.sgp_setup(&sgp_desc);
 
-        LoadImage("testimg.png");
+        // LoadImage("testimg.png");
 
         // //init shader
         // var pip_desc = default(sgp_pipeline_desc);
@@ -69,183 +74,183 @@ public static class Engine
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
     private static unsafe void Frame()
     {
-        var width = Sokol.sapp_width();
-        var height = Sokol.sapp_height();
+        var width = App.width();
+        var height = App.height();
         float ratio = width/(float)height;
         
-        var ptbf = new util.NativeArray<sgp_vec2>(4096);
+        var ptbf = new Utils.NativeArray<sgp_vec2>(4096);
 
 
         
-        // clearTest(width,height,ratio);
-        // rectangleTest(width,height,ratio);
-        // primitivesTest(width,height,ratio);
-        textureTest(width,height,ratio);
+        clearTest(width,height,ratio);
+        rectangleTest(width,height,ratio);
+        primitivesTest(width,height,ratio, ptbf);
+        // textureTest(width,height,ratio);
 
         static void textureTest(int width,int height,float ratio)
         {
-            Sokol.sgp_begin(width, height);
-            Sokol.sgp_viewport(0, 0, width, height);
-            // Sokol.sgp_project(-ratio, ratio, 1.0f, -1.0f);
+            GP.sgp_begin(width, height);
+            GP.sgp_viewport(0, 0, width, height);
+            GP.sgp_project(-ratio, ratio, 1.0f, -1.0f);
 
-            // Sokol.sgp_set_color(0.1f, 0.1f, 0.1f, 1.0f);
-            Sokol.sgp_clear();
+            GP.sgp_set_color(0.1f, 0.1f, 0.1f, 1.0f);
+            GP.sgp_clear();
 
 
-            Sokol.sgp_set_image(0,image);
-            Sokol.sgp_draw_textured_rect(0, 0, width, height);
-            Sokol.sgp_reset_image(0);
+            // GP.sgp_set_image(0,image);
+            GP.sgp_draw_textured_rect(0, 0, width, height);
+            GP.sgp_reset_image(0);
 
             // Begin a render pass.
             var pass = default(sg_pass_action);
-            Sokol.sg_begin_default_pass(&pass, width, height);
+            Gfx.begin_default_pass(&pass, width, height);
             // Dispatch all draw commands to Sokol GFX.
-            Sokol.sgp_flush();
+            GP.sgp_flush();
             // Finish a draw command queue, clearing it.
-            Sokol.sgp_end();
+            GP.sgp_end();
             // End render pass.
-            Sokol.sg_end_pass();
+            Gfx.end_pass();
             // Commit Sokol render.
-            Sokol.sg_commit();
+            Gfx.commit();
         }
 
         static void clearTest(int width,int height,float ratio)
         {
             var pass = default(sg_pass_action);
-            pass.colors.e0.action = sg_action.SG_ACTION_CLEAR;
-            pass.colors.e0.value = new sg_color(){r = 1.0f,g=0f,b=0f,a=1.0f};
-            Sokol.sg_begin_default_pass(&pass,Sokol.sapp_width(),Sokol.sapp_height());
-            Sokol.sg_end_pass();
-            Sokol.sg_commit();
+            pass.colors.e0.load_action = sg_load_action.SG_LOADACTION_CLEAR;
+            pass.colors.e0.clear_value = new sg_color(){r = 1.0f,g=0f,b=0f,a=1.0f};
+            Gfx.begin_default_pass(&pass,App.width(),App.height());
+            Gfx.end_pass();
+            Gfx.commit();
         }
 
         static void rectangleTest(int width,int height,float ratio)
         {
             //sgptest rectangle
             // Begin recording draw commands for a frame buffer of size (width, height).
-            Sokol.sgp_begin(width, height);
+            GP.sgp_begin(width, height);
             // Set frame buffer drawing region to (0,0,width,height).
-            Sokol.sgp_viewport(0, 0, width, height);
+            GP.sgp_viewport(0, 0, width, height);
             // Set drawing coordinate space to (left=-ratio, right=ratio, top=1, bottom=-1).
-            Sokol.sgp_project(-ratio, ratio, 1.0f, -1.0f);
+            GP.sgp_project(-ratio, ratio, 1.0f, -1.0f);
 
             // Clear the frame buffer.
-            Sokol.sgp_set_color(0.1f, 0.1f, 0.1f, 1.0f);
-            Sokol.sgp_clear();
+            GP.sgp_set_color(0.1f, 0.1f, 0.1f, 1.0f);
+            GP.sgp_clear();
 
             // Draw an animated rectangle that rotates and changes its colors.
-            double time = Sokol.sapp_frame_count() * Sokol.sapp_frame_duration();
+            double time = App.frame_count() * App.frame_duration();
             var r = (float)(Math.Sin(time)*0.5+0.5);
             var g = (float)(Math.Cos(time)*0.5+0.5);
-            Sokol.sgp_set_color(r, g, 0.3f, 1.0f);
-            Sokol.sgp_rotate_at((float)time, 0.0f, 0.0f);
-            Sokol.sgp_draw_filled_rect(-0.5f, -0.5f, 1.0f, 1.0f);
+            GP.sgp_set_color(r, g, 0.3f, 1.0f);
+            GP.sgp_rotate_at((float)time, 0.0f, 0.0f);
+            GP.sgp_draw_filled_rect(-0.5f, -0.5f, 1.0f, 1.0f);
 
             // Begin a render pass.
             var pass = default(sg_pass_action);
-            Sokol.sg_begin_default_pass(&pass, width, height);
+            Gfx.begin_default_pass(&pass, width, height);
             // Dispatch all draw commands to Sokol GFX.
-            Sokol.sgp_flush();
+            GP.sgp_flush();
             // Finish a draw command queue, clearing it.
-            Sokol.sgp_end();
+            GP.sgp_end();
             // End render pass.
-            Sokol.sg_end_pass();
+            Gfx.end_pass();
             // Commit Sokol render.
-            Sokol.sg_commit();
+            Gfx.commit();
         }
 
-        static void primitivesTest(int width,int height,float ratio)
+        static void primitivesTest(int width,int height,float ratio, Utils.NativeArray<sgp_vec2> ptbf)
         {
 
             //sgptest primitives
             // /*
-            Sokol.sgp_begin(width, height);
+            GP.sgp_begin(width, height);
 
             int hw = width / 2;
             int hh = height / 2;
 
             // draw background
-            Sokol.sgp_set_color(0.05f, 0.05f, 0.05f, 1.0f);
-            Sokol.sgp_clear();
-            Sokol.sgp_reset_color();
+            GP.sgp_set_color(0.05f, 0.05f, 0.05f, 1.0f);
+            GP.sgp_clear();
+            GP.sgp_reset_color();
 
             // top left
-            Sokol.sgp_viewport(0, 0, hw, hh);
-            Sokol.sgp_set_color(0.1f, 0.1f, 0.1f, 1.0f);
-            Sokol.sgp_clear();
-            Sokol.sgp_reset_color();
-            Sokol.sgp_push_transform();
-            Sokol.sgp_translate(0.0f, -hh / 4.0f);
+            GP.sgp_viewport(0, 0, hw, hh);
+            GP.sgp_set_color(0.1f, 0.1f, 0.1f, 1.0f);
+            GP.sgp_clear();
+            GP.sgp_reset_color();
+            GP.sgp_push_transform();
+            GP.sgp_translate(0.0f, -hh / 4.0f);
             draw_rects();
-            Sokol.sgp_pop_transform();
-            Sokol.sgp_push_transform();
-            Sokol.sgp_translate(0.0f, hh / 4.0f);
-            Sokol.sgp_scissor(0, 0, hw, (int)(3.0f*hh / 4.0f));
+            GP.sgp_pop_transform();
+            GP.sgp_push_transform();
+            GP.sgp_translate(0.0f, hh / 4.0f);
+            GP.sgp_scissor(0, 0, hw, (int)(3.0f*hh / 4.0f));
             draw_rects();
-            Sokol.sgp_reset_scissor();
-            Sokol.sgp_pop_transform();
+            GP.sgp_reset_scissor();
+            GP.sgp_pop_transform();
 
             // top right
-            Sokol.sgp_viewport(hw, 0, hw, hh);
-            draw_triangles();
+            GP.sgp_viewport(hw, 0, hw, hh);
+            draw_triangles(ptbf);
 
             // bottom left
-            Sokol.sgp_viewport(0, hh, hw, hh);
-            draw_points();
+            GP.sgp_viewport(0, hh, hw, hh);
+            draw_points(ptbf);
 
             // bottom right
-            Sokol.sgp_viewport(hw, hh, hw, hh);
-            Sokol.sgp_set_color(0.1f, 0.1f, 0.1f, 1.0f);
-            Sokol.sgp_clear();
-            Sokol.sgp_reset_color();
-            draw_lines();
+            GP.sgp_viewport(hw, hh, hw, hh);
+            GP.sgp_set_color(0.1f, 0.1f, 0.1f, 1.0f);
+            GP.sgp_clear();
+            GP.sgp_reset_color();
+            draw_lines(ptbf);
 
             // dispatch draw commands
             var pass = default(sg_pass_action);
-            Sokol.sg_begin_default_pass(&pass, width, height);
-            Sokol.sgp_flush();
-            Sokol.sgp_end();
-            Sokol.sg_end_pass();
-            Sokol.sg_commit();
+            Gfx.begin_default_pass(&pass, width, height);
+            GP.sgp_flush();
+            GP.sgp_end();
+            Gfx.end_pass();
+            Gfx.commit();
 
             static void draw_rects()
             {
-                sgp_irect viewport = Sokol.sgp_query_state()->viewport;
+                sgp_irect viewport = GP.sgp_query_state()->viewport;
                 int width = viewport.w, height = viewport.h;
                 int size = 64;
                 int hsize = size / 2;
-                float time = Sokol.sapp_frame_count() / 60.0f;
+                float time = App.frame_count() / 60.0f;
                 float t = (float)(1.0f+Math.Sin(time))/2.0f;
 
                 // left
-                Sokol.sgp_push_transform();
-                Sokol.sgp_translate(width*0.25f - hsize, height*0.5f - hsize);
-                Sokol.sgp_translate(0.0f, 2*size*t - size);
-                Sokol.sgp_set_color(t, 0.3f, 1.0f-t, 1.0f);
-                Sokol.sgp_draw_filled_rect(0, 0, size, size);
-                Sokol.sgp_pop_transform();
+                GP.sgp_push_transform();
+                GP.sgp_translate(width*0.25f - hsize, height*0.5f - hsize);
+                GP.sgp_translate(0.0f, 2*size*t - size);
+                GP.sgp_set_color(t, 0.3f, 1.0f-t, 1.0f);
+                GP.sgp_draw_filled_rect(0, 0, size, size);
+                GP.sgp_pop_transform();
 
                 // middle
-                Sokol.sgp_push_transform();
-                Sokol.sgp_translate(width*0.5f - hsize, height*0.5f - hsize);
-                Sokol.sgp_rotate_at(time, hsize, hsize);
-                Sokol.sgp_set_color(t, 1.0f - t, 0.3f, 1.0f);
-                Sokol.sgp_draw_filled_rect(0, 0, size, size);
-                Sokol.sgp_pop_transform();
+                GP.sgp_push_transform();
+                GP.sgp_translate(width*0.5f - hsize, height*0.5f - hsize);
+                GP.sgp_rotate_at(time, hsize, hsize);
+                GP.sgp_set_color(t, 1.0f - t, 0.3f, 1.0f);
+                GP.sgp_draw_filled_rect(0, 0, size, size);
+                GP.sgp_pop_transform();
 
                 // right
-                Sokol.sgp_push_transform();
-                Sokol.sgp_translate(width*0.75f - hsize, height*0.5f - hsize);
-                Sokol.sgp_scale_at(t + 0.25f, t + 0.5f, hsize, hsize);
-                Sokol.sgp_set_color(0.3f, t, 1.0f - t, 1.0f);
-                Sokol.sgp_draw_filled_rect(0, 0, size, size);
-                Sokol.sgp_pop_transform();
+                GP.sgp_push_transform();
+                GP.sgp_translate(width*0.75f - hsize, height*0.5f - hsize);
+                GP.sgp_scale_at(t + 0.25f, t + 0.5f, hsize, hsize);
+                GP.sgp_set_color(0.3f, t, 1.0f - t, 1.0f);
+                GP.sgp_draw_filled_rect(0, 0, size, size);
+                GP.sgp_pop_transform();
             }
 
-            static void draw_points()
+            static void draw_points(Utils.NativeArray<sgp_vec2> ptbf)
             {
-                Sokol.sgp_set_color(1.0f, 1.0f, 1.0f, 1.0f);
-                sgp_irect viewport = Sokol.sgp_query_state()->viewport;
+                GP.sgp_set_color(1.0f, 1.0f, 1.0f, 1.0f);
+                sgp_irect viewport = GP.sgp_query_state()->viewport;
                 int width = viewport.w, height = viewport.h;
                 uint count = 0;
                 for(int y=64;y<height-64 && count < 4096;y+=8) {
@@ -257,26 +262,26 @@ public static class Engine
                 }
                 
                 //not working
-                // Sokol.sgp_draw_points((sgp_vec2*) Unsafe.AsPointer(ref points_buffer), count);
+                // GP.sgp_draw_points((sgp_vec2*) Unsafe.AsPointer(ref points_buffer), count);
                 
                 //working - but bad becuase ptr isnt stable
                 // Span<sgp_vec2> s = points_buffer.AsSpan();
                 // ref var reference = ref MemoryMarshal.GetReference(s);
-                // Sokol.sgp_draw_points((sgp_vec2*) Unsafe.AsPointer(ref reference), count);
+                // GP.sgp_draw_points((sgp_vec2*) Unsafe.AsPointer(ref reference), count);
 
                 //working + maybe slow
-                // Sokol.sgp_draw_points((sgp_vec2*) bufferHandle.AddrOfPinnedObject(), count);
+                // GP.sgp_draw_points((sgp_vec2*) bufferHandle.AddrOfPinnedObject(), count);
 
                 //new and improved
-                Sokol.sgp_draw_points(ptbf.Ptr, count);
+                GP.sgp_draw_points(ptbf.Ptr, count);
                 
             }
 
-            static void draw_lines()
+            static void draw_lines(Utils.NativeArray<sgp_vec2> ptbf)
             {
-                Sokol.sgp_set_color(1.0f, 1.0f, 1.0f, 1.0f);
+                GP.sgp_set_color(1.0f, 1.0f, 1.0f, 1.0f);
                 uint count = 0;
-                sgp_irect viewport = Sokol.sgp_query_state()->viewport;
+                sgp_irect viewport = GP.sgp_query_state()->viewport;
                 ptbf[(int)count].x = viewport.w / 2.0f;
                 ptbf[(int)count].y = viewport.h / 2.0f;
                 var c = ptbf[0];
@@ -289,21 +294,21 @@ public static class Engine
                 }
                 
                 //not working
-                // Sokol.sgp_draw_lines_strip((sgp_vec2*) Unsafe.AsPointer(ref points_buffer), count);
+                // GP.sgp_draw_lines_strip((sgp_vec2*) Unsafe.AsPointer(ref points_buffer), count);
 
                 //working
                 // Span<sgp_vec2> s = points_buffer.AsSpan();
                 // ref var reference = ref MemoryMarshal.GetReference(s);
-                // Sokol.sgp_draw_lines_strip((sgp_vec2*) Unsafe.AsPointer(ref reference), count);
+                // GP.sgp_draw_lines_strip((sgp_vec2*) Unsafe.AsPointer(ref reference), count);
 
                 //working + maybe slow
-                // Sokol.sgp_draw_lines_strip((sgp_vec2*) bufferHandle.AddrOfPinnedObject(), count);
-                Sokol.sgp_draw_lines_strip(ptbf.Ptr, count);
+                // GP.sgp_draw_lines_strip((sgp_vec2*) bufferHandle.AddrOfPinnedObject(), count);
+                GP.sgp_draw_lines_strip(ptbf.Ptr, count);
             }
 
-            static void draw_triangles()
+            static void draw_triangles(Utils.NativeArray<sgp_vec2> ptbf)
             {
-                sgp_irect viewport = Sokol.sgp_query_state()->viewport;
+                sgp_irect viewport = GP.sgp_query_state()->viewport;
                 int width = viewport.w, height = viewport.h;
                 float hw = width * 0.5f;
                 float hh = height * 0.5f;
@@ -311,11 +316,11 @@ public static class Engine
                 float ax = hw - w, ay = hh + w;
                 float bx = hw,     by = hh - w;
                 float cx = hw + w, cy = hh + w;
-                Sokol.sgp_set_color(1.0f, 0.0f, 1.0f, 1.0f);
-                Sokol.sgp_push_transform();
-                Sokol.sgp_translate(-w*1.5f, 0.0f);
-                Sokol.sgp_draw_filled_triangle(ax, ay, bx, by, cx, cy);
-                Sokol.sgp_translate(w*3.0f, 0.0f);
+                GP.sgp_set_color(1.0f, 0.0f, 1.0f, 1.0f);
+                GP.sgp_push_transform();
+                GP.sgp_translate(-w*1.5f, 0.0f);
+                GP.sgp_draw_filled_triangle(ax, ay, bx, by, cx, cy);
+                GP.sgp_translate(w*3.0f, 0.0f);
                 uint count = 0;
                 float step = (float)(2.0f*Math.PI)/6.0f;
                 for(float theta = 0.0f; theta <= 2.0f*Math.PI + step*0.5f; theta+=step) {
@@ -328,10 +333,10 @@ public static class Engine
                         count++;
                     }
                 }
-                Sokol.sgp_set_color(0.0f, 1.0f, 1.0f, 1.0f);
-                // Sokol.sgp_draw_filled_triangles_strip((sgp_vec2*) bufferHandle.AddrOfPinnedObject(), count);
-                Sokol.sgp_draw_filled_triangles_strip(ptbf.Ptr, count);
-                Sokol.sgp_pop_transform();
+                GP.sgp_set_color(0.0f, 1.0f, 1.0f, 1.0f);
+                // GP.sgp_draw_filled_triangles_strip((sgp_vec2*) bufferHandle.AddrOfPinnedObject(), count);
+                GP.sgp_draw_filled_triangles_strip(ptbf.Ptr, count);
+                GP.sgp_pop_transform();
             }
             // */
         }
@@ -341,9 +346,9 @@ public static class Engine
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
     private static unsafe void Cleanup()
     {
-        Sokol.sg_destroy_image(image);
-        Sokol.sgp_shutdown();
-        Sokol.sg_shutdown();
+        // Gfx.destroy_image(image);
+        GP.sgp_shutdown();
+        Gfx.shutdown();
     }
     
     // static unsafe sg_shader makeShaderFromSource()
@@ -376,13 +381,16 @@ public static class Engine
         {
             fixed (byte* imgPtr = testImgBytes)
             {
+                var sampler_desc = default(sg_sampler_desc);
+                sampler_desc.mag_filter = sg_filter.SG_FILTER_LINEAR;
+                sampler_desc.min_filter = sg_filter.SG_FILTER_LINEAR;
+                sampler_desc.wrap_u = sg_wrap.SG_WRAP_REPEAT;
+                sampler_desc.wrap_v = sg_wrap.SG_WRAP_REPEAT;
+                sampler_desc.mipmap_filter = sg_filter.SG_FILTER_NONE;
+                
                 var image_desc = default(sg_image_desc);
                 image_desc.width = 64;
                 image_desc.height = 64;
-                image_desc.min_filter = sg_filter.SG_FILTER_LINEAR;
-                image_desc.mag_filter = sg_filter.SG_FILTER_LINEAR;
-                image_desc.wrap_u = sg_wrap.SG_WRAP_REPEAT;
-                image_desc.wrap_v = sg_wrap.SG_WRAP_REPEAT;
                 // image_desc.data = default(sg_image_data);
                 image_desc.data.subimage.e0_0.ptr = imgPtr;
                 // var r = default(sg_range);
@@ -390,9 +398,9 @@ public static class Engine
                 // image_desc.data.subimage.e0_0.size = (nuint)2; // * 4?
                 image_desc.data.subimage.e0_0.size = (nuint)(64*64*4*sizeof(byte)); //works
                 // image_desc.data.subimage.e0_0.size = (nuint)(testImgBytes.Length * sizeof(byte)); //works
-                var image = Sokol.sg_make_image(&image_desc);
+                var image = Gfx.make_image(&image_desc);
                 
-                if(Sokol.sg_query_image_state(image) != sg_resource_state.SG_RESOURCESTATE_VALID) {
+                if(Gfx.query_image_state(image) != sg_resource_state.SG_RESOURCESTATE_VALID) {
                     Console.WriteLine("failed to load image");
                     return image;
                 } else {

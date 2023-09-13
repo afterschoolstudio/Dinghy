@@ -1,9 +1,7 @@
 @settings.rsp
 --file
-../../libs/sokol/sokol_log.h
---prefixStrip
-slog_
+../src/sokol/sokol_log.h
 --methodClassName
 Log
 --output
-./out/bindings/Sokol.Log.cs
+../../../../Dinghy.Core/src/generated/lib/sokol/Sokol.Log.cs

@@ -1,8 +1,8 @@
+rider configs has accurate mappings for all the sokol libs
+
 todo: 
-  
-- add in console application that runs the ClangSharpPInvokeGenerator global against sokol wtih rsp  
-- maybe this is added in as nuget instead of a global tool?  
-- these bindings get spit out to an out directory and copied  
+* fix mappings for stb  
+* add in zig build commands to rider configs
 * bootstrapper could also use zig to build deps?
 	* zig
 	* fips
@@ -12,18 +12,10 @@ need to build DLLs first
 then generate bindings against those DLLs
 then export those generated DLLs + bindings into Dinghy.Core
   
-generate bindings by running the global ClangSharpPinvokeGenerator tool against these rsp files: 
-  
-sokol_settings.rsp  
-sokol_gp_settings.rsp  
+generate bindings by running the corresponding rider config
   
 tool has a tendency to add another brace at the end + inject garbage in the middle of the file so needs cleaning  
-  
-to generate sokol_gp bindings, need to manually add this to the top of the sokol_gp.h file (otherwise it wont detect gfx):  
-```  
-#include "../sokol/sokol_gfx.h"  
-```  
-  
+
 at the bottom of the sokol file, need to add in a manual binding for slog:  
 see other note in other folder about UnmanagedCallersOnly  
 ```c#  
@@ -33,3 +25,5 @@ public static extern void slog_func([NativeTypeName("const char *")] sbyte* tag,
   
 see this link about clangsharp stuff  
 https://github.com/dotnet/ClangSharp/issues/432
+
+as a note on clagsharp

@@ -1,15 +1,3 @@
-need to manually add:
-
-```c#
-
-[DllImport("sokol_gp", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-
-public static extern sg_context_desc sapp_sgcontext();
-
-```
-
-  
-
 log function needs to be tagged with proper UnmanagedCallersOnly attribute, so edit to be this:
 
 ```c#

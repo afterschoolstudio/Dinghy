@@ -8,14 +8,14 @@
 #define SOKOL_LOG(s) OutputDebugStringA(s)
 #endif
 /* sokol 3D-API defines are provided by build options */
-#include "../../libs/sokol/sokol_app.h"
-#include "../../libs/sokol/sokol_args.h"
-#include "../../libs/sokol/sokol_audio.h"
-#include "../../libs/sokol/sokol_fetch.h"
-#include "../../libs/sokol/sokol_gfx.h"
+#include "../src/sokol/sokol_app.h"
+#include "../src/sokol/sokol_args.h"
+#include "../src/sokol/sokol_audio.h"
+#include "../src/sokol/sokol_fetch.h"
+#include "../src/sokol/sokol_gfx.h"
 
-#include "../../libs/sokol_gp/sokol_gp.h"
+#include "../src/sokol_gp/sokol_gp.h"
 
-#include "../../libs/sokol/sokol_glue.h"
-#include "../../libs/sokol/sokol_time.h"
-#include "../../libs/sokol/sokol_log.h"
+#include "../src/sokol/sokol_glue.h"
+#include "../src/sokol/sokol_time.h"
+#include "../src/sokol/sokol_log.h"
