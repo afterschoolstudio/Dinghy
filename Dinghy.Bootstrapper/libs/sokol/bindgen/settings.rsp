@@ -6,4 +6,4 @@ SOKOL_DLL
 --namespace
 Dinghy.Internal.Sokol
 --libraryPath
-libs/sokol
+sokol

@@ -16,4 +16,8 @@
       <ClCompile Include="res\shaders\loadpng\compiled\_loadpng_hlsl4_vs.hlsl" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Dinghy.Core\Dinghy.Core.csproj" />
+    </ItemGroup>
+
 </Project>

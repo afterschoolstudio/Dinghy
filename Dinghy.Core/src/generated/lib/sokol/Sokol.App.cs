@@ -589,202 +589,202 @@ public enum sapp_event_type
         public const int SAPP_MODIFIER_RMB = 0x200;
         public const int SAPP_MODIFIER_MMB = 0x400;
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern sapp_desc sokol_main(int argc, [NativeTypeName("char *[]")] sbyte** argv);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_isvalid", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_isvalid", ExactSpelling = true)]
         [return: NativeTypeName("bool")]
         public static extern byte isvalid();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_width", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_width", ExactSpelling = true)]
         public static extern int width();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_widthf", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_widthf", ExactSpelling = true)]
         public static extern float widthf();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_height", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_height", ExactSpelling = true)]
         public static extern int height();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_heightf", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_heightf", ExactSpelling = true)]
         public static extern float heightf();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_color_format", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_color_format", ExactSpelling = true)]
         public static extern int color_format();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_depth_format", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_depth_format", ExactSpelling = true)]
         public static extern int depth_format();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_sample_count", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_sample_count", ExactSpelling = true)]
         public static extern int sample_count();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_high_dpi", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_high_dpi", ExactSpelling = true)]
         [return: NativeTypeName("bool")]
         public static extern byte high_dpi();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_dpi_scale", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_dpi_scale", ExactSpelling = true)]
         public static extern float dpi_scale();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_show_keyboard", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_show_keyboard", ExactSpelling = true)]
         public static extern void show_keyboard([NativeTypeName("bool")] byte show);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_keyboard_shown", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_keyboard_shown", ExactSpelling = true)]
         [return: NativeTypeName("bool")]
         public static extern byte keyboard_shown();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_is_fullscreen", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_is_fullscreen", ExactSpelling = true)]
         [return: NativeTypeName("bool")]
         public static extern byte is_fullscreen();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_toggle_fullscreen", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_toggle_fullscreen", ExactSpelling = true)]
         public static extern void toggle_fullscreen();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_show_mouse", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_show_mouse", ExactSpelling = true)]
         public static extern void show_mouse([NativeTypeName("bool")] byte show);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_mouse_shown", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_mouse_shown", ExactSpelling = true)]
         [return: NativeTypeName("bool")]
         public static extern byte mouse_shown();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_lock_mouse", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_lock_mouse", ExactSpelling = true)]
         public static extern void lock_mouse([NativeTypeName("bool")] byte @lock);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_mouse_locked", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_mouse_locked", ExactSpelling = true)]
         [return: NativeTypeName("bool")]
         public static extern byte mouse_locked();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_set_mouse_cursor", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_set_mouse_cursor", ExactSpelling = true)]
         public static extern void set_mouse_cursor(sapp_mouse_cursor cursor);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_get_mouse_cursor", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_get_mouse_cursor", ExactSpelling = true)]
         public static extern sapp_mouse_cursor get_mouse_cursor();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_userdata", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_userdata", ExactSpelling = true)]
         public static extern void* userdata();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_query_desc", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_query_desc", ExactSpelling = true)]
         public static extern sapp_desc query_desc();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_request_quit", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_request_quit", ExactSpelling = true)]
         public static extern void request_quit();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_cancel_quit", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_cancel_quit", ExactSpelling = true)]
         public static extern void cancel_quit();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_quit", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_quit", ExactSpelling = true)]
         public static extern void quit();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_consume_event", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_consume_event", ExactSpelling = true)]
         public static extern void consume_event();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_frame_count", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_frame_count", ExactSpelling = true)]
         [return: NativeTypeName("uint64_t")]
         public static extern ulong frame_count();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_frame_duration", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_frame_duration", ExactSpelling = true)]
         public static extern double frame_duration();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_set_clipboard_string", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_set_clipboard_string", ExactSpelling = true)]
         public static extern void set_clipboard_string([NativeTypeName("const char *")] sbyte* str);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_get_clipboard_string", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_get_clipboard_string", ExactSpelling = true)]
         [return: NativeTypeName("const char *")]
         public static extern sbyte* get_clipboard_string();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_set_window_title", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_set_window_title", ExactSpelling = true)]
         public static extern void set_window_title([NativeTypeName("const char *")] sbyte* str);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_set_icon", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_set_icon", ExactSpelling = true)]
         public static extern void set_icon([NativeTypeName("const sapp_icon_desc *")] sapp_icon_desc* icon_desc);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_get_num_dropped_files", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_get_num_dropped_files", ExactSpelling = true)]
         public static extern int get_num_dropped_files();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_get_dropped_file_path", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_get_dropped_file_path", ExactSpelling = true)]
         [return: NativeTypeName("const char *")]
         public static extern sbyte* get_dropped_file_path(int index);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_run", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_run", ExactSpelling = true)]
         public static extern void run([NativeTypeName("const sapp_desc *")] sapp_desc* desc);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_egl_get_display", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_egl_get_display", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* egl_get_display();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_egl_get_context", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_egl_get_context", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* egl_get_context();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_html5_ask_leave_site", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_html5_ask_leave_site", ExactSpelling = true)]
         public static extern void html5_ask_leave_site([NativeTypeName("bool")] byte ask);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_html5_get_dropped_file_size", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_html5_get_dropped_file_size", ExactSpelling = true)]
         [return: NativeTypeName("uint32_t")]
         public static extern uint html5_get_dropped_file_size(int index);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_html5_fetch_dropped_file", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_html5_fetch_dropped_file", ExactSpelling = true)]
         public static extern void html5_fetch_dropped_file([NativeTypeName("const sapp_html5_fetch_request *")] sapp_html5_fetch_request* request);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_metal_get_device", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_metal_get_device", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* metal_get_device();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_metal_get_renderpass_descriptor", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_metal_get_renderpass_descriptor", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* metal_get_renderpass_descriptor();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_metal_get_drawable", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_metal_get_drawable", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* metal_get_drawable();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_macos_get_window", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_macos_get_window", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* macos_get_window();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_ios_get_window", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_ios_get_window", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* ios_get_window();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_d3d11_get_device", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_d3d11_get_device", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* d3d11_get_device();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_d3d11_get_device_context", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_d3d11_get_device_context", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* d3d11_get_device_context();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_d3d11_get_swap_chain", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_d3d11_get_swap_chain", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* d3d11_get_swap_chain();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_d3d11_get_render_target_view", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_d3d11_get_render_target_view", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* d3d11_get_render_target_view();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_d3d11_get_depth_stencil_view", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_d3d11_get_depth_stencil_view", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* d3d11_get_depth_stencil_view();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_win32_get_hwnd", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_win32_get_hwnd", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* win32_get_hwnd();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_wgpu_get_device", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_wgpu_get_device", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* wgpu_get_device();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_wgpu_get_render_view", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_wgpu_get_render_view", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* wgpu_get_render_view();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_wgpu_get_resolve_view", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_wgpu_get_resolve_view", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* wgpu_get_resolve_view();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_wgpu_get_depth_stencil_view", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_wgpu_get_depth_stencil_view", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* wgpu_get_depth_stencil_view();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_android_get_native_activity", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sapp_android_get_native_activity", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* android_get_native_activity();
     }

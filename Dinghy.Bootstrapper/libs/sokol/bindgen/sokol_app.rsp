@@ -6,4 +6,4 @@ sapp_
 --methodClassName
 App
 --output
-../../../../Dinghy.Core/src/generated/lib/sokol/Sokol_App.cs
+../../../../Dinghy.Core/src/generated/lib/sokol/Sokol.App.cs
