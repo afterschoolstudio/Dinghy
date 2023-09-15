@@ -73,26 +73,14 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "resource pipelines.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "fb00c577b594aec2",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "dev/manual adds.md",
+                "file": "ui/yoga.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
         ],
-        "currentTab": 6
+        "currentTab": 5
       }
     ],
     "direction": "vertical"
@@ -166,7 +154,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "dev/manual adds.md",
+                "file": "ui/yoga.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -183,7 +171,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "dev/manual adds.md",
+                "file": "ui/yoga.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -206,7 +194,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "dev/manual adds.md"
+                "file": "ui/yoga.md"
               }
             }
           }
@@ -228,18 +216,19 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "fb00c577b594aec2",
+  "active": "7330355a7f7645ff",
   "lastOpenFiles": [
+    "resource pipelines.md",
+    "ui/yoga.md",
+    "dev/manual adds.md",
     "dev/bootstrapper.md",
     "dev/clangsharppinvokegenerator notes.md",
     "how.md",
-    "dev/manual adds.md",
     "references/buildscripts/basic-lib-build.zig.md",
     "references/buildscripts/fips cmake builder.md",
     "references/buildscripts/sokol zig build ref.md",
     "references/buildscripts/sokol dll builder from sokol-samples.md",
     "lygia.md",
-    "resource pipelines.md",
     "scriban.md",
     "data description formats.md",
     "dotnet releaser.md",
