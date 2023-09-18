@@ -28,8 +28,8 @@ pub const Config = struct {
 // runner.
 pub fn build(b: *std.Build) void {
 
-        var config: Config = .{};
-
+    var config: Config = .{};
+        
     const force_gl = b.option(bool, "gl", "Force GL backend") orelse false;
     config.backend = if (force_gl) .gl else .auto;
 
@@ -40,7 +40,7 @@ pub fn build(b: *std.Build) void {
     config.force_egl = b.option(bool, "egl", "Use EGL instead of GLX if possible (default: false)") orelse false;
 
     const target = b.standardTargetOptions(.{});
-
+    
     const lib = b.addSharedLibrary(.{
         .name = "sokol",
         .target = target,
@@ -50,8 +50,7 @@ pub fn build(b: *std.Build) void {
         .optimize = b.standardOptimizeOption(.{})
     });
     lib.linkLibC();
-
-
+    
     const sokol_path = "";
     const csources = [_][]const u8 {
         "sokol.c"
@@ -81,7 +80,10 @@ pub fn build(b: *std.Build) void {
 
     if (lib.target.isDarwin()) {
         inline for (csources) |csrc| {
-            lib.addCSourceFile(sokol_path ++ csrc, &[_][]const u8{"-ObjC", "-DIMPL", backend_option});
+            lib.addCSourceFile(.{
+                .file = .{ .path = sokol_path ++ csrc },
+                .flags = &[_][]const u8{ "-ObjC", "-DIMPL", backend_option },
+            });
         }
         lib.linkFramework("Cocoa");
         lib.linkFramework("QuartzCore");
@@ -99,7 +101,10 @@ pub fn build(b: *std.Build) void {
         var wayland_flag = if (!config.enable_wayland) "-DSOKOL_DISABLE_WAYLAND" else "";
 
         inline for (csources) |csrc| {
-            lib.addCSourceFile(sokol_path ++ csrc, &[_][]const u8{"-DIMPL", backend_option, egl_flag, x11_flag, wayland_flag});
+            lib.addCSourceFile(.{
+                .file = .{ .path = sokol_path ++ csrc },
+                .flags = &[_][]const u8{ "-DIMPL", backend_option, egl_flag, x11_flag, wayland_flag },
+            });
         }
 
         if (lib.target.isLinux()) {
@@ -142,7 +147,7 @@ pub fn build(b: *std.Build) void {
             }
         }
     }
-
+    
     // lib.setBuildMode(mode);
     // shared_lib.setTarget(target);
     // shared_lib.addCSourceFile("sokol.c",&.{ "-Wall", "-Werror" });
@@ -155,6 +160,6 @@ pub fn build(b: *std.Build) void {
     // shared_lib.linkSystemLibrary("shell32");
     // shared_lib.linkSystemLibrary("dxgi");
     // shared_lib.linkSystemLibrary("d3d11");
-
+    b.lib_dir = "../../../../Dinghy.Core/libs";
     b.installArtifact(lib);
 }

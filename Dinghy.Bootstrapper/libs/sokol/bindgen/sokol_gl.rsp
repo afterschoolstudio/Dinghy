@@ -1,0 +1,11 @@
+@settings.rsp
+--traverse
+../src/sokol/util/sokol_gl.h
+--file
+sokol_gl_bindgen_helper.h
+--prefixStrip
+sgl_
+--methodClassName
+GL
+--output
+../../../../Dinghy.Core/src/generated/lib/sokol/Sokol.GL.cs

@@ -78,9 +78,21 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "f1c50e2e9975e5f1",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "dev/manual adds.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
         ],
-        "currentTab": 5
+        "currentTab": 6
       }
     ],
     "direction": "vertical"
@@ -154,7 +166,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "ui/yoga.md",
+                "file": "dev/manual adds.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -171,7 +183,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "ui/yoga.md",
+                "file": "dev/manual adds.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -194,7 +206,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ui/yoga.md"
+                "file": "dev/manual adds.md"
               }
             }
           }
@@ -216,7 +228,7 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "7330355a7f7645ff",
+  "active": "f1c50e2e9975e5f1",
   "lastOpenFiles": [
     "resource pipelines.md",
     "ui/yoga.md",

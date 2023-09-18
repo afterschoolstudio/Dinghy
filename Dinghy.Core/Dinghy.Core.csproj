@@ -16,14 +16,24 @@
       <PackageReference Include="StbImageSharp" Version="2.27.13" />
     </ItemGroup>
 
+
+
+
     <ItemGroup>
-      <None Update="sokol.dll">
+      <Folder Include="libs\" />
+    </ItemGroup>
+
+
+
+
+    <ItemGroup>
+      <None Update="libs\sokol.dll">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="sokol.lib">
+      <None Update="libs\sokol.lib">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="sokol.pdb">
+      <None Update="libs\sokol.pdb">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>

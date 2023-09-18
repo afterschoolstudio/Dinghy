@@ -1,6 +1,7 @@
 #define SOKOL_IMPL
 #define SOKOL_DLL
 #define SOKOL_NO_ENTRY
+#define SOKOL_DEBUG
 
 #define USE_SOKOL_APP
 
@@ -19,3 +20,5 @@
 #include "../src/sokol/sokol_glue.h"
 #include "../src/sokol/sokol_time.h"
 #include "../src/sokol/sokol_log.h"
+
+#include "../src/sokol/util/sokol_gl.h"
