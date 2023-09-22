@@ -22,8 +22,8 @@ public static class Engine
             {
                 //init
                 sapp_desc desc = default;
-                desc.width = 500;
-                desc.height = 500;
+                desc.width = 1920;
+                desc.height = 1080;
                 desc.icon.sokol_default = 1;
                 desc.window_title = (sbyte*)ptr;
                 desc.init_cb = &Initialize;
@@ -79,11 +79,27 @@ public static class Engine
         GL.setup(&gl_desc);
         
         // a checkerboard texture
-        var texSize = 32;
+        var texSize = 128;
+        var checkSize = texSize / 8;
+        uint WHITE = 0xFFFFFFFF;
+        uint BLUE = 0xFFFF0000;
         var pixels = new Utils.NativeArray<uint>(texSize*texSize);
         for (int i = 0; i < (texSize*texSize); i++)
         {
-            pixels[i] = (i + (i / texSize)) % 2 == 0 ? 0xFFFFFFFF : 0xFFFF0000;
+            var x = i % texSize;
+            var y = i / texSize;
+            if ((y / checkSize) % 2 == 0)
+            {
+                pixels[i] = (x / checkSize) % 2 == 0 ? BLUE : WHITE;
+            }
+            else
+            {
+                pixels[i] = (x / checkSize) % 2 == 0 ? WHITE : BLUE;
+            }
+            // pixels[i] = (i + (i / texSize)) % 2 == 0 ? 0xFFFFFFFF : 0xFFFF0000;
+            // if (i % 8 == 0)
+            // {
+            // }
         }
         
         var img_desc = default(sg_image_desc);
@@ -99,8 +115,8 @@ public static class Engine
         var sample_desc = default(sg_sampler_desc);
         sample_desc.min_filter = sg_filter.SG_FILTER_NEAREST;
         sample_desc.mag_filter = sg_filter.SG_FILTER_NEAREST;
-        sample_desc.wrap_u = sg_wrap.SG_WRAP_CLAMP_TO_EDGE;
-        sample_desc.wrap_v = sg_wrap.SG_WRAP_CLAMP_TO_EDGE;
+        // sample_desc.wrap_u = sg_wrap.SG_WRAP_CLAMP_TO_BORDER;
+        // sample_desc.wrap_v = sg_wrap.SG_WRAP_CLAMP_TO_BORDER;
         state.smp = Gfx.make_sampler(&sample_desc);
         /* create a pipeline object for 3d rendering, with less-equal
            depth-test and cull-face enabled, note that we don't provide
@@ -126,7 +142,7 @@ public static class Engine
     }
 
     private static float angle_deg = 0;
-    private static Vector2 rectPos = new Vector2(0,0);
+    private static Vector2 rectPos = new Vector2(30,30);
     
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
     private static unsafe void Frame()
@@ -136,60 +152,38 @@ public static class Engine
         var dw = App.width();
         var dh = App.height();
         
-        int ww = dh/2; // not a bug
-        int hh = dh/2;
-        int x0 = dw/2 - hh;
-        int x1 = dw/2;
-        int y0 = 0;
-        int y1 = dh/2;
-        
-        // draw_triangle();
-        // GL.viewport(x0, y0, ww, hh, 1);
-        //     GL.defaults();
-        //     GL.begin_triangles();
-        //     GL.v2f_c3b( 0.0f,  0.5f, 255, 0, 0);
-        //     GL.v2f_c3b(-0.5f, -0.5f, 0, 0, 255);
-        //     GL.v2f_c3b( 0.5f, -0.5f, 0, 255, 0);
-        //     GL.end();
-        
         //draw quad
         // GL.viewport(x1, y0, ww, hh, 1);        
         GL.viewport(0, 0, dw, dh, 1);  
-            // float scale = 1.0f + MathF.Sin(GL.rad(angle_deg)) * 0.5f;
-            // angle_deg += 1.0f * t;
+            float scale = 1.0f + MathF.Sin(GL.rad(angle_deg)) * 10.5f;
+            angle_deg += 1.0f * t;
             GL.defaults();
             // GL.load_pipeline(state.pip_3d);
+            // GL.matrix_mode_modelview();
+
             GL.enable_texture();
             GL.texture(state.img, state.smp);
-            // GL.matrix_mode_texture();
-            // GL.scale(scale, scale, 1.0f);
-
-            // GL.rotate(GL.rad(angle_deg), 0.0f, 0.0f, 1.0f);
-            // GL.scale(scale, scale, 1.0f);
-            GL.begin_quads();
-            var clip_img_width =       ((state.imageWidth / (float)dw) * 2f) - 1f;
-            var clip_img_height = -1 * (((state.imageHeight / (float)dh) * 2f) - 1f);
-            // GL.translate(.3f,(float)MathF.Sin(t),0); 
-            //draw the verts at the clip size of the texture
-            // GL.v2f_t2f_c3b( -0.5f, -0.5f,  0, 0,  255, 255, 0); //bottom left
-            // GL.v2f_t2f_c3b(  0.5f, -0.5f,  1, 0,  0, 255, 0); //bottom right
-            // GL.v2f_t2f_c3b(  0.5f,  0.5f,  1, 1,  0, 0, 255); //top right
-            // GL.v2f_t2f_c3b( -0.5f,  0.5f,  0, 1,  255, 0, 0); //top left
+            // List<Vector2> pos = new();
+            // for (int i = 0; i < 100; i++)
+            // {
+            //     pos.Add(new Vector2(10* (i % 10),10* (i / 10)));
+            // }
+            List<Vector2> pos = new List<Vector2>()
+            {
+                new Vector2(0, 0),
+                new Vector2(150, 0),
+                new Vector2(300, 0),
+                new Vector2(450, 0),
+                new Vector2(600, 0),
+                new Vector2(750, 0)
+            };
+            for (int i = 0; i < pos.Count; i++)
+            {
+                GL.push_matrix();
+                drawRect(pos[i],dw,dh);
+                GL.pop_matrix();
+            }
             
-            //gl clip space is -1 -> + 1, lower left to top right
-            //this is a top left quad that stays in the top left quadrant of the screen
-            // GL.v2f_t2f_c3b( -1, 0,  0, 0,  255, 255, 0); //bottom left
-            // GL.v2f_t2f_c3b(  0f, 0f,  1, 0,  0, 255, 0); //bottom right
-            // GL.v2f_t2f_c3b(  0,  1,  1, 1,  0, 0, 255); //top right
-            // GL.v2f_t2f_c3b( -1,  1,  0, 1,  255, 0, 0); //top left
-            
-            //this quad maintains its pos based on the texture size
-            GL.v2f_t2f_c3b( -1, clip_img_height,  0, 0,  255, 255, 0); //bottom left
-            GL.v2f_t2f_c3b(  clip_img_width, clip_img_height,  1, 0,  0, 255, 0); //bottom right
-            GL.v2f_t2f_c3b(  clip_img_width,  1,  1, 1,  0, 0, 255); //top right
-            GL.v2f_t2f_c3b( -1,  1,  0, 1,  255, 0, 0); //top left
-            
-            GL.end();
 
             fixed (sg_pass_action* pass = &state.pass_action)
             {
@@ -198,6 +192,25 @@ public static class Engine
                 Gfx.end_pass();
                 Gfx.commit();
             }
+    }
+
+    static void drawRect(Vector2 pos, int dw, int dh)
+    {
+        GL.begin_quads();
+        //gl clip space is -1 -> + 1, lower left to top right
+        (float x, float y) clipPos = ((float)pos.X / dw, (float)pos.Y / dh);
+        GL.translate(-1 + clipPos.x,1-clipPos.y,0);
+        // GL.rotate(GL.rad(angle_deg), 0.0f, 0.0f, 1.0f);
+        // GL.scale(scale, scale, 1.0f);
+            
+        var clip_img_height = state.imageHeight / (float)dh;
+        var clip_img_width =       state.imageWidth / (float)dw;
+        GL.v2f_t2f_c3b( -1, 1-clip_img_height,  0, 0,  255, 255, 0); //bottom left
+        GL.v2f_t2f_c3b(  -1 + clip_img_width, 1-clip_img_height,  1, 0,  0, 255, 0); //bottom right
+        GL.v2f_t2f_c3b(  -1 + clip_img_width, 1,  1, 1,  0, 0, 255); //top right
+        GL.v2f_t2f_c3b( -1, 1,  0, 1,  255, 0, 0); //top left
+        GL.translate(1f,-1f,0);
+        GL.end();
     }
 
     public enum LogLevel
