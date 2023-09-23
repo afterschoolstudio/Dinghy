@@ -1,0 +1,9 @@
+﻿@settings.rsp
+--file
+../src/stb/stb_image.h
+--methodClassName
+STB
+--define-macro
+STBI_NO_STDIO
+--output
+../../../../Dinghy.Core/src/generated/lib/stb/STB.Image.cs

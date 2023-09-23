@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Dinghy.Internal.STB;
 using Dinghy.NativeInterop;
 
 namespace Dinghy;
@@ -96,19 +97,59 @@ public static class Engine
             {
                 pixels[i] = (x / checkSize) % 2 == 0 ? WHITE : BLUE;
             }
-            // pixels[i] = (i + (i / texSize)) % 2 == 0 ? 0xFFFFFFFF : 0xFFFF0000;
-            // if (i % 8 == 0)
-            // {
-            // }
         }
-        
-        var img_desc = default(sg_image_desc);
-        img_desc.width = texSize;
-        img_desc.height = texSize;
-        img_desc.data.subimage.e0_0 = pixels.AsSgRange();
-        state.img = Gfx.make_image(&img_desc);
-        state.imageWidth = texSize;
-        state.imageHeight = texSize;
+
+        bool useLoadedTexture = false;
+        if (useLoadedTexture)
+        {
+            var img_desc = default(sg_image_desc);
+            img_desc.width = texSize;
+            img_desc.height = texSize;
+            img_desc.data.subimage.e0_0 = pixels.AsSgRange();
+            state.img = Gfx.make_image(&img_desc);
+            state.imageWidth = texSize;
+            state.imageHeight = texSize;
+        }
+        else
+        {
+            var img_desc = default(sg_image_desc);
+            img_desc.width = texSize;
+            img_desc.height = texSize;
+            img_desc.data.subimage.e0_0 = pixels.AsSgRange();
+
+            var fileBytes = File.ReadAllBytes("test.png");
+            // int imgx;
+            // int imgy;
+            // int channels = 3;
+            Console.WriteLine("init");
+            Console.WriteLine(fileBytes.Length);
+            fixed (byte* imgptr = fileBytes)
+            {
+                int imgx, imgy, channels;
+                // var ok = STB.stbi_info_from_memory(imgptr, fileBytes.Length, &imgx, &imgy, &channels); 
+                // Console.WriteLine($"mem test: {ok}: {imgx} {imgy} {channels}");
+                var stbimg = STB.stbi_load_from_memory(imgptr, fileBytes.Length, &imgx,&imgy, &channels, 4);
+                sg_image_desc stb_img_desc = default;
+                stb_img_desc.width = imgx;
+                stb_img_desc.height = imgy;
+                stb_img_desc.pixel_format = sg_pixel_format.SG_PIXELFORMAT_RGBA8;
+                stb_img_desc.data.subimage.e0_0 = new sg_range()
+                {
+                    ptr = stbimg,
+                    size = (nuint)(imgx * imgy * 4)
+                };
+                STB.stbi_image_free(stbimg);
+
+                
+                state.img = Gfx.make_image(&stb_img_desc);
+                state.imageWidth = imgx;
+                state.imageHeight = imgy;
+            }
+            
+            // state.img = Gfx.make_image(&img_desc);
+            // state.imageWidth = texSize;
+            // state.imageHeight = texSize;
+        }
         
         
         // ... and a sampler
@@ -142,8 +183,6 @@ public static class Engine
     }
 
     private static float angle_deg = 0;
-    private static Vector2 rectPos = new Vector2(30,30);
-    
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
     private static unsafe void Frame()
     {
@@ -153,48 +192,49 @@ public static class Engine
         var dh = App.height();
         
         //draw quad
-        // GL.viewport(x1, y0, ww, hh, 1);        
         GL.viewport(0, 0, dw, dh, 1);  
-            float scale = 1.0f + MathF.Sin(GL.rad(angle_deg)) * 10.5f;
-            angle_deg += 1.0f * t;
-            GL.defaults();
-            // GL.load_pipeline(state.pip_3d);
-            // GL.matrix_mode_modelview();
+        float scale = 1.0f + MathF.Sin(GL.rad(angle_deg)) * 10.5f;
+        angle_deg += 1.0f * t;
+        GL.defaults();
+        // GL.load_pipeline(state.pip_3d);
+        // GL.matrix_mode_modelview();
 
-            GL.enable_texture();
-            GL.texture(state.img, state.smp);
-            // List<Vector2> pos = new();
-            // for (int i = 0; i < 100; i++)
-            // {
-            //     pos.Add(new Vector2(10* (i % 10),10* (i / 10)));
-            // }
-            List<Vector2> pos = new List<Vector2>()
-            {
-                new Vector2(0, 0),
-                new Vector2(150, 0),
-                new Vector2(300, 0),
-                new Vector2(450, 0),
-                new Vector2(600, 0),
-                new Vector2(750, 0)
-            };
-            for (int i = 0; i < pos.Count; i++)
-            {
-                GL.push_matrix();
-                drawRect(pos[i],dw,dh);
-                GL.pop_matrix();
-            }
-            
+        GL.enable_texture();
+        GL.texture(state.img, state.smp);
+        
+        for (int i = 0; i < rects.Count; i++)
+        {
+            GL.push_matrix();
+            drawRect(rects[i],dw,dh);
+            GL.pop_matrix();
+        }
+        
 
-            fixed (sg_pass_action* pass = &state.pass_action)
-            {
-                Gfx.begin_default_pass(pass, dw, dh);
-                GL.draw();
-                Gfx.end_pass();
-                Gfx.commit();
-            }
+        fixed (sg_pass_action* pass = &state.pass_action)
+        {
+            Gfx.begin_default_pass(pass, dw, dh);
+            GL.draw();
+            Gfx.end_pass();
+            Gfx.commit();
+        }
     }
 
-    static void drawRect(Vector2 pos, int dw, int dh)
+    record struct rect(int X, int Y);
+
+    private static List<rect> rects = new List<rect>()
+    {
+        new rect(0, 0),
+        new rect(150, 0),
+        new rect(300, 0),
+        new rect(450, 0),
+        new rect(600, 0),
+        new rect(750, 0),
+        new rect(900, 0),
+        new rect(1050, 0)
+        
+    };
+
+    static void drawRect(rect pos, int dw, int dh)
     {
         GL.begin_quads();
         //gl clip space is -1 -> + 1, lower left to top right

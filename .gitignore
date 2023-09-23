@@ -4,3 +4,5 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 Dinghy.Bootstrapper/libs/sokol/build/zig-cache/
+
+Dinghy.Bootstrapper/libs/stb/build/zig-cache/
