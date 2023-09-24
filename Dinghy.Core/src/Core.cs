@@ -23,8 +23,8 @@ public static class Engine
             {
                 //init
                 sapp_desc desc = default;
-                desc.width = 1920;
-                desc.height = 1080;
+                desc.width = 400;
+                desc.height = 400;
                 desc.icon.sokol_default = 1;
                 desc.window_title = (sbyte*)ptr;
                 desc.init_cb = &Initialize;
@@ -51,14 +51,20 @@ public static class Engine
     public struct core_state
     {
         public sg_pass_action pass_action ;
-        public sg_image img;
-        public int imageWidth;
-        public int imageHeight;
+        public imageInfo checkerboard;
+        public imageInfo logo;
         public sg_sampler smp;
-        public sgl_pipeline pip_3d;
+        public sgl_pipeline alpha_pip;
     }
 
-    public static core_state state = default(core_state);
+    public struct imageInfo
+    {
+        public int width;
+        public int height;
+        public sg_image img;
+    }
+
+    public static core_state state = default;
 
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
     private static unsafe void Initialize()
@@ -80,15 +86,15 @@ public static class Engine
         GL.setup(&gl_desc);
         
         // a checkerboard texture
-        var texSize = 128;
-        var checkSize = texSize / 8;
+        var checkerboardTexSize = 128;
+        var checkSize = checkerboardTexSize / 8;
         uint WHITE = 0xFFFFFFFF;
         uint BLUE = 0xFFFF0000;
-        var pixels = new Utils.NativeArray<uint>(texSize*texSize);
-        for (int i = 0; i < (texSize*texSize); i++)
+        var pixels = new Utils.NativeArray<uint>(checkerboardTexSize*checkerboardTexSize);
+        for (int i = 0; i < (checkerboardTexSize*checkerboardTexSize); i++)
         {
-            var x = i % texSize;
-            var y = i / texSize;
+            var x = i % checkerboardTexSize;
+            var y = i / checkerboardTexSize;
             if ((y / checkSize) % 2 == 0)
             {
                 pixels[i] = (x / checkSize) % 2 == 0 ? BLUE : WHITE;
@@ -99,87 +105,66 @@ public static class Engine
             }
         }
 
-        bool useLoadedTexture = false;
-        if (useLoadedTexture)
+        var checkerboard_desc = default(sg_image_desc);
+        checkerboard_desc.width = checkerboardTexSize;
+        checkerboard_desc.height = checkerboardTexSize;
+        checkerboard_desc.data.subimage.e0_0 = pixels.AsSgRange();
+        state.checkerboard.img = Gfx.make_image(&checkerboard_desc);
+        state.checkerboard.width = checkerboardTexSize;
+        state.checkerboard.height = checkerboardTexSize;
+        
+        
+        var logo_desc = default(sg_image_desc);
+        var fileBytes = File.ReadAllBytes("logo_re.png");
+        fixed (byte* imgptr = fileBytes)
         {
-            var img_desc = default(sg_image_desc);
-            img_desc.width = texSize;
-            img_desc.height = texSize;
-            img_desc.data.subimage.e0_0 = pixels.AsSgRange();
-            state.img = Gfx.make_image(&img_desc);
-            state.imageWidth = texSize;
-            state.imageHeight = texSize;
-        }
-        else
-        {
-            var img_desc = default(sg_image_desc);
-            img_desc.width = texSize;
-            img_desc.height = texSize;
-            img_desc.data.subimage.e0_0 = pixels.AsSgRange();
-
-            var fileBytes = File.ReadAllBytes("test.png");
-            // int imgx;
-            // int imgy;
-            // int channels = 3;
-            Console.WriteLine("init");
-            Console.WriteLine(fileBytes.Length);
-            fixed (byte* imgptr = fileBytes)
-            {
-                int imgx, imgy, channels;
-                // var ok = STB.stbi_info_from_memory(imgptr, fileBytes.Length, &imgx, &imgy, &channels); 
-                // Console.WriteLine($"mem test: {ok}: {imgx} {imgy} {channels}");
-                var stbimg = STB.stbi_load_from_memory(imgptr, fileBytes.Length, &imgx,&imgy, &channels, 4);
-                sg_image_desc stb_img_desc = default;
-                stb_img_desc.width = imgx;
-                stb_img_desc.height = imgy;
-                stb_img_desc.pixel_format = sg_pixel_format.SG_PIXELFORMAT_RGBA8;
-                stb_img_desc.data.subimage.e0_0 = new sg_range()
-                {
-                    ptr = stbimg,
-                    size = (nuint)(imgx * imgy * 4)
-                };
-                STB.stbi_image_free(stbimg);
-
-                
-                state.img = Gfx.make_image(&stb_img_desc);
-                state.imageWidth = imgx;
-                state.imageHeight = imgy;
-            }
+            int imgx, imgy, channels;
+            // var ok = STB.stbi_info_from_memory(imgptr, fileBytes.Length, &imgx, &imgy, &channels); 
+            // Console.WriteLine($"mem test: {ok}: {imgx} {imgy} {channels}");
+            STB.stbi_set_flip_vertically_on_load(1);
+            var stbimg = STB.stbi_load_from_memory(imgptr, fileBytes.Length, &imgx,&imgy, &channels, 4);
+            sg_image_desc stb_img_desc = default;
+            stb_img_desc.width = imgx;
+            stb_img_desc.height = imgy;
+            stb_img_desc.pixel_format = sg_pixel_format.SG_PIXELFORMAT_RGBA8;
             
-            // state.img = Gfx.make_image(&img_desc);
-            // state.imageWidth = texSize;
-            // state.imageHeight = texSize;
+            stb_img_desc.data.subimage.e0_0.ptr = stbimg;
+            stb_img_desc.data.subimage.e0_0.size = (nuint)(imgx * imgy * 4);
+
+            
+            state.logo.img = Gfx.make_image(&stb_img_desc);
+            state.logo.width = imgx;
+            state.logo.height = imgy;
+            STB.stbi_image_free(stbimg);
         }
         
         
         // ... and a sampler
-        var sample_desc = default(sg_sampler_desc);
-        sample_desc.min_filter = sg_filter.SG_FILTER_NEAREST;
-        sample_desc.mag_filter = sg_filter.SG_FILTER_NEAREST;
-        // sample_desc.wrap_u = sg_wrap.SG_WRAP_CLAMP_TO_BORDER;
-        // sample_desc.wrap_v = sg_wrap.SG_WRAP_CLAMP_TO_BORDER;
+        sg_sampler_desc sample_desc = default;
+        sample_desc.min_filter = sg_filter.SG_FILTER_LINEAR;
+        sample_desc.mag_filter = sg_filter.SG_FILTER_LINEAR;
+        sample_desc.mipmap_filter = sg_filter.SG_FILTER_NONE;
+        sample_desc.max_anisotropy = 8;
+        // sample_desc.mipmap_filter = sg_filter.SG_FILTER_NEAREST;
         state.smp = Gfx.make_sampler(&sample_desc);
-        /* create a pipeline object for 3d rendering, with less-equal
-           depth-test and cull-face enabled, note that we don't provide
-           a shader, vertex-layout, pixel formats and sample count here,
-           these are all filled in by sokol-gl
-        */
+        
+        var d = Gfx.query_sampler_desc(state.smp);
+        Console.WriteLine("init: " + d.mipmap_filter);
+        
         sg_pipeline_desc pipeline_desc = default;
-        pipeline_desc.cull_mode = sg_cull_mode.SG_CULLMODE_BACK;
-        pipeline_desc.depth.write_enabled = 1;
-        pipeline_desc.depth.compare = sg_compare_func.SG_COMPAREFUNC_LESS_EQUAL;
-        state.pip_3d = GL.make_pipeline(&pipeline_desc);
+        pipeline_desc.colors.e0.write_mask = sg_color_mask.SG_COLORMASK_RGB;
+        pipeline_desc.colors.e0.blend.enabled = 1;
+        pipeline_desc.colors.e0.blend.src_factor_rgb = sg_blend_factor.SG_BLENDFACTOR_SRC_ALPHA;
+        pipeline_desc.colors.e0.blend.dst_factor_rgb = sg_blend_factor.SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
+        state.alpha_pip = GL.make_pipeline(&pipeline_desc);
 
         // default pass action
         var pass_action = default(sg_pass_action);
-        pass_action.colors[0].load_action = sg_load_action.SG_LOADACTION_CLEAR;
-        pass_action.colors[0].clear_value = new sg_color()
-        {
-            r = 0f,
-            g = 0f,
-            b = 0f,
-            a = 1.0f
-        };
+        pass_action.colors.e0.load_action = sg_load_action.SG_LOADACTION_CLEAR;
+        pass_action.colors.e0.clear_value.r = 0f;
+        pass_action.colors.e0.clear_value.g = 0f;
+        pass_action.colors.e0.clear_value.b = 0f;
+        pass_action.colors.e0.clear_value.a = 1.0f;
     }
 
     private static float angle_deg = 0;
@@ -196,17 +181,11 @@ public static class Engine
         float scale = 1.0f + MathF.Sin(GL.rad(angle_deg)) * 10.5f;
         angle_deg += 1.0f * t;
         GL.defaults();
-        // GL.load_pipeline(state.pip_3d);
-        // GL.matrix_mode_modelview();
-
         GL.enable_texture();
-        GL.texture(state.img, state.smp);
         
         for (int i = 0; i < rects.Count; i++)
         {
-            GL.push_matrix();
             drawRect(rects[i],dw,dh);
-            GL.pop_matrix();
         }
         
 
@@ -219,38 +198,57 @@ public static class Engine
         }
     }
 
-    record struct rect(int X, int Y);
+    record struct rect(int X, int Y, tex t);
 
     private static List<rect> rects = new List<rect>()
     {
-        new rect(0, 0),
-        new rect(150, 0),
-        new rect(300, 0),
-        new rect(450, 0),
-        new rect(600, 0),
-        new rect(750, 0),
-        new rect(900, 0),
-        new rect(1050, 0)
+        new rect(0, 0,tex.logo),
+        new rect(150, 0,tex.checkerboard),
+        new rect(300, 0,tex.logo),
+        new rect(450, 0,tex.checkerboard),
+        new rect(600, 0,tex.logo),
+        new rect(750, 0,tex.checkerboard),
+        new rect(900, 0,tex.logo),
+        new rect(1050, 0,tex.checkerboard)
         
     };
 
-    static void drawRect(rect pos, int dw, int dh)
+    public enum tex
     {
-        GL.begin_quads();
+        logo,
+        checkerboard
+    }
+    static void drawRect(rect r, int dw, int dh)
+    {
+        (float x, float y) clipPos = ((float)r.X / dw, (float)r.Y / dh);
+        var activeTex = r.t == tex.checkerboard ? state.checkerboard : state.logo;
+        
+        GL.texture(activeTex.img, state.smp);
+        if (r.t == tex.logo)
+        {
+            GL.load_pipeline(state.alpha_pip);
+        }
+        else
+        {
+            GL.load_default_pipeline();
+        }
+        
+        GL.push_matrix();
         //gl clip space is -1 -> + 1, lower left to top right
-        (float x, float y) clipPos = ((float)pos.X / dw, (float)pos.Y / dh);
         GL.translate(-1 + clipPos.x,1-clipPos.y,0);
-        // GL.rotate(GL.rad(angle_deg), 0.0f, 0.0f, 1.0f);
         // GL.scale(scale, scale, 1.0f);
+        // GL.rotate(GL.rad(angle_deg), 0.0f, 0.0f, 1.0f);
+        GL.begin_quads();
             
-        var clip_img_height = state.imageHeight / (float)dh;
-        var clip_img_width =       state.imageWidth / (float)dw;
+        var clip_img_height = activeTex.height / (float)dh;
+        var clip_img_width =       activeTex.width / (float)dw;
         GL.v2f_t2f_c3b( -1, 1-clip_img_height,  0, 0,  255, 255, 0); //bottom left
         GL.v2f_t2f_c3b(  -1 + clip_img_width, 1-clip_img_height,  1, 0,  0, 255, 0); //bottom right
         GL.v2f_t2f_c3b(  -1 + clip_img_width, 1,  1, 1,  0, 0, 255); //top right
         GL.v2f_t2f_c3b( -1, 1,  0, 1,  255, 0, 0); //top left
         GL.translate(1f,-1f,0);
         GL.end();
+        GL.pop_matrix();
     }
 
     public enum LogLevel
