@@ -85,7 +85,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "dev/manual adds.md",
+                "file": "resource pipelines.md",
                 "mode": "source",
                 "source": false
               }
@@ -166,7 +166,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "dev/manual adds.md",
+                "file": "resource pipelines.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -183,7 +183,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "dev/manual adds.md",
+                "file": "resource pipelines.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -206,7 +206,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "dev/manual adds.md"
+                "file": "resource pipelines.md"
               }
             }
           }
@@ -230,24 +230,25 @@
   },
   "active": "f1c50e2e9975e5f1",
   "lastOpenFiles": [
+    "ideas.md",
+    "builtins.md",
+    "todo.md",
+    "scriban.md",
     "resource pipelines.md",
-    "ui/yoga.md",
+    "lygia.md",
+    "how.md",
+    "data description formats.md",
+    "dotnet releaser.md",
     "dev/manual adds.md",
+    "ui/yoga.md",
     "dev/bootstrapper.md",
     "dev/clangsharppinvokegenerator notes.md",
-    "how.md",
     "references/buildscripts/basic-lib-build.zig.md",
     "references/buildscripts/fips cmake builder.md",
     "references/buildscripts/sokol zig build ref.md",
     "references/buildscripts/sokol dll builder from sokol-samples.md",
-    "lygia.md",
-    "scriban.md",
-    "data description formats.md",
-    "dotnet releaser.md",
-    "ideas.md",
     "ui/razor refs.md",
     "ui",
-    "todo.md",
     "references/buildscripts.md",
     "references/buildscripts",
     "references",

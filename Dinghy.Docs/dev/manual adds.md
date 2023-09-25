@@ -1,4 +1,4 @@
-log function needs to be tagged with proper UnmanagedCallersOnly attribute, so edit to be this:
+(dont need to do this anymore as we have our own logger) log function needs to be tagged with proper UnmanagedCallersOnly attribute, so edit to be this:
 
 ```c#
 

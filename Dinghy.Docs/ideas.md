@@ -22,3 +22,5 @@ other interesting libs
 	* realtime network lib
 * https://github.com/Cysharp/MemoryPack
 	* super fast serializer
+* https://github.com/libsdl-org/SDL/blob/399bc709b7485bab57880f8261f826f29dc0d7b2/src/joystick/SDL_gamepad.c
+	* gamepad support (sokol doesnt have it)

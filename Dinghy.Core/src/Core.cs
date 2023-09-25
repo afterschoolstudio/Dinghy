@@ -168,6 +168,7 @@ public static class Engine
     }
 
     private static float angle_deg = 0;
+    private static float scale = 0;
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
     private static unsafe void Frame()
     {
@@ -178,7 +179,7 @@ public static class Engine
         
         //draw quad
         GL.viewport(0, 0, dw, dh, 1);  
-        float scale = 1.0f + MathF.Sin(GL.rad(angle_deg)) * 10.5f;
+        scale = 1.0f + MathF.Sin(GL.rad(angle_deg)) * 10.5f;
         angle_deg += 1.0f * t;
         GL.defaults();
         GL.enable_texture();
@@ -237,7 +238,7 @@ public static class Engine
         //gl clip space is -1 -> + 1, lower left to top right
         GL.translate(-1 + clipPos.x,1-clipPos.y,0);
         // GL.scale(scale, scale, 1.0f);
-        // GL.rotate(GL.rad(angle_deg), 0.0f, 0.0f, 1.0f);
+        GL.rotate(GL.rad(angle_deg), 0.0f, 0.0f, 1.0f);
         GL.begin_quads();
             
         var clip_img_height = activeTex.height / (float)dh;
