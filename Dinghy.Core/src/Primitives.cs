@@ -1,25 +1,67 @@
-﻿namespace Dinghy;
+﻿using System.Text;
 
-public record struct World
+namespace Dinghy;
+
+public record struct World()
 {
-    public HashSet<Entity> Entities;
+    public HashSet<Entity> Entities = new HashSet<Entity>();
 }
 
+public abstract record EntityData
+{
+    public abstract void GetEntity(out Entity e);
+}
+
+//record structs dont allow custom copy semantics so its a bit hard to get a nice with api
 public record struct Entity
 {
-    public uint ID { get; }
-
-    public HashSet<DComponent> Components;
-    public Entity() :this(null)
-    {
-        ID = Engine.idCounter++;
-    }
-    public Entity(Entity original) : this(){}
+    public uint ID { get; init; } = Engine.idCounter++;
+    public HashSet<DComponent> Components = Util.EmptyComponentList;
     public Entity(params DComponent[] components)
     {
-        ID = Engine.idCounter++;
         Components = new HashSet<DComponent>(components);
     }
+
+    private bool PrintMembers(StringBuilder builder)
+    {
+        builder.Append($"ID = {ID}, ");
+        builder.Append(String.Join(", ",Components));
+        return true;
+    }
+
+    //better cachce this list
+    public List<T> GetComponents<T>() where T : DComponent
+    {
+        var t = new List<T>();
+        foreach (var c in Components)
+        {
+            if (c is T casted)
+            {
+                t.Add(casted);
+            }
+        }
+        return t; 
+    }
+    
+    public bool GetComponent<T>(out T component) where T : DComponent
+    {
+        foreach (var c in Components)
+        {
+            if (c is T casted)
+            {
+                component = casted;
+                return true;
+            }
+        }
+        component = default;
+        return false; 
+    }
+    
+}
+
+public static class Util
+{
+    public static HashSet<DComponent> EmptyComponentList = new HashSet<DComponent>();
 }
 
 
@@ -27,17 +69,21 @@ public class DSystem {}
 
 public interface IUpdateSystem
 {
-    private void Update(World w){}
+    public void Update(World w){}
 }
-public abstract class PositionSystem : DSystem, IUpdateSystem
+public class VelocitySystem : DSystem, IUpdateSystem
 {
-    private void Update(World w)
+    public void Update(World w)
     {
         foreach (var e in w.Entities)
         {
-            foreach (Position p in e.Components.Where(x => x is Position))
+            if (e.GetComponent(out Position pc))
             {
-                // Engine.move(e.ID,p.X,p.Y);
+                e.GetComponents<Velocity>().ForEach(c =>
+                {
+                    pc.X += c.X;
+                    pc.Y += c.Y;
+                });
             }
         }
     }
@@ -57,52 +103,88 @@ public class SpriteRenderSystem : RenderSystem
     {
         foreach (var e in w.Entities)
         {
-            foreach (SpriteRenderer r in e.Components.Where(x => x is SpriteRenderer))
+            foreach (SpriteRenderer r in e.GetComponents<SpriteRenderer>())
             {
-                // Engine.draw(e.ID,r.Texture);
+                //TODO: should submit texture as an image resources
+                // Engine.addRect(e.ID,r.Texture);
+                Engine.addRect(e,0);
+                //maybe add the SpriteRenderer directly? save the lookup on engine side
             }
         }
     }
 }
 
-
-public record DComponent()
+//can clean this up in dotnet 8 i think
+//using primary ctors for the components
+public interface DComponent
 {
-    private uint id;
-    public uint ID
-    {
-        get => id;
-        init => id = Engine.idCounter++;
-    }
-    // public DComponent(DComponent original)
-    // {
-    //     ID = Engine.idCounter++;        
-    // }
+    public uint ID { get; set; }
 }
-public record SpriteRenderer(string Texture) : DComponent {}
-public record Position(int X, int Y) : DComponent {}
 
+public struct SpriteRenderer : DComponent
+{
+    public string Texture;
+    public uint ID { get;set;} 
+}
+
+public struct Position : DComponent
+{
+    public uint ID { get;set;}
+    public int X, Y;
+}
+
+public struct Velocity : DComponent
+{
+    public uint ID { get;set;}
+    public int X, Y;
+}
 
 
 public class Quick
 {
-    public static Entity Entity = new();
-    public static SpriteRenderer SpriteRenderer= new SpriteRenderer("logo.png");
-
-    public static Entity Sprite = Entity with
+    private static Entity Entity = new();
+    public static uint NextID()
     {
-        Components = new()
+        Engine.idCounter++;
+        return Engine.idCounter;
+    }
+
+    public static Position Position = new (){X = 0, Y = 0};
+    public static SpriteRenderer SpriteRenderer = new (){Texture = "logo.png"};
+
+
+
+    
+
+    public record SpriteData(string texture) : EntityData
+    {
+        public override void GetEntity(out Entity e)
         {
-            SpriteRenderer with { Texture = "logo.png" }
-        }
+            e = Entity with
+            {
+                ID = NextID(),
+                Components = new()
+                {
+                    Position with {ID = NextID()},
+                    SpriteRenderer with { ID = NextID(), Texture = texture }
+                }
         
-        /*
-         dotnet 8
-         Components = [
-            SpriteRenderer with { texture = "logo.png" }
-         ]
-         */
-    };
+                /*
+                 dotnet 8
+                 Components = [
+                    SpriteRenderer with { texture = "logo.png" }
+                 ]
+                 */
+            };
+        }
+    }
+
+    public static Entity Add(EntityData d)
+    {
+        d.GetEntity(out var e);
+        Engine.World.Entities.Add(e);
+        return e;
+    }
 
     public static void Repeat(int amount, Action a)
     {

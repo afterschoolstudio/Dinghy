@@ -13,9 +13,12 @@ public static class Engine
 
     private static HashSet<DSystem> DefaultSystems = new HashSet<DSystem>()
     {
-        SpriteRenderSystem,
-        PositionSystem
+        new VelocitySystem(),
+        new SpriteRenderSystem()
     };
+
+    public static uint idCounter;
+    public static World World = new World();
     public static void Init(Action update = null)
     {
         if (update != null)
@@ -24,7 +27,7 @@ public static class Engine
         }
         Boot();
     }
-
+    
     static internal void Boot()
     {
         unsafe
@@ -197,12 +200,26 @@ public static class Engine
         GL.enable_texture();
         
         Update?.Invoke();
-
-        foreach (var rect in rects)
+        foreach (var s in DefaultSystems)
         {
-            Console.WriteLine($"drawing {rect.Key} {rect.Value.X} {rect.Value.Y}");
-            drawRect(rect.Value,dw,dh);
+            //TODO: need to sort systems by priority
+            if (s is IUpdateSystem us)
+            {
+                us.Update(World);
+            }
         }
+
+        foreach (var r in rects)
+        {
+            Console.WriteLine($"drawing entity: {r.Key}");
+            drawRect(r.Value,dw,dh);
+        }
+
+        // foreach (var rect in rects)
+        // {
+        //     Console.WriteLine($"drawing {rect.Key} {rect.Value.X} {rect.Value.Y}");
+        //     drawRect(rect.Value,dw,dh);
+        // }
         
 
         fixed (sg_pass_action* pass = &state.pass_action)
@@ -214,48 +231,29 @@ public static class Engine
         }
     }
 
-    public static uint idCounter = 0;
-    public static void addRect(uint id, int X, int Y, int tex)
+    private static Dictionary<uint, Entity> rects = new();
+    public static void addRect(Entity e, int tex)
     {
-        if (rects.TryGetValue(id, out var r))
-        {
-            // rects[id].X = X;
-            r.X = X;
-            r.Y = Y;
-            Console.WriteLine($"engine: {id} {r.X} {r.Y}");
-        }
-        else
-        {
-            rects.Add(id, new rect()
-            {
-                X = X,
-                Y = Y,
-                t = (tex)tex
-            });
-        }
+        Console.WriteLine("adding entity id: " + e.ID);
+        rects.TryAdd(e.ID, e);
     }
 
-    public class rect
-    {
-        public int X;
-        public int Y;
-        public tex t;
-    }
-
-    private static Dictionary<uint, rect> rects = new();
 
     public enum tex
     {
         logo,
         checkerboard
     }
-    static void drawRect(rect r, int dw, int dh)
+    static void drawRect(Entity e, int dw, int dh)
     {
-        (float x, float y) clipPos = ((float)r.X / dw, (float)r.Y / dh);
-        var activeTex = r.t == tex.checkerboard ? state.checkerboard : state.logo;
+        e.GetComponent(out Position pos);
+        e.GetComponent(out SpriteRenderer rend);
+        (float x, float y) clipPos = ((float)pos.X / dw, (float)pos.Y / dh);
+        // var activeTex = rend.Texture == tex.checkerboard ? state.checkerboard : state.logo;
+        var activeTex = state.logo;
         
         GL.texture(activeTex.img, state.smp);
-        if (r.t == tex.logo)
+        if (true /*r.t == tex.logo*/)
         {
             GL.load_pipeline(state.alpha_pip);
         }

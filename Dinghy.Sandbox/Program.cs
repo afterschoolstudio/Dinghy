@@ -1,18 +1,26 @@
 ﻿using Dinghy;
 using static Dinghy.Quick;
 
-var logo = Sprite with { tex = "logo.png" };
-float frame = 0;
-Engine.Init(() =>
-{
-	Console.WriteLine(frame++);
-	if (frame % 2 == 0)
-	{
-		logo.x += 1;
-	}
-	logo.x += 1;
-	logo.draw();
-});
+// var logo = Sprite with { tex = "logo.png" };
+// float frame = 0;
+// Engine.Init(() =>
+// {
+// 	Console.WriteLine(frame++);
+// 	if (frame % 2 == 0)
+// 	{
+// 		logo.x += 1;
+// 	}
+// 	logo.x += 1;
+// 	logo.draw();
+// });
+SpriteData logo = new("texture");
+var s = Add(logo);
+Console.WriteLine(s);
+Console.WriteLine($"new sprite ID: {s.ID}");
+Console.WriteLine($"new sprite renderer component ID: {s.Components.First(x => x is SpriteRenderer).ID}");
+Console.WriteLine($"new sprite position component ID: {s.Components.First(x => x is Position).ID}");
+Engine.Init();
+
 
 
 // var sprites = new HashSet<obj2D>();
