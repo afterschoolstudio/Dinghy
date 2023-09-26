@@ -39,6 +39,8 @@ public static class Engine
             }
         }
     }
+
+    public static Action Update;
     
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
     private static unsafe void Event(sapp_event* e)
@@ -184,9 +186,12 @@ public static class Engine
         GL.defaults();
         GL.enable_texture();
         
-        for (int i = 0; i < rects.Count; i++)
+        Update?.Invoke();
+
+        foreach (var rect in rects)
         {
-            drawRect(rects[i],dw,dh);
+            Console.WriteLine($"drawing {rect.Key} {rect.Value.X} {rect.Value.Y}");
+            drawRect(rect.Value,dw,dh);
         }
         
 
@@ -199,20 +204,35 @@ public static class Engine
         }
     }
 
-    record struct rect(int X, int Y, tex t);
-
-    private static List<rect> rects = new List<rect>()
+    public static uint idCounter = 0;
+    public static void addRect(uint id, int X, int Y, int tex)
     {
-        new rect(0, 0,tex.logo),
-        new rect(150, 0,tex.checkerboard),
-        new rect(300, 0,tex.logo),
-        new rect(450, 0,tex.checkerboard),
-        new rect(600, 0,tex.logo),
-        new rect(750, 0,tex.checkerboard),
-        new rect(900, 0,tex.logo),
-        new rect(1050, 0,tex.checkerboard)
-        
-    };
+        if (rects.TryGetValue(id, out var r))
+        {
+            // rects[id].X = X;
+            r.X = X;
+            r.Y = Y;
+            Console.WriteLine($"engine: {id} {r.X} {r.Y}");
+        }
+        else
+        {
+            rects.Add(id, new rect()
+            {
+                X = X,
+                Y = Y,
+                t = (tex)tex
+            });
+        }
+    }
+
+    public class rect
+    {
+        public int X;
+        public int Y;
+        public tex t;
+    }
+
+    private static Dictionary<uint, rect> rects = new();
 
     public enum tex
     {
@@ -238,7 +258,7 @@ public static class Engine
         //gl clip space is -1 -> + 1, lower left to top right
         GL.translate(-1 + clipPos.x,1-clipPos.y,0);
         // GL.scale(scale, scale, 1.0f);
-        GL.rotate(GL.rad(angle_deg), 0.0f, 0.0f, 1.0f);
+        // GL.rotate(GL.rad(angle_deg), 0.0f, 0.0f, 1.0f);
         GL.begin_quads();
             
         var clip_img_height = activeTex.height / (float)dh;

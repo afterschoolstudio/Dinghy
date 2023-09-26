@@ -1,6 +1,27 @@
 ﻿using Dinghy;
+using static Dinghy.Quick;
 
+var logo = Sprite with { tex = "logo.png" };
+float frame = 0;
+Engine.Update += () =>
+{
+	Console.WriteLine(frame++);
+	if (frame % 2 == 0)
+	{
+		logo.x += 1;
+	}
+	Console.WriteLine($"{logo.id} {logo.x} {logo.y}");
+	logo.draw();
+};
 Engine.Init();
+
+
+// var sprites = new HashSet<obj2D>();
+// Repeat(10, () =>
+// {
+// 	sprites.Add(Sprite with { tex = "logo.png" });
+//});
+
 
 /*
 add(sprite with tex = res.ship)
