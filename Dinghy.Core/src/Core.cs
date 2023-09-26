@@ -9,8 +9,19 @@ using Internal.Sokol;
 
 public static class Engine
 {
-    public static void Init()
+    static Action Update;
+
+    private static HashSet<DSystem> DefaultSystems = new HashSet<DSystem>()
     {
+        SpriteRenderSystem,
+        PositionSystem
+    };
+    public static void Init(Action update = null)
+    {
+        if (update != null)
+        {
+            Update += update;
+        }
         Boot();
     }
 
@@ -40,7 +51,6 @@ public static class Engine
         }
     }
 
-    public static Action Update;
     
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
     private static unsafe void Event(sapp_event* e)

@@ -3,17 +3,16 @@ using static Dinghy.Quick;
 
 var logo = Sprite with { tex = "logo.png" };
 float frame = 0;
-Engine.Update += () =>
+Engine.Init(() =>
 {
 	Console.WriteLine(frame++);
 	if (frame % 2 == 0)
 	{
 		logo.x += 1;
 	}
-	Console.WriteLine($"{logo.id} {logo.x} {logo.y}");
+	logo.x += 1;
 	logo.draw();
-};
-Engine.Init();
+});
 
 
 // var sprites = new HashSet<obj2D>();

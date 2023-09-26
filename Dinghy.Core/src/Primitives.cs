@@ -1,43 +1,108 @@
 ﻿namespace Dinghy;
 
-// public record obj (List<component> components);
-// public record obj2d(List<component> components) : obj(components);
-// public record sprite : obj2d();
-//
-// public record component {}
-// public 
-// public static obj2D Sprite = new obj2D() 
-
-
-public record struct obj2D(int x, int y, string tex)
+public record struct World
 {
-    public uint id { get; }
-    public obj2D() :this(0,0,"null")
-    {
-        Engine.idCounter++;
-        id = Engine.idCounter;
-    }
-    public obj2D(obj2D original) : this(){}
+    public HashSet<Entity> Entities;
+}
 
-    public void draw() //hacky as shit move to ECS asap
+public record struct Entity
+{
+    public uint ID { get; }
+
+    public HashSet<DComponent> Components;
+    public Entity() :this(null)
     {
-        Engine.addRect(id,x,y,0);
+        ID = Engine.idCounter++;
+    }
+    public Entity(Entity original) : this(){}
+    public Entity(params DComponent[] components)
+    {
+        ID = Engine.idCounter++;
+        Components = new HashSet<DComponent>(components);
     }
 }
 
-public record component();
 
-public record ISystem;
-public record IUpdateSystem : ISystem;
-public record IRenderSystem : IUpdateSystem;
-public record SpriteRenderSystem : IRenderSystem;
+public class DSystem {}
 
-public record system();
-public record renderer : system
+public interface IUpdateSystem
+{
+    private void Update(World w){}
+}
+public abstract class PositionSystem : DSystem, IUpdateSystem
+{
+    private void Update(World w)
+    {
+        foreach (var e in w.Entities)
+        {
+            foreach (Position p in e.Components.Where(x => x is Position))
+            {
+                // Engine.move(e.ID,p.X,p.Y);
+            }
+        }
+    }
+}
+public abstract class RenderSystem : DSystem, IUpdateSystem
+{
+    private void Update(World w)
+    {
+        Render(w);
+    }
+
+    public abstract void Render(World w);
+}
+public class SpriteRenderSystem : RenderSystem
+{
+    public override void Render(World w)
+    {
+        foreach (var e in w.Entities)
+        {
+            foreach (SpriteRenderer r in e.Components.Where(x => x is SpriteRenderer))
+            {
+                // Engine.draw(e.ID,r.Texture);
+            }
+        }
+    }
+}
+
+
+public record DComponent()
+{
+    private uint id;
+    public uint ID
+    {
+        get => id;
+        init => id = Engine.idCounter++;
+    }
+    // public DComponent(DComponent original)
+    // {
+    //     ID = Engine.idCounter++;        
+    // }
+}
+public record SpriteRenderer(string Texture) : DComponent {}
+public record Position(int X, int Y) : DComponent {}
+
+
 
 public class Quick
 {
-    public static obj2D Sprite = new obj2D(0, 0, "");
+    public static Entity Entity = new();
+    public static SpriteRenderer SpriteRenderer= new SpriteRenderer("logo.png");
+
+    public static Entity Sprite = Entity with
+    {
+        Components = new()
+        {
+            SpriteRenderer with { Texture = "logo.png" }
+        }
+        
+        /*
+         dotnet 8
+         Components = [
+            SpriteRenderer with { texture = "logo.png" }
+         ]
+         */
+    };
 
     public static void Repeat(int amount, Action a)
     {
