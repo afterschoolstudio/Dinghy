@@ -189,18 +189,23 @@ public static class Engine
         Setup?.Invoke();
     }
 
+    public static int Width;
+    public static int Height;
+
     private static float angle_deg = 0;
     private static float scale = 0;
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
     private static unsafe void Frame()
     {
-        float t = (float)App.frame_duration() * 60.0f;
-
-        var dw = App.width();
-        var dh = App.height();
+        App.frame_count();
+        // float t = (float)App.frame_duration() * 60.0f;
+        float t = (float)App.frame_duration() * 1000.0f;
+        Console.WriteLine($"{t}ms");
+        Width = App.width();
+        Height = App.height();
         
         //draw quad
-        GL.viewport(0, 0, dw, dh, 1);  
+        GL.viewport(0, 0, Width, Height, 1);  
         scale = 1.0f + MathF.Sin(GL.rad(angle_deg)) * 10.5f;
         angle_deg += 1.0f * t;
         GL.defaults();
@@ -209,11 +214,9 @@ public static class Engine
         Update?.Invoke();
         foreach (var s in DefaultSystems)
         {
-            Console.WriteLine("system update tick");
             //TODO: need to sort systems by priority
             if (s is IUpdateSystem us)
             {
-                Console.WriteLine("update system tick");
                 us.Update();
             }
         }
@@ -221,7 +224,7 @@ public static class Engine
         foreach (var r in RectDrawCommands)
         {
             // Console.WriteLine($"drawing entity: {r.Key}");
-            draw(r,dw,dh);
+            draw(r);
         }
         
         RectDrawCommands.Clear();
@@ -235,7 +238,7 @@ public static class Engine
 
         fixed (sg_pass_action* pass = &state.pass_action)
         {
-            Gfx.begin_default_pass(pass, dw, dh);
+            Gfx.begin_default_pass(pass, Width, Height);
             GL.draw();
             Gfx.end_pass();
             Gfx.commit();
@@ -248,7 +251,6 @@ public static class Engine
     private static HashSet<RectDraw> RectDrawCommands = new HashSet<RectDraw>();
     public static void AddRect(Entity e, int x, int y, int tex)
     {
-        Console.WriteLine($"adding entity id: {e.Id} at pos {x},{y}");
         RectDrawCommands.Add(new RectDraw(e.Id, x, y, tex));
     }
 
@@ -258,9 +260,9 @@ public static class Engine
         logo,
         checkerboard
     }
-    static void draw(RectDraw r, int dw, int dh)
+    static void draw(RectDraw r)
     {
-        (float x, float y) clipPos = ((float)r.x / (dw * App.dpi_scale()), (float)r.y / (dh * App.dpi_scale()));
+        (float x, float y) clipPos = ((float)r.x / (Width * App.dpi_scale()), (float)r.y / (Height * App.dpi_scale()));
         // var activeTex = rend.Texture == tex.checkerboard ? state.checkerboard : state.logo;
         var activeTex = state.logo;
         
@@ -281,8 +283,8 @@ public static class Engine
         // GL.rotate(GL.rad(angle_deg), 0.0f, 0.0f, 1.0f);
         GL.begin_quads();
             
-        var clip_img_height = activeTex.height / (float)dh;
-        var clip_img_width =       activeTex.width / (float)dw;
+        var clip_img_height = activeTex.height / (Height * App.dpi_scale());
+        var clip_img_width =       activeTex.width / (Width * App.dpi_scale());
         GL.v2f_t2f_c3b( -1, 1-clip_img_height,  0, 0,  255, 255, 0); //bottom left
         GL.v2f_t2f_c3b(  -1 + clip_img_width, 1-clip_img_height,  1, 0,  0, 255, 0); //bottom right
         GL.v2f_t2f_c3b(  -1 + clip_img_width, 1,  1, 1,  0, 0, 255); //top right

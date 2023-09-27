@@ -3,11 +3,6 @@ using Arch.Core;
 
 namespace Dinghy;
 
-// public record struct World()
-// {
-//     public HashSet<Entity> Entities = new HashSet<Entity>();
-// }
-
 public abstract record EntityData
 {
     public abstract void GetEntity(out Entity e);
@@ -23,14 +18,37 @@ public class VelocitySystem : DSystem, IUpdateSystem
     QueryDescription query = new QueryDescription().WithAll<Position, Velocity>();      // Should have all specified components
     public void Update()
     {
-        Console.WriteLine("velocity update tick");
-            // WithAny<Player,Projectile>().      // Should have any of those
-            // WithNone<AI>();
+        var r = new System.Random();
         Engine.World.Query(in query, (in Entity e, ref Position pos, ref Velocity vel) => {
-            Console.WriteLine($"updating pos for e {e.Id}");
-            pos.x += vel.x;
-            pos.y += vel.y;
-            Console.WriteLine($"po for e {e.Id}: {pos.x},{pos.y}");
+            pos.x += (int)vel.x;
+            pos.y += (int)vel.y;
+            vel.y += 9.8f;
+            
+            if (pos.x > Engine.Width)
+            {
+                vel.x *= -1;
+                pos.x = Engine.Width;
+            }
+            else if (pos.x < 0)
+            {
+                vel.x *= -1;
+                pos.x = 0;
+            }
+            
+            if (pos.y > Engine.Height)
+            {
+                vel.y *= -1;
+                pos.y = Engine.Height;
+                if (r.NextDouble() > 0.5)
+                {
+                    vel.y -= (int)r.NextDouble() * 6;
+                }
+            }
+            else if (pos.y < 0)
+            {
+                vel.y = 0;
+                pos.y = 0;
+            }
         });
     }
 }
@@ -38,7 +56,6 @@ public abstract class RenderSystem : DSystem, IUpdateSystem
 {
     public void Update()
     {
-        Console.WriteLine("base render update tick");
         Render();
     }
 
@@ -49,10 +66,8 @@ public class SpriteRenderSystem : RenderSystem
     QueryDescription query = new QueryDescription().WithAll<Position,SpriteRenderer>();      // Should have all specified components
     protected override void Render()
     {
-        Console.WriteLine("render system tick");
         Engine.World.Query(in query, (in Entity e, ref SpriteRenderer r, ref Position p) =>
         {
-            Console.WriteLine($"submitting entity {e.Id} for draw");
             //TODO: should submit texture as an image resources
             Engine.AddRect(e, p.x,p.y, 0);
         });
@@ -61,14 +76,11 @@ public class SpriteRenderSystem : RenderSystem
 
 public record struct SpriteRenderer(string texture);
 public record struct Position(int x, int y);
-public record struct Velocity (int x, int y);
+public record struct Velocity (float x, float y);
 
 
 public class Quick
 {
-    // private static Entity Entity = new();
-    // public static Position Position = new (0,0);
-    // public static SpriteRenderer SpriteRenderer = new ("logo.png");
     public record SpriteData(string texture) : EntityData
     {
         public override void GetEntity(out Entity e)
