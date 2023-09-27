@@ -253,9 +253,11 @@ public static class Engine
     }
     static void drawRect(Entity e, int dw, int dh)
     {
-        e.GetComponent(out Position pos);
-        e.GetComponent(out SpriteRenderer rend);
-        (float x, float y) clipPos = ((float)pos.X / dw, (float)pos.Y / dh);
+        Position pos = default;
+        SpriteRenderer rend = default;
+        e.GetComponent<Position>(ref pos);
+        e.GetComponent<SpriteRenderer>(ref rend);
+        (float x, float y) clipPos = ((float)pos.x / dw, (float)pos.y / dh);
         // var activeTex = rend.Texture == tex.checkerboard ? state.checkerboard : state.logo;
         var activeTex = state.logo;
         

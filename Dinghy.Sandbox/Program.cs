@@ -7,19 +7,20 @@ Entity db = default;
 Engine.Init(() =>
 {
 	db = Add(logo);
-	db.AddComponent(new Velocity(){X = 1, Y = 1});
+	db.AddComponent(new Velocity(1,1));
 	Console.WriteLine(db);
-	db.GetComponent(out SpriteRenderer sr);
-	db.GetComponent(out Position p);
-	db.GetComponent(out Velocity v);
-	Console.WriteLine($"new sprite renderer component ID: {sr.ID}");
-	Console.WriteLine($"new sprite position component ID: {p.ID}");
-	Console.WriteLine($"new sprite vel component {v.X},{v.Y}");
+	// DComponent dc = default;
+	// db.GetComponent<SpriteRenderer>(ref dc);
+	// db.GetComponent(out Position p);
+	// db.GetComponent(out Velocity v);
+	// Console.WriteLine($"new sprite renderer component ID: {sr.ID}");
+	// Console.WriteLine($"new sprite position component ID: {p.ID}");
+	// Console.WriteLine($"new sprite vel component {v.X},{v.Y}");
 }, () =>
 {
-	db.GetComponent(out Position p);
-	p = p with { X = p.X + 1 };
-	Console.WriteLine($"{p.X} {p.Y}");
+	// db.GetComponent(out Position p);
+	// p = p with { X = p.X + 1 };
+	// Console.WriteLine($"{p.X} {p.Y}");
 });
 
 
