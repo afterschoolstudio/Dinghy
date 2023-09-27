@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Dinghy.Internal.STB;
 using Dinghy.NativeInterop;
+using Arch.Core;
 
 namespace Dinghy;
 using Internal.Sokol;
@@ -19,7 +20,7 @@ public static class Engine
     };
 
     public static uint idCounter;
-    public static World World = new World();
+    public static World World = World.Create();
     public static void Init(Action setup = null, Action update = null)
     {
         if (update != null)
@@ -208,19 +209,22 @@ public static class Engine
         Update?.Invoke();
         foreach (var s in DefaultSystems)
         {
+            Console.WriteLine("system update tick");
             //TODO: need to sort systems by priority
             if (s is IUpdateSystem us)
             {
-                // Console.WriteLine($"updating {us}");
-                us.Update(World);
+                Console.WriteLine("update system tick");
+                us.Update();
             }
         }
 
-        foreach (var r in rects)
+        foreach (var r in RectDrawCommands)
         {
-            Console.WriteLine($"drawing entity: {r.Key}");
-            drawRect(r.Value,dw,dh);
+            // Console.WriteLine($"drawing entity: {r.Key}");
+            draw(r,dw,dh);
         }
+        
+        RectDrawCommands.Clear();
 
         // foreach (var rect in rects)
         // {
@@ -238,11 +242,14 @@ public static class Engine
         }
     }
 
-    private static Dictionary<uint, Entity> rects = new();
-    public static void addRect(Entity e, int tex)
+    
+    public readonly record struct RectDraw(int id, int x, int y, int texture);
+
+    private static HashSet<RectDraw> RectDrawCommands = new HashSet<RectDraw>();
+    public static void AddRect(Entity e, int x, int y, int tex)
     {
-        Console.WriteLine("adding entity id: " + e.ID);
-        rects.TryAdd(e.ID, e);
+        Console.WriteLine($"adding entity id: {e.Id} at pos {x},{y}");
+        RectDrawCommands.Add(new RectDraw(e.Id, x, y, tex));
     }
 
 
@@ -251,13 +258,9 @@ public static class Engine
         logo,
         checkerboard
     }
-    static void drawRect(Entity e, int dw, int dh)
+    static void draw(RectDraw r, int dw, int dh)
     {
-        Position pos = default;
-        SpriteRenderer rend = default;
-        e.GetComponent<Position>(ref pos);
-        e.GetComponent<SpriteRenderer>(ref rend);
-        (float x, float y) clipPos = ((float)pos.x / dw, (float)pos.y / dh);
+        (float x, float y) clipPos = ((float)r.x / (dw * App.dpi_scale()), (float)r.y / (dh * App.dpi_scale()));
         // var activeTex = rend.Texture == tex.checkerboard ? state.checkerboard : state.logo;
         var activeTex = state.logo;
         

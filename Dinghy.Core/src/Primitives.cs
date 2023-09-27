@@ -1,192 +1,88 @@
 ﻿using System.Text;
+using Arch.Core;
 
 namespace Dinghy;
 
-public record struct World()
-{
-    public HashSet<Entity> Entities = new HashSet<Entity>();
-}
+// public record struct World()
+// {
+//     public HashSet<Entity> Entities = new HashSet<Entity>();
+// }
 
 public abstract record EntityData
 {
     public abstract void GetEntity(out Entity e);
 }
 
-//record structs dont allow custom copy semantics so its a bit hard to get a nice with api
-public record struct Entity
-{
-    public uint ID { get; init; } = Engine.idCounter++;
-    // struct[] Components;
-    public Dictionary<Type,DComponent> Components;
-    // public HashSet<DComponent> Components = Util.EmptyComponentList;
-    public Entity(params DComponent[] components)
-    {
-        Components = new Dictionary<Type, DComponent>();
-        foreach (var c in components)
-        {
-            if (Components.TryGetValue(c.GetType(), out var entry))
-            {
-                Console.WriteLine("adding another component of already added type");
-                entry = c;
-            }
-            else
-            {
-                Components.Add(c.GetType(),c);
-            }
-        }
-    }
-
-    private bool PrintMembers(StringBuilder builder)
-    {
-        builder.Append($"ID = {ID}, ");
-        builder.Append(String.Join(", ",Components));
-        return true;
-    }
-
-    public bool GetComponent<T>(ref T component)
-    {
-        component = default;
-        if (Components.TryGetValue(typeof(T), out var c))
-        {
-            component = (T)c;
-            return true;
-        }
-        return false;
-    }
-
-    public void AddComponent(DComponent c)
-    {
-        if (Components.TryGetValue(c.GetType(), out var existing))
-        {
-            Console.WriteLine("adding another component of already added type");
-            existing = c;
-        }
-        else
-        {
-            Components.Add(c.GetType(),c);
-        }
-    }
-}
-
-public static class Util
-{
-    public static HashSet<DComponent> EmptyComponentList = new HashSet<DComponent>();
-}
-
-
 public class DSystem {}
-
 public interface IUpdateSystem
 {
-    public void Update(World w){}
+    void Update();
 }
 public class VelocitySystem : DSystem, IUpdateSystem
 {
-    public void Update(World w)
+    QueryDescription query = new QueryDescription().WithAll<Position, Velocity>();      // Should have all specified components
+    public void Update()
     {
-        foreach (var e in w.Entities)
-        {
-            Position pc = default;
-            Velocity v = default;
-            if (e.GetComponent(ref pc) && e.GetComponent(ref v))
-            {
-                (e.Components[typeof(Position)] as Position).x = pc.x + v.y;
-                Console.WriteLine($"update vel str {v.x}{v.y}");
-                Console.WriteLine($"pc.x {pc.x}");
-                Console.WriteLine($"adding {v.x}");
-                pc = pc with { x = pc.x + v.x, y = pc.y + v.y };
-                Console.WriteLine($"new pc.x {pc.x}");
-                Console.WriteLine("update vel" + pc.x);
-            }
-        }
+        Console.WriteLine("velocity update tick");
+            // WithAny<Player,Projectile>().      // Should have any of those
+            // WithNone<AI>();
+        Engine.World.Query(in query, (in Entity e, ref Position pos, ref Velocity vel) => {
+            Console.WriteLine($"updating pos for e {e.Id}");
+            pos.x += vel.x;
+            pos.y += vel.y;
+            Console.WriteLine($"po for e {e.Id}: {pos.x},{pos.y}");
+        });
     }
 }
 public abstract class RenderSystem : DSystem, IUpdateSystem
 {
-    public void Update(World w)
+    public void Update()
     {
-        Render(w);
+        Console.WriteLine("base render update tick");
+        Render();
     }
 
-    protected abstract void Render(World w);
+    protected abstract void Render();
 }
 public class SpriteRenderSystem : RenderSystem
 {
-    protected override void Render(World w)
+    QueryDescription query = new QueryDescription().WithAll<Position,SpriteRenderer>();      // Should have all specified components
+    protected override void Render()
     {
-        foreach (var e in w.Entities)
+        Console.WriteLine("render system tick");
+        Engine.World.Query(in query, (in Entity e, ref SpriteRenderer r, ref Position p) =>
         {
-            SpriteRenderer r = default;
-            if (e.GetComponent<SpriteRenderer>(ref r))
-            {
-                Console.WriteLine("submitting for render");
-                //TODO: should submit texture as an image resources
-                // Engine.addRect(e.ID,r.Texture);
-                Engine.addRect(e,0);
-                //maybe add the SpriteRenderer directly? save the lookup on engine side
-            }
-        }
+            Console.WriteLine($"submitting entity {e.Id} for draw");
+            //TODO: should submit texture as an image resources
+            Engine.AddRect(e, p.x,p.y, 0);
+        });
     }
 }
 
-//can clean this up in dotnet 8 i think
-//using primary ctors for the components
-public interface DComponent
-{
-    // public uint ID { get; set; }
-}
-
-public readonly record struct SpriteRenderer(string texture) : DComponent;
-public readonly record struct Position(int x, int y) : DComponent;
-public readonly record struct Velocity (int x, int y) : DComponent;
+public record struct SpriteRenderer(string texture);
+public record struct Position(int x, int y);
+public record struct Velocity (int x, int y);
 
 
 public class Quick
 {
-    private static Entity Entity = new();
-    public static uint NextID()
-    {
-        Engine.idCounter++;
-        return Engine.idCounter;
-    }
-
-    public static Position Position = new (0,0);
-    public static SpriteRenderer SpriteRenderer = new ("logo.png");
-
-
-
-    
-
+    // private static Entity Entity = new();
+    // public static Position Position = new (0,0);
+    // public static SpriteRenderer SpriteRenderer = new ("logo.png");
     public record SpriteData(string texture) : EntityData
     {
         public override void GetEntity(out Entity e)
         {
-            e = new Entity(
-                new Position(0, 0),
+            e = Engine.World.Create(
+                new Position(0, 0), 
                 new SpriteRenderer(texture));
-            // e = Entity with
-            // {
-            //     ID = NextID(),
-            //     Components = new()
-            //     {
-            //         Position with {ID = NextID()},
-            //         SpriteRenderer with { ID = NextID(), Texture = texture }
-            //     }
-            //
-            //     /*
-            //      dotnet 8
-            //      Components = [
-            //         SpriteRenderer with { texture = "logo.png" }
-            //      ]
-            //      */
-            // };
         }
     }
 
     public static Entity Add(EntityData d)
     {
         d.GetEntity(out var e);
-        Engine.World.Entities.Add(e);
+        Engine.World.Add<Entity>(e);
         return e;
     }
 

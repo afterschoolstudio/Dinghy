@@ -1,14 +1,13 @@
-﻿using Dinghy;
+﻿using Arch.Core.Extensions;
+using Dinghy;
 using static Dinghy.Quick;
 
 int frame = 0;
 SpriteData logo = new("texture");
-Entity db = default;
 Engine.Init(() =>
 {
-	db = Add(logo);
-	db.AddComponent(new Velocity(1,1));
-	Console.WriteLine(db);
+	var l = Add(logo);
+	l.Add(new Velocity(3,3));
 	// DComponent dc = default;
 	// db.GetComponent<SpriteRenderer>(ref dc);
 	// db.GetComponent(out Position p);
