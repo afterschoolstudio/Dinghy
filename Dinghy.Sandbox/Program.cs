@@ -1,25 +1,27 @@
 ﻿using Dinghy;
 using static Dinghy.Quick;
 
-// var logo = Sprite with { tex = "logo.png" };
-// float frame = 0;
-// Engine.Init(() =>
-// {
-// 	Console.WriteLine(frame++);
-// 	if (frame % 2 == 0)
-// 	{
-// 		logo.x += 1;
-// 	}
-// 	logo.x += 1;
-// 	logo.draw();
-// });
+int frame = 0;
 SpriteData logo = new("texture");
-var s = Add(logo);
-Console.WriteLine(s);
-Console.WriteLine($"new sprite ID: {s.ID}");
-Console.WriteLine($"new sprite renderer component ID: {s.Components.First(x => x is SpriteRenderer).ID}");
-Console.WriteLine($"new sprite position component ID: {s.Components.First(x => x is Position).ID}");
-Engine.Init();
+Entity db = default;
+Engine.Init(() =>
+{
+	db = Add(logo);
+	db.AddComponent(new Velocity(){X = 1, Y = 1});
+	Console.WriteLine(db);
+	db.GetComponent(out SpriteRenderer sr);
+	db.GetComponent(out Position p);
+	db.GetComponent(out Velocity v);
+	Console.WriteLine($"new sprite renderer component ID: {sr.ID}");
+	Console.WriteLine($"new sprite position component ID: {p.ID}");
+	Console.WriteLine($"new sprite vel component {v.X},{v.Y}");
+}, () =>
+{
+	db.GetComponent(out Position p);
+	p = p with { X = p.X + 1 };
+	Console.WriteLine($"{p.X} {p.Y}");
+});
+
 
 
 

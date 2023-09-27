@@ -16,10 +16,22 @@ public abstract record EntityData
 public record struct Entity
 {
     public uint ID { get; init; } = Engine.idCounter++;
-    public HashSet<DComponent> Components = Util.EmptyComponentList;
+    public Dictionary<Type, DComponent> Components;
+    // public HashSet<DComponent> Components = Util.EmptyComponentList;
     public Entity(params DComponent[] components)
     {
-        Components = new HashSet<DComponent>(components);
+        Components = new Dictionary<Type, DComponent>();
+        foreach (var c in components)
+        {
+            if (Components.TryGetValue(c.GetType(), out var entry))
+            {
+                Console.WriteLine("adding another component of already added type");
+            }
+            else
+            {
+                Components.Add(c.GetType(),c);
+            }
+        }
     }
 
     private bool PrintMembers(StringBuilder builder)
@@ -29,34 +41,30 @@ public record struct Entity
         return true;
     }
 
-    //better cachce this list
-    public List<T> GetComponents<T>() where T : DComponent
-    {
-        var t = new List<T>();
-        foreach (var c in Components)
-        {
-            if (c is T casted)
-            {
-                t.Add(casted);
-            }
-        }
-        return t; 
-    }
-    
     public bool GetComponent<T>(out T component) where T : DComponent
     {
-        foreach (var c in Components)
-        {
-            if (c is T casted)
-            {
-                component = casted;
-                return true;
-            }
-        }
         component = default;
-        return false; 
+        if (Components.TryGetValue(typeof(T), out var c))
+        {
+            component = (T)c;
+            return true;
+        }
+        return false;
     }
-    
+
+    public bool AddComponent(DComponent c)
+    {
+        if (Components.TryGetValue(c.GetType(), out var entry))
+        {
+            Console.WriteLine("skpping adding another component of already added type");
+            return false;
+        }
+        else
+        {
+            Components.Add(c.GetType(),c);
+            return true;
+        }
+    }
 }
 
 public static class Util
@@ -77,34 +85,37 @@ public class VelocitySystem : DSystem, IUpdateSystem
     {
         foreach (var e in w.Entities)
         {
-            if (e.GetComponent(out Position pc))
+            if (e.GetComponent(out Position pc) && e.GetComponent(out Velocity v))
             {
-                e.GetComponents<Velocity>().ForEach(c =>
-                {
-                    pc.X += c.X;
-                    pc.Y += c.Y;
-                });
+                Console.WriteLine($"update vel str {v.X}{v.Y}");
+                Console.WriteLine($"pc.X {pc.X}");
+                Console.WriteLine($"adding {v.X}");
+                pc.X += v.X;
+                Console.WriteLine($"new pc.x {pc.X}");
+                pc.Y += v.Y;
+                Console.WriteLine("update vel" + pc.X);
             }
         }
     }
 }
 public abstract class RenderSystem : DSystem, IUpdateSystem
 {
-    private void Update(World w)
+    public void Update(World w)
     {
         Render(w);
     }
 
-    public abstract void Render(World w);
+    protected abstract void Render(World w);
 }
 public class SpriteRenderSystem : RenderSystem
 {
-    public override void Render(World w)
+    protected override void Render(World w)
     {
         foreach (var e in w.Entities)
         {
-            foreach (SpriteRenderer r in e.GetComponents<SpriteRenderer>())
+            if (e.GetComponent(out SpriteRenderer r))
             {
+                Console.WriteLine("submitting for render");
                 //TODO: should submit texture as an image resources
                 // Engine.addRect(e.ID,r.Texture);
                 Engine.addRect(e,0);
@@ -123,20 +134,20 @@ public interface DComponent
 
 public struct SpriteRenderer : DComponent
 {
-    public string Texture;
     public uint ID { get;set;} 
+    public required string Texture;
 }
 
 public struct Position : DComponent
 {
     public uint ID { get;set;}
-    public int X, Y;
+    public required int X, Y;
 }
 
 public struct Velocity : DComponent
 {
     public uint ID { get;set;}
-    public int X, Y;
+    public required int X, Y;
 }
 
 
@@ -160,22 +171,25 @@ public class Quick
     {
         public override void GetEntity(out Entity e)
         {
-            e = Entity with
-            {
-                ID = NextID(),
-                Components = new()
-                {
-                    Position with {ID = NextID()},
-                    SpriteRenderer with { ID = NextID(), Texture = texture }
-                }
-        
-                /*
-                 dotnet 8
-                 Components = [
-                    SpriteRenderer with { texture = "logo.png" }
-                 ]
-                 */
-            };
+            e = new Entity(
+                new Position() { ID = NextID(), X = 0, Y = 0 }, 
+                new SpriteRenderer(){ID = NextID(), Texture = texture});
+            // e = Entity with
+            // {
+            //     ID = NextID(),
+            //     Components = new()
+            //     {
+            //         Position with {ID = NextID()},
+            //         SpriteRenderer with { ID = NextID(), Texture = texture }
+            //     }
+            //
+            //     /*
+            //      dotnet 8
+            //      Components = [
+            //         SpriteRenderer with { texture = "logo.png" }
+            //      ]
+            //      */
+            // };
         }
     }
 

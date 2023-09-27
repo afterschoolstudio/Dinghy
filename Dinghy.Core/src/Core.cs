@@ -10,6 +10,7 @@ using Internal.Sokol;
 public static class Engine
 {
     static Action Update;
+    static Action Setup;
 
     private static HashSet<DSystem> DefaultSystems = new HashSet<DSystem>()
     {
@@ -19,11 +20,14 @@ public static class Engine
 
     public static uint idCounter;
     public static World World = new World();
-    public static void Init(Action update = null)
+    public static void Init(Action setup = null, Action update = null)
     {
         if (update != null)
         {
             Update += update;
+        }if (setup != null)
+        {
+            Setup += setup;
         }
         Boot();
     }
@@ -180,6 +184,8 @@ public static class Engine
         pass_action.colors.e0.clear_value.g = 0f;
         pass_action.colors.e0.clear_value.b = 0f;
         pass_action.colors.e0.clear_value.a = 1.0f;
+        
+        Setup?.Invoke();
     }
 
     private static float angle_deg = 0;
@@ -205,6 +211,7 @@ public static class Engine
             //TODO: need to sort systems by priority
             if (s is IUpdateSystem us)
             {
+                // Console.WriteLine($"updating {us}");
                 us.Update(World);
             }
         }
