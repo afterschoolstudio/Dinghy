@@ -21,29 +21,35 @@ public static class Engine
 
     public static uint idCounter;
     public static World World = World.Create();
-    public static void Init(Action setup = null, Action update = null)
+
+    public record RunOptions(int width, int height, string appName);
+
+    private static RunOptions defaultOpts = new(500, 500, "dinghy");
+    public static void Run(RunOptions opts = null, Action update = null)
     {
         if (update != null)
         {
             Update += update;
-        }if (setup != null)
-        {
-            Setup += setup;
         }
-        Boot();
+        if (opts == null)
+        {
+            
+        }
+        Boot(opts == null ? defaultOpts : opts);
     }
     
-    static internal void Boot()
+    static internal void Boot(RunOptions opts)
     {
         unsafe
         {
-            var window_title = "my window"u8;
+            // var window_title = "dinghy"u8;
+            var window_title = System.Text.Encoding.UTF8.GetBytes(opts.appName);
             fixed (byte* ptr = window_title)
             {
                 //init
                 sapp_desc desc = default;
-                desc.width = 400;
-                desc.height = 400;
+                desc.width = opts.width;
+                desc.height = opts.height;
                 desc.icon.sokol_default = 1;
                 desc.window_title = (sbyte*)ptr;
                 desc.init_cb = &Initialize;
@@ -133,31 +139,10 @@ public static class Engine
         state.checkerboard.width = checkerboardTexSize;
         state.checkerboard.height = checkerboardTexSize;
         
-        
-        var logo_desc = default(sg_image_desc);
-        var fileBytes = File.ReadAllBytes("logo_re.png");
-        fixed (byte* imgptr = fileBytes)
-        {
-            int imgx, imgy, channels;
-            // var ok = STB.stbi_info_from_memory(imgptr, fileBytes.Length, &imgx, &imgy, &channels); 
-            // Console.WriteLine($"mem test: {ok}: {imgx} {imgy} {channels}");
-            STB.stbi_set_flip_vertically_on_load(1);
-            var stbimg = STB.stbi_load_from_memory(imgptr, fileBytes.Length, &imgx,&imgy, &channels, 4);
-            sg_image_desc stb_img_desc = default;
-            stb_img_desc.width = imgx;
-            stb_img_desc.height = imgy;
-            stb_img_desc.pixel_format = sg_pixel_format.SG_PIXELFORMAT_RGBA8;
-            
-            stb_img_desc.data.subimage.e0_0.ptr = stbimg;
-            stb_img_desc.data.subimage.e0_0.size = (nuint)(imgx * imgy * 4);
-
-            
-            state.logo.img = Gfx.make_image(&stb_img_desc);
-            state.logo.width = imgx;
-            state.logo.height = imgy;
-            STB.stbi_image_free(stbimg);
-        }
-        
+        var logo = LoadImage("logo.png", out var imageWidth, out var imageHeight);
+        state.logo.img = logo;
+        state.logo.width = imageWidth;
+        state.logo.height = imageHeight;
         
         // ... and a sampler
         sg_sampler_desc sample_desc = default;
@@ -315,47 +300,33 @@ public static class Engine
     // }
     
 
-    public static sg_image LoadImage(string path)
+    public static sg_image LoadImage(string path, out int width, out int height)
     {
-        byte[] testImgBytes = File.ReadAllBytes(path);
-        
-        //load image
-        var s = testImgBytes.Length * sizeof(byte);
-        Console.WriteLine(s);
-        
-        //note: need to use stbsharp here to actually turn the bytes into an image
+        var logo_desc = default(sg_image_desc);
+        var fileBytes = File.ReadAllBytes(path);
         unsafe
         {
-            fixed (byte* imgPtr = testImgBytes)
+            fixed (byte* imgptr = fileBytes)
             {
-                var sampler_desc = default(sg_sampler_desc);
-                sampler_desc.mag_filter = sg_filter.SG_FILTER_LINEAR;
-                sampler_desc.min_filter = sg_filter.SG_FILTER_LINEAR;
-                sampler_desc.wrap_u = sg_wrap.SG_WRAP_REPEAT;
-                sampler_desc.wrap_v = sg_wrap.SG_WRAP_REPEAT;
-                sampler_desc.mipmap_filter = sg_filter.SG_FILTER_NONE;
+                int imgx, imgy, channels;
+                // var ok = STB.stbi_info_from_memory(imgptr, fileBytes.Length, &imgx, &imgy, &channels); 
+                // Console.WriteLine($"mem test: {ok}: {imgx} {imgy} {channels}");
+                STB.stbi_set_flip_vertically_on_load(1);
+                var stbimg = STB.stbi_load_from_memory(imgptr, fileBytes.Length, &imgx,&imgy, &channels, 4);
+                sg_image_desc stb_img_desc = default;
+                stb_img_desc.width = imgx;
+                stb_img_desc.height = imgy;
+                stb_img_desc.pixel_format = sg_pixel_format.SG_PIXELFORMAT_RGBA8;
                 
-                var image_desc = default(sg_image_desc);
-                image_desc.width = 64;
-                image_desc.height = 64;
-                // image_desc.data = default(sg_image_data);
-                image_desc.data.subimage.e0_0.ptr = imgPtr;
-                // var r = default(sg_range);
-                // r.size
-                // image_desc.data.subimage.e0_0.size = (nuint)2; // * 4?
-                image_desc.data.subimage.e0_0.size = (nuint)(64*64*4*sizeof(byte)); //works
-                // image_desc.data.subimage.e0_0.size = (nuint)(testImgBytes.Length * sizeof(byte)); //works
-                var image = Gfx.make_image(&image_desc);
-                
-                if(Gfx.query_image_state(image) != sg_resource_state.SG_RESOURCESTATE_VALID) {
-                    Console.WriteLine("failed to load image");
-                    return image;
-                } else {
-                    Console.WriteLine("loaded image");
-                    return image;
-                }
+                stb_img_desc.data.subimage.e0_0.ptr = stbimg;
+                stb_img_desc.data.subimage.e0_0.size = (nuint)(imgx * imgy * 4);
+
+                var img = Gfx.make_image(&stb_img_desc);
+                STB.stbi_image_free(stbimg);
+                width = imgx;
+                height = imgy;
+                return img;
             }
         }
-        
     }
 }

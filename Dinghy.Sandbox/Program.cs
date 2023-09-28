@@ -10,7 +10,7 @@ for (int i = 0; i < 10000; i++)
 	var l = Add(logo);
 	l.Add(new Velocity(r.NextSingle() * 10, (r.NextSingle() * 10) - 5));
 }
-Engine.Init(() =>
+Engine.Run(update:() =>
 {
 	// DComponent dc = default;
 	// db.GetComponent<SpriteRenderer>(ref dc);
@@ -19,21 +19,7 @@ Engine.Init(() =>
 	// Console.WriteLine($"new sprite renderer component ID: {sr.ID}");
 	// Console.WriteLine($"new sprite position component ID: {p.ID}");
 	// Console.WriteLine($"new sprite vel component {v.X},{v.Y}");
-}, () =>
-{
-	// db.GetComponent(out Position p);
-	// p = p with { X = p.X + 1 };
-	// Console.WriteLine($"{p.X} {p.Y}");
 });
-
-
-
-
-// var sprites = new HashSet<obj2D>();
-// Repeat(10, () =>
-// {
-// 	sprites.Add(Sprite with { tex = "logo.png" });
-//});
 
 
 /*
