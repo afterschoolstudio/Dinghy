@@ -7,12 +7,12 @@ public static class Quick
     public static Random Random = new System.Random();
     public static int RandomInt() => Random.Next();
     public static float RandomFloat() => Random.NextSingle();
-    public record SpriteData(string texture) : EntityData
+    public record SpriteData(string texture,int startX = 0, int startY = 0) : EntityData
     {
         public override void GetEntity(out Entity e)
         {
             e = Engine.World.Create(
-                new Position(0, 0), 
+                new Position(startX, startY), 
                 new SpriteRenderer(texture));
         }
     }

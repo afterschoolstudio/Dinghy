@@ -13,39 +13,38 @@ public class VelocitySystem : DSystem, IUpdateSystem
     QueryDescription query = new QueryDescription().WithAll<Position, Velocity>();      // Should have all specified components
     public void Update()
     {
-        var r = new System.Random();
         Engine.World.Query(in query, (in Entity e, ref Position pos, ref Velocity vel) => {
             pos.x += (int)vel.x;
             pos.y += (int)vel.y;
             
             //bunny
-            // vel.y += 9.8f;
-            //
-            // if (pos.x > Engine.Width)
-            // {
-            //     vel.x *= -1;
-            //     pos.x = Engine.Width;
-            // }
-            // else if (pos.x < 0)
-            // {
-            //     vel.x *= -1;
-            //     pos.x = 0;
-            // }
-            //
-            // if (pos.y > Engine.Height)
-            // {
-            //     vel.y *= -0.85f;
-            //     pos.y = Engine.Height;
-            //     if (r.NextSingle() > 0.5)
-            //     {
-            //         vel.y -= (r.NextSingle() * 6);
-            //     }
-            // }
-            // else if (pos.y < 0)
-            // {
-            //     vel.y = 0;
-            //     pos.y = 0;
-            // }
+            vel.y += 9.8f;
+            
+            if (pos.x > Engine.Width)
+            {
+                vel.x *= -1;
+                pos.x = Engine.Width;
+            }
+            else if (pos.x < 0)
+            {
+                vel.x *= -1;
+                pos.x = 0;
+            }
+            
+            if (pos.y > Engine.Height)
+            {
+                vel.y *= -0.85f;
+                pos.y = Engine.Height;
+                if (Quick.RandomFloat() > 0.5)
+                {
+                    vel.y -= (Quick.RandomFloat() * 6);
+                }
+            }
+            else if (pos.y < 0)
+            {
+                vel.y = 0;
+                pos.y = 0;
+            }
         });
     }
 }
@@ -69,7 +68,6 @@ public class SpriteRenderSystem : RenderSystem
             {
                 r.ImageResource.Load();
             }
-            //TODO: should submit texture as an image resources
             Engine.DrawTexturedRect(p.x, p.y,r.ImageResource);
         });
     }

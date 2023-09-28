@@ -216,8 +216,10 @@ public static class Engine
 
     public static void DrawTexturedRect(int x, int y, Resources.Image img)
     {
-        Console.WriteLine($"drawing image {img.texture}");
-        (float x, float y) clipPos = (x / (Width * App.dpi_scale()), y / (Height * App.dpi_scale()));
+        // Console.WriteLine($"drawing rect {img.internalData.sg_image.id} at {x},{y}");
+        (float x, float y) clipPos = 
+            (2f * (x / (Width * App.dpi_scale())),
+            2f * (y / (Height * App.dpi_scale())));
         GL.texture(img.internalData.sg_image, state.smp);
         if (img.alphaIsTransparecy)
         {
@@ -237,9 +239,8 @@ public static class Engine
         // GL.scale(scale, scale, 1.0f);
         // GL.rotate(GL.rad(angle_deg), 0.0f, 0.0f, 1.0f);
         GL.begin_quads();
-            
-        var clip_img_height = img.height / (Height * App.dpi_scale());
-        var clip_img_width =       img.width / (Width * App.dpi_scale());
+        var clip_img_height = img.internalData.height / (Height * App.dpi_scale());
+        var clip_img_width =       img.internalData.width / (Width * App.dpi_scale());
         
         // var clip_img_height = state.checkerboard.height / (Height * App.dpi_scale());
         // var clip_img_width =       state.checkerboard.width / (Width * App.dpi_scale());
