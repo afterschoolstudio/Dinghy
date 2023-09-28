@@ -262,7 +262,6 @@ public static class Engine
 
     public static void DrawTexturedRect(int x, int y, Resources.Image img)
     {
-        // Console.WriteLine($"drawing rect {img.internalData.sg_image.id} at {x},{y}");
         (float x, float y) clipPos = 
             (2f * (x / (Width * App.dpi_scale())),
             2f * (y / (Height * App.dpi_scale())));

@@ -75,3 +75,11 @@ public class SpriteRenderSystem : RenderSystem
     }
 }
 
+public class InputSystem : DSystem, IUpdateSystem
+{
+    public void Update()
+    {
+        
+    }
+}
+

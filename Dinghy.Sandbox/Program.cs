@@ -2,17 +2,25 @@
 using Dinghy;
 using static Dinghy.Quick;
 
-SpriteData logo = new("logo.png");
-Add(logo);
-for (int i = 0; i < 100; i++)
+SpriteData logo = new("logo.png",10,10);
+var e = Add(logo);
+// for (int i = 0; i < 100; i++)
+// {
+// 	var l = Add(logo);
+// 	l.Add(new Velocity(RandFloat() * 10, (RandFloat() * 10) - 5));
+// 	l.Add(new BunnyMark());
+// }
+
+//this basically registers a lamba to be called when the update system itself sees the event in update
+On(KeyDown.Space, () =>
 {
-	var l = Add(logo);
-	l.Add(new Velocity(RandFloat() * 10, (RandFloat() * 10) - 5));
-	l.Add(new BunnyMark());
-}
-Engine.Run(update:() =>
-{
+	ref var position = ref e.Get<Position>();    // Get reference to the position.
+	position.X++;                                     // Update x.
+	position.Y++;
 });
+//or just add player movement component?
+
+Engine.Run();
 
 
 /*
