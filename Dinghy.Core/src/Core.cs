@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Dinghy.Internal.STB;
@@ -221,21 +221,6 @@ public static class Engine
             }
         }
 
-        foreach (var r in RectDrawCommands)
-        {
-            // Console.WriteLine($"drawing entity: {r.Key}");
-            draw(r);
-        }
-        
-        RectDrawCommands.Clear();
-
-        // foreach (var rect in rects)
-        // {
-        //     Console.WriteLine($"drawing {rect.Key} {rect.Value.X} {rect.Value.Y}");
-        //     drawRect(rect.Value,dw,dh);
-        // }
-        
-
         fixed (sg_pass_action* pass = &state.pass_action)
         {
             Gfx.begin_default_pass(pass, Width, Height);
@@ -246,23 +231,14 @@ public static class Engine
     }
 
     
-    public readonly record struct RectDraw(int id, int x, int y, int texture);
-
-    private static HashSet<RectDraw> RectDrawCommands = new HashSet<RectDraw>();
-    public static void AddRect(Entity e, int x, int y, int tex)
-    {
-        RectDrawCommands.Add(new RectDraw(e.Id, x, y, tex));
-    }
-
-
     public enum tex
     {
         logo,
         checkerboard
     }
-    static void draw(RectDraw r)
+    public static void DrawRect(int x, int y, int tex)
     {
-        (float x, float y) clipPos = ((float)r.x / (Width * App.dpi_scale()), (float)r.y / (Height * App.dpi_scale()));
+        (float x, float y) clipPos = (x / (Width * App.dpi_scale()), y / (Height * App.dpi_scale()));
         // var activeTex = rend.Texture == tex.checkerboard ? state.checkerboard : state.logo;
         var activeTex = state.logo;
         

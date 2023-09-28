@@ -4,10 +4,14 @@ using static Dinghy.Quick;
 
 int frame = 0;
 SpriteData logo = new("texture");
-Engine.Init(() =>
+var r = new System.Random();
+for (int i = 0; i < 10000; i++)
 {
 	var l = Add(logo);
-	l.Add(new Velocity(3,3));
+	l.Add(new Velocity(r.NextSingle() * 10, (r.NextSingle() * 10) - 5));
+}
+Engine.Init(() =>
+{
 	// DComponent dc = default;
 	// db.GetComponent<SpriteRenderer>(ref dc);
 	// db.GetComponent(out Position p);

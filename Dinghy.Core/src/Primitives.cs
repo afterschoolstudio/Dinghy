@@ -20,10 +20,14 @@ public class VelocitySystem : DSystem, IUpdateSystem
     {
         var r = new System.Random();
         Engine.World.Query(in query, (in Entity e, ref Position pos, ref Velocity vel) => {
+            // pos.x += (int)vel.x;
+            // pos.y += (int)vel.y;
+            
+            
             pos.x += (int)vel.x;
             pos.y += (int)vel.y;
             vel.y += 9.8f;
-            
+
             if (pos.x > Engine.Width)
             {
                 vel.x *= -1;
@@ -34,14 +38,14 @@ public class VelocitySystem : DSystem, IUpdateSystem
                 vel.x *= -1;
                 pos.x = 0;
             }
-            
+
             if (pos.y > Engine.Height)
             {
-                vel.y *= -1;
+                vel.y *= -0.85f;
                 pos.y = Engine.Height;
-                if (r.NextDouble() > 0.5)
+                if (r.NextSingle() > 0.5)
                 {
-                    vel.y -= (int)r.NextDouble() * 6;
+                    vel.y -= (r.NextSingle() * 6);
                 }
             }
             else if (pos.y < 0)
@@ -69,7 +73,7 @@ public class SpriteRenderSystem : RenderSystem
         Engine.World.Query(in query, (in Entity e, ref SpriteRenderer r, ref Position p) =>
         {
             //TODO: should submit texture as an image resources
-            Engine.AddRect(e, p.x,p.y, 0);
+            Engine.DrawRect(p.x, p.y,0);
         });
     }
 }
