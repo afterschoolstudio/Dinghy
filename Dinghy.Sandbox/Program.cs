@@ -4,7 +4,7 @@ using static Dinghy.Quick;
 
 SpriteData logo = new("logo.png");
 Add(logo);
-for (int i = 0; i < 10000; i++)
+for (int i = 0; i < 100; i++)
 {
 	var l = Add(logo);
 	l.Add(new Velocity(RandFloat() * 10, (RandFloat() * 10) - 5));

@@ -109,6 +109,17 @@ public static class Engine
         //call native logger
         // gl_desc.logger.func = (delegate* unmanaged[Cdecl]<sbyte*, uint, uint, sbyte*, uint, sbyte*, void*, void>)NativeLibrary.GetExport(NativeLibrary.Load("libs/sokol"), "slog_func");
         GL.setup(&gl_desc);
+
+
+        sdtx_desc_t debug_text_desc = default;
+        debug_text_desc.fonts.e0 = DebugText.font_kc853();
+        debug_text_desc.fonts.e1 = DebugText.font_kc854();
+        debug_text_desc.fonts.e2 = DebugText.font_z1013();
+        debug_text_desc.fonts.e3 = DebugText.font_cpc();
+        debug_text_desc.fonts.e4 = DebugText.font_c64();
+        debug_text_desc.fonts.e5 = DebugText.font_oric();
+        debug_text_desc.logger.func = &Sokol_Logger;
+        DebugText.setup(&debug_text_desc);
         
         // a checkerboard texture
         var checkerboardTexSize = 128;
@@ -184,7 +195,7 @@ public static class Engine
         App.frame_count();
         // float t = (float)App.frame_duration() * 60.0f;
         float t = (float)App.frame_duration() * 1000.0f;
-        Console.WriteLine($"{t}ms");
+        // Console.WriteLine($"{t}ms");
         Width = App.width();
         Height = App.height();
         
@@ -205,12 +216,47 @@ public static class Engine
             }
         }
 
+        drawDebugText(DebugFont.C64,$"{t}ms");
+
         fixed (sg_pass_action* pass = &state.pass_action)
         {
             Gfx.begin_default_pass(pass, Width, Height);
             GL.draw();
+            DebugText.draw();
             Gfx.end_pass();
             Gfx.commit();
+        }
+    }
+
+    public enum DebugFont
+    {
+        KC853,
+        KC854,
+        Z1013,
+        AMSTRAD,
+        C64,
+        ORIC
+    }
+    static void drawDebugText(DebugFont f, string debugText)
+    {
+        DebugText.canvas(Width*0.5f, Height*0.5f);
+        DebugText.origin(0.0f, 2.0f);
+        DebugText.home();
+        printFont(debugText);
+
+        void printFont(string t)
+        {
+            DebugText.font((int)f);
+            DebugText.color3b(255, 255, 0);
+            unsafe
+            {
+                var text = System.Text.Encoding.UTF8.GetBytes(t);
+                fixed (byte* ptr = text)
+                {
+                    DebugText.puts((sbyte*)ptr);
+                }
+            }
+            DebugText.crlf();
         }
     }
 
