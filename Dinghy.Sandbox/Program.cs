@@ -2,42 +2,16 @@
 using Dinghy;
 using static Dinghy.Quick;
 
-int frame = 0;
-SpriteData logo = new("logo.png",480);
-SpriteData arrow = new("up.png");
+SpriteData logo = new("logo.png");
 Add(logo);
-// l.Add(new Velocity(1, 1));
-// l.Add(new Velocity(r.NextSingle() * 10, (r.NextSingle() * 10) - 5));
-// var r = new System.Random();
-// for (int i = 0; i < 10000; i++)
-// {
-// 	var l = Add(logo);
-// 	var rx = r.NextSingle();
-// 	var ry = r.NextSingle();
-// 	Console.WriteLine($"setting vel : {rx},{ry}");
-// 	l.Add(new Velocity(rx * 10, ry * 10));
-//
-// 	// l.Add(new Velocity(rx * 10, (ry * 10) - 5));
-// }
-// for (int i = 0; i < 10; i++)
-// {
-// 	var l = Add(arrow);
-// 	var rx = r.NextSingle();
-// 	var ry = r.NextSingle();
-// 	Console.WriteLine($"setting vel : {rx},{ry}");
-// 	l.Add(new Velocity(rx * 10, ry * 10));
-//
-// 	// l.Add(new Velocity(rx * 10, (ry * 10) - 5));
-// }
+for (int i = 0; i < 10000; i++)
+{
+	var l = Add(logo);
+	l.Add(new Velocity(RandFloat() * 10, (RandFloat() * 10) - 5));
+	l.Add(new BunnyMark());
+}
 Engine.Run(update:() =>
 {
-	// DComponent dc = default;
-	// db.GetComponent<SpriteRenderer>(ref dc);
-	// db.GetComponent(out Position p);
-	// db.GetComponent(out Velocity v);
-	// Console.WriteLine($"new sprite renderer component ID: {sr.ID}");
-	// Console.WriteLine($"new sprite position component ID: {p.ID}");
-	// Console.WriteLine($"new sprite vel component {v.X},{v.Y}");
 });
 
 

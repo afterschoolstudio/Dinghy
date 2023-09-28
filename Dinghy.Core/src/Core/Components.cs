@@ -11,3 +11,4 @@ public record struct SpriteRenderer
 }
 public record struct Position(int x, int y);
 public record struct Velocity (float x, float y);
+public record struct BunnyMark();

@@ -11,13 +11,15 @@ public interface IUpdateSystem
 public class VelocitySystem : DSystem, IUpdateSystem
 {
     QueryDescription query = new QueryDescription().WithAll<Position, Velocity>();      // Should have all specified components
+    QueryDescription bunny = new QueryDescription().WithAll<Position, Velocity,BunnyMark>();      // Should have all specified components
     public void Update()
     {
         Engine.World.Query(in query, (in Entity e, ref Position pos, ref Velocity vel) => {
             pos.x += (int)vel.x;
             pos.y += (int)vel.y;
-            
-            //bunny
+        });
+        
+        Engine.World.Query(in bunny, (in Entity e, ref Position pos, ref Velocity vel) => {
             vel.y += 9.8f;
             
             if (pos.x > Engine.Width)
@@ -35,9 +37,9 @@ public class VelocitySystem : DSystem, IUpdateSystem
             {
                 vel.y *= -0.85f;
                 pos.y = Engine.Height;
-                if (Quick.RandomFloat() > 0.5)
+                if (Quick.RandFloat() > 0.5)
                 {
-                    vel.y -= (Quick.RandomFloat() * 6);
+                    vel.y -= (Quick.RandFloat() * 6);
                 }
             }
             else if (pos.y < 0)

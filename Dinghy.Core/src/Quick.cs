@@ -5,8 +5,8 @@ namespace Dinghy;
 public static class Quick
 {
     public static Random Random = new System.Random();
-    public static int RandomInt() => Random.Next();
-    public static float RandomFloat() => Random.NextSingle();
+    public static int RandInt() => Random.Next();
+    public static float RandFloat() => Random.NextSingle();
     public record SpriteData(string texture,int startX = 0, int startY = 0) : EntityData
     {
         public override void GetEntity(out Entity e)
