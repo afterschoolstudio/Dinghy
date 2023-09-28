@@ -3,13 +3,15 @@ using Dinghy;
 using static Dinghy.Quick;
 
 int frame = 0;
-SpriteData logo = new("texture");
-var r = new System.Random();
-for (int i = 0; i < 10000; i++)
-{
-	var l = Add(logo);
-	l.Add(new Velocity(r.NextSingle() * 10, (r.NextSingle() * 10) - 5));
-}
+SpriteData logo = new("logo.png");
+var l = Add(logo);
+l.Add(new Velocity(1, 1));
+// l.Add(new Velocity(r.NextSingle() * 10, (r.NextSingle() * 10) - 5));
+// for (int i = 0; i < 1000; i++)
+// {
+// 	var l = Add(logo);
+// 	l.Add(new Velocity(r.NextSingle() * 10, (r.NextSingle() * 10) - 5));
+// }
 Engine.Run(update:() =>
 {
 	// DComponent dc = default;

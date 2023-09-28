@@ -78,7 +78,6 @@ public static class Engine
     {
         public sg_pass_action pass_action ;
         public imageInfo checkerboard;
-        public imageInfo logo;
         public sg_sampler smp;
         public sgl_pipeline alpha_pip;
     }
@@ -139,10 +138,10 @@ public static class Engine
         state.checkerboard.width = checkerboardTexSize;
         state.checkerboard.height = checkerboardTexSize;
         
-        var logo = LoadImage("logo.png", out var imageWidth, out var imageHeight);
-        state.logo.img = logo;
-        state.logo.width = imageWidth;
-        state.logo.height = imageHeight;
+        // var logo = LoadImage("logo.png", out var imageWidth, out var imageHeight);
+        // state.logo.img = logo;
+        // state.logo.width = imageWidth;
+        // state.logo.height = imageHeight;
         
         // ... and a sampler
         sg_sampler_desc sample_desc = default;
@@ -215,20 +214,12 @@ public static class Engine
         }
     }
 
-    
-    public enum tex
+    public static void DrawTexturedRect(int x, int y, Resources.Image img)
     {
-        logo,
-        checkerboard
-    }
-    public static void DrawRect(int x, int y, int tex)
-    {
+        Console.WriteLine($"drawing image {img.texture}");
         (float x, float y) clipPos = (x / (Width * App.dpi_scale()), y / (Height * App.dpi_scale()));
-        // var activeTex = rend.Texture == tex.checkerboard ? state.checkerboard : state.logo;
-        var activeTex = state.logo;
-        
-        GL.texture(activeTex.img, state.smp);
-        if (true /*r.t == tex.logo*/)
+        GL.texture(img.internalData.sg_image, state.smp);
+        if (img.alphaIsTransparecy)
         {
             GL.load_pipeline(state.alpha_pip);
         }
@@ -236,6 +227,9 @@ public static class Engine
         {
             GL.load_default_pipeline();
         }
+        // GL.texture(state.checkerboard.img, state.smp);
+        // GL.load_default_pipeline();
+
         
         GL.push_matrix();
         //gl clip space is -1 -> + 1, lower left to top right
@@ -244,8 +238,12 @@ public static class Engine
         // GL.rotate(GL.rad(angle_deg), 0.0f, 0.0f, 1.0f);
         GL.begin_quads();
             
-        var clip_img_height = activeTex.height / (Height * App.dpi_scale());
-        var clip_img_width =       activeTex.width / (Width * App.dpi_scale());
+        var clip_img_height = img.height / (Height * App.dpi_scale());
+        var clip_img_width =       img.width / (Width * App.dpi_scale());
+        
+        // var clip_img_height = state.checkerboard.height / (Height * App.dpi_scale());
+        // var clip_img_width =       state.checkerboard.width / (Width * App.dpi_scale());
+        
         GL.v2f_t2f_c3b( -1, 1-clip_img_height,  0, 0,  255, 255, 0); //bottom left
         GL.v2f_t2f_c3b(  -1 + clip_img_width, 1-clip_img_height,  1, 0,  0, 255, 0); //bottom right
         GL.v2f_t2f_c3b(  -1 + clip_img_width, 1,  1, 1,  0, 0, 255); //top right
