@@ -1,4 +1,5 @@
 ﻿using Arch.Core;
+using Dinghy.Internal.Sokol;
 using static Dinghy.Resources;
 
 namespace Dinghy;
@@ -77,9 +78,82 @@ public class SpriteRenderSystem : RenderSystem
 
 public class InputSystem : DSystem, IUpdateSystem
 {
+    public static class Events
+    {
+        public static class Key
+        {
+            public static Action<sapp_keycode> Pressed;
+            public static Action<sapp_keycode> Down;
+            public static Action<sapp_keycode> Up;
+        }
+    }
+    public HashSet<sapp_event> FrameEvents = new HashSet<sapp_event>();
     public void Update()
     {
-        
+        // Dinghy.Internal.Sokol.App.ke
+        foreach (var e in FrameEvents)
+        {
+            switch (e.type)
+            {
+                case sapp_event_type.SAPP_EVENTTYPE_INVALID:
+                    break;
+                case sapp_event_type.SAPP_EVENTTYPE_KEY_DOWN:
+                    if (e.key_repeat > 0)
+                    {
+                        Events.Key.Pressed?.Invoke(e.key_code);
+                    }
+                    Events.Key.Down?.Invoke(e.key_code);
+                    // Console.WriteLine($"{e.key_code} {e.key_repeat}");
+                    break;
+                case sapp_event_type.SAPP_EVENTTYPE_KEY_UP:
+                    Events.Key.Up?.Invoke(e.key_code);
+                    break;
+                case sapp_event_type.SAPP_EVENTTYPE_CHAR:
+                    break;
+                case sapp_event_type.SAPP_EVENTTYPE_MOUSE_DOWN:
+                    break;
+                case sapp_event_type.SAPP_EVENTTYPE_MOUSE_UP:
+                    break;
+                case sapp_event_type.SAPP_EVENTTYPE_MOUSE_SCROLL:
+                    break;
+                case sapp_event_type.SAPP_EVENTTYPE_MOUSE_MOVE:
+                    break;
+                case sapp_event_type.SAPP_EVENTTYPE_MOUSE_ENTER:
+                    break;
+                case sapp_event_type.SAPP_EVENTTYPE_MOUSE_LEAVE:
+                    break;
+                case sapp_event_type.SAPP_EVENTTYPE_TOUCHES_BEGAN:
+                    break;
+                case sapp_event_type.SAPP_EVENTTYPE_TOUCHES_MOVED:
+                    break;
+                case sapp_event_type.SAPP_EVENTTYPE_TOUCHES_ENDED:
+                    break;
+                case sapp_event_type.SAPP_EVENTTYPE_TOUCHES_CANCELLED:
+                    break;
+                case sapp_event_type.SAPP_EVENTTYPE_RESIZED:
+                    break;
+                case sapp_event_type.SAPP_EVENTTYPE_ICONIFIED:
+                    break;
+                case sapp_event_type.SAPP_EVENTTYPE_RESTORED:
+                    break;
+                case sapp_event_type.SAPP_EVENTTYPE_FOCUSED:
+                    break;
+                case sapp_event_type.SAPP_EVENTTYPE_UNFOCUSED:
+                    break;
+                case sapp_event_type.SAPP_EVENTTYPE_SUSPENDED:
+                    break;
+                case sapp_event_type.SAPP_EVENTTYPE_RESUMED:
+                    break;
+                case sapp_event_type.SAPP_EVENTTYPE_QUIT_REQUESTED:
+                    break;
+                case sapp_event_type.SAPP_EVENTTYPE_CLIPBOARD_PASTED:
+                    break;
+                case sapp_event_type.SAPP_EVENTTYPE_FILES_DROPPED:
+                    break;
+            }
+            Console.WriteLine(e.type);
+        }
+        FrameEvents.Clear();
     }
 }
 

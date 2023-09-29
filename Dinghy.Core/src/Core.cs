@@ -12,11 +12,13 @@ public static class Engine
 {
     static Action Update;
     static Action Setup;
+    static InputSystem InputSystem = new InputSystem();
 
     private static HashSet<DSystem> DefaultSystems = new HashSet<DSystem>()
     {
         new VelocitySystem(),
-        new SpriteRenderSystem()
+        new SpriteRenderSystem(),
+        InputSystem
     };
 
     public static uint idCounter;
@@ -69,6 +71,9 @@ public static class Engine
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
     private static unsafe void Event(sapp_event* e)
     {
+        sapp_event ev = *e;
+        InputSystem.FrameEvents.Add(ev);
+        // Console.WriteLine(ev);
         // var width = App.width();
         // var height = App.height();
         // Console.WriteLine(e->type);
