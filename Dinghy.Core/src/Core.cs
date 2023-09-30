@@ -265,11 +265,11 @@ public static partial class Engine
         }
     }
 
-    public static void DrawTexturedRect(int x, int y, Resources.Image img)
+    public static void DrawTexturedRect(float x, float y, Resources.Image img)
     {
-        (float x, float y) clipPos = 
-            (2f * (x / (Width * App.dpi_scale())),
-            2f * (y / (Height * App.dpi_scale())));
+        // (float x, float y) clipPos = 
+        //     (2f * (x / (Width * App.dpi_scale())),
+        //     2f * (y / (Height * App.dpi_scale())));
         GL.texture(img.internalData.sg_image, state.smp);
         if (img.alphaIsTransparecy)
         {
@@ -283,9 +283,9 @@ public static partial class Engine
         // GL.load_default_pipeline();
 
         
-        GL.push_matrix();
+        // GL.push_matrix();
         //gl clip space is -1 -> + 1, lower left to top right
-        GL.translate(-1 + clipPos.x,1-clipPos.y,0); //this puts us at the top left of the image
+        // GL.translate(-1 + clipPos.x,1-clipPos.y,0); //this puts us at the top left of the image
         // GL.scale(scale, scale, 1.0f);
         // GL.rotate(GL.rad(angle_deg), 0.0f, 0.0f, 1.0f);
         GL.begin_quads();
@@ -295,13 +295,13 @@ public static partial class Engine
         // var clip_img_height = state.checkerboard.height / (Height * App.dpi_scale());
         // var clip_img_width =       state.checkerboard.width / (Width * App.dpi_scale());
         
-        GL.v2f_t2f_c3b( -1, 1-clip_img_height,  0, 0,  255, 255, 0); //bottom left
-        GL.v2f_t2f_c3b(  -1 + clip_img_width, 1-clip_img_height,  1, 0,  0, 255, 0); //bottom right
-        GL.v2f_t2f_c3b(  -1 + clip_img_width, 1,  1, 1,  0, 0, 255); //top right
-        GL.v2f_t2f_c3b( -1, 1,  0, 1,  255, 0, 0); //top left
-        GL.translate(1f,-1f,0);
+        GL.v2f_t2f_c3b( x, y-clip_img_height,  0, 0,  255, 255, 0); //bottom left
+        GL.v2f_t2f_c3b(  x + clip_img_width, y-clip_img_height,  1, 0,  0, 255, 0); //bottom right
+        GL.v2f_t2f_c3b(  x + clip_img_width, y,  1, 1,  0, 0, 255); //top right
+        GL.v2f_t2f_c3b( x, y,  0, 1,  255, 0, 0); //top left
+        // GL.translate(1f,-1f,0);
         GL.end();
-        GL.pop_matrix();
+        // GL.pop_matrix();
     }
 
     public enum LogLevel

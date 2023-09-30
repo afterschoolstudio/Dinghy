@@ -2,21 +2,25 @@
 using Dinghy;
 using static Dinghy.Quick;
 
-SpriteData logo_img = new("logo.png",10,10);
-var logo = Add(logo_img);
-logo.Add(new Velocity());
-OnKeyDown += (key) =>  {
-	ref var vel = ref logo.Get<Velocity>();
-	(int dx, int dy) v = key switch {
-		Key.LEFT => (-1, 0),
-		Key.RIGHT => (1, 0),
-		Key.UP => (0, -1),
-		Key.DOWN => (0, 1),
-		_ => (0, 0)
-	};
-	vel.x += v.dx;
-	vel.y += v.dy;
-};
+SpriteData logo_img = new("logo.png",0,0);
+for (int i = 0; i < 10000; i++)
+{
+	var logo = Add(logo_img);
+	logo.Add(new Velocity());
+	logo.Add(new BunnyMark());
+}
+// OnKeyDown += (key) =>  {
+// 	ref var vel = ref logo.Get<Velocity>();
+// 	(int dx, int dy) v = key switch {
+// 		Key.LEFT => (-1, 0),
+// 		Key.RIGHT => (1, 0),
+// 		Key.UP => (0, -1),
+// 		Key.DOWN => (0, 1),
+// 		_ => (0, 0)
+// 	};
+// 	vel.x += v.dx;
+// 	vel.y += v.dy;
+// };
 Engine.Run();
 
 
