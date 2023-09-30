@@ -82,15 +82,14 @@ public class InputSystem : DSystem, IUpdateSystem
     {
         public static class Key
         {
-            public static Action<sapp_keycode> Pressed;
-            public static Action<sapp_keycode> Down;
-            public static Action<sapp_keycode> Up;
+            public static Action<Dinghy.Key> Pressed;
+            public static Action<Dinghy.Key> Down;
+            public static Action<Dinghy.Key> Up;
         }
     }
     public HashSet<sapp_event> FrameEvents = new HashSet<sapp_event>();
     public void Update()
     {
-        // Dinghy.Internal.Sokol.App.ke
         foreach (var e in FrameEvents)
         {
             switch (e.type)
@@ -100,13 +99,12 @@ public class InputSystem : DSystem, IUpdateSystem
                 case sapp_event_type.SAPP_EVENTTYPE_KEY_DOWN:
                     if (e.key_repeat > 0)
                     {
-                        Events.Key.Pressed?.Invoke(e.key_code);
+                        Events.Key.Pressed?.Invoke((Key)e.key_code);
                     }
-                    Events.Key.Down?.Invoke(e.key_code);
-                    // Console.WriteLine($"{e.key_code} {e.key_repeat}");
+                    Events.Key.Down?.Invoke((Key)e.key_code);
                     break;
                 case sapp_event_type.SAPP_EVENTTYPE_KEY_UP:
-                    Events.Key.Up?.Invoke(e.key_code);
+                    Events.Key.Up?.Invoke((Key)e.key_code);
                     break;
                 case sapp_event_type.SAPP_EVENTTYPE_CHAR:
                     break;
@@ -151,7 +149,7 @@ public class InputSystem : DSystem, IUpdateSystem
                 case sapp_event_type.SAPP_EVENTTYPE_FILES_DROPPED:
                     break;
             }
-            Console.WriteLine(e.type);
+            // Console.WriteLine(e.type);
         }
         FrameEvents.Clear();
     }

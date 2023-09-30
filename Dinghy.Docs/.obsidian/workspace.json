@@ -90,9 +90,21 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "109e8f6faa55dfd9",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "networking.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
         ],
-        "currentTab": 6
+        "currentTab": 7
       }
     ],
     "direction": "vertical"
@@ -166,7 +178,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "ui/sdf.md",
+                "file": "networking.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -183,7 +195,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "ui/sdf.md",
+                "file": "networking.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -206,7 +218,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ui/sdf.md"
+                "file": "networking.md"
               }
             }
           }
@@ -228,13 +240,15 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "f1c50e2e9975e5f1",
+  "active": "109e8f6faa55dfd9",
   "lastOpenFiles": [
+    "ideas.md",
+    "networking.md",
+    "dev/bootstrapper.md",
     "ui/yoga.md",
     "ui/sdf.md",
     "ui/razor refs.md",
     "resource pipelines.md",
-    "ideas.md",
     "builtins.md",
     "todo.md",
     "scriban.md",
@@ -243,7 +257,6 @@
     "data description formats.md",
     "dotnet releaser.md",
     "dev/manual adds.md",
-    "dev/bootstrapper.md",
     "dev/clangsharppinvokegenerator notes.md",
     "references/buildscripts/basic-lib-build.zig.md",
     "references/buildscripts/fips cmake builder.md",

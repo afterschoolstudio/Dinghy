@@ -8,7 +8,7 @@ using Arch.Core;
 namespace Dinghy;
 using Internal.Sokol;
 
-public static class Engine
+public static partial class Engine
 {
     static Action Update;
     static Action Setup;

@@ -23,4 +23,22 @@ public static class Quick
         Engine.World.Add<Entity>(e);
         return e;
     }
+    
+    public static Action<Key> OnKeyDown
+    {
+        get => InputSystem.Events.Key.Down;
+        set => InputSystem.Events.Key.Down += value;
+    }
+    
+    public static Action<Key> OnKeyPressed
+    {
+        get => InputSystem.Events.Key.Pressed;
+        set => InputSystem.Events.Key.Pressed += value;
+    }
+    
+    public static Action<Key> OnKeyUp
+    {
+        get => InputSystem.Events.Key.Up;
+        set => InputSystem.Events.Key.Up += value;
+    }
 }

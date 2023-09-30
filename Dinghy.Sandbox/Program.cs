@@ -1,37 +1,22 @@
 ﻿using Arch.Core.Extensions;
 using Dinghy;
-using Dinghy.Internal.Sokol;
 using static Dinghy.Quick;
-using static Dinghy.InputSystem;
 
 SpriteData logo_img = new("logo.png",10,10);
 var logo = Add(logo_img);
 logo.Add(new Velocity());
-Events.Key.Down += (key) =>
-{
+OnKeyDown += (key) =>  {
 	ref var vel = ref logo.Get<Velocity>();
-	(int dx, int dy) v = key switch
-	{
-		sapp_keycode.SAPP_KEYCODE_LEFT => (-1, 0),
-		sapp_keycode.SAPP_KEYCODE_RIGHT => (1, 0),
-		sapp_keycode.SAPP_KEYCODE_UP => (0, -1),
-		sapp_keycode.SAPP_KEYCODE_DOWN => (0, 1),
+	(int dx, int dy) v = key switch {
+		Key.LEFT => (-1, 0),
+		Key.RIGHT => (1, 0),
+		Key.UP => (0, -1),
+		Key.DOWN => (0, 1),
 		_ => (0, 0)
 	};
 	vel.x += v.dx;
 	vel.y += v.dy;
 };
-
-// 	
-// //this basically registers a lamba to be called when the update system itself sees the event in update
-// On(KeyDown.Space, () =>
-// {
-// 	ref var position = ref e.Get<Position>();    // Get reference to the position.
-// 	position.X++;                                     // Update x.
-// 	position.Y++;
-// });
-//or just add player movement component?
-
 Engine.Run();
 
 

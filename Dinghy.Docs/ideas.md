@@ -8,6 +8,12 @@
 		* use a razor compiler lib to spit out proper ui pages to be displayed and bound against
 			* https://github.com/toddams/RazorLight
 
+easy networking with cloudflare webworkers/durable objects
+https://blog.cloudflare.com/building-real-time-games-using-workers-durable-objects-and-unity/
+
+laundry, coffee, dinghy blog
+transform coords - look at sokol_gp
+
 other interesting libs
 * https://github.com/xoofx/markdig
 	* markdown processor in dotnet
