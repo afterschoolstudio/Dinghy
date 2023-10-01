@@ -5,6 +5,10 @@ using static Dinghy.Resources;
 namespace Dinghy;
 
 public class DSystem {}
+public interface IPreUpdateSystem
+{
+    void Update();
+}
 public interface IUpdateSystem
 {
     void Update();
@@ -82,8 +86,7 @@ public class SpriteRenderSystem : RenderSystem
             {
                 r.ImageResource.Load();
             }
-            // Engine.DrawTexturedRect(p.x, p.y,r.ImageResource);
-            Engine.DrawTexturedRect(p.x, p.y,r.ImageResource);
+            Engine.DrawTexturedRect(p.x, p.y,r.HasAssignedFrame ? r.Frame : r.ImageResource.DefaultFrame,r.ImageResource);
         });
     }
     
@@ -196,6 +199,31 @@ public class InputSystem : DSystem, IUpdateSystem
             // Console.WriteLine(e.type);
         }
         FrameEvents.Clear();
+    }
+}
+
+public abstract class AnimationSystem : DSystem, IPreUpdateSystem
+{
+    public void Update()
+    {
+        Animate();
+    }
+
+    protected abstract void Animate();
+}
+
+public class FrameAnimationSystem : AnimationSystem
+{
+    QueryDescription query = new QueryDescription().WithAll<SpriteRenderer,Animation>();
+    protected override void Animate()
+    {
+        Engine.World.Query(in query, (in Entity e, ref SpriteRenderer r, ref SpriteAnimator a) =>
+        {
+            a.TickAnimation();
+            
+            //note that there is currently no binding glue to imply that SpriteAnimator will work directly on an attached SpriteRenderer
+            r.UpdateFrame(a.AnimationFrame);
+        });
     }
 }
 

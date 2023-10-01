@@ -19,6 +19,7 @@ public static partial class Engine
     {
         new VelocitySystem(),
         new SpriteRenderSystem(),
+        new FrameAnimationSystem(),
         InputSystem
     };
 
@@ -238,6 +239,14 @@ public static partial class Engine
         // GP.sgp_rotate_at((float)time, 0.0f, 0.0f);
         // GP.sgp_draw_filled_rect(-0.5f, -0.5f, 1.0f, 1.0f);
         
+        foreach (var s in DefaultSystems)
+        {
+            //TODO: need to sort systems by priority
+            if (s is IPreUpdateSystem us)
+            {
+                us.Update();
+            }
+        }
         Update?.Invoke();
         foreach (var s in DefaultSystems)
         {
@@ -296,8 +305,9 @@ public static partial class Engine
         }
     }
 
-    public static void DrawTexturedRect(float x, float y, Resources.Image img)
+    public static void DrawTexturedRect(float x, float y, Frame f, Resources.Image img)
     {
+        GP.sgp_set_color(1.0f, 1.0f, 1.0f, 1.0f);
         GP.sgp_set_blend_mode(sgp_blend_mode.SGP_BLENDMODE_BLEND);
         GP.sgp_set_image(0,img.internalData.sg_image);
         GP.sgp_draw_filled_rect(x,y,img.internalData.width,img.internalData.height);

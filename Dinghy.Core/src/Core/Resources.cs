@@ -9,6 +9,7 @@ public static class Resources
     public record Image(string texture, bool alphaIsTransparecy)
     {
         public LoadedImageResource internalData { get; private set; }
+        public Frame DefaultFrame { get; private set; }
         public bool loaded { get; private set; } = false;
         public int Width => internalData.width;
         public int Height => internalData.height;
@@ -22,6 +23,7 @@ public static class Resources
                 return;
             }
             var img = Engine.LoadImage(texture, out var w, out var h);
+            DefaultFrame = new Frame(0, 0, w, h); //default is the full texture
             // var state = Internal.Sokol.Gfx.query_image_state(img);
             // Console.WriteLine(state);
             internalData = new LoadedImageResource(img,w,h);
@@ -29,6 +31,12 @@ public static class Resources
             loaded = true;
         }
     }
+    public record Animation(string Name, List<Frame> Frames)
+    {
+        public int FrameCount { get; } = Frames.Count;
+    }
 }
+
+public readonly record struct Frame(int startX, int startY, int width, int height);
 
 

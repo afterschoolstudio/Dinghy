@@ -3,26 +3,11 @@ using Dinghy;
 using static Dinghy.Quick;
 
 SpriteData logo_img = new("logo.png",0,0);
-int bunnies = 100000;
-for (int i = 0; i < bunnies; i++)
-{
-	var logo = Add(logo_img);
-	logo.Add(new Velocity(RandFloat() *10,RandFloat()*10-5));
-	logo.Add(new BunnyMark());
-}
+SpriteData conscript_img = new("conscript.png",0,0);
 
-Engine.DebugTextStr = $"{bunnies} buns";
-int addedbuns = 1000;
-OnKeyDown += (key) =>  {
-	for (int i = 0; i < addedbuns; i++)
-	{
-		var logo = Add(logo_img);
-		logo.Add(new Velocity(RandFloat() *10,RandFloat()*10-5));
-		logo.Add(new BunnyMark());
-	}
+animation();
+// bunny();
 
-	bunnies += addedbuns;
-	Engine.DebugTextStr = $"{bunnies} buns";
 
 // 	(int dx, int dy) v = key switch {
 // 		Key.LEFT => (-1, 0),
@@ -33,7 +18,6 @@ OnKeyDown += (key) =>  {
 // 	};
 // 	vel.x += v.dx;
 // 	vel.y += v.dy;
-};
 
 // Add(logo_img);
 // OnKeyDown += (key) =>  {
@@ -49,6 +33,40 @@ OnKeyDown += (key) =>  {
 // 	vel.y += v.dy;
 // };
 Engine.Run();
+
+void animation()
+{
+	var c = Add(conscript_img);
+	// c.Add(new SpriteAnimator(new HashSet<Resources.Animation>()
+	// {
+	// 	new Resources.Animation()
+	// }));
+}
+
+void bunny()
+{
+	int bunnies = 50000;
+	for (int i = 0; i < bunnies; i++)
+	{
+		var logo = Add(logo_img);
+		logo.Add(new Velocity(RandFloat() *10,RandFloat()*10-5));
+		logo.Add(new BunnyMark());
+	}
+
+	Engine.DebugTextStr = $"{bunnies} buns";
+	int addedbuns = 1000;
+	OnKeyDown += (key) =>  {
+		for (int i = 0; i < addedbuns; i++)
+		{
+			var logo = Add(logo_img);
+			logo.Add(new Velocity(RandFloat() *10,RandFloat()*10-5));
+			logo.Add(new BunnyMark());
+		}
+
+		bunnies += addedbuns;
+		Engine.DebugTextStr = $"{bunnies} buns";
+	};
+}
 
 
 /*
