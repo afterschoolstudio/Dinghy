@@ -15,6 +15,8 @@ public static class Quick
                 new Position(startX, startY), 
                 new SpriteRenderer(texture));
         }
+        
+        //TODO: maybe set initial frame?
     }
 
     public static Entity Add(EntityData d)
