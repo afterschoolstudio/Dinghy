@@ -108,13 +108,17 @@ public static partial class Engine
         // desc.logger.func = (delegate* unmanaged[Cdecl]<sbyte*, uint, uint, sbyte*, uint, sbyte*, void*, void>)NativeLibrary.GetExport(NativeLibrary.Load("libs/sokol"), "slog_func");
         Gfx.setup(&desc);
 
+        /* GL setup
         sgl_desc_t gl_desc = default;
         //call our own logger
         gl_desc.logger.func = &Sokol_Logger;
         //call native logger
         // gl_desc.logger.func = (delegate* unmanaged[Cdecl]<sbyte*, uint, uint, sbyte*, uint, sbyte*, void*, void>)NativeLibrary.GetExport(NativeLibrary.Load("libs/sokol"), "slog_func");
         GL.setup(&gl_desc);
+         */
 
+        sgp_desc gp_desc = default;
+        GP.sgp_setup(&gp_desc);
 
         sdtx_desc_t debug_text_desc = default;
         debug_text_desc.fonts.e0 = DebugText.font_kc853();
@@ -125,6 +129,7 @@ public static partial class Engine
         debug_text_desc.fonts.e5 = DebugText.font_oric();
         debug_text_desc.logger.func = &Sokol_Logger;
         DebugText.setup(&debug_text_desc);
+        
         
         // a checkerboard texture
         var checkerboardTexSize = 128;
@@ -154,11 +159,6 @@ public static partial class Engine
         state.checkerboard.width = checkerboardTexSize;
         state.checkerboard.height = checkerboardTexSize;
         
-        // var logo = LoadImage("logo.png", out var imageWidth, out var imageHeight);
-        // state.logo.img = logo;
-        // state.logo.width = imageWidth;
-        // state.logo.height = imageHeight;
-        
         // ... and a sampler
         sg_sampler_desc sample_desc = default;
         sample_desc.min_filter = sg_filter.SG_FILTER_LINEAR;
@@ -167,7 +167,9 @@ public static partial class Engine
         sample_desc.max_anisotropy = 8;
         // sample_desc.mipmap_filter = sg_filter.SG_FILTER_NEAREST;
         state.smp = Gfx.make_sampler(&sample_desc);
+        // GP.sgp_set_sampler(0,state.smp);
         
+        /* GL setup
         var d = Gfx.query_sampler_desc(state.smp);
         Console.WriteLine("init: " + d.mipmap_filter);
         
@@ -185,6 +187,7 @@ public static partial class Engine
         pass_action.colors.e0.clear_value.g = 0f;
         pass_action.colors.e0.clear_value.b = 0f;
         pass_action.colors.e0.clear_value.a = 1.0f;
+        */
         
         Setup?.Invoke();
     }
@@ -197,36 +200,62 @@ public static partial class Engine
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
     private static unsafe void Frame()
     {
-        App.frame_count();
+        var frameCount = App.frame_count();
         // float t = (float)App.frame_duration() * 60.0f;
         float t = (float)App.frame_duration() * 1000.0f;
         // Console.WriteLine($"{t}ms");
         Width = App.width();
         Height = App.height();
         
-        //draw quad
+        
+        /* GL frame
         GL.viewport(0, 0, Width, Height, 1);  
         scale = 1.0f + MathF.Sin(GL.rad(angle_deg)) * 10.5f;
         angle_deg += 1.0f * t;
         GL.defaults();
         GL.enable_texture();
+         */
         
-        Update?.Invoke();
-        foreach (var s in DefaultSystems)
-        {
-            //TODO: need to sort systems by priority
-            if (s is IUpdateSystem us)
-            {
-                us.Update();
-            }
-        }
+        float ratio = Width/(float)Height;
+
+        // Begin recording draw commands for a frame buffer of size (width, height).
+        GP.sgp_begin(Width, Height);
+        // Set frame buffer drawing region to (0,0,width,height).
+        GP.sgp_viewport(0, 0, Width, Height);
+        // Set drawing coordinate space to (left=-ratio, right=ratio, top=1, bottom=-1).
+        GP.sgp_project(-ratio, ratio, 1.0f, -1.0f);
+
+        // Clear the frame buffer.
+        GP.sgp_set_color(0.1f, 0.1f, 0.1f, 1.0f);
+        GP.sgp_clear();
+
+        // Draw an animated rectangle that rotates and changes its colors.
+        double time = frameCount * App.frame_duration();
+        float r = MathF.Sin((float)time)*0.5f+0.5f, g = MathF.Cos((float)time)*0.5f+0.5f;
+        GP.sgp_set_color(r, g, 0.3f, 1.0f);
+        GP.sgp_rotate_at((float)time, 0.0f, 0.0f);
+        GP.sgp_draw_filled_rect(-0.5f, -0.5f, 1.0f, 1.0f);
+        
+        // Update?.Invoke();
+        // foreach (var s in DefaultSystems)
+        // {
+        //     //TODO: need to sort systems by priority
+        //     if (s is IUpdateSystem us)
+        //     {
+        //         us.Update();
+        //     }
+        // }
 
         drawDebugText(DebugFont.C64,$"{t}ms");
 
         fixed (sg_pass_action* pass = &state.pass_action)
         {
             Gfx.begin_default_pass(pass, Width, Height);
-            GL.draw();
+            // GL.draw();
+            // Dispatch all draw commands to Sokol GFX.
+            GP.sgp_flush();
+            // Finish a draw command queue, clearing it.
+            GP.sgp_end();
             DebugText.draw();
             Gfx.end_pass();
             Gfx.commit();
@@ -314,7 +343,6 @@ public static partial class Engine
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
     private static unsafe void Sokol_Logger(sbyte* tag, uint log_level, uint log_item, sbyte* message, uint line_nr, sbyte* filename, void* user_data)
     {
-
         var TagStr = new string(tag); //Marshal.PtrToStringAnsi((IntPtr)tag);
         var MesageStr = new string(message);
         var FilenameStr = new string(filename);
@@ -327,8 +355,8 @@ public static partial class Engine
     private static unsafe void Cleanup()
     {
         // Gfx.destroy_image(image);
-        // GP.sgp_shutdown();
-        GL.shutdown();
+        GP.sgp_shutdown();
+        // GL.shutdown();
         Gfx.shutdown();
     }
     

@@ -6,4 +6,4 @@ sokol_gp_bindgen_helper.h
 --methodClassName
 GP
 --output
-../../../../Dinghy.Core/src/generated/lib/sokol/Sokol_GP.cs
+../../../../Dinghy.Core/src/generated/lib/sokol/Sokol.GP.cs
