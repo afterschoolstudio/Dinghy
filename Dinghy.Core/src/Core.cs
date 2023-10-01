@@ -13,6 +13,7 @@ public static partial class Engine
     static Action Update;
     static Action Setup;
     static InputSystem InputSystem = new InputSystem();
+    public static string DebugTextStr = "";
 
     private static HashSet<DSystem> DefaultSystems = new HashSet<DSystem>()
     {
@@ -118,6 +119,7 @@ public static partial class Engine
          */
 
         sgp_desc gp_desc = default;
+        gp_desc.max_vertices = 1000000;
         GP.sgp_setup(&gp_desc);
 
         sdtx_desc_t debug_text_desc = default;
@@ -223,30 +225,30 @@ public static partial class Engine
         // Set frame buffer drawing region to (0,0,width,height).
         GP.sgp_viewport(0, 0, Width, Height);
         // Set drawing coordinate space to (left=-ratio, right=ratio, top=1, bottom=-1).
-        GP.sgp_project(-ratio, ratio, 1.0f, -1.0f);
+        // GP.sgp_project(-ratio, ratio, 1.0f, -1.0f);
 
         // Clear the frame buffer.
         GP.sgp_set_color(0.1f, 0.1f, 0.1f, 1.0f);
         GP.sgp_clear();
 
         // Draw an animated rectangle that rotates and changes its colors.
-        double time = frameCount * App.frame_duration();
-        float r = MathF.Sin((float)time)*0.5f+0.5f, g = MathF.Cos((float)time)*0.5f+0.5f;
-        GP.sgp_set_color(r, g, 0.3f, 1.0f);
-        GP.sgp_rotate_at((float)time, 0.0f, 0.0f);
-        GP.sgp_draw_filled_rect(-0.5f, -0.5f, 1.0f, 1.0f);
+        // double time = frameCount * App.frame_duration();
+        // float r = MathF.Sin((float)time)*0.5f+0.5f, g = MathF.Cos((float)time)*0.5f+0.5f;
+        // GP.sgp_set_color(r, g, 0.3f, 1.0f);
+        // GP.sgp_rotate_at((float)time, 0.0f, 0.0f);
+        // GP.sgp_draw_filled_rect(-0.5f, -0.5f, 1.0f, 1.0f);
         
-        // Update?.Invoke();
-        // foreach (var s in DefaultSystems)
-        // {
-        //     //TODO: need to sort systems by priority
-        //     if (s is IUpdateSystem us)
-        //     {
-        //         us.Update();
-        //     }
-        // }
+        Update?.Invoke();
+        foreach (var s in DefaultSystems)
+        {
+            //TODO: need to sort systems by priority
+            if (s is IUpdateSystem us)
+            {
+                us.Update();
+            }
+        }
 
-        drawDebugText(DebugFont.C64,$"{t}ms");
+        drawDebugText(DebugFont.C64,$"{t}ms \n {DebugTextStr}");
 
         fixed (sg_pass_action* pass = &state.pass_action)
         {
@@ -296,6 +298,11 @@ public static partial class Engine
 
     public static void DrawTexturedRect(float x, float y, Resources.Image img)
     {
+        GP.sgp_set_blend_mode(sgp_blend_mode.SGP_BLENDMODE_BLEND);
+        GP.sgp_set_image(0,img.internalData.sg_image);
+        GP.sgp_draw_filled_rect(x,y,img.internalData.width,img.internalData.height);
+        
+        /*
         // (float x, float y) clipPos = 
         //     (2f * (x / (Width * App.dpi_scale())),
         //     2f * (y / (Height * App.dpi_scale())));
@@ -331,6 +338,7 @@ public static partial class Engine
         // GL.translate(1f,-1f,0);
         GL.end();
         // GL.pop_matrix();
+        */
     }
 
     public enum LogLevel
@@ -388,7 +396,7 @@ public static partial class Engine
                 int imgx, imgy, channels;
                 // var ok = STB.stbi_info_from_memory(imgptr, fileBytes.Length, &imgx, &imgy, &channels); 
                 // Console.WriteLine($"mem test: {ok}: {imgx} {imgy} {channels}");
-                STB.stbi_set_flip_vertically_on_load(1);
+                // STB.stbi_set_flip_vertically_on_load(1);
                 var stbimg = STB.stbi_load_from_memory(imgptr, fileBytes.Length, &imgx,&imgy, &channels, 4);
                 sg_image_desc stb_img_desc = default;
                 stb_img_desc.width = imgx;

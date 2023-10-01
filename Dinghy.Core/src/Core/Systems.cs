@@ -67,22 +67,23 @@ public class SpriteRenderSystem : RenderSystem
     {
         Engine.World.Query(in query, (in Entity e, ref SpriteRenderer r, ref Position p) =>
         {
-            // PixelCoordinate objectPosition = new(200, 150);
-            PixelCoordinate pivot = new(0, 0);
-            PixelCoordinate pixelCoord = new(p.x, p.y);
-
-            // Transformations
-            // PixelCoordinate translated = Translate(pixelCoord, 50, 50);
-            PixelCoordinate rotated = Rotate(pixelCoord, 0, pivot);
-            PixelCoordinate scaled = Scale(rotated, 1, 1, pivot);
-            ClipSpaceCoordinate clip = ToClipSpace(scaled, pivot);
-            
+            // // PixelCoordinate objectPosition = new(200, 150);
+            // PixelCoordinate pivot = new(0, 0);
+            // PixelCoordinate pixelCoord = new(p.x, p.y);
+            //
+            // // Transformations
+            // // PixelCoordinate translated = Translate(pixelCoord, 50, 50);
+            // PixelCoordinate rotated = Rotate(pixelCoord, 0, pivot);
+            // PixelCoordinate scaled = Scale(rotated, 1, 1, pivot);
+            // /* GL required transforming to clip, GP handles it directly as pixel coords
+            // ClipSpaceCoordinate clip = ToClipSpace(scaled, pivot);
+            // */
             if (!r.ImageResource.loaded)
             {
                 r.ImageResource.Load();
             }
             // Engine.DrawTexturedRect(p.x, p.y,r.ImageResource);
-            Engine.DrawTexturedRect(clip.X, clip.Y,r.ImageResource);
+            Engine.DrawTexturedRect(p.x, p.y,r.ImageResource);
         });
     }
     
