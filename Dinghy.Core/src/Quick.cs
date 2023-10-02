@@ -19,6 +19,17 @@ public static class Quick
         //TODO: maybe set initial frame?
     }
 
+    public static List<Frame> CreateHorizontalFrameSequence(int startX, int startY, int frameWidth, int frameHeight, int frameCount)
+    {
+        List<Frame> frames = new List<Frame>();
+        for (int i = 0; i < frameCount; i++)
+        {
+            frames.Add(new Frame(startX + i * frameWidth, startY, frameWidth, frameHeight));
+        }
+
+        return frames;
+    }
+
     public static Entity Add(EntityData d)
     {
         d.GetEntity(out var e);

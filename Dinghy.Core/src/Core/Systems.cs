@@ -214,7 +214,7 @@ public abstract class AnimationSystem : DSystem, IPreUpdateSystem
 
 public class FrameAnimationSystem : AnimationSystem
 {
-    QueryDescription query = new QueryDescription().WithAll<SpriteRenderer,Animation>();
+    QueryDescription query = new QueryDescription().WithAll<SpriteRenderer,SpriteAnimator>();
     protected override void Animate()
     {
         Engine.World.Query(in query, (in Entity e, ref SpriteRenderer r, ref SpriteAnimator a) =>

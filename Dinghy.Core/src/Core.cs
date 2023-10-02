@@ -320,7 +320,7 @@ public static partial class Engine
             w = 64,
             h = 64
         };
-        GP.sgp_draw_textured_rect(0,dest,src);
+        GP.sgp_draw_textured_rect(0,dest,f.InternalRect);
         // GP.sgp_draw_filled_rect(x,y,img.internalData.width,img.internalData.height);
         GP.sgp_reset_image(0);
         

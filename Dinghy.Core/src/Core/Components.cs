@@ -57,7 +57,7 @@ public record struct SpriteAnimator
         }
     }
 
-    private int animationIndex;
+    private int animationIndex = 0;
     public void TickAnimation()
     {
         animationIndex++;

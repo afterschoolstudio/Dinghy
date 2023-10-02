@@ -13,10 +13,9 @@ void animation()
 {
 	SpriteData conscript_img = new("conscript.png",0,0);
 	var c = Add(conscript_img);
-	// c.Add(new SpriteAnimator(new HashSet<Resources.Animation>()
-	// {
-	// 	new Resources.Animation()
-	// }));
+	c.Add(new SpriteAnimator(new () {
+		new ("test",CreateHorizontalFrameSequence(0,0,64,64,4))
+	}));
 }
 
 void interaction()
