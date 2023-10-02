@@ -37,6 +37,15 @@ public static class Resources
     }
 }
 
-public readonly record struct Frame(int startX, int startY, int width, int height);
+public readonly record struct Frame(int startX, int startY, int width, int height)
+{
+    public readonly Internal.Sokol.sgp_rect InternalRect { get; } = new sgp_rect()
+    {
+        x = startX,
+        y = startY,
+        w = width,
+        h = height
+    };
+}
 
 

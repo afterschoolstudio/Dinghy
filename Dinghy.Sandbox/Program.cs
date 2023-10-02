@@ -2,18 +2,16 @@
 using Dinghy;
 using static Dinghy.Quick;
 
-SpriteData logo_img = new("logo.png",0,0);
-SpriteData conscript_img = new("conscript.png",0,0);
+SpriteData logo_img = new("logo.png");
 
 animation();
 // bunny();
 // interaction();
-
-
 Engine.Run();
 
 void animation()
 {
+	SpriteData conscript_img = new("conscript.png",0,0);
 	var c = Add(conscript_img);
 	// c.Add(new SpriteAnimator(new HashSet<Resources.Animation>()
 	// {

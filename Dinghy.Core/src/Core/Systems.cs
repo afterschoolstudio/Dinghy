@@ -222,7 +222,7 @@ public class FrameAnimationSystem : AnimationSystem
             a.TickAnimation();
             
             //note that there is currently no binding glue to imply that SpriteAnimator will work directly on an attached SpriteRenderer
-            r.UpdateFrame(a.AnimationFrame);
+            r.UpdateFrame(a.CurrentAnimationFrame);
         });
     }
 }

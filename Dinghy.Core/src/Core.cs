@@ -46,7 +46,6 @@ public static partial class Engine
     {
         unsafe
         {
-            // var window_title = "dinghy"u8;
             var window_title = System.Text.Encoding.UTF8.GetBytes(opts.appName);
             fixed (byte* ptr = window_title)
             {
@@ -60,10 +59,7 @@ public static partial class Engine
                 desc.event_cb = &Event;
                 desc.frame_cb = &Frame;
                 desc.cleanup_cb = &Cleanup;
-                //call our own logger
                 desc.logger.func = &Sokol_Logger;
-                //call native logger
-                // desc.logger.func = (delegate* unmanaged[Cdecl]<sbyte*, uint, uint, sbyte*, uint, sbyte*, void*, void>)NativeLibrary.GetExport(NativeLibrary.Load("libs/sokol"), "slog_func");
                 App.run(&desc);
             }
         }
@@ -229,7 +225,7 @@ public static partial class Engine
         // GP.sgp_project(-ratio, ratio, 1.0f, -1.0f);
 
         // Clear the frame buffer.
-        GP.sgp_set_color(0.1f, 0.1f, 0.1f, 1.0f);
+        GP.sgp_set_color(0.5f, 0.5f, 0.5f, 1.0f);
         GP.sgp_clear();
 
         // Draw an animated rectangle that rotates and changes its colors.
@@ -310,7 +306,23 @@ public static partial class Engine
         GP.sgp_set_color(1.0f, 1.0f, 1.0f, 1.0f);
         GP.sgp_set_blend_mode(sgp_blend_mode.SGP_BLENDMODE_BLEND);
         GP.sgp_set_image(0,img.internalData.sg_image);
-        GP.sgp_draw_filled_rect(x,y,img.internalData.width,img.internalData.height);
+        var dest = new sgp_rect() //this is the rect to draw the source "to", basically can scale the rect (maybe do wrapping?)
+        {
+            x = 0,
+            y = 0,
+            w = 64,
+            h = 64
+        };
+        var src = new sgp_rect() //this is the rect index into the text (aka f.InternalRect when hooked up)
+        {
+            x = 0,
+            y = 0,
+            w = 64,
+            h = 64
+        };
+        GP.sgp_draw_textured_rect(0,dest,src);
+        // GP.sgp_draw_filled_rect(x,y,img.internalData.width,img.internalData.height);
+        GP.sgp_reset_image(0);
         
         /*
         // (float x, float y) clipPos = 

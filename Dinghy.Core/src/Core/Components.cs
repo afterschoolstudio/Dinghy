@@ -36,7 +36,7 @@ public record struct SpriteRenderer
 public record struct SpriteAnimator
 {
     public Animation CurrentAnimation { get; private set; }
-    public Frame AnimationFrame => CurrentAnimation.Frames[animationIndex];
+    public Frame CurrentAnimationFrame => CurrentAnimation.Frames[animationIndex];
     public HashSet<Animation> animations { get; set; }
     public SpriteAnimator(HashSet<Animation> animations)
     {
@@ -66,17 +66,6 @@ public record struct SpriteAnimator
             animationIndex = 0;
         }
     }
-}
-public record struct AnimatedSpriteRenderer
-{
-    public Resources.Image ImageResource { get;  set; }
-    public HashSet<Resources.Animation> Animations { get; }
-    public AnimatedSpriteRenderer(string texture, HashSet<Animation> animations, bool alphaIsTransparency = true)
-    {
-        ImageResource = new (texture, alphaIsTransparency);
-        Animations = animations;
-    }
-
 }
 public record struct Position(int x, int y);
 public record struct Velocity (float x, float y);
