@@ -14,8 +14,21 @@ void animation()
 	SpriteData conscript_img = new("conscript.png",0,0);
 	var c = Add(conscript_img);
 	c.Add(new SpriteAnimator(new () {
-		new ("test",CreateHorizontalFrameSequence(0,0,64,64,4),0.6f)
+		new ("test",HorizontalFrameSequence(0,0,64,64,4),0.6f)
 	}));
+	// c.Add(new Velocity());
+	// OnKeyDown += (key) =>  {
+	// 	ref var vel = ref c.Get<Velocity>();
+	// 	(int dx, int dy) v = key switch {
+	// 		Key.LEFT => (-1, 0),
+	// 		Key.RIGHT => (1, 0),
+	// 		Key.UP => (0, -1),
+	// 		Key.DOWN => (0, 1),
+	// 		_ => (0, 0)
+	// 	};
+	// 	vel.x += v.dx;
+	// 	vel.y += v.dy;
+	// };
 }
 
 void interaction()

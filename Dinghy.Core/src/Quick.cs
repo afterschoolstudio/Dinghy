@@ -19,7 +19,7 @@ public static class Quick
         //TODO: maybe set initial frame?
     }
 
-    public static List<Frame> CreateHorizontalFrameSequence(int startX, int startY, int frameWidth, int frameHeight, int frameCount)
+    public static List<Frame> HorizontalFrameSequence(int startX, int startY, int frameWidth, int frameHeight, int frameCount)
     {
         List<Frame> frames = new List<Frame>();
         for (int i = 0; i < frameCount; i++)
