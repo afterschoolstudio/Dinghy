@@ -31,9 +31,10 @@ public static class Resources
             loaded = true;
         }
     }
-    public record Animation(string Name, List<Frame> Frames)
+    public record Animation(string Name, List<Frame> Frames, float animationTime = 1f)
     {
         public int FrameCount { get; } = Frames.Count;
+        public float FrameTime { get; } = animationTime / Frames.Count;
     }
 }
 

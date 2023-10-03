@@ -200,6 +200,7 @@ public static partial class Engine
     private static unsafe void Frame()
     {
         var frameCount = App.frame_count();
+        var dt = App.frame_duration();
         // float t = (float)App.frame_duration() * 60.0f;
         float t = (float)App.frame_duration() * 1000.0f;
         // Console.WriteLine($"{t}ms");
@@ -240,7 +241,7 @@ public static partial class Engine
             //TODO: need to sort systems by priority
             if (s is IPreUpdateSystem us)
             {
-                us.Update();
+                us.Update(dt);
             }
         }
         Update?.Invoke();
@@ -249,7 +250,7 @@ public static partial class Engine
             //TODO: need to sort systems by priority
             if (s is IUpdateSystem us)
             {
-                us.Update();
+                us.Update(dt);
             }
         }
 

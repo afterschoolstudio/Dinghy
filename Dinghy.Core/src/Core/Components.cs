@@ -38,6 +38,8 @@ public record struct SpriteAnimator
     public Animation CurrentAnimation { get; private set; }
     public Frame CurrentAnimationFrame => CurrentAnimation.Frames[animationIndex];
     public HashSet<Animation> animations { get; set; }
+    public double AnimationTime = 0f;
+    public bool AnimationStarted = false;
     public SpriteAnimator(HashSet<Animation> animations)
     {
         this.animations = animations;

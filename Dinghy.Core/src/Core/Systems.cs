@@ -7,17 +7,17 @@ namespace Dinghy;
 public class DSystem {}
 public interface IPreUpdateSystem
 {
-    void Update();
+    void Update(double dt);
 }
 public interface IUpdateSystem
 {
-    void Update();
+    void Update(double dt);
 }
 public class VelocitySystem : DSystem, IUpdateSystem
 {
     QueryDescription query = new QueryDescription().WithAll<Position, Velocity>();      // Should have all specified components
     QueryDescription bunny = new QueryDescription().WithAll<Position, Velocity,BunnyMark>();      // Should have all specified components
-    public void Update()
+    public void Update(double dt)
     {
         Engine.World.Query(in query, (in Entity e, ref Position pos, ref Velocity vel) => {
             pos.x += (int)vel.x;
@@ -57,17 +57,17 @@ public class VelocitySystem : DSystem, IUpdateSystem
 }
 public abstract class RenderSystem : DSystem, IUpdateSystem
 {
-    public void Update()
+    public void Update(double dt)
     {
-        Render();
+        Render(dt);
     }
 
-    protected abstract void Render();
+    protected abstract void Render(double dt);
 }
 public class SpriteRenderSystem : RenderSystem
 {
     QueryDescription query = new QueryDescription().WithAll<Position,SpriteRenderer>();      // Should have all specified components
-    protected override void Render()
+    protected override void Render(double dt)
     {
         Engine.World.Query(in query, (in Entity e, ref SpriteRenderer r, ref Position p) =>
         {
@@ -135,7 +135,7 @@ public class InputSystem : DSystem, IUpdateSystem
         }
     }
     public HashSet<sapp_event> FrameEvents = new HashSet<sapp_event>();
-    public void Update()
+    public void Update(double dt)
     {
         foreach (var e in FrameEvents)
         {
@@ -204,25 +204,37 @@ public class InputSystem : DSystem, IUpdateSystem
 
 public abstract class AnimationSystem : DSystem, IPreUpdateSystem
 {
-    public void Update()
+    public void Update(double dt)
     {
-        Animate();
+        Animate(dt);
     }
 
-    protected abstract void Animate();
+    protected abstract void Animate(double dt);
 }
 
 public class FrameAnimationSystem : AnimationSystem
 {
     QueryDescription query = new QueryDescription().WithAll<SpriteRenderer,SpriteAnimator>();
-    protected override void Animate()
+    protected override void Animate(double dt)
     {
         Engine.World.Query(in query, (in Entity e, ref SpriteRenderer r, ref SpriteAnimator a) =>
         {
-            a.TickAnimation();
-            
-            //note that there is currently no binding glue to imply that SpriteAnimator will work directly on an attached SpriteRenderer
-            r.UpdateFrame(a.CurrentAnimationFrame);
+            if (a.AnimationStarted == false)
+            {
+                //we do this to pump the first animation frame to the renderer so we dont render the whole texture first
+                a.AnimationStarted = true;
+                r.UpdateFrame(a.CurrentAnimationFrame);
+            }
+            else
+            {
+                a.AnimationTime += dt;
+                if (!(a.AnimationTime > a.CurrentAnimation.FrameTime)) return;
+                a.TickAnimation();
+                    
+                //note that there is currently no binding glue to imply that SpriteAnimator will work directly on an attached SpriteRenderer
+                r.UpdateFrame(a.CurrentAnimationFrame);
+                a.AnimationTime = 0;
+            }
         });
     }
 }
