@@ -102,9 +102,21 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "540407edd8ce3be6",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "ecs.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
         ],
-        "currentTab": 7
+        "currentTab": 8
       }
     ],
     "direction": "vertical"
@@ -178,7 +190,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "networking.md",
+                "file": "ecs.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -195,7 +207,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "networking.md",
+                "file": "ecs.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -218,7 +230,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "networking.md"
+                "file": "ecs.md"
               }
             }
           }
@@ -240,10 +252,13 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "109e8f6faa55dfd9",
+  "active": "540407edd8ce3be6",
   "lastOpenFiles": [
-    "ideas.md",
+    "Pasted image 20231005144819.png",
+    "Pasted image 20231005144749.png",
     "networking.md",
+    "ecs.md",
+    "ideas.md",
     "dev/bootstrapper.md",
     "ui/yoga.md",
     "ui/sdf.md",
