@@ -73,50 +73,14 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ui/yoga.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "f1c50e2e9975e5f1",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "ui/sdf.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "109e8f6faa55dfd9",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "networking.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "540407edd8ce3be6",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "ecs.md",
+                "file": "resource pipelines.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
         ],
-        "currentTab": 8
+        "currentTab": 5
       }
     ],
     "direction": "vertical"
@@ -190,7 +154,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "ecs.md",
+                "file": "resource pipelines.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -207,7 +171,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "ecs.md",
+                "file": "resource pipelines.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -230,7 +194,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ecs.md"
+                "file": "resource pipelines.md"
               }
             }
           }
@@ -252,37 +216,38 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "540407edd8ce3be6",
+  "active": "7330355a7f7645ff",
   "lastOpenFiles": [
-    "Pasted image 20231005144819.png",
+    "performance.md",
+    "marketing.md",
+    "ui/yoga.md",
     "Pasted image 20231005144749.png",
+    "Pasted image 20231005144819.png",
+    "ui/sdf.md",
     "networking.md",
     "ecs.md",
-    "ideas.md",
-    "dev/bootstrapper.md",
-    "ui/yoga.md",
-    "ui/sdf.md",
-    "ui/razor refs.md",
-    "resource pipelines.md",
     "builtins.md",
-    "todo.md",
-    "scriban.md",
-    "lygia.md",
-    "how.md",
-    "data description formats.md",
-    "dotnet releaser.md",
+    "resource pipelines.md",
     "dev/manual adds.md",
+    "dev/bootstrapper.md",
     "dev/clangsharppinvokegenerator notes.md",
+    "how.md",
     "references/buildscripts/basic-lib-build.zig.md",
     "references/buildscripts/fips cmake builder.md",
     "references/buildscripts/sokol zig build ref.md",
     "references/buildscripts/sokol dll builder from sokol-samples.md",
+    "lygia.md",
+    "scriban.md",
+    "data description formats.md",
+    "dotnet releaser.md",
+    "ideas.md",
+    "ui/razor refs.md",
     "ui",
+    "todo.md",
     "references/buildscripts.md",
     "references/buildscripts",
     "references",
     "bootstrapper.md",
-    "dev.md",
     "dev"
   ]
 }
