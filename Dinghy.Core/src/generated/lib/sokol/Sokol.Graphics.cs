@@ -67,7 +67,8 @@ public partial struct sg_buffer
         public float a;
     }
 
-    public enum sg_backend
+    [NativeTypeName("unsigned int")]
+    public enum sg_backend : uint
     {
         SG_BACKEND_GLCORE33,
         SG_BACKEND_GLES3,
@@ -79,7 +80,8 @@ public partial struct sg_buffer
         SG_BACKEND_DUMMY,
     }
 
-    public enum sg_pixel_format
+    [NativeTypeName("unsigned int")]
+    public enum sg_pixel_format : uint
     {
         _SG_PIXELFORMAT_DEFAULT,
         SG_PIXELFORMAT_NONE,
@@ -204,7 +206,8 @@ public partial struct sg_buffer
         public int gl_max_combined_texture_image_units;
     }
 
-    public enum sg_resource_state
+    [NativeTypeName("unsigned int")]
+    public enum sg_resource_state : uint
     {
         SG_RESOURCESTATE_INITIAL,
         SG_RESOURCESTATE_ALLOC,
@@ -214,7 +217,8 @@ public partial struct sg_buffer
         _SG_RESOURCESTATE_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_usage
+    [NativeTypeName("unsigned int")]
+    public enum sg_usage : uint
     {
         _SG_USAGE_DEFAULT,
         SG_USAGE_IMMUTABLE,
@@ -224,7 +228,8 @@ public partial struct sg_buffer
         _SG_USAGE_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_buffer_type
+    [NativeTypeName("unsigned int")]
+    public enum sg_buffer_type : uint
     {
         _SG_BUFFERTYPE_DEFAULT,
         SG_BUFFERTYPE_VERTEXBUFFER,
@@ -233,7 +238,8 @@ public partial struct sg_buffer
         _SG_BUFFERTYPE_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_index_type
+    [NativeTypeName("unsigned int")]
+    public enum sg_index_type : uint
     {
         _SG_INDEXTYPE_DEFAULT,
         SG_INDEXTYPE_NONE,
@@ -243,7 +249,8 @@ public partial struct sg_buffer
         _SG_INDEXTYPE_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_image_type
+    [NativeTypeName("unsigned int")]
+    public enum sg_image_type : uint
     {
         _SG_IMAGETYPE_DEFAULT,
         SG_IMAGETYPE_2D,
@@ -254,7 +261,8 @@ public partial struct sg_buffer
         _SG_IMAGETYPE_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_image_sample_type
+    [NativeTypeName("unsigned int")]
+    public enum sg_image_sample_type : uint
     {
         _SG_IMAGESAMPLETYPE_DEFAULT,
         SG_IMAGESAMPLETYPE_FLOAT,
@@ -265,7 +273,8 @@ public partial struct sg_buffer
         _SG_IMAGESAMPLETYPE_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_sampler_type
+    [NativeTypeName("unsigned int")]
+    public enum sg_sampler_type : uint
     {
         _SG_SAMPLERTYPE_DEFAULT,
         SG_SAMPLERTYPE_SAMPLE,
@@ -274,7 +283,8 @@ public partial struct sg_buffer
         _SG_SAMPLERTYPE_FORCE_U32,
     }
 
-    public enum sg_cube_face
+    [NativeTypeName("unsigned int")]
+    public enum sg_cube_face : uint
     {
         SG_CUBEFACE_POS_X,
         SG_CUBEFACE_NEG_X,
@@ -286,14 +296,16 @@ public partial struct sg_buffer
         _SG_CUBEFACE_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_shader_stage
+    [NativeTypeName("unsigned int")]
+    public enum sg_shader_stage : uint
     {
         SG_SHADERSTAGE_VS,
         SG_SHADERSTAGE_FS,
         _SG_SHADERSTAGE_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_primitive_type
+    [NativeTypeName("unsigned int")]
+    public enum sg_primitive_type : uint
     {
         _SG_PRIMITIVETYPE_DEFAULT,
         SG_PRIMITIVETYPE_POINTS,
@@ -305,7 +317,8 @@ public partial struct sg_buffer
         _SG_PRIMITIVETYPE_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_filter
+    [NativeTypeName("unsigned int")]
+    public enum sg_filter : uint
     {
         _SG_FILTER_DEFAULT,
         SG_FILTER_NONE,
@@ -315,7 +328,8 @@ public partial struct sg_buffer
         _SG_FILTER_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_wrap
+    [NativeTypeName("unsigned int")]
+    public enum sg_wrap : uint
     {
         _SG_WRAP_DEFAULT,
         SG_WRAP_REPEAT,
@@ -326,7 +340,8 @@ public partial struct sg_buffer
         _SG_WRAP_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_border_color
+    [NativeTypeName("unsigned int")]
+    public enum sg_border_color : uint
     {
         _SG_BORDERCOLOR_DEFAULT,
         SG_BORDERCOLOR_TRANSPARENT_BLACK,
@@ -336,7 +351,8 @@ public partial struct sg_buffer
         _SG_BORDERCOLOR_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_vertex_format
+    [NativeTypeName("unsigned int")]
+    public enum sg_vertex_format : uint
     {
         SG_VERTEXFORMAT_INVALID,
         SG_VERTEXFORMAT_FLOAT,
@@ -360,7 +376,8 @@ public partial struct sg_buffer
         _SG_VERTEXFORMAT_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_vertex_step
+    [NativeTypeName("unsigned int")]
+    public enum sg_vertex_step : uint
     {
         _SG_VERTEXSTEP_DEFAULT,
         SG_VERTEXSTEP_PER_VERTEX,
@@ -369,7 +386,8 @@ public partial struct sg_buffer
         _SG_VERTEXSTEP_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_uniform_type
+    [NativeTypeName("unsigned int")]
+    public enum sg_uniform_type : uint
     {
         SG_UNIFORMTYPE_INVALID,
         SG_UNIFORMTYPE_FLOAT,
@@ -385,7 +403,8 @@ public partial struct sg_buffer
         _SG_UNIFORMTYPE_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_uniform_layout
+    [NativeTypeName("unsigned int")]
+    public enum sg_uniform_layout : uint
     {
         _SG_UNIFORMLAYOUT_DEFAULT,
         SG_UNIFORMLAYOUT_NATIVE,
@@ -394,7 +413,8 @@ public partial struct sg_buffer
         _SG_UNIFORMLAYOUT_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_cull_mode
+    [NativeTypeName("unsigned int")]
+    public enum sg_cull_mode : uint
     {
         _SG_CULLMODE_DEFAULT,
         SG_CULLMODE_NONE,
@@ -404,7 +424,8 @@ public partial struct sg_buffer
         _SG_CULLMODE_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_face_winding
+    [NativeTypeName("unsigned int")]
+    public enum sg_face_winding : uint
     {
         _SG_FACEWINDING_DEFAULT,
         SG_FACEWINDING_CCW,
@@ -413,7 +434,8 @@ public partial struct sg_buffer
         _SG_FACEWINDING_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_compare_func
+    [NativeTypeName("unsigned int")]
+    public enum sg_compare_func : uint
     {
         _SG_COMPAREFUNC_DEFAULT,
         SG_COMPAREFUNC_NEVER,
@@ -428,7 +450,8 @@ public partial struct sg_buffer
         _SG_COMPAREFUNC_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_stencil_op
+    [NativeTypeName("unsigned int")]
+    public enum sg_stencil_op : uint
     {
         _SG_STENCILOP_DEFAULT,
         SG_STENCILOP_KEEP,
@@ -443,7 +466,8 @@ public partial struct sg_buffer
         _SG_STENCILOP_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_blend_factor
+    [NativeTypeName("unsigned int")]
+    public enum sg_blend_factor : uint
     {
         _SG_BLENDFACTOR_DEFAULT,
         SG_BLENDFACTOR_ZERO,
@@ -465,7 +489,8 @@ public partial struct sg_buffer
         _SG_BLENDFACTOR_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_blend_op
+    [NativeTypeName("unsigned int")]
+    public enum sg_blend_op : uint
     {
         _SG_BLENDOP_DEFAULT,
         SG_BLENDOP_ADD,
@@ -475,7 +500,8 @@ public partial struct sg_buffer
         _SG_BLENDOP_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_color_mask
+    [NativeTypeName("unsigned int")]
+    public enum sg_color_mask : uint
     {
         _SG_COLORMASK_DEFAULT = 0,
         SG_COLORMASK_NONE = 0x10,
@@ -497,7 +523,8 @@ public partial struct sg_buffer
         _SG_COLORMASK_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_load_action
+    [NativeTypeName("unsigned int")]
+    public enum sg_load_action : uint
     {
         _SG_LOADACTION_DEFAULT,
         SG_LOADACTION_CLEAR,
@@ -506,7 +533,8 @@ public partial struct sg_buffer
         _SG_LOADACTION_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_store_action
+    [NativeTypeName("unsigned int")]
+    public enum sg_store_action : uint
     {
         _SG_STOREACTION_DEFAULT,
         SG_STOREACTION_STORE,
@@ -1447,48 +1475,48 @@ public partial struct sg_buffer
     {
         [NativeTypeName("uint32_t")]
         public uint _start_canary;
-    
+
         public sg_shader shader;
-        
+
         public sg_vertex_layout_state layout;
-        
+
         public sg_depth_state depth;
-        
+
         public sg_stencil_state stencil;
-    
+
         public int color_count;
-    
+
         [NativeTypeName("sg_color_target_state[4]")]
         public _colors_e__FixedBuffer colors;
-        
+
         public sg_primitive_type primitive_type;
-        
+
         public sg_index_type index_type;
-        
+
         public sg_cull_mode cull_mode;
-        
+
         public sg_face_winding face_winding;
-    
+
         public int sample_count;
-    
+
         public sg_color blend_color;
-    
+
         [NativeTypeName("bool")]
         public byte alpha_to_coverage_enabled;
-    
+
         [NativeTypeName("const char *")]
         public sbyte* label;
-    
+
         [NativeTypeName("uint32_t")]
         public uint _end_canary;
-    
+
         public partial struct _colors_e__FixedBuffer
         {
             public sg_color_target_state e0;
             public sg_color_target_state e1;
             public sg_color_target_state e2;
             public sg_color_target_state e3;
-        
+
             [UnscopedRef]
             public ref sg_color_target_state this[int index]
             {
@@ -1498,7 +1526,7 @@ public partial struct sg_buffer
                     return ref AsSpan()[index];
                 }
             }
-        
+
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             [UnscopedRef]
             public Span<sg_color_target_state> AsSpan() => MemoryMarshal.CreateSpan(ref e0, 4);
@@ -1820,7 +1848,8 @@ public partial struct sg_buffer
         public sg_slot_info slot;
     }
 
-    public enum sg_log_item
+    [NativeTypeName("unsigned int")]
+    public enum sg_log_item : uint
     {
         SG_LOGITEM_OK,
         SG_LOGITEM_MALLOC_FAILED,
@@ -1857,7 +1886,10 @@ public partial struct sg_buffer
         SG_LOGITEM_D3D11_MAP_FOR_UPDATE_BUFFER_FAILED,
         SG_LOGITEM_D3D11_MAP_FOR_APPEND_BUFFER_FAILED,
         SG_LOGITEM_D3D11_MAP_FOR_UPDATE_IMAGE_FAILED,
+        SG_LOGITEM_METAL_CREATE_BUFFER_FAILED,
         SG_LOGITEM_METAL_TEXTURE_FORMAT_NOT_SUPPORTED,
+        SG_LOGITEM_METAL_CREATE_TEXTURE_FAILED,
+        SG_LOGITEM_METAL_CREATE_SAMPLER_FAILED,
         SG_LOGITEM_METAL_SHADER_COMPILATION_FAILED,
         SG_LOGITEM_METAL_SHADER_CREATION_FAILED,
         SG_LOGITEM_METAL_SHADER_COMPILATION_OUTPUT,
@@ -1865,6 +1897,7 @@ public partial struct sg_buffer
         SG_LOGITEM_METAL_FRAGMENT_SHADER_ENTRY_NOT_FOUND,
         SG_LOGITEM_METAL_CREATE_RPS_FAILED,
         SG_LOGITEM_METAL_CREATE_RPS_OUTPUT,
+        SG_LOGITEM_METAL_CREATE_DSS_FAILED,
         SG_LOGITEM_WGPU_MAP_UNIFORM_BUFFER_FAILED,
         SG_LOGITEM_WGPU_STAGING_BUFFER_FULL_COPY_TO_BUFFER,
         SG_LOGITEM_WGPU_STAGING_BUFFER_FULL_COPY_TO_TEXTURE,
@@ -2127,6 +2160,17 @@ public partial struct sg_buffer
         public void* user_data;
     }
 
+    public unsafe partial struct sg_gl_context_desc
+    {
+        [NativeTypeName("uint32_t (*)()")]
+        public delegate* unmanaged[Cdecl]<uint> default_framebuffer_cb;
+
+        [NativeTypeName("uint32_t (*)(void *)")]
+        public delegate* unmanaged[Cdecl]<void*, uint> default_framebuffer_userdata_cb;
+
+        public void* user_data;
+    }
+
     public partial struct sg_context_desc
     {
         public sg_pixel_format color_format;
@@ -2140,6 +2184,8 @@ public partial struct sg_buffer
         public sg_d3d11_context_desc d3d11;
 
         public sg_wgpu_context_desc wgpu;
+
+        public sg_gl_context_desc gl;
     }
 
     public unsafe partial struct sg_commit_listener
@@ -2153,10 +2199,10 @@ public partial struct sg_buffer
     public unsafe partial struct sg_allocator
     {
         [NativeTypeName("void *(*)(size_t, void *)")]
-        public delegate* unmanaged[Cdecl]<nuint, void*, void*> alloc;
+        public delegate* unmanaged[Cdecl]<nuint, void*, void*> alloc_fn;
 
         [NativeTypeName("void (*)(void *, void *)")]
-        public delegate* unmanaged[Cdecl]<void*, void*, void> free;
+        public delegate* unmanaged[Cdecl]<void*, void*, void> free_fn;
 
         public void* user_data;
     }
@@ -2212,19 +2258,19 @@ public partial struct sg_buffer
 
     public static unsafe partial class Gfx
     {
-        public const int SG_INVALID_ID = 0;
-        public const int SG_NUM_SHADER_STAGES = 2;
-        public const int SG_NUM_INFLIGHT_FRAMES = 2;
-        public const int SG_MAX_COLOR_ATTACHMENTS = 4;
-        public const int SG_MAX_VERTEX_BUFFERS = 8;
-        public const int SG_MAX_SHADERSTAGE_IMAGES = 12;
-        public const int SG_MAX_SHADERSTAGE_SAMPLERS = 8;
-        public const int SG_MAX_SHADERSTAGE_IMAGESAMPLERPAIRS = 12;
-        public const int SG_MAX_SHADERSTAGE_UBS = 4;
-        public const int SG_MAX_UB_MEMBERS = 16;
-        public const int SG_MAX_VERTEX_ATTRIBUTES = 16;
-        public const int SG_MAX_MIPMAPS = 16;
-        public const int SG_MAX_TEXTUREARRAY_LAYERS = 128;
+        public const uint SG_INVALID_ID = 0;
+        public const uint SG_NUM_SHADER_STAGES = 2;
+        public const uint SG_NUM_INFLIGHT_FRAMES = 2;
+        public const uint SG_MAX_COLOR_ATTACHMENTS = 4;
+        public const uint SG_MAX_VERTEX_BUFFERS = 8;
+        public const uint SG_MAX_SHADERSTAGE_IMAGES = 12;
+        public const uint SG_MAX_SHADERSTAGE_SAMPLERS = 8;
+        public const uint SG_MAX_SHADERSTAGE_IMAGESAMPLERPAIRS = 12;
+        public const uint SG_MAX_SHADERSTAGE_UBS = 4;
+        public const uint SG_MAX_UB_MEMBERS = 16;
+        public const uint SG_MAX_VERTEX_ATTRIBUTES = 16;
+        public const uint SG_MAX_MIPMAPS = 16;
+        public const uint SG_MAX_TEXTUREARRAY_LAYERS = 128;
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_setup", ExactSpelling = true)]
         public static extern void setup([NativeTypeName("const sg_desc *")] sg_desc* desc);
@@ -2270,7 +2316,6 @@ public partial struct sg_buffer
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_make_pipeline", ExactSpelling = true)]
         public static extern sg_pipeline make_pipeline([NativeTypeName("const sg_pipeline_desc *")] sg_pipeline_desc* desc);
-        // public static extern sg_pipeline make_pipeline([NativeTypeName("const sg_pipeline_desc *")] IntPtr desc);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_make_pass", ExactSpelling = true)]
         public static extern sg_pass make_pass([NativeTypeName("const sg_pass_desc *")] sg_pass_desc* desc);
