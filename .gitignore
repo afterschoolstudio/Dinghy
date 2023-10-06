@@ -6,3 +6,5 @@ riderModule.iml
 Dinghy.Bootstrapper/libs/sokol/build/zig-cache/
 
 Dinghy.Bootstrapper/libs/stb/build/zig-cache/
+
+Dinghy.Bootstrapper/libs/sokol/build/code
