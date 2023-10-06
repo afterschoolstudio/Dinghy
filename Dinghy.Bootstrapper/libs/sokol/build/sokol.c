@@ -3,11 +3,11 @@
 #define SOKOL_NO_ENTRY
 // #define SOKOL_DEBUG
 
-#define USE_SOKOL_APP
-
-#if defined(_WIN32)
-#define SOKOL_LOG(s) OutputDebugStringA(s)
-#endif
+// #define USE_SOKOL_APP dont need this anymore says floooh - if it breaks uncomment i guess
+//
+// #if defined(_WIN32)
+// #define SOKOL_LOG(s) OutputDebugStringA(s)
+// #endif
 /* sokol 3D-API defines are provided by build options */
 #include "../src/sokol/sokol_app.h"
 #include "../src/sokol/sokol_args.h"
