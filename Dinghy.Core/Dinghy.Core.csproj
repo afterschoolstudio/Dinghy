@@ -53,6 +53,9 @@
       <None Update="libs\sokol.dylib">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="libs\stb.dylib">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>
