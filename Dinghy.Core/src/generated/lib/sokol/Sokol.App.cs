@@ -319,10 +319,10 @@ public enum sapp_event_type
     public unsafe partial struct sapp_allocator
     {
         [NativeTypeName("void *(*)(size_t, void *)")]
-        public delegate* unmanaged[Cdecl]<nuint, void*, void*> alloc;
+        public delegate* unmanaged[Cdecl]<nuint, void*, void*> alloc_fn;
 
         [NativeTypeName("void (*)(void *, void *)")]
-        public delegate* unmanaged[Cdecl]<void*, void*, void> free;
+        public delegate* unmanaged[Cdecl]<void*, void*, void> free_fn;
 
         public void* user_data;
     }
