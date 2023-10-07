@@ -6,7 +6,7 @@ public static class Resources
 {
     static Dictionary<string, LoadedImageResource> LoadedImageResources = new Dictionary<string, LoadedImageResource>();
     public record LoadedImageResource(sg_image sg_image, int width, int height); 
-    public record Image(string texture, bool alphaIsTransparecy)
+    public record Image(string texturePath, bool alphaIsTransparecy)
     {
         public LoadedImageResource internalData { get; private set; }
         public Frame DefaultFrame { get; private set; }
@@ -16,18 +16,18 @@ public static class Resources
         public void Load()
         {
             //we dont load the same image more than once
-            if (LoadedImageResources.TryGetValue(texture, out var loadedResource))
+            if (LoadedImageResources.TryGetValue(texturePath, out var loadedResource))
             {
                 internalData = loadedResource;
                 loaded = true;
                 return;
             }
-            var img = Engine.LoadImage(texture, out var w, out var h);
+            var img = Engine.LoadImage(texturePath, out var w, out var h);
             DefaultFrame = new Frame(0, 0, w, h); //default is the full texture
             // var state = Internal.Sokol.Gfx.query_image_state(img);
             // Console.WriteLine(state);
             internalData = new LoadedImageResource(img,w,h);
-            LoadedImageResources.Add(texture,internalData);
+            LoadedImageResources.Add(texturePath,internalData);
             loaded = true;
         }
     }
