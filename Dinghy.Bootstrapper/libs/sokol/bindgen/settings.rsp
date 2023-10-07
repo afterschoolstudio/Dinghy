@@ -1,5 +1,6 @@
 ﻿@../../../shared/bindgen/base.rsp
 --include-directory
+/Library/Developer/CommandLineTools/usr/lib/clang/13.0.0/include/
 ../src/sokol
 --define-macro
 SOKOL_DLL

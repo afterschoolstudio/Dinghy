@@ -1447,48 +1447,48 @@ public partial struct sg_buffer
     {
         [NativeTypeName("uint32_t")]
         public uint _start_canary;
-    
+
         public sg_shader shader;
-        
+
         public sg_vertex_layout_state layout;
-        
+
         public sg_depth_state depth;
-        
+
         public sg_stencil_state stencil;
-    
+
         public int color_count;
-    
+
         [NativeTypeName("sg_color_target_state[4]")]
         public _colors_e__FixedBuffer colors;
-        
+
         public sg_primitive_type primitive_type;
-        
+
         public sg_index_type index_type;
-        
+
         public sg_cull_mode cull_mode;
-        
+
         public sg_face_winding face_winding;
-    
+
         public int sample_count;
-    
+
         public sg_color blend_color;
-    
+
         [NativeTypeName("bool")]
         public byte alpha_to_coverage_enabled;
-    
+
         [NativeTypeName("const char *")]
         public sbyte* label;
-    
+
         [NativeTypeName("uint32_t")]
         public uint _end_canary;
-    
+
         public partial struct _colors_e__FixedBuffer
         {
             public sg_color_target_state e0;
             public sg_color_target_state e1;
             public sg_color_target_state e2;
             public sg_color_target_state e3;
-        
+
             [UnscopedRef]
             public ref sg_color_target_state this[int index]
             {
@@ -1498,7 +1498,7 @@ public partial struct sg_buffer
                     return ref AsSpan()[index];
                 }
             }
-        
+
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             [UnscopedRef]
             public Span<sg_color_target_state> AsSpan() => MemoryMarshal.CreateSpan(ref e0, 4);
@@ -1857,7 +1857,10 @@ public partial struct sg_buffer
         SG_LOGITEM_D3D11_MAP_FOR_UPDATE_BUFFER_FAILED,
         SG_LOGITEM_D3D11_MAP_FOR_APPEND_BUFFER_FAILED,
         SG_LOGITEM_D3D11_MAP_FOR_UPDATE_IMAGE_FAILED,
+        SG_LOGITEM_METAL_CREATE_BUFFER_FAILED,
         SG_LOGITEM_METAL_TEXTURE_FORMAT_NOT_SUPPORTED,
+        SG_LOGITEM_METAL_CREATE_TEXTURE_FAILED,
+        SG_LOGITEM_METAL_CREATE_SAMPLER_FAILED,
         SG_LOGITEM_METAL_SHADER_COMPILATION_FAILED,
         SG_LOGITEM_METAL_SHADER_CREATION_FAILED,
         SG_LOGITEM_METAL_SHADER_COMPILATION_OUTPUT,
@@ -1865,6 +1868,7 @@ public partial struct sg_buffer
         SG_LOGITEM_METAL_FRAGMENT_SHADER_ENTRY_NOT_FOUND,
         SG_LOGITEM_METAL_CREATE_RPS_FAILED,
         SG_LOGITEM_METAL_CREATE_RPS_OUTPUT,
+        SG_LOGITEM_METAL_CREATE_DSS_FAILED,
         SG_LOGITEM_WGPU_MAP_UNIFORM_BUFFER_FAILED,
         SG_LOGITEM_WGPU_STAGING_BUFFER_FULL_COPY_TO_BUFFER,
         SG_LOGITEM_WGPU_STAGING_BUFFER_FULL_COPY_TO_TEXTURE,
@@ -2127,6 +2131,17 @@ public partial struct sg_buffer
         public void* user_data;
     }
 
+    public unsafe partial struct sg_gl_context_desc
+    {
+        [NativeTypeName("uint32_t (*)()")]
+        public delegate* unmanaged[Cdecl]<uint> default_framebuffer_cb;
+
+        [NativeTypeName("uint32_t (*)(void *)")]
+        public delegate* unmanaged[Cdecl]<void*, uint> default_framebuffer_userdata_cb;
+
+        public void* user_data;
+    }
+
     public partial struct sg_context_desc
     {
         public sg_pixel_format color_format;
@@ -2140,6 +2155,8 @@ public partial struct sg_buffer
         public sg_d3d11_context_desc d3d11;
 
         public sg_wgpu_context_desc wgpu;
+
+        public sg_gl_context_desc gl;
     }
 
     public unsafe partial struct sg_commit_listener
@@ -2153,10 +2170,10 @@ public partial struct sg_buffer
     public unsafe partial struct sg_allocator
     {
         [NativeTypeName("void *(*)(size_t, void *)")]
-        public delegate* unmanaged[Cdecl]<nuint, void*, void*> alloc;
+        public delegate* unmanaged[Cdecl]<nuint, void*, void*> alloc_fn;
 
         [NativeTypeName("void (*)(void *, void *)")]
-        public delegate* unmanaged[Cdecl]<void*, void*, void> free;
+        public delegate* unmanaged[Cdecl]<void*, void*, void> free_fn;
 
         public void* user_data;
     }
@@ -2270,7 +2287,6 @@ public partial struct sg_buffer
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_make_pipeline", ExactSpelling = true)]
         public static extern sg_pipeline make_pipeline([NativeTypeName("const sg_pipeline_desc *")] sg_pipeline_desc* desc);
-        // public static extern sg_pipeline make_pipeline([NativeTypeName("const sg_pipeline_desc *")] IntPtr desc);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_make_pass", ExactSpelling = true)]
         public static extern sg_pass make_pass([NativeTypeName("const sg_pass_desc *")] sg_pass_desc* desc);
