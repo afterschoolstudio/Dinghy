@@ -2,75 +2,96 @@
 using Dinghy;
 using static Dinghy.Quick;
 
-SpriteData logo_img = new("logo.png");
+var conscriptImage = new TextureData("conscript.png");
+var logoImage = new TextureData("logo.png");
 
+texture();
+textureFrame();
 animation();
-// bunny();
-// interaction();
+simpleUpdate();
+interaction();
+bunny();
 Engine.Run();
+
+void texture()
+{
+	SpriteData fullConscript = new(conscriptImage);
+	Add(new Sprite(fullConscript));
+}
+
+void textureFrame()
+{
+	SpriteData conscriptFrame0 = new(conscriptImage, new Frame(0,0,64,64));
+	Add(new Sprite(conscriptFrame0));
+}
 
 void animation()
 {
-	SpriteData conscript_img = new("conscript.png",0,0);
-	var c = Add(conscript_img);
-	c.Add(new SpriteAnimator(new () {
-		new ("test",HorizontalFrameSequence(0,0,64,64,4),0.6f)
-	}));
-	// c.Add(new Velocity());
-	// OnKeyDown += (key) =>  {
-	// 	ref var vel = ref c.Get<Velocity>();
-	// 	(int dx, int dy) v = key switch {
-	// 		Key.LEFT => (-1, 0),
-	// 		Key.RIGHT => (1, 0),
-	// 		Key.UP => (0, -1),
-	// 		Key.DOWN => (0, 1),
-	// 		_ => (0, 0)
-	// 	};
-	// 	vel.x += v.dx;
-	// 	vel.y += v.dy;
-	// };
+	AnimatedSpriteData animatedConscript = new AnimatedSpriteData(
+		conscriptImage,
+		new() { new("test", HorizontalFrameSequence(0, 0, 64, 64, 4),
+			0.4f) });
+	Add(new AnimatedSprite(animatedConscript));
 }
 
-void interaction()
-{ 
-	var logo = Add(logo_img);
-	logo.Add(new Velocity());
-	OnKeyDown += (key) =>  {
-		ref var vel = ref logo.Get<Velocity>();
-		(int dx, int dy) v = key switch {
-			Key.LEFT => (-1, 0),
-			Key.RIGHT => (1, 0),
-			Key.UP => (0, -1),
-			Key.DOWN => (0, 1),
-			_ => (0, 0)
-		};
-		vel.x += v.dx;
-		vel.y += v.dy;
+void simpleUpdate()
+{
+	SpriteData conscriptFrame0 = new(conscriptImage, new Frame(0,0,64,64));
+	var e = Add(new Sprite(conscriptFrame0));
+	Update += () =>
+	{
+		e.X = 0 + (int)MathF.Abs((MathF.Sin((float)Engine.Time) * 100));
 	};
 }
 
+void interaction()
+{
+	AnimatedSpriteData animatedConscript = new AnimatedSpriteData(
+		conscriptImage,
+		new() { new("test", HorizontalFrameSequence(0, 0, 64, 64, 4),
+			0.4f) });
+	var e = Add(new AnimatedSprite(animatedConscript));
+	
+	OnKeyDown += (key) =>  {
+		(float dx, float dy) v = key switch {
+			Key.LEFT => (-1f, 0),
+			Key.RIGHT => (1f, 0),
+			Key.UP => (0, -1f),
+			Key.DOWN => (0, 1f),
+			_ => (0, 0)
+		};
+		e.DX += v.dx;
+		e.DY += v.dy;
+	};
+}
+
+
 void bunny()
 {
+	SpriteData logo = new(logoImage);
 	int bunnies = 50000;
+	TestBunny b = null;
 	for (int i = 0; i < bunnies; i++)
 	{
-		var logo = Add(logo_img);
-		logo.Add(new Velocity(RandFloat() *10,RandFloat()*10-5));
-		logo.Add(new BunnyMark());
+		b = new TestBunny(logo);
+		Add(b);
+		b.SetVelocity(RandFloat() * 10,RandFloat()*10-5);
 	}
 
 	Engine.DebugTextStr = $"{bunnies} buns";
 	int addedbuns = 1000;
 	OnKeyDown += (key) =>  {
-		for (int i = 0; i < addedbuns; i++)
+		if (key == Key.SPACE)
 		{
-			var logo = Add(logo_img);
-			logo.Add(new Velocity(RandFloat() *10,RandFloat()*10-5));
-			logo.Add(new BunnyMark());
+			for (int i = 0; i < addedbuns; i++)
+			{
+				b = new TestBunny(logo);
+				Add(b);
+				b.SetVelocity(RandFloat() * 10,RandFloat()*10-5);
+			}
+			bunnies += addedbuns;
+			Engine.DebugTextStr = $"{bunnies} buns";
 		}
-
-		bunnies += addedbuns;
-		Engine.DebugTextStr = $"{bunnies} buns";
 	};
 }
 

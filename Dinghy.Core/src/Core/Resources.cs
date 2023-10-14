@@ -47,6 +47,14 @@ public readonly record struct Frame(int startX, int startY, int width, int heigh
         w = width,
         h = height
     };
+    
+    public readonly Internal.Sokol.sgp_rect SizeRect { get; } = new sgp_rect()
+    {
+        x = 0,
+        y = 0,
+        w = width,
+        h = height
+    };
 }
 
 

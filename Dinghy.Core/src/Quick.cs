@@ -7,18 +7,6 @@ public static class Quick
     public static Random Random = new System.Random();
     public static int RandInt() => Random.Next();
     public static float RandFloat() => Random.NextSingle();
-    public record SpriteData(string texture,int startX = 0, int startY = 0) : EntityData
-    {
-        public override void GetEntity(out Entity e)
-        {
-            e = Engine.World.Create(
-                new Position(startX, startY), 
-                new SpriteRenderer(texture));
-        }
-        
-        //TODO: maybe set initial frame?
-    }
-
     public static List<Frame> HorizontalFrameSequence(int startX, int startY, int frameWidth, int frameHeight, int frameCount)
     {
         List<Frame> frames = new List<Frame>();
@@ -30,13 +18,17 @@ public static class Quick
         return frames;
     }
 
-    public static Entity Add(EntityData d)
+    public static Dinghy.Entity Add(Dinghy.Entity e)
     {
-        d.GetEntity(out var e);
-        Engine.World.Add<Entity>(e);
+        e.AddToScene();
         return e;
     }
-    
+
+    public static Action Update
+    {
+        get => Engine.Update;
+        set => Engine.Update += value;
+    }
     public static Action<Key> OnKeyDown
     {
         get => InputSystem.Events.Key.Down;

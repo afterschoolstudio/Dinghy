@@ -1,17 +1,43 @@
 ﻿using Arch.Core;
 using Dinghy.Internal.Sokol;
-using static Dinghy.Resources;
 
 namespace Dinghy;
 
 public class DSystem {}
 public interface IPreUpdateSystem
 {
-    void Update(double dt);
+    void PreUpdate(double dt);
 }
 public interface IUpdateSystem
 {
     void Update(double dt);
+}
+public interface IPostUpdateSystem
+{
+    void PostUpdate(double dt);
+}
+
+public class ManagedComponentSystem : DSystem, IPreUpdateSystem, IPostUpdateSystem, IUpdateSystem
+{
+    QueryDescription query = new QueryDescription().WithAll<ManagedComponent>();      // Should have all specified components
+    public void PreUpdate(double dt)
+    {
+        Engine.World.Query(in query, (in Arch.Core.Entity e, ref ManagedComponent c) => {
+            c.managedComponent.PreUpdate();
+        });
+    }
+    public void Update(double dt)
+    {
+        Engine.World.Query(in query, (in Arch.Core.Entity e, ref ManagedComponent c) => {
+            c.managedComponent.Update();
+        });
+    }
+    public void PostUpdate(double dt)
+    {
+        Engine.World.Query(in query, (in Arch.Core.Entity e, ref ManagedComponent c) => {
+            c.managedComponent.PostUpdate();
+        });
+    }
 }
 public class VelocitySystem : DSystem, IUpdateSystem
 {
@@ -19,12 +45,15 @@ public class VelocitySystem : DSystem, IUpdateSystem
     QueryDescription bunny = new QueryDescription().WithAll<Position, Velocity,BunnyMark>();      // Should have all specified components
     public void Update(double dt)
     {
-        Engine.World.Query(in query, (in Entity e, ref Position pos, ref Velocity vel) => {
+        Engine.World.Query(in query, (in Arch.Core.Entity e, ref Position pos, ref Velocity vel) => {
             pos.x += (int)vel.x;
             pos.y += (int)vel.y;
+            //could maybe grab stuff like this at the top of the frame so an entity
+            //has the most recent pos stuff at the start instead of changing it mid frame?
+            Engine.GlobalScene.ECSToManagedEntitiesDict[e.Id].SetPositionRaw(pos.x,pos.y);
         });
         
-        Engine.World.Query(in bunny, (in Entity e, ref Position pos, ref Velocity vel) => {
+        Engine.World.Query(in bunny, (in Arch.Core.Entity e, ref Position pos, ref Velocity vel) => {
             vel.y += 9.8f;
             
             if (pos.x > Engine.Width)
@@ -52,6 +81,7 @@ public class VelocitySystem : DSystem, IUpdateSystem
                 vel.y = 0;
                 pos.y = 0;
             }
+            Engine.GlobalScene.ECSToManagedEntitiesDict[e.Id].SetPositionRaw(pos.x,pos.y);
         });
     }
 }
@@ -69,7 +99,7 @@ public class SpriteRenderSystem : RenderSystem
     QueryDescription query = new QueryDescription().WithAll<Position,SpriteRenderer>();      // Should have all specified components
     protected override void Render(double dt)
     {
-        Engine.World.Query(in query, (in Entity e, ref SpriteRenderer r, ref Position p) =>
+        Engine.World.Query(in query, (in Arch.Core.Entity e, ref SpriteRenderer r, ref Position p) =>
         {
             // // PixelCoordinate objectPosition = new(200, 150);
             // PixelCoordinate pivot = new(0, 0);
@@ -86,7 +116,7 @@ public class SpriteRenderSystem : RenderSystem
             {
                 r.ImageResource.Load();
             }
-            Engine.DrawTexturedRect(p.x, p.y,r.HasAssignedFrame ? r.Frame : r.ImageResource.DefaultFrame,r.ImageResource);
+            Engine.DrawTexturedRect(p.x, p.y,r.Frame,r.ImageResource);
         });
     }
     
@@ -204,7 +234,7 @@ public class InputSystem : DSystem, IUpdateSystem
 
 public abstract class AnimationSystem : DSystem, IPreUpdateSystem
 {
-    public void Update(double dt)
+    public void PreUpdate(double dt)
     {
         Animate(dt);
     }
@@ -217,7 +247,7 @@ public class FrameAnimationSystem : AnimationSystem
     QueryDescription query = new QueryDescription().WithAll<SpriteRenderer,SpriteAnimator>();
     protected override void Animate(double dt)
     {
-        Engine.World.Query(in query, (in Entity e, ref SpriteRenderer r, ref SpriteAnimator a) =>
+        Engine.World.Query(in query, (in Arch.Core.Entity e, ref SpriteRenderer r, ref SpriteAnimator a) =>
         {
             if (a.AnimationStarted == false)
             {

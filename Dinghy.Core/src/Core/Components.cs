@@ -5,25 +5,10 @@ namespace Dinghy;
 public record struct SpriteRenderer
 {
     public Resources.Image ImageResource { get;  set; }
-    private Frame _frame;
-    public Frame Frame
-    {
-        get => _frame;
-        private set
-        {
-            HasAssignedFrame = true;
-            _frame = value;
-        }
-    }
-    public bool HasAssignedFrame { get; private set; } = false;
-    public SpriteRenderer(string texture, bool alphaIsTransparency = true)
+    public Frame Frame { get; private set; }
+    public SpriteRenderer(string texture, Frame r, bool alphaIsTransparency = true)
     {
         ImageResource = new (texture, alphaIsTransparency);
-    }
-
-    public SpriteRenderer(string texture, Frame r, bool alphaIsTransparency = true)
-        : this(texture, alphaIsTransparency)
-    {
         Frame = r;
     }
 
@@ -33,18 +18,13 @@ public record struct SpriteRenderer
     }
 }
 
-public record struct SpriteAnimator
+public record struct SpriteAnimator(HashSet<Animation> animations)
 {
-    public Animation CurrentAnimation { get; private set; }
+    public Animation CurrentAnimation { get; private set; } = animations.First();
     public Frame CurrentAnimationFrame => CurrentAnimation.Frames[animationIndex];
-    public HashSet<Animation> animations { get; set; }
     public double AnimationTime = 0f;
     public bool AnimationStarted = false;
-    public SpriteAnimator(HashSet<Animation> animations)
-    {
-        this.animations = animations;
-        CurrentAnimation = animations.First();
-    }
+
     public void SetAnimation(string name)
     {
         var anim = animations.First(x => x.Name == name);
@@ -69,6 +49,7 @@ public record struct SpriteAnimator
         }
     }
 }
-public record struct Position(int x, int y);
+public record struct Position(int x = 0, int y = 0);
 public record struct Velocity (float x, float y);
+public record ManagedComponent(Component managedComponent);
 public record struct BunnyMark();

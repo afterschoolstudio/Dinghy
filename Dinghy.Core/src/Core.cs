@@ -10,7 +10,7 @@ using Internal.Sokol;
 
 public static partial class Engine
 {
-    static Action Update;
+    public static Action Update;
     static Action Setup;
     static InputSystem InputSystem = new InputSystem();
     public static string DebugTextStr = "";
@@ -20,11 +20,13 @@ public static partial class Engine
         new VelocitySystem(),
         new SpriteRenderSystem(),
         new FrameAnimationSystem(),
+        new ManagedComponentSystem(),
         InputSystem
     };
 
     public static uint idCounter;
     public static World World = World.Create();
+    public static Scene GlobalScene = new Scene();
 
     public record RunOptions(int width, int height, string appName);
 
@@ -196,13 +198,19 @@ public static partial class Engine
 
     private static float angle_deg = 0;
     private static float scale = 0;
+
+    public static ulong FrameCount;
+    public static double DeltaTime;
+    public static double Time;
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
     private static unsafe void Frame()
     {
-        var frameCount = App.frame_count();
+        FrameCount = App.frame_count();
         var dt = App.frame_duration();
+        Time += dt;
+        
         // float t = (float)App.frame_duration() * 60.0f;
-        float t = (float)App.frame_duration() * 1000.0f;
+        float t = (float)dt * 1000.0f;
         // Console.WriteLine($"{t}ms");
         Width = App.width();
         Height = App.height();
@@ -241,7 +249,7 @@ public static partial class Engine
             //TODO: need to sort systems by priority
             if (s is IPreUpdateSystem us)
             {
-                us.Update(dt);
+                us.PreUpdate(dt);
             }
         }
         Update?.Invoke();
@@ -251,6 +259,14 @@ public static partial class Engine
             if (s is IUpdateSystem us)
             {
                 us.Update(dt);
+            }
+        }
+        foreach (var s in DefaultSystems)
+        {
+            //TODO: need to sort systems by priority
+            if (s is IPostUpdateSystem ps)
+            {
+                ps.PostUpdate(dt);
             }
         }
 
@@ -307,23 +323,14 @@ public static partial class Engine
         GP.sgp_set_color(1.0f, 1.0f, 1.0f, 1.0f);
         GP.sgp_set_blend_mode(sgp_blend_mode.SGP_BLENDMODE_BLEND);
         GP.sgp_set_image(0,img.internalData.sg_image);
-        var dest = new sgp_rect() //this is the rect to draw the source "to", basically can scale the rect (maybe do wrapping?)
-        {
-            x = 0,
-            y = 0,
-            w = 64,
-            h = 64
-        };
-        var src = new sgp_rect() //this is the rect index into the text (aka f.InternalRect when hooked up)
-        {
-            x = 0,
-            y = 0,
-            w = 64,
-            h = 64
-        };
         GP.sgp_push_transform();
         GP.sgp_translate(x,y);
-        GP.sgp_draw_textured_rect(0,dest,f.InternalRect);
+        GP.sgp_draw_textured_rect(0,
+            //this is the rect to draw the source "to", basically can scale the rect (maybe do wrapping?)
+            //we assume this is the width and height of the frame itself
+            f.SizeRect,
+            //this is the rect index into the texture itself
+            f.InternalRect);
         GP.sgp_pop_transform();
         // GP.sgp_draw_filled_rect(x,y,img.internalData.width,img.internalData.height);
         GP.sgp_reset_image(0);
@@ -420,8 +427,8 @@ public static partial class Engine
             fixed (byte* imgptr = fileBytes)
             {
                 int imgx, imgy, channels;
-                // var ok = STB.stbi_info_from_memory(imgptr, fileBytes.Length, &imgx, &imgy, &channels); 
-                // Console.WriteLine($"mem test: {ok}: {imgx} {imgy} {channels}");
+                var ok = STB.stbi_info_from_memory(imgptr, fileBytes.Length, &imgx, &imgy, &channels); 
+                Console.WriteLine($"mem test: {ok}: {imgx} {imgy} {channels}");
                 // STB.stbi_set_flip_vertically_on_load(1);
                 var stbimg = STB.stbi_load_from_memory(imgptr, fileBytes.Length, &imgx,&imgy, &channels, 4);
                 sg_image_desc stb_img_desc = default;
