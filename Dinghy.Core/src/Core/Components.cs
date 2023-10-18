@@ -53,3 +53,6 @@ public record struct Position(int x = 0, int y = 0);
 public record struct Velocity (float x, float y);
 public record ManagedComponent(Component managedComponent);
 public record struct BunnyMark();
+public record struct Destroy();
+
+public record struct BasicCollider(Frame f);

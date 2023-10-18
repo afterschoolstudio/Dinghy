@@ -11,16 +11,20 @@ public class Scene
 }
 
 
-public abstract class Entity
+public class Entity
 {
+    public string Name { get; set; } = "entity";
     private int x = 0;
     public int X
     {
         get => x;
         set
         {
-            ref var pos = ref ECSEntity.Get<Position>();
-            pos.x = value;
+            if (AddedToScene)
+            {
+                ref var pos = ref ECSEntity.Get<Position>();
+                pos.x = value;
+            }
             x = value;
         }
     }
@@ -31,8 +35,11 @@ public abstract class Entity
         get => y;
         set
         {
-            ref var pos = ref ECSEntity.Get<Position>();
-            pos.y = value;
+            if (AddedToScene)
+            {
+                ref var pos = ref ECSEntity.Get<Position>();
+                pos.y = value;
+            }
             y = value;
         }
     }
@@ -49,8 +56,11 @@ public abstract class Entity
         get => dx;
         set
         {
-            ref var vel = ref ECSEntity.Get<Velocity>();
-            vel.x = value;
+            if (AddedToScene)
+            {
+                ref var vel = ref ECSEntity.Get<Velocity>();
+                vel.x = value;
+            }
             dx = value;
         }
     }
@@ -61,17 +71,22 @@ public abstract class Entity
         get => dy;
         set
         {
-            ref var vel = ref ECSEntity.Get<Velocity>();
-            vel.y = value;
+            if (AddedToScene)
+            {
+                ref var vel = ref ECSEntity.Get<Velocity>();
+                vel.y = value;
+            }
             dy = value;
         }
     }
     
     public List<Component> Components;
-    protected abstract void AdditionalECSSetup(ref Arch.Core.Entity e);
+    protected virtual void AdditionalECSSetup(ref Arch.Core.Entity e){}
     public Arch.Core.Entity ECSEntity;
+    public bool AddedToScene { get; private set; } = false;
     public void AddToScene(Scene scene = null)
     {
+        if(AddedToScene){return;}
         //all entites this
         ECSEntity = Engine.World.Create(
             new Position(X,Y), 
@@ -87,6 +102,8 @@ public abstract class Entity
         {
             scene.ECSToManagedEntitiesDict.Add(ECSEntity.Id,this);
         }
+
+        AddedToScene = true;
     }
 
     public void Shift(int x, int y)
@@ -105,6 +122,16 @@ public abstract class Entity
         ref var vel = ref ECSEntity.Get<Velocity>();
         vel.x = dx;
         vel.y = dy;
+    }
+
+    public void Destroy()
+    {
+        ECSEntity.Add(new Destroy());
+    }
+
+    public void DestroyImmediate()
+    {
+        //TODO: do destroy logic
     }
 }
 
@@ -161,32 +188,3 @@ public class TestBunny : Entity
         e.Add(new BunnyMark());
     }
 }
-
-public record TextureData(string texturePath);
-public record SpriteData
-{
-    public TextureData TextureData { get; init; }
-    public Frame Frame { get; set; }
-    public SpriteData(TextureData Texture)
-    {
-        TextureData = Texture;
-        //get the default frame from STB (full frame)
-        var fileBytes = File.ReadAllBytes(TextureData.texturePath);
-        unsafe
-        {
-            fixed (byte* imgptr = fileBytes)
-            {
-                int imgx, imgy, channels;
-                var ok = STB.stbi_info_from_memory(imgptr, fileBytes.Length, &imgx, &imgy, &channels);
-                Frame = new Frame(0, 0, imgx, imgy);
-            }
-        }
-    }
-    public SpriteData(TextureData Texture, Frame Frame)
-    {
-        TextureData = Texture;
-        this.Frame = Frame;
-    }
-}
-
-public record AnimatedSpriteData(TextureData TextureData, HashSet<Resources.Animation> Animations);

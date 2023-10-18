@@ -206,11 +206,11 @@ public static partial class Engine
     private static unsafe void Frame()
     {
         FrameCount = App.frame_count();
-        var dt = App.frame_duration();
-        Time += dt;
+        DeltaTime = App.frame_duration();
+        Time += DeltaTime;
         
         // float t = (float)App.frame_duration() * 60.0f;
-        float t = (float)dt * 1000.0f;
+        float t = (float)DeltaTime * 1000.0f;
         // Console.WriteLine($"{t}ms");
         Width = App.width();
         Height = App.height();
@@ -249,7 +249,7 @@ public static partial class Engine
             //TODO: need to sort systems by priority
             if (s is IPreUpdateSystem us)
             {
-                us.PreUpdate(dt);
+                us.PreUpdate(DeltaTime);
             }
         }
         Update?.Invoke();
@@ -258,7 +258,7 @@ public static partial class Engine
             //TODO: need to sort systems by priority
             if (s is IUpdateSystem us)
             {
-                us.Update(dt);
+                us.Update(DeltaTime);
             }
         }
         foreach (var s in DefaultSystems)
@@ -266,7 +266,7 @@ public static partial class Engine
             //TODO: need to sort systems by priority
             if (s is IPostUpdateSystem ps)
             {
-                ps.PostUpdate(dt);
+                ps.PostUpdate(DeltaTime);
             }
         }
 

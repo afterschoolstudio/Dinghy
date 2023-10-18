@@ -5,12 +5,14 @@ using static Dinghy.Quick;
 var conscriptImage = new TextureData("conscript.png");
 var logoImage = new TextureData("logo.png");
 
-texture();
-textureFrame();
-animation();
-simpleUpdate();
-interaction();
-bunny();
+// texture();
+// textureFrame();
+// animation();
+// simpleUpdate();
+// interaction();
+// bunny();
+asteroidsGame();
+
 Engine.Run();
 
 void texture()
@@ -65,11 +67,10 @@ void interaction()
 	};
 }
 
-
 void bunny()
 {
 	SpriteData logo = new(logoImage);
-	int bunnies = 50000;
+	int bunnies = 10000;
 	TestBunny b = null;
 	for (int i = 0; i < bunnies; i++)
 	{
@@ -95,6 +96,52 @@ void bunny()
 	};
 }
 
+void asteroidsGame()
+{
+	SpriteData logo = new(logoImage);
+	SpriteData conscript = new(conscriptImage, new Frame(0,0,64,64));
+	var player = Add(new Sprite(logo){Name = "player"});
+	double bulletCooldown = 0;
+	OnKeyDown += (key) =>  {
+		(float dx, float dy) v = key switch {
+			Key.LEFT => (-1f, 0),
+			Key.RIGHT => (1f, 0),
+			Key.UP => (0, -1f),
+			Key.DOWN => (0, 1f),
+			_ => (0, 0)
+		};
+		player.SetVelocity(player.DX + v.dx, player.DY + v.dy);
+
+		if (key == Key.SPACE && bulletCooldown > 1)
+		{
+			//spawn bullets
+			var a = Add(new Sprite(conscript) {
+				X = player.X, 
+				Y = player.Y
+			});
+			a.SetVelocity(2.5f,0);
+			bulletCooldown = 0f;
+		}
+	};
+
+	double timer = 0;
+	Update += () =>
+	{
+		//spawn asteroids
+		timer += Engine.DeltaTime;
+		bulletCooldown += Engine.DeltaTime;
+		if (timer > 2)
+		{
+			var a = Add(new Sprite(conscript) {
+				X = Engine.Width, 
+				Y = (int)((Engine.Height / 2f) + MathF.Sin(RandFloat() * 2 - 1) * Engine.Height / 2.5f)
+			});
+			a.SetVelocity(-2,0);
+			timer = 0;
+		}
+	};
+}
+
 
 /*
 add(sprite with tex = res.ship)
@@ -103,41 +150,6 @@ add(new sprite(res.ship))
 
 
 ```c#
-using Dinghy;
-using static Dinghy.Engine;
-
-
-Init();
-var ship = new Ship(true);
-var bullets = new List<Bullet>();
-var asteroids = new List<Asteroids>();
-for (int i = 0; i < 10; i++) {
-asteroids.Add(new Asteroid(
-	Screen.Width / 2 + Random(0,Screen.Width),
-	Random(0,Screen.Height),
-	true));
-}
-
-Events.KeyPressed += ((key) =>
-{
-	ship.Shift(key switch {
-		Key.LeftArrow => (-1,0),
-		Key.RightArrow => (1,0),
-		Key.UpArrow => (0,1),
-		Key.DownArrow => (0,-1)
-	_ => (0,0)
-});
-
-
-if(key == Key.Space){
-
-bullets.Add(new Bullet(ship.X,ship.Y,true);
-
-}
-
-}
-
-  
 
 Engine.Update += (() => {
 

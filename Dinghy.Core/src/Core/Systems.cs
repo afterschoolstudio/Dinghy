@@ -16,6 +16,10 @@ public interface IPostUpdateSystem
 {
     void PostUpdate(double dt);
 }
+public interface ICleanupSystem
+{
+    void Cleanup(double dt);
+}
 
 public class ManagedComponentSystem : DSystem, IPreUpdateSystem, IPostUpdateSystem, IUpdateSystem
 {
@@ -267,5 +271,30 @@ public class FrameAnimationSystem : AnimationSystem
             }
         });
     }
+}
+
+public class DestructionSystem : DSystem, ICleanupSystem
+{
+    QueryDescription query = new QueryDescription().WithAll<Destroy>();
+    public void Cleanup(double dt)
+    {
+        Engine.World.Query(in query, (in Arch.Core.Entity e) =>
+        {
+            //TODO: do destroy logic
+        });
+    }
+}
+
+public class BasicCollisionSystem : DSystem, IUpdateSystem
+{
+    QueryDescription query = new QueryDescription().WithAll<BasicCollider,Position>();
+    public void Update(double dt)
+    {
+        Engine.World.Query(in query, (in Arch.Core.Entity e, ref BasicCollider c, ref Position a) =>
+        {
+            
+        });
+    }
+
 }
 
