@@ -21,6 +21,7 @@ public static partial class Engine
         new SpriteRenderSystem(),
         new FrameAnimationSystem(),
         new ManagedComponentSystem(),
+        new DestructionSystem(),
         InputSystem
     };
 

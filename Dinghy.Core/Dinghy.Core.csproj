@@ -14,7 +14,6 @@
 
     <ItemGroup>
       <PackageReference Include="Arch" Version="1.2.6.8-alpha" />
-      <PackageReference Include="StbImageSharp" Version="2.27.13" />
     </ItemGroup>
 
 
@@ -48,12 +47,6 @@
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
       <None Update="libs\stb.pdb">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="libs\sokol.dylib">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="libs\stb.dylib">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>

@@ -14,6 +14,20 @@ public class Scene
 public class Entity
 {
     public string Name { get; set; } = "entity";
+    private bool enabled = true;
+    public bool Enable
+    {
+        get => enabled;
+        set
+        {
+            if (AddedToScene)
+            {
+                ref var s = ref ECSEntity.Get<ActiveState>();
+                s.enabled = value;
+            }
+            enabled = value;
+        }
+    }
     private int x = 0;
     public int X
     {
@@ -82,17 +96,20 @@ public class Entity
     
     public List<Component> Components;
     protected virtual void AdditionalECSSetup(ref Arch.Core.Entity e){}
-    public Arch.Core.Entity ECSEntity;
+    public Arch.Core.EntityReference ECSEntityReference;
+    public Arch.Core.Entity ECSEntity => ECSEntityReference.Entity;
     public bool AddedToScene { get; private set; } = false;
     public void AddToScene(Scene scene = null)
     {
         if(AddedToScene){return;}
         //all entites this
-        ECSEntity = Engine.World.Create(
+        var e = Engine.World.Create(
+            new ActiveState(),
             new Position(X,Y), 
             new Velocity(0,0)
         );
-        AdditionalECSSetup(ref ECSEntity);
+        AdditionalECSSetup(ref e);
+        ECSEntityReference = Engine.World.Reference(e);
         Engine.World.Add<Entity>(ECSEntity);
         if (scene == null)
         {

@@ -280,19 +280,21 @@ public class DestructionSystem : DSystem, ICleanupSystem
     {
         Engine.World.Query(in query, (in Arch.Core.Entity e) =>
         {
-            //TODO: do destroy logic
+            Engine.GlobalScene.ECSToManagedEntitiesDict.Remove(e.Id);
         });
+        Engine.World.Destroy(in query);
     }
 }
 
 public class BasicCollisionSystem : DSystem, IUpdateSystem
 {
-    QueryDescription query = new QueryDescription().WithAll<BasicCollider,Position>();
+    QueryDescription query = new QueryDescription().WithAll<Collider,Position>();
     public void Update(double dt)
     {
-        Engine.World.Query(in query, (in Arch.Core.Entity e, ref BasicCollider c, ref Position a) =>
+        Engine.World.Query(in query, (in Arch.Core.Entity e, ref Collider c, ref Position a) =>
         {
-            
+            //get collider position
+            c.f.
         });
     }
 

@@ -22,4 +22,5 @@
 #include "../src/sokol/sokol_log.h"
 
 #include "../src/sokol/util/sokol_gl.h"
+#include "../src/sokol/util/sokol_color.h"
 #include "../src/sokol/util/sokol_debugtext.h"

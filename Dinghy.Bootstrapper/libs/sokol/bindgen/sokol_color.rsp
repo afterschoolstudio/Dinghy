@@ -1,0 +1,11 @@
+@settings.rsp
+--traverse
+../src/sokol/util/sokol_color.h
+--file
+sokol_color_bindgen_helper.h
+--prefixStrip
+sg_color_
+--methodClassName
+Color
+--output
+../../../../Dinghy.Core/src/generated/lib/sokol/Sokol.Color.cs
