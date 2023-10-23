@@ -1,7 +1,11 @@
-﻿using Arch.Core.Extensions;
+﻿using System.Diagnostics;
+using Arch.Core.Extensions;
 using Dinghy;
+using Volatile;
 using static Dinghy.Quick;
 
+var width = 500;
+var height = 500;
 var conscriptImage = new TextureData("conscript.png");
 var logoImage = new TextureData("logo.png");
 
@@ -11,20 +15,21 @@ var logoImage = new TextureData("logo.png");
 // simpleUpdate();
 // interaction();
 // bunny();
-asteroidsGame();
+// asteroidsGame();
+physics();
 
-Engine.Run();
+Engine.Run(new Engine.RunOptions(width,height,"dinghy"));
 
 void texture()
 {
 	SpriteData fullConscript = new(conscriptImage);
-	Add(new Sprite(fullConscript));
+	new Sprite(fullConscript);
 }
 
 void textureFrame()
 {
 	SpriteData conscriptFrame0 = new(conscriptImage, new Frame(0,0,64,64));
-	Add(new Sprite(conscriptFrame0));
+	new Sprite(conscriptFrame0);
 }
 
 void animation()
@@ -33,13 +38,13 @@ void animation()
 		conscriptImage,
 		new() { new("test", HorizontalFrameSequence(0, 0, 64, 64, 4),
 			0.4f) });
-	Add(new AnimatedSprite(animatedConscript));
+	new AnimatedSprite(animatedConscript);
 }
 
 void simpleUpdate()
 {
 	SpriteData conscriptFrame0 = new(conscriptImage, new Frame(0,0,64,64));
-	var e = Add(new Sprite(conscriptFrame0));
+	var e = new Sprite(conscriptFrame0);
 	Update += () =>
 	{
 		e.X = 0 + (int)MathF.Abs((MathF.Sin((float)Engine.Time) * 100));
@@ -52,7 +57,7 @@ void interaction()
 		conscriptImage,
 		new() { new("test", HorizontalFrameSequence(0, 0, 64, 64, 4),
 			0.4f) });
-	var e = Add(new AnimatedSprite(animatedConscript));
+	var e = new AnimatedSprite(animatedConscript);
 	
 	OnKeyDown += (key) =>  {
 		(float dx, float dy) v = key switch {
@@ -75,7 +80,6 @@ void bunny()
 	for (int i = 0; i < bunnies; i++)
 	{
 		b = new TestBunny(logo);
-		Add(b);
 		b.SetVelocity(RandFloat() * 10,RandFloat()*10-5);
 	}
 
@@ -87,7 +91,6 @@ void bunny()
 			for (int i = 0; i < addedbuns; i++)
 			{
 				b = new TestBunny(logo);
-				Add(b);
 				b.SetVelocity(RandFloat() * 10,RandFloat()*10-5);
 			}
 			bunnies += addedbuns;
@@ -100,7 +103,7 @@ void asteroidsGame()
 {
 	SpriteData logo = new(logoImage);
 	SpriteData conscript = new(conscriptImage, new Frame(0,0,64,64));
-	var player = Add(new Sprite(logo){Name = "player"});
+	var player = new Sprite(logo){Name = "player"};
 	double bulletCooldown = 0;
 	OnKeyDown += (key) =>  {
 		(float dx, float dy) v = key switch {
@@ -115,10 +118,10 @@ void asteroidsGame()
 		if (key == Key.SPACE && bulletCooldown > 1)
 		{
 			//spawn bullets
-			var a = Add(new Sprite(conscript) {
+			var a = new Sprite(conscript) {
 				X = player.X, 
 				Y = player.Y
-			});
+			};
 			a.SetVelocity(2.5f,0);
 			bulletCooldown = 0f;
 		}
@@ -132,14 +135,79 @@ void asteroidsGame()
 		bulletCooldown += Engine.DeltaTime;
 		if (timer > 2)
 		{
-			var a = Add(new Sprite(conscript) {
+			var a = new Sprite(conscript) {
 				X = Engine.Width, 
 				Y = (int)((Engine.Height / 2f) + MathF.Sin(RandFloat() * 2 - 1) * Engine.Height / 2.5f)
-			});
+			};
 			a.SetVelocity(-2,0);
 			timer = 0;
 		}
 	};
+}
+
+void physics()
+{
+	SpriteData conscript = new(conscriptImage, new Frame(0,0,64,64));
+	double timer = 0;
+	VoltConfig.AreaMassRatio = 0.000007f;
+	Dictionary<Sprite, VoltBody> bods = new Dictionary<Sprite, VoltBody>();
+	var bot = new Vector2(0, height / 2f);
+	Setup += () =>
+	{
+		var poly = Engine.PhysicsWorld.CreatePolygonWorldSpace(
+			new Vector2[]
+			{
+				new Vector2(0, height),
+				new Vector2(width, height),
+				new Vector2(width, height + 100),
+				new Vector2(0, height + 100)
+			}, 0f);
+		var bod = Engine.PhysicsWorld.CreateStaticBody(bot, 0f, new[] { poly });
+		bod.Set(bot,0f);
+		Console.WriteLine(bod.IsStatic);
+		Console.WriteLine($"{bod.Position.x},{bod.Position.y}");
+	};
+	
+	Update += () =>
+	{
+		//spawn physics
+		timer += Engine.DeltaTime;
+		if (timer > 0.1)
+		{
+			// var a = new Sprite(conscript) {
+			// 	Y = 0,
+			// 	X = (int)((Engine.Width / 2f) + MathF.Sin(RandFloat() * 2 - 1) * Engine.Width / 2.5f)
+			// };
+			// var startPos = new Vector2(Engine.Width / 2f, Engine.Height / 2f);
+			var startPos = new Vector2(InputSystem.MouseX, InputSystem.MouseY);
+			var a = new Sprite(conscript) {
+				X = (int)startPos.x,
+				Y = (int)startPos.y
+			};
+			var poly = Engine.PhysicsWorld.CreatePolygonWorldSpace(
+				new Vector2[]
+				{
+					new Vector2(startPos.x, startPos.y),
+					new Vector2(startPos.x + 64, startPos.y),
+					new Vector2(startPos.x + 64, startPos.y + 64),
+					new Vector2(startPos.x, startPos.y + 64)
+				},-1f);
+			var bod = Engine.PhysicsWorld.CreateDynamicBody(startPos, 0f, new []{poly});
+			bods.Add(a,bod);
+			// bod.AddForce(new Vector2(0,9.8f));
+			// a.SetVelocity(-2,0);
+			timer = 0;
+		}
+
+		foreach (var b in bods)
+		{
+			b.Value.AddForce(new Vector2(0,9.8f));
+			Console.WriteLine($"{b.Key.ECSEntity.Id} {(int)b.Value.Position.x},{(int)b.Value.Position.y}");
+			b.Key.SetPosition((int)b.Value.Position.x,(int)b.Value.Position.y);
+			// transform.rotation = Quaternion.Euler(0.0f, 0.0f, Mathf.Rad2Deg * this.body.Angle);
+		}
+	};
+	
 }
 
 

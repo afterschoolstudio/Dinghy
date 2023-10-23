@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using Dinghy.Internal.STB;
 using Dinghy.NativeInterop;
 using Arch.Core;
+using Volatile;
 
 namespace Dinghy;
 using Internal.Sokol;
@@ -11,9 +12,10 @@ using Internal.Sokol;
 public static partial class Engine
 {
     public static Action Update;
-    static Action Setup;
+    public static Action Setup;
     static InputSystem InputSystem = new InputSystem();
     public static string DebugTextStr = "";
+    public static Volatile.VoltWorld PhysicsWorld = new VoltWorld();
 
     private static HashSet<DSystem> DefaultSystems = new HashSet<DSystem>()
     {
@@ -190,7 +192,8 @@ public static partial class Engine
         pass_action.colors.e0.clear_value.b = 0f;
         pass_action.colors.e0.clear_value.a = 1.0f;
         */
-        
+        Width = App.width();
+        Height = App.height();
         Setup?.Invoke();
     }
 
@@ -253,6 +256,7 @@ public static partial class Engine
                 us.PreUpdate(DeltaTime);
             }
         }
+        PhysicsWorld.Update();
         Update?.Invoke();
         foreach (var s in DefaultSystems)
         {
