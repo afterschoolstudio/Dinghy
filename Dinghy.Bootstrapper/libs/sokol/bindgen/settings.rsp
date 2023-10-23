@@ -1,5 +1,6 @@
 ﻿@../../../shared/bindgen/base.rsp
 --include-directory
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include
 /Library/Developer/CommandLineTools/usr/lib/clang/13.0.0/include/
 ../src/sokol
 --define-macro

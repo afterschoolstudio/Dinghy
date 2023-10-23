@@ -55,5 +55,4 @@ public record ManagedComponent(Component managedComponent);
 public record struct BunnyMark();
 public readonly record struct Destroy();
 public record struct Collider(Frame f);
-public readonly record struct Enabled();
-public readonly record struct Disable();
+public readonly record struct Active();

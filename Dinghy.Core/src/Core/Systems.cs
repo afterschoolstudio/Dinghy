@@ -23,7 +23,7 @@ public interface ICleanupSystem
 
 public class ManagedComponentSystem : DSystem, IPreUpdateSystem, IPostUpdateSystem, IUpdateSystem
 {
-    QueryDescription query = new QueryDescription().WithAll<ManagedComponent>();      // Should have all specified components
+    QueryDescription query = new QueryDescription().WithAll<Active,ManagedComponent>();      // Should have all specified components
     public void PreUpdate(double dt)
     {
         Engine.World.Query(in query, (in Arch.Core.Entity e, ref ManagedComponent c) => {
@@ -45,8 +45,8 @@ public class ManagedComponentSystem : DSystem, IPreUpdateSystem, IPostUpdateSyst
 }
 public class VelocitySystem : DSystem, IUpdateSystem
 {
-    QueryDescription query = new QueryDescription().WithAll<Position, Velocity>();      // Should have all specified components
-    QueryDescription bunny = new QueryDescription().WithAll<Position, Velocity,BunnyMark>();      // Should have all specified components
+    QueryDescription query = new QueryDescription().WithAll<Active,Position, Velocity>();      // Should have all specified components
+    QueryDescription bunny = new QueryDescription().WithAll<Active,Position, Velocity,BunnyMark>();      // Should have all specified components
     public void Update(double dt)
     {
         Engine.World.Query(in query, (in Arch.Core.Entity e, ref Position pos, ref Velocity vel) => {
@@ -100,7 +100,7 @@ public abstract class RenderSystem : DSystem, IUpdateSystem
 }
 public class SpriteRenderSystem : RenderSystem
 {
-    QueryDescription query = new QueryDescription().WithAll<Position,SpriteRenderer>();      // Should have all specified components
+    QueryDescription query = new QueryDescription().WithAll<Active,Position,SpriteRenderer>();      // Should have all specified components
     protected override void Render(double dt)
     {
         Engine.World.Query(in query, (in Arch.Core.Entity e, ref SpriteRenderer r, ref Position p) =>
@@ -159,6 +159,8 @@ public class SpriteRenderSystem : RenderSystem
 
 public class InputSystem : DSystem, IUpdateSystem
 {
+    public static float MouseX;
+    public static float MouseY;
     public static class Events
     {
         public static class Key
@@ -196,6 +198,8 @@ public class InputSystem : DSystem, IUpdateSystem
                 case sapp_event_type.SAPP_EVENTTYPE_MOUSE_SCROLL:
                     break;
                 case sapp_event_type.SAPP_EVENTTYPE_MOUSE_MOVE:
+                    MouseX = e.mouse_x;
+                    MouseY = e.mouse_y;
                     break;
                 case sapp_event_type.SAPP_EVENTTYPE_MOUSE_ENTER:
                     break;
@@ -248,7 +252,7 @@ public abstract class AnimationSystem : DSystem, IPreUpdateSystem
 
 public class FrameAnimationSystem : AnimationSystem
 {
-    QueryDescription query = new QueryDescription().WithAll<SpriteRenderer,SpriteAnimator>();
+    QueryDescription query = new QueryDescription().WithAll<Active,SpriteRenderer,SpriteAnimator>();
     protected override void Animate(double dt)
     {
         Engine.World.Query(in query, (in Arch.Core.Entity e, ref SpriteRenderer r, ref SpriteAnimator a) =>
@@ -294,7 +298,7 @@ public class BasicCollisionSystem : DSystem, IUpdateSystem
         Engine.World.Query(in query, (in Arch.Core.Entity e, ref Collider c, ref Position a) =>
         {
             //get collider position
-            c.f.
+            // c.f.
         });
     }
 

@@ -18,16 +18,16 @@ public static class Quick
         return frames;
     }
 
-    public static Dinghy.Entity Add(Dinghy.Entity e)
-    {
-        e.AddToScene();
-        return e;
-    }
-
     public static Action Update
     {
         get => Engine.Update;
         set => Engine.Update += value;
+    }
+    
+    public static Action Setup
+    {
+        get => Engine.Setup;
+        set => Engine.Setup += value;
     }
     public static Action<Key> OnKeyDown
     {

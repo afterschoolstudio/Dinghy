@@ -15,15 +15,23 @@ public class Entity
 {
     public string Name { get; set; } = "entity";
     private bool enabled = true;
-    public bool Enable
+    public bool Enabled
     {
         get => enabled;
         set
         {
-            if (AddedToScene)
+            if (value == enabled)
             {
-                ref var s = ref ECSEntity.Get<ActiveState>();
-                s.enabled = value;
+                //do nothing if same
+                return;
+            }
+            if (value)
+            {
+                ECSEntityReference.Entity.Add<Active>();
+            }
+            else
+            {
+                ECSEntityReference.Entity.Remove<Active>();
             }
             enabled = value;
         }
@@ -34,11 +42,8 @@ public class Entity
         get => x;
         set
         {
-            if (AddedToScene)
-            {
-                ref var pos = ref ECSEntity.Get<Position>();
-                pos.x = value;
-            }
+            ref var pos = ref ECSEntity.Get<Position>();
+            pos.x = value;
             x = value;
         }
     }
@@ -49,11 +54,8 @@ public class Entity
         get => y;
         set
         {
-            if (AddedToScene)
-            {
-                ref var pos = ref ECSEntity.Get<Position>();
-                pos.y = value;
-            }
+            ref var pos = ref ECSEntity.Get<Position>();
+            pos.y = value;
             y = value;
         }
     }
@@ -63,6 +65,14 @@ public class Entity
         this.x = x;
         this.y = y;
     }
+
+    public void SetPosition(int x, int y)
+    {
+        ref var pos = ref ECSEntity.Get<Position>();
+        pos.x = x;
+        pos.y = y;
+        SetPositionRaw(x,y);
+    }
     
     private float dx = 0;
     public float DX
@@ -70,11 +80,8 @@ public class Entity
         get => dx;
         set
         {
-            if (AddedToScene)
-            {
-                ref var vel = ref ECSEntity.Get<Velocity>();
-                vel.x = value;
-            }
+            ref var vel = ref ECSEntity.Get<Velocity>();
+            vel.x = value;
             dx = value;
         }
     }
@@ -85,30 +92,33 @@ public class Entity
         get => dy;
         set
         {
-            if (AddedToScene)
-            {
-                ref var vel = ref ECSEntity.Get<Velocity>();
-                vel.y = value;
-            }
+            ref var vel = ref ECSEntity.Get<Velocity>();
+            vel.y = value;
             dy = value;
         }
     }
     
-    public List<Component> Components;
-    protected virtual void AdditionalECSSetup(ref Arch.Core.Entity e){}
+    public List<Component> Components = new List<Component>();
     public Arch.Core.EntityReference ECSEntityReference;
     public Arch.Core.Entity ECSEntity => ECSEntityReference.Entity;
-    public bool AddedToScene { get; private set; } = false;
-    public void AddToScene(Scene scene = null)
+    public Entity(bool startEnabled, Scene? scene = null)
     {
-        if(AddedToScene){return;}
-        //all entites this
-        var e = Engine.World.Create(
-            new ActiveState(),
-            new Position(X,Y), 
-            new Velocity(0,0)
-        );
-        AdditionalECSSetup(ref e);
+        Arch.Core.Entity e;
+        if (startEnabled)
+        {
+            e = Engine.World.Create(
+                new Active(),
+                new Position(X,Y), 
+                new Velocity(0,0)
+            );
+        }
+        else
+        {
+            e = Engine.World.Create(
+                new Position(X,Y), 
+                new Velocity(0,0)
+            );
+        }
         ECSEntityReference = Engine.World.Reference(e);
         Engine.World.Add<Entity>(ECSEntity);
         if (scene == null)
@@ -119,8 +129,6 @@ public class Entity
         {
             scene.ECSToManagedEntitiesDict.Add(ECSEntity.Id,this);
         }
-
-        AddedToScene = true;
     }
 
     public void Shift(int x, int y)
@@ -148,7 +156,8 @@ public class Entity
 
     public void DestroyImmediate()
     {
-        //TODO: do destroy logic
+        Engine.GlobalScene.ECSToManagedEntitiesDict.Remove(ECSEntity.Id);
+        Engine.World.Destroy(ECSEntity);
     }
 }
 
@@ -168,40 +177,33 @@ public class Component
 public class Sprite : Entity
 {
     public SpriteData Data { get; init; }
-    public Sprite(SpriteData spriteData)
+    public Sprite(SpriteData spriteData, bool startEnabled = true) : base(startEnabled)
     {
         Data = spriteData;
-    }
-    protected override void AdditionalECSSetup(ref Arch.Core.Entity e)
-    {
-        e.Add(new SpriteRenderer(Data.TextureData.texturePath,Data.Frame));
+        ECSEntity.Add(new SpriteRenderer(Data.TextureData.texturePath,Data.Frame));
     }
 }
 
 public class AnimatedSprite : Entity
 {
     public AnimatedSpriteData Data { get; init; }
-    public AnimatedSprite(AnimatedSpriteData animatedSpriteData)
+    public AnimatedSprite(AnimatedSpriteData animatedSpriteData, bool startEnabled = true) : base(startEnabled)
     {
         Data = animatedSpriteData;
-    }
-    protected override void AdditionalECSSetup(ref Arch.Core.Entity e)
-    {
-        e.Add(new SpriteRenderer(Data.TextureData.texturePath, Data.Animations.First().Frames[0]));
-        e.Add(new SpriteAnimator(Data.Animations));
+        ECSEntity.Add(
+            new SpriteRenderer(Data.TextureData.texturePath, Data.Animations.First().Frames[0]),
+            new SpriteAnimator(Data.Animations));
     }
 }
 
 public class TestBunny : Entity
 {
     public SpriteData Data { get; init; }
-    public TestBunny(SpriteData spriteData)
+    public TestBunny(SpriteData spriteData, bool startEnabled = true) : base(startEnabled)
     {
         Data = spriteData;
-    }
-    protected override void AdditionalECSSetup(ref Arch.Core.Entity e)
-    {
-        e.Add(new SpriteRenderer(Data.TextureData.texturePath, Data.Frame));
-        e.Add(new BunnyMark());
+        ECSEntity.Add(
+            new SpriteRenderer(Data.TextureData.texturePath, Data.Frame),
+            new BunnyMark());
     }
 }
