@@ -21,6 +21,7 @@ public static partial class Engine
     {
         new VelocitySystem(),
         new SpriteRenderSystem(),
+        new ShapeRenderSystem(),
         new FrameAnimationSystem(),
         new ManagedComponentSystem(),
         new DestructionSystem(),
@@ -240,6 +241,7 @@ public static partial class Engine
         // Clear the frame buffer.
         GP.sgp_set_color(0.5f, 0.5f, 0.5f, 1.0f);
         GP.sgp_clear();
+        GP.sgp_reset_color();
 
         // Draw an animated rectangle that rotates and changes its colors.
         // double time = frameCount * App.frame_duration();
@@ -377,6 +379,19 @@ public static partial class Engine
         GL.end();
         // GL.pop_matrix();
         */
+    }
+    
+    public static void DrawShape(float x, float y, Color c, Frame f)
+    {
+        //argb
+        //rgba
+        GP.sgp_set_color(c.internal_color.g, c.internal_color.b, c.internal_color.a, c.internal_color.r);
+        GP.sgp_set_blend_mode(sgp_blend_mode.SGP_BLENDMODE_NONE);
+        GP.sgp_push_transform();
+        GP.sgp_translate(x,y);
+        GP.sgp_draw_filled_rect(0,0,f.width,f.height);
+        GP.sgp_pop_transform();
+        GP.sgp_reset_color();
     }
 
     public enum LogLevel

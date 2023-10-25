@@ -15,8 +15,11 @@ var logoImage = new TextureData("logo.png");
 // simpleUpdate();
 // interaction();
 // bunny();
-// asteroidsGame();
-physics();
+//asteroidsGame();
+// physics();
+// shape();
+// physicsShape();
+particle();
 
 Engine.Run(new Engine.RunOptions(width,height,"dinghy"));
 
@@ -115,7 +118,7 @@ void asteroidsGame()
 		};
 		player.SetVelocity(player.DX + v.dx, player.DY + v.dy);
 
-		if (key == Key.SPACE && bulletCooldown > 1)
+		if (key == Key.SPACE)
 		{
 			//spawn bullets
 			var a = new Sprite(conscript) {
@@ -158,9 +161,9 @@ void physics()
 			new Vector2[]
 			{
 				new Vector2(0, height),
-				new Vector2(width, height),
+				new Vector2(0, height + 100),
 				new Vector2(width, height + 100),
-				new Vector2(0, height + 100)
+				new Vector2(width, height)
 			}, 0f);
 		var bod = Engine.PhysicsWorld.CreateStaticBody(bot, 0f, new[] { poly });
 		bod.Set(bot,0f);
@@ -188,10 +191,10 @@ void physics()
 				new Vector2[]
 				{
 					new Vector2(startPos.x, startPos.y),
-					new Vector2(startPos.x + 64, startPos.y),
+					new Vector2(startPos.x, startPos.y + 64),
 					new Vector2(startPos.x + 64, startPos.y + 64),
-					new Vector2(startPos.x, startPos.y + 64)
-				},-1f);
+					new Vector2(startPos.x + 64, startPos.y)
+				},1f);
 			var bod = Engine.PhysicsWorld.CreateDynamicBody(startPos, 0f, new []{poly});
 			bods.Add(a,bod);
 			// bod.AddForce(new Vector2(0,9.8f));
@@ -210,7 +213,91 @@ void physics()
 	
 }
 
+void shape()
+{
+	new Shape(new Color(Palettes.ENDESGA[9]));
+}
 
+void physicsShape()
+{
+	double timer = 0;
+	VoltConfig.AreaMassRatio = 0.000007f;
+	Dictionary<Shape, VoltBody> bods = new Dictionary<Shape, VoltBody>();
+	var bot = new Vector2(0, height / 2f);
+	Setup += () =>
+	{
+		var poly = Engine.PhysicsWorld.CreatePolygonWorldSpace(
+			new Vector2[]
+			{
+				new Vector2(0, height),
+				new Vector2(0, height + 100),
+				new Vector2(width, height + 100),
+				new Vector2(width, height)
+			}, 0f);
+		var bod = Engine.PhysicsWorld.CreateStaticBody(bot, 0f, new[] { poly });
+		bod.Set(bot,0f);
+	};
+	
+	Update += () =>
+	{
+		//spawn physics
+		timer += Engine.DeltaTime;
+		if (timer > 0.1)
+		{
+			// var a = new Sprite(conscript) {
+			// 	Y = 0,
+			// 	X = (int)((Engine.Width / 2f) + MathF.Sin(RandFloat() * 2 - 1) * Engine.Width / 2.5f)
+			// };
+			// var startPos = new Vector2(Engine.Width / 2f, Engine.Height / 2f);
+			var startPos = new Vector2(InputSystem.MouseX, InputSystem.MouseY);
+			var a = new Shape(new Color(Palettes.ENDESGA[Quick.Random.Next(Palettes.ENDESGA.Count)])) {
+				X = (int)startPos.x,
+				Y = (int)startPos.y
+			};
+			var poly = Engine.PhysicsWorld.CreatePolygonWorldSpace(
+				new Vector2[]
+				{
+					new Vector2(startPos.x, startPos.y),
+					new Vector2(startPos.x, startPos.y + 32),
+					new Vector2(startPos.x + 32, startPos.y + 32),
+					new Vector2(startPos.x + 32, startPos.y)
+				},1f);
+			var bod = Engine.PhysicsWorld.CreateDynamicBody(startPos, 0f, new []{poly});
+			bods.Add(a,bod);
+			timer = 0;
+		}
+
+		foreach (var b in bods)
+		{
+			b.Value.AddForce(new Vector2(0,9.8f));
+			b.Key.SetPosition((int)b.Value.Position.x,(int)b.Value.Position.y);
+		}
+	};
+}
+
+void particle()
+{
+	double timer = 0;
+	Update += () =>
+	{
+		timer += Engine.DeltaTime;
+		if (timer > 0.0001)
+		{
+			var startPos = new Vector2(InputSystem.MouseX, InputSystem.MouseY);
+			var num = RandFloat();
+			new Shape(new Color(Palettes.ENDESGA[Quick.Random.Next(Palettes.ENDESGA.Count)])) {
+				X = (int)startPos.x,
+				Y = (int)startPos.y,
+				DX = Mathf.Cos((float)Engine.Time / num) * 3,
+				DY = Mathf.Sin((float)Engine.Time / num) * 3,
+			};
+			// a.SetVelocity(-2,0);
+			// Console.WriteLine($"{Mathf.Cos((float)timer)},{Mathf.Sin((float)timer)}");
+			// a.SetVelocity(Mathf.Cos((float)timer) * 2,Mathf.Sin((float)timer) * 2);
+			timer = 0;
+		}
+	};
+}
 /*
 add(sprite with tex = res.ship)
 add(new sprite(res.ship))

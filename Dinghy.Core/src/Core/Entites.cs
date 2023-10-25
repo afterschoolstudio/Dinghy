@@ -1,6 +1,7 @@
 using System.Numerics;
 using Arch.Core;
 using Arch.Core.Extensions;
+using Dinghy.Internal.Sokol;
 using Dinghy.Internal.STB;
 
 namespace Dinghy;
@@ -172,6 +173,26 @@ public class Component
     public virtual void PreUpdate(){}
     public virtual void Update(){}
     public virtual void PostUpdate(){}
+}
+
+public class Shape : Entity
+{
+    private Color c;
+    public Color Color
+    {
+        get => c;
+        set
+        {
+            ref var sr = ref ECSEntity.Get<ShapeRenderer>();
+            sr.Color = value;
+            c = value;
+        }
+    }
+    public Shape(Color color, bool startEnabled = true) : base(startEnabled)
+    {
+        c = color;
+        ECSEntity.Add(new ShapeRenderer(color));
+    }
 }
 
 public class Sprite : Entity
