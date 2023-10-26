@@ -60,19 +60,62 @@ public class Entity
             y = value;
         }
     }
+    
+    private float scaleY = 1;
+    public float ScaleY
+    {
+        get => scaleY;
+        set
+        {
+            ref var pos = ref ECSEntity.Get<Position>();
+            pos.scaleY = value;
+            scaleY = value;
+        }
+    }
+    
+    private float scaleX = 1;
+    public float ScaleX
+    {
+        get => scaleX;
+        set
+        {
+            ref var pos = ref ECSEntity.Get<Position>();
+            pos.scaleX = value;
+            scaleX = value;
+        }
+    }
+    
+    private float rotation = 0;
+    public float Rotation
+    {
+        get => rotation;
+        set
+        {
+            ref var pos = ref ECSEntity.Get<Position>();
+            pos.rotation = value;
+            rotation = value;
+        }
+    }
 
-    public void SetPositionRaw(int x, int y)
+
+    public void SetPositionRaw(int x, int y, float rotation, float scaleX, float scaleY)
     {
         this.x = x;
         this.y = y;
+        this.scaleX = scaleX;
+        this.scaleY = scaleY;
+        this.rotation = rotation;
     }
 
-    public void SetPosition(int x, int y)
+    public void SetPosition(int x, int y, float rotation, float scaleX, float scaleY)
     {
         ref var pos = ref ECSEntity.Get<Position>();
         pos.x = x;
         pos.y = y;
-        SetPositionRaw(x,y);
+        pos.scaleY = scaleY;
+        pos.scaleX = scaleX;
+        pos.rotation = rotation;
+        SetPositionRaw(x,y,rotation,scaleX,scaleY);
     }
     
     private float dx = 0;

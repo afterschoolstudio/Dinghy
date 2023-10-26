@@ -54,7 +54,7 @@ public class VelocitySystem : DSystem, IUpdateSystem
             pos.y = (int)(pos.y + vel.y);
             //could maybe grab stuff like this at the top of the frame so an entity
             //has the most recent pos stuff at the start instead of changing it mid frame?
-            Engine.GlobalScene.ECSToManagedEntitiesDict[e.Id].SetPositionRaw(pos.x,pos.y);
+            Engine.GlobalScene.ECSToManagedEntitiesDict[e.Id].SetPositionRaw(pos.x,pos.y,pos.rotation,pos.scaleX,pos.scaleY);
         });
         
         Engine.World.Query(in bunny, (in Arch.Core.Entity e, ref Position pos, ref Velocity vel) => {
@@ -85,7 +85,7 @@ public class VelocitySystem : DSystem, IUpdateSystem
                 vel.y = 0;
                 pos.y = 0;
             }
-            Engine.GlobalScene.ECSToManagedEntitiesDict[e.Id].SetPositionRaw(pos.x,pos.y);
+            Engine.GlobalScene.ECSToManagedEntitiesDict[e.Id].SetPositionRaw(pos.x,pos.y,pos.rotation,pos.scaleX,pos.scaleY);
         });
     }
 }
@@ -120,7 +120,7 @@ public class SpriteRenderSystem : RenderSystem
             {
                 r.ImageResource.Load();
             }
-            Engine.DrawTexturedRect(p.x, p.y,r.Frame,r.ImageResource);
+            Engine.DrawTexturedRect(p.x, p.y,p.rotation,p.scaleX, p.scaleY,r.Frame,r.ImageResource);
         });
     }
     
@@ -164,41 +164,9 @@ public class ShapeRenderSystem : RenderSystem
     {
         Engine.World.Query(in query, (in Arch.Core.Entity e, ref ShapeRenderer r, ref Position p) =>
         {
-            Engine.DrawShape(p.x, p.y,r.Color, new Frame(0,0,8,8));
+            Engine.DrawShape(p.x, p.y,p.rotation, p.scaleX, p.scaleY, r.Color, new Frame(0,0,8,8));
         });
     }
-    
-    public record struct PixelCoordinate(int X, int Y);
-    public record struct ClipSpaceCoordinate(float X, float Y);
-    public PixelCoordinate Translate(PixelCoordinate point, int dx, int dy) 
-        => new(point.X + dx, point.Y + dy);
-    public PixelCoordinate Rotate(PixelCoordinate point, double angleDegrees, PixelCoordinate pivot)
-    {
-        double angleRadians = Math.PI * angleDegrees / 180.0;
-        int dx = point.X - pivot.X;
-        int dy = point.Y - pivot.Y;
-    
-        int rotatedX = (int)(dx * Math.Cos(angleRadians) - dy * Math.Sin(angleRadians) + pivot.X);
-        int rotatedY = (int)(dx * Math.Sin(angleRadians) + dy * Math.Cos(angleRadians) + pivot.Y);
-    
-        return new(rotatedX, rotatedY);
-    }
-
-    public PixelCoordinate Scale(PixelCoordinate point, double scaleX, double scaleY, PixelCoordinate pivot) 
-        => new((int)((point.X - pivot.X) * scaleX + pivot.X), (int)((point.Y - pivot.Y) * scaleY + pivot.Y));
-
-    public ClipSpaceCoordinate ToClipSpace(PixelCoordinate pixelCoordinate, PixelCoordinate pivot)
-    {
-        int translatedX = pixelCoordinate.X - pivot.X;
-        int translatedY = pixelCoordinate.Y - pivot.Y;
-
-        float x = (translatedX * 2.0f / Engine.Width) - 1.0f;
-        float y = 1.0f - (translatedY * 2.0f / Engine.Height);
-        
-        return new(x, y);
-    }
-
-
 }
 
 public class InputSystem : DSystem, IUpdateSystem

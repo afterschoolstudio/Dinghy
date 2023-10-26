@@ -279,7 +279,7 @@ public static partial class Engine
             }
         }
 
-        drawDebugText(DebugFont.C64,$"{t}ms \n {DebugTextStr}");
+        drawDebugText(DebugFont.C64,$"{t}ms \ne: {GlobalScene.ECSToManagedEntitiesDict.Count} \n {DebugTextStr}");
 
         fixed (sg_pass_action* pass = &state.pass_action)
         {
@@ -327,13 +327,15 @@ public static partial class Engine
         }
     }
 
-    public static void DrawTexturedRect(float x, float y, Frame f, Resources.Image img)
+    public static void DrawTexturedRect(float x, float y, float rotation, float scaleX, float scaleY, Frame f, Resources.Image img)
     {
         GP.sgp_set_color(1.0f, 1.0f, 1.0f, 1.0f);
         GP.sgp_set_blend_mode(sgp_blend_mode.SGP_BLENDMODE_BLEND);
         GP.sgp_set_image(0,img.internalData.sg_image);
         GP.sgp_push_transform();
         GP.sgp_translate(x,y);
+        GP.sgp_rotate_at(rotation, f.width / 2f, f.height / 2f);
+        GP.sgp_scale_at(scaleX, scaleY, f.width / 2f, f.height / 2f);
         GP.sgp_draw_textured_rect(0,
             //this is the rect to draw the source "to", basically can scale the rect (maybe do wrapping?)
             //we assume this is the width and height of the frame itself
@@ -383,7 +385,7 @@ public static partial class Engine
         */
     }
     
-    public static void DrawShape(float x, float y, Color c, Frame f)
+    public static void DrawShape(float x, float y, float rotation, float scaleX, float scaleY, Color c, Frame f)
     {
         //argb
         //rgba
@@ -391,6 +393,8 @@ public static partial class Engine
         GP.sgp_set_blend_mode(sgp_blend_mode.SGP_BLENDMODE_NONE);
         GP.sgp_push_transform();
         GP.sgp_translate(x,y);
+        GP.sgp_rotate_at(rotation, f.width / 2f, f.height / 2f);
+        GP.sgp_scale_at(scaleX, scaleY, f.width / 2f, f.height / 2f);
         GP.sgp_draw_filled_rect(0,0,f.width,f.height);
         GP.sgp_pop_transform();
         GP.sgp_reset_color();

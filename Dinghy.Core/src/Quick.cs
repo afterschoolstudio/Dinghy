@@ -1,4 +1,5 @@
 ﻿using Arch.Core;
+using Volatile;
 
 namespace Dinghy;
 
@@ -8,6 +9,14 @@ public static class Quick
     public static int RandInt() => Random.Next();
     public static float RandFloat() => Random.NextSingle();
     public static double RandDouble() => Random.NextDouble();
+
+    public static Vector2 RandUnitCircle()
+    {
+        var radian = RandDouble() * Math.PI * 2;
+        return new Vector2(
+            (float)Math.Cos(radian),
+            (float)Math.Sin(radian));
+    }
     public static List<Frame> HorizontalFrameSequence(int startX, int startY, int frameWidth, int frameHeight, int frameCount)
     {
         List<Frame> frames = new List<Frame>();

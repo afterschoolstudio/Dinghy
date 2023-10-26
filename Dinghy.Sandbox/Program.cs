@@ -15,7 +15,7 @@ var logoImage = new TextureData("logo.png");
 // simpleUpdate();
 // interaction();
 // bunny();
-//asteroidsGame();
+// asteroidsGame();
 // physics();
 // shape();
 // physicsShape();
@@ -47,10 +47,24 @@ void animation()
 void simpleUpdate()
 {
 	SpriteData conscriptFrame0 = new(conscriptImage, new Frame(0,0,64,64));
-	var e = new Sprite(conscriptFrame0);
+	Sprite e = null;
+	Vector2 startPos = Vector2.zero;
+	Setup += () =>
+	{
+		startPos = new Vector2((Engine.Width / 2f) - 32, (Engine.Height / 2f) - 32);
+		e = new Sprite(conscriptFrame0)
+		{
+			X = (int)startPos.x,
+			Y = (int)startPos.y,
+		};
+	};
 	Update += () =>
 	{
-		e.X = 0 + (int)MathF.Abs((MathF.Sin((float)Engine.Time) * 100));
+		e.X = (int)startPos.x + (int)(Math.Sin(Engine.Time) * 100);
+		e.Rotation = (float)Engine.Time;
+		var scale = (Math.Cos(Engine.Time) * 2);
+		e.ScaleX = (float)scale;
+		e.ScaleY = (float)scale;
 	};
 }
 
@@ -206,7 +220,7 @@ void physics()
 		{
 			b.Value.AddForce(new Vector2(0,9.8f));
 			Console.WriteLine($"{b.Key.ECSEntity.Id} {(int)b.Value.Position.x},{(int)b.Value.Position.y}");
-			b.Key.SetPosition((int)b.Value.Position.x,(int)b.Value.Position.y);
+			b.Key.SetPosition((int)b.Value.Position.x,(int)b.Value.Position.y,b.Value.Angle,b.Key.ScaleX,b.Key.ScaleY);
 			// transform.rotation = Quaternion.Euler(0.0f, 0.0f, Mathf.Rad2Deg * this.body.Angle);
 		}
 	};
@@ -270,7 +284,7 @@ void physicsShape()
 		foreach (var b in bods)
 		{
 			b.Value.AddForce(new Vector2(0,9.8f));
-			b.Key.SetPosition((int)b.Value.Position.x,(int)b.Value.Position.y);
+			b.Key.SetPosition((int)b.Value.Position.x,(int)b.Value.Position.y,b.Value.Angle,b.Key.ScaleX,b.Key.ScaleY);
 		}
 	};
 }
@@ -284,36 +298,13 @@ void particle()
 		if (timer > 0.00001)
 		{
 			var startPos = new Vector2(InputSystem.MouseX, InputSystem.MouseY);
-			var rad = RandDouble() * Math.PI * 2;
-			Vector2 trajectory = new Vector2(
-				(float)Math.Cos(rad),
-				(float)Math.Sin(rad));
+			var rand = RandUnitCircle();
 			new Shape(new Color(Palettes.ENDESGA[Quick.Random.Next(Palettes.ENDESGA.Count)])) {
-			// new Shape(new Color(Palettes.ONE_BIT_MONITOR_GLOW[1])) {
 				X = (int)startPos.x,
 				Y = (int)startPos.y,
-				DX = trajectory.x * 4,
-				DY = trajectory.y * 4
+				DX = rand.x * 4,
+				DY = rand.y * 4
 			};
-			// new Shape(new Color(Palettes.ONE_BIT_MONITOR_GLOW[1]))
-			// {
-			// 	X = (int)startPos.x + 8,
-			// 	Y = (int)startPos.y,
-			// 	DX = trajectory.x * 4,
-			// 	DY = trajectory.y * 4
-			// };
-			// new Shape(new Color(Palettes.ONE_BIT_MONITOR_GLOW[1])) {
-			// 	X = (int)startPos.x + 8,
-			// 	Y = (int)startPos.y + 8,
-			// 	DX = trajectory.x * 4,
-			// 	DY = trajectory.y * 4
-			// };
-			// new Shape(new Color(Palettes.ONE_BIT_MONITOR_GLOW[1])) {
-			// 	X = (int)startPos.x,
-			// 	Y = (int)startPos.y + 8,
-			// 	DX = trajectory.x * 4,
-			// 	DY = trajectory.y * 4
-			// };
 			timer = 0;
 		}
 	};
