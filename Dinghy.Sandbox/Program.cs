@@ -281,23 +281,45 @@ void particle()
 	Update += () =>
 	{
 		timer += Engine.DeltaTime;
-		if (timer > 0.0001)
+		if (timer > 0.00001)
 		{
 			var startPos = new Vector2(InputSystem.MouseX, InputSystem.MouseY);
-			var num = RandFloat();
+			var rad = RandDouble() * Math.PI * 2;
+			Vector2 trajectory = new Vector2(
+				(float)Math.Cos(rad),
+				(float)Math.Sin(rad));
 			new Shape(new Color(Palettes.ENDESGA[Quick.Random.Next(Palettes.ENDESGA.Count)])) {
+			// new Shape(new Color(Palettes.ONE_BIT_MONITOR_GLOW[1])) {
 				X = (int)startPos.x,
 				Y = (int)startPos.y,
-				DX = Mathf.Cos((float)Engine.Time / num) * 3,
-				DY = Mathf.Sin((float)Engine.Time / num) * 3,
+				DX = trajectory.x * 4,
+				DY = trajectory.y * 4
 			};
-			// a.SetVelocity(-2,0);
-			// Console.WriteLine($"{Mathf.Cos((float)timer)},{Mathf.Sin((float)timer)}");
-			// a.SetVelocity(Mathf.Cos((float)timer) * 2,Mathf.Sin((float)timer) * 2);
+			// new Shape(new Color(Palettes.ONE_BIT_MONITOR_GLOW[1]))
+			// {
+			// 	X = (int)startPos.x + 8,
+			// 	Y = (int)startPos.y,
+			// 	DX = trajectory.x * 4,
+			// 	DY = trajectory.y * 4
+			// };
+			// new Shape(new Color(Palettes.ONE_BIT_MONITOR_GLOW[1])) {
+			// 	X = (int)startPos.x + 8,
+			// 	Y = (int)startPos.y + 8,
+			// 	DX = trajectory.x * 4,
+			// 	DY = trajectory.y * 4
+			// };
+			// new Shape(new Color(Palettes.ONE_BIT_MONITOR_GLOW[1])) {
+			// 	X = (int)startPos.x,
+			// 	Y = (int)startPos.y + 8,
+			// 	DX = trajectory.x * 4,
+			// 	DY = trajectory.y * 4
+			// };
 			timer = 0;
 		}
 	};
 }
+
+
 /*
 add(sprite with tex = res.ship)
 add(new sprite(res.ship))

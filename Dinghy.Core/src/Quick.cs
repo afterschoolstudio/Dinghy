@@ -7,6 +7,7 @@ public static class Quick
     public static Random Random = new System.Random();
     public static int RandInt() => Random.Next();
     public static float RandFloat() => Random.NextSingle();
+    public static double RandDouble() => Random.NextDouble();
     public static List<Frame> HorizontalFrameSequence(int startX, int startY, int frameWidth, int frameHeight, int frameCount)
     {
         List<Frame> frames = new List<Frame>();

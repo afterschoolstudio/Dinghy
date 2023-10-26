@@ -164,7 +164,7 @@ public class ShapeRenderSystem : RenderSystem
     {
         Engine.World.Query(in query, (in Arch.Core.Entity e, ref ShapeRenderer r, ref Position p) =>
         {
-            Engine.DrawShape(p.x, p.y,r.Color, new Frame(0,0,32,32));
+            Engine.DrawShape(p.x, p.y,r.Color, new Frame(0,0,8,8));
         });
     }
     

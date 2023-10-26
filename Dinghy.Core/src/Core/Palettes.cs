@@ -40,4 +40,10 @@ public static class Palettes
         0xFFc28569
     };
 
+    public static readonly List<uint> ONE_BIT_MONITOR_GLOW = new()
+    {
+        0x222323FF,
+        0xf0f6f0FF
+    };
+
 }

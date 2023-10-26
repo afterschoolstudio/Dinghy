@@ -16,6 +16,7 @@ public static partial class Engine
     static InputSystem InputSystem = new InputSystem();
     public static string DebugTextStr = "";
     public static Volatile.VoltWorld PhysicsWorld = new VoltWorld();
+    static Color ClearColor = new Color(Palettes.ONE_BIT_MONITOR_GLOW[0]);
 
     private static HashSet<DSystem> DefaultSystems = new HashSet<DSystem>()
     {
@@ -239,7 +240,8 @@ public static partial class Engine
         // GP.sgp_project(-ratio, ratio, 1.0f, -1.0f);
 
         // Clear the frame buffer.
-        GP.sgp_set_color(0.5f, 0.5f, 0.5f, 1.0f);
+        // GP.sgp_set_color(0.5f, 0.5f, 0.5f, 1.0f);
+        GP.sgp_set_color(ClearColor.internal_color.r, ClearColor.internal_color.g, ClearColor.internal_color.b, ClearColor.internal_color.a);
         GP.sgp_clear();
         GP.sgp_reset_color();
 
