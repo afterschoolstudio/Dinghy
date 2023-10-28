@@ -279,7 +279,7 @@ public static partial class Engine
             }
         }
 
-        drawDebugText(DebugFont.C64,$"{t}ms \ne: {GlobalScene.ECSToManagedEntitiesDict.Count} \n {DebugTextStr}");
+        drawDebugText(DebugFont.C64,$"{t}ms \ne: {GlobalScene.Entities.Count} \n {DebugTextStr}");
 
         fixed (sg_pass_action* pass = &state.pass_action)
         {

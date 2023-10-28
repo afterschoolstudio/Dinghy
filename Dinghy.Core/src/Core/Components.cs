@@ -57,3 +57,4 @@ public record struct BunnyMark();
 public readonly record struct Destroy();
 public record struct Collider(Frame f);
 public readonly record struct Active();
+public readonly record struct HasManagedOwner(Dinghy.Entity e);

@@ -8,7 +8,7 @@ namespace Dinghy;
 
 public class Scene
 {
-    public Dictionary<int, Dinghy.Entity> ECSToManagedEntitiesDict = new Dictionary<int, Entity>();
+    public List<Dinghy.Entity> Entities = new List<Dinghy.Entity>();
 }
 
 
@@ -152,6 +152,7 @@ public class Entity
         {
             e = Engine.World.Create(
                 new Active(),
+                new HasManagedOwner(this),
                 new Position(X,Y), 
                 new Velocity(0,0)
             );
@@ -159,6 +160,7 @@ public class Entity
         else
         {
             e = Engine.World.Create(
+                new HasManagedOwner(this),
                 new Position(X,Y), 
                 new Velocity(0,0)
             );
@@ -167,11 +169,11 @@ public class Entity
         Engine.World.Add<Entity>(ECSEntity);
         if (scene == null)
         {
-            Engine.GlobalScene.ECSToManagedEntitiesDict.Add(ECSEntity.Id,this);
+            Engine.GlobalScene.Entities.Add(this);
         }
         else
         {
-            scene.ECSToManagedEntitiesDict.Add(ECSEntity.Id,this);
+            scene.Entities.Add(this);
         }
     }
 
@@ -200,7 +202,7 @@ public class Entity
 
     public void DestroyImmediate()
     {
-        Engine.GlobalScene.ECSToManagedEntitiesDict.Remove(ECSEntity.Id);
+        Engine.GlobalScene.Entities.Remove(this); //TODO: note this assumes a global scene
         Engine.World.Destroy(ECSEntity);
     }
 }

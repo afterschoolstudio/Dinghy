@@ -45,19 +45,19 @@ public class ManagedComponentSystem : DSystem, IPreUpdateSystem, IPostUpdateSyst
 }
 public class VelocitySystem : DSystem, IUpdateSystem
 {
-    QueryDescription query = new QueryDescription().WithAll<Active,Position, Velocity>();      // Should have all specified components
-    QueryDescription bunny = new QueryDescription().WithAll<Active,Position, Velocity,BunnyMark>();      // Should have all specified components
+    QueryDescription query = new QueryDescription().WithAll<Active,HasManagedOwner,Position, Velocity>();      // Should have all specified components
+    QueryDescription bunny = new QueryDescription().WithAll<Active,HasManagedOwner,Position, Velocity,BunnyMark>();      // Should have all specified components
     public void Update(double dt)
     {
-        Engine.World.Query(in query, (in Arch.Core.Entity e, ref Position pos, ref Velocity vel) => {
+        Engine.World.Query(in query, (in Arch.Core.Entity e, ref HasManagedOwner owner, ref Position pos, ref Velocity vel) => {
             pos.x = (int)(pos.x + vel.x);
             pos.y = (int)(pos.y + vel.y);
             //could maybe grab stuff like this at the top of the frame so an entity
             //has the most recent pos stuff at the start instead of changing it mid frame?
-            Engine.GlobalScene.ECSToManagedEntitiesDict[e.Id].SetPositionRaw(pos.x,pos.y,pos.rotation,pos.scaleX,pos.scaleY);
+            owner.e.SetPositionRaw(pos.x,pos.y,pos.rotation,pos.scaleX,pos.scaleY);
         });
         
-        Engine.World.Query(in bunny, (in Arch.Core.Entity e, ref Position pos, ref Velocity vel) => {
+        Engine.World.Query(in bunny, (in Arch.Core.Entity e, ref HasManagedOwner owner,  ref Position pos, ref Velocity vel) => {
             vel.y += 9.8f;
             
             if (pos.x > Engine.Width)
@@ -85,7 +85,7 @@ public class VelocitySystem : DSystem, IUpdateSystem
                 vel.y = 0;
                 pos.y = 0;
             }
-            Engine.GlobalScene.ECSToManagedEntitiesDict[e.Id].SetPositionRaw(pos.x,pos.y,pos.rotation,pos.scaleX,pos.scaleY);
+            owner.e.SetPositionRaw(pos.x,pos.y,pos.rotation,pos.scaleX,pos.scaleY);
         });
     }
 }
@@ -292,11 +292,12 @@ public class FrameAnimationSystem : AnimationSystem
 public class DestructionSystem : DSystem, ICleanupSystem
 {
     QueryDescription query = new QueryDescription().WithAll<Destroy>();
+    QueryDescription managedCleanupQuery = new QueryDescription().WithAll<Destroy>();
     public void Cleanup(double dt)
     {
-        Engine.World.Query(in query, (in Arch.Core.Entity e) =>
+        Engine.World.Query(in managedCleanupQuery, (in Arch.Core.Entity e, ref HasManagedOwner owner) =>
         {
-            Engine.GlobalScene.ECSToManagedEntitiesDict.Remove(e.Id);
+            Engine.GlobalScene.Entities.Remove(owner.e); //TODO: note this assumes a global scene
         });
         Engine.World.Destroy(in query);
     }
