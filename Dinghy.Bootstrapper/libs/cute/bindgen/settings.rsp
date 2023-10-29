@@ -1,0 +1,8 @@
+﻿@../../../shared/bindgen/base.rsp
+--include-directory
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include
+../src/cute_headers
+--namespace
+Dinghy.Internal.Cute
+--libraryPath
+libs/cute

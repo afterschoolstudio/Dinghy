@@ -1,0 +1,9 @@
+@settings.rsp
+--traverse
+../src/cute_headers/cute_c2.h
+--file
+c2_bindgen_helper.h
+--methodClassName
+C2
+--output
+../../../../Dinghy.Core/src/generated/lib/cute/Cute.C2.cs
