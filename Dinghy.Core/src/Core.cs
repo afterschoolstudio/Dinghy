@@ -86,7 +86,7 @@ public static partial class Engine
 
     public struct core_state
     {
-        public sg_pass_action pass_action ;
+        public sg_pass_action pass_action;
         public imageInfo checkerboard;
         public sg_sampler smp;
         public sgl_pipeline alpha_pip;
@@ -98,6 +98,8 @@ public static partial class Engine
         public int height;
         public sg_image img;
     }
+
+    public static bool Clear = true;
 
     public static core_state state = default;
 
@@ -240,10 +242,13 @@ public static partial class Engine
         // GP.sgp_project(-ratio, ratio, 1.0f, -1.0f);
 
         // Clear the frame buffer.
-        // GP.sgp_set_color(0.5f, 0.5f, 0.5f, 1.0f);
-        GP.sgp_set_color(ClearColor.internal_color.r, ClearColor.internal_color.g, ClearColor.internal_color.b, ClearColor.internal_color.a);
-        GP.sgp_clear();
-        GP.sgp_reset_color();
+        if (Clear)
+        {
+            GP.sgp_set_color(ClearColor.internal_color.r, ClearColor.internal_color.g, ClearColor.internal_color.b, ClearColor.internal_color.a);
+            // GP.sgp_set_color(ClearColor.internal_color.r, ClearColor.internal_color.g, ClearColor.internal_color.b, 1f);
+            GP.sgp_clear();
+            GP.sgp_reset_color();
+        }
 
         // Draw an animated rectangle that rotates and changes its colors.
         // double time = frameCount * App.frame_duration();
@@ -281,6 +286,8 @@ public static partial class Engine
 
         drawDebugText(DebugFont.C64,$"{t}ms \ne: {GlobalScene.Entities.Count} \n {DebugTextStr}");
 
+        // setting this to load instead of clear allows us to toggle sokol_gp clearing
+        state.pass_action.colors.e0.load_action = sg_load_action.SG_LOADACTION_LOAD;
         fixed (sg_pass_action* pass = &state.pass_action)
         {
             Gfx.begin_default_pass(pass, Width, Height);

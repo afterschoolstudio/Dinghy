@@ -26,19 +26,19 @@ public class ManagedComponentSystem : DSystem, IPreUpdateSystem, IPostUpdateSyst
     QueryDescription query = new QueryDescription().WithAll<Active,ManagedComponent>();      // Should have all specified components
     public void PreUpdate(double dt)
     {
-        Engine.World.Query(in query, (in Arch.Core.Entity e, ref ManagedComponent c) => {
+        Engine.World.Query(in query, (Arch.Core.Entity e, ref ManagedComponent c) => {
             c.managedComponent.PreUpdate();
         });
     }
     public void Update(double dt)
     {
-        Engine.World.Query(in query, (in Arch.Core.Entity e, ref ManagedComponent c) => {
+        Engine.World.Query(in query, (Arch.Core.Entity e, ref ManagedComponent c) => {
             c.managedComponent.Update();
         });
     }
     public void PostUpdate(double dt)
     {
-        Engine.World.Query(in query, (in Arch.Core.Entity e, ref ManagedComponent c) => {
+        Engine.World.Query(in query, (Arch.Core.Entity e, ref ManagedComponent c) => {
             c.managedComponent.PostUpdate();
         });
     }
@@ -49,7 +49,7 @@ public class VelocitySystem : DSystem, IUpdateSystem
     QueryDescription bunny = new QueryDescription().WithAll<Active,HasManagedOwner,Position, Velocity,BunnyMark>();      // Should have all specified components
     public void Update(double dt)
     {
-        Engine.World.Query(in query, (in Arch.Core.Entity e, ref HasManagedOwner owner, ref Position pos, ref Velocity vel) => {
+        Engine.World.Query(in query, (Arch.Core.Entity e, ref HasManagedOwner owner, ref Position pos, ref Velocity vel) => {
             pos.x = (int)(pos.x + vel.x);
             pos.y = (int)(pos.y + vel.y);
             //could maybe grab stuff like this at the top of the frame so an entity
@@ -57,7 +57,7 @@ public class VelocitySystem : DSystem, IUpdateSystem
             owner.e.SetPositionRaw(pos.x,pos.y,pos.rotation,pos.scaleX,pos.scaleY);
         });
         
-        Engine.World.Query(in bunny, (in Arch.Core.Entity e, ref HasManagedOwner owner,  ref Position pos, ref Velocity vel) => {
+        Engine.World.Query(in bunny, (Arch.Core.Entity e, ref HasManagedOwner owner,  ref Position pos, ref Velocity vel) => {
             vel.y += 9.8f;
             
             if (pos.x > Engine.Width)
@@ -103,7 +103,7 @@ public class SpriteRenderSystem : RenderSystem
     QueryDescription query = new QueryDescription().WithAll<Active,Position,SpriteRenderer>();      // Should have all specified components
     protected override void Render(double dt)
     {
-        Engine.World.Query(in query, (in Arch.Core.Entity e, ref SpriteRenderer r, ref Position p) =>
+        Engine.World.Query(in query, (Arch.Core.Entity e, ref SpriteRenderer r, ref Position p) =>
         {
             // // PixelCoordinate objectPosition = new(200, 150);
             // PixelCoordinate pivot = new(0, 0);
@@ -162,7 +162,7 @@ public class ShapeRenderSystem : RenderSystem
     QueryDescription query = new QueryDescription().WithAll<Active,Position,ShapeRenderer>();      // Should have all specified components
     protected override void Render(double dt)
     {
-        Engine.World.Query(in query, (in Arch.Core.Entity e, ref ShapeRenderer r, ref Position p) =>
+        Engine.World.Query(in query, (Arch.Core.Entity e, ref ShapeRenderer r, ref Position p) =>
         {
             Engine.DrawShape(p.x, p.y,p.rotation, p.scaleX, p.scaleY, r.Color, new Frame(0,0,8,8));
         });
@@ -267,7 +267,7 @@ public class FrameAnimationSystem : AnimationSystem
     QueryDescription query = new QueryDescription().WithAll<Active,SpriteRenderer,SpriteAnimator>();
     protected override void Animate(double dt)
     {
-        Engine.World.Query(in query, (in Arch.Core.Entity e, ref SpriteRenderer r, ref SpriteAnimator a) =>
+        Engine.World.Query(in query, (Arch.Core.Entity e, ref SpriteRenderer r, ref SpriteAnimator a) =>
         {
             if (a.AnimationStarted == false)
             {
@@ -295,7 +295,7 @@ public class DestructionSystem : DSystem, ICleanupSystem
     QueryDescription managedCleanupQuery = new QueryDescription().WithAll<Destroy>();
     public void Cleanup(double dt)
     {
-        Engine.World.Query(in managedCleanupQuery, (in Arch.Core.Entity e, ref HasManagedOwner owner) =>
+        Engine.World.Query(in managedCleanupQuery, (Arch.Core.Entity e, ref HasManagedOwner owner) =>
         {
             Engine.GlobalScene.Entities.Remove(owner.e); //TODO: note this assumes a global scene
         });
@@ -308,7 +308,7 @@ public class BasicCollisionSystem : DSystem, IUpdateSystem
     QueryDescription query = new QueryDescription().WithAll<Collider,Position>();
     public void Update(double dt)
     {
-        Engine.World.Query(in query, (in Arch.Core.Entity e, ref Collider c, ref Position a) =>
+        Engine.World.Query(in query, (Arch.Core.Entity e, ref Collider c, ref Position a) =>
         {
             //get collider position
             // c.f.

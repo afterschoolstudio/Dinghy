@@ -2,6 +2,8 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Dinghy.Bootstrapper/libs/cute/src/cute_headers" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Dinghy.Bootstrapper/libs/cute/src/cute_headers/player2d" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Dinghy.Bootstrapper/libs/sokol/src/sokol" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Dinghy.Bootstrapper/libs/sokol/src/sokol_gp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Dinghy.Bootstrapper/libs/stb/src/stb" vcs="Git" />

@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using Arch.Core.Extensions;
 using Dinghy;
+using Dinghy.Collision;
+using Dinghy.Core;
 using Volatile;
 using static Dinghy.Quick;
 
@@ -19,7 +21,8 @@ var logoImage = new TextureData("logo.png");
 // physics();
 // shape();
 // physicsShape();
-particle();
+// particle();
+collision();;
 
 Engine.Run(new Engine.RunOptions(width,height,"dinghy"));
 
@@ -292,6 +295,12 @@ void physicsShape()
 void particle()
 {
 	double timer = 0;
+	OnKeyDown += (key) =>  {
+		if (key == Key.C)
+		{
+			Engine.Clear = !Engine.Clear;
+		}
+	};
 	Update += () =>
 	{
 		timer += Engine.DeltaTime;
@@ -308,6 +317,40 @@ void particle()
 			timer = 0;
 		}
 	};
+}
+
+void collision()
+{
+	//shapes default 8x8
+	var pointer = new Shape(new Color(Palettes.ENDESGA[9]));
+	var col = new Shape(new Color(Palettes.ENDESGA[7]))
+	{
+		X = 100,
+		Y = 100
+	};
+	var col_poly = new Polygon(4, GetPolyPoints(col.X, col.Y, 8, 8));
+	var id = new Checks.Transform2D(0, 0, 0);
+	Update += () =>
+	{
+		pointer.SetPosition((int)InputSystem.MouseX,(int)InputSystem.MouseY,0,1,1);
+		var pointer_poly = new Polygon(4, GetPolyPoints((int)InputSystem.MouseX, (int)InputSystem.MouseY, 8, 8));
+		Console.WriteLine(Checks.CheckCollision(pointer_poly, id, col_poly, id));
+		var m = Checks.GetManifold(pointer_poly, id, col_poly, id);
+		Console.WriteLine(m.count);
+		Console.WriteLine($"{m.contact_points.e0.x},{m.contact_points.e0.y}");
+		Console.WriteLine($"{m.contact_points.e1.x},{m.contact_points.e1.y}");
+	};
+
+	Point[] GetPolyPoints(int x, int y, int w, int h)
+	{
+		return new []
+		{
+			new Point(x, y),
+			new Point(x + w, y),
+			new Point(x + w, y + h),
+			new Point(x, y + h)
+		};
+	}
 }
 
 
