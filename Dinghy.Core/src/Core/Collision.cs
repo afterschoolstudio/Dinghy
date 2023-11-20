@@ -6,6 +6,11 @@ namespace Dinghy.Collision;
 
 public static class Checks
 {
+    //TODO:
+    //wrap these:
+    //C2.c2Collide();
+    //C2.c2Collided();
+    
     public class Transform2D(int x, int y, float r)
     {
         public int X { get; } = x;
@@ -31,8 +36,6 @@ public static class Checks
             {
                 // c = C2.c2PolytoPoly(a_ptr, &ac2x, b_ptr, &bc2x);
                 c = C2.c2PolytoPoly(a_ptr, null, b_ptr, null);
-                // C2.c2Collide();
-                // C2.c2Collided();
             }
         }
         return c > 0;
@@ -53,6 +56,14 @@ public static class Checks
             }
         }
         return manifold;
+    }
+}
+
+public static class Utils
+{
+    public static Polygon GetEntityPolygon<T>(T e) where T : Entity, IHasSize
+    {
+        return new Polygon(4,Core.Utils.GetEntityBounds(e));
     }
 }
 

@@ -9,4 +9,10 @@ public class Color
     {
         internal_color = Internal.Sokol.Color.sg_make_color_1i(hex);
     }
+    
+    public static implicit operator Color(uint c)
+    {
+        return new Color(c);
+    }
+    
 }

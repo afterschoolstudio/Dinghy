@@ -1,6 +1,7 @@
 using System.Numerics;
 using Arch.Core;
 using Arch.Core.Extensions;
+using Dinghy.Core;
 using Dinghy.Internal.Sokol;
 using Dinghy.Internal.STB;
 
@@ -220,9 +221,31 @@ public class Component
     public virtual void PostUpdate(){}
 }
 
-public class Shape : Entity
+public class Shape : Entity, IHasSize
 {
     private Color c;
+    private float height = 0;
+    public float Height
+    {
+        get => height;
+        set
+        {
+            ref var r = ref ECSEntity.Get<ShapeRenderer>();
+            r.Height = value;
+            height = value;
+        }
+    }
+    private float width = 0;
+    public float Width
+    {
+        get => width;
+        set
+        {
+            ref var r = ref ECSEntity.Get<ShapeRenderer>();
+            r.Width = value;
+            width = value;
+        }
+    }
     public Color Color
     {
         get => c;
@@ -233,10 +256,11 @@ public class Shape : Entity
             c = value;
         }
     }
-    public Shape(Color color, bool startEnabled = true) : base(startEnabled)
+    public Shape(Color color, int width = 32, int height = 32, bool startEnabled = true) : base(startEnabled)
     {
         c = color;
-        ECSEntity.Add(new ShapeRenderer(color));
+        ECSEntity.Add(new ShapeRenderer(color,width,height));
+        ECSEntity.Add(new Collider());
     }
 }
 

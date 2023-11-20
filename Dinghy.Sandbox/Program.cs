@@ -5,6 +5,7 @@ using Dinghy.Collision;
 using Dinghy.Core;
 using Volatile;
 using static Dinghy.Quick;
+using Utils = Dinghy.Collision.Utils;
 
 var width = 500;
 var height = 500;
@@ -322,18 +323,27 @@ void particle()
 void collision()
 {
 	//shapes default 8x8
-	var pointer = new Shape(new Color(Palettes.ENDESGA[9]));
-	var col = new Shape(new Color(Palettes.ENDESGA[7]))
+	Color pointer_col = Palettes.ENDESGA[9];
+	Color no_collide = Palettes.ENDESGA[7];
+	Color collide = Palettes.ENDESGA[3];
+	var pointer = new Shape(pointer_col);
+	var static_collider = new Shape(no_collide)
 	{
 		X = 100,
 		Y = 100
 	};
-	var col_poly = new Polygon(4, GetPolyPoints(col.X, col.Y, 8, 8));
+	var col_poly = new Polygon(4, GetPolyPoints(static_collider.X, static_collider.Y, 32, 32));
+	// var col_poly = Utils.GetEntityPolygon(static_collider);
 	var id = new Checks.Transform2D(0, 0, 0);
 	Update += () =>
 	{
 		pointer.SetPosition((int)InputSystem.MouseX,(int)InputSystem.MouseY,0,1,1);
-		var pointer_poly = new Polygon(4, GetPolyPoints((int)InputSystem.MouseX, (int)InputSystem.MouseY, 8, 8));
+		var pointer_poly = new Polygon(4, GetPolyPoints((int)InputSystem.MouseX, (int)InputSystem.MouseY, 32, 32));
+		// var pointer_poly = Utils.GetEntityPolygon(pointer);
+		static_collider.Color = Checks.CheckCollision(pointer_poly, id, col_poly, id)
+			? collide
+			: no_collide;
+		
 		Console.WriteLine(Checks.CheckCollision(pointer_poly, id, col_poly, id));
 		var m = Checks.GetManifold(pointer_poly, id, col_poly, id);
 		Console.WriteLine(m.count);

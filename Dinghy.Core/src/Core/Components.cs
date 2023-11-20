@@ -18,7 +18,7 @@ public record struct SpriteRenderer
     }
 }
 
-public record struct ShapeRenderer(Color Color);
+public record struct ShapeRenderer(Color Color, float Width, float Height);
 public record struct SpriteAnimator(HashSet<Animation> animations)
 {
     public Animation CurrentAnimation { get; private set; } = animations.First();
