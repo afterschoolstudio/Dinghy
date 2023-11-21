@@ -322,45 +322,33 @@ void particle()
 
 void collision()
 {
-	//shapes default 8x8
 	Color pointer_col = Palettes.ENDESGA[9];
 	Color no_collide = Palettes.ENDESGA[7];
 	Color collide = Palettes.ENDESGA[3];
-	var pointer = new Shape(pointer_col);
+	
+	var pointer = new Shape(pointer_col){Name = "pointer",Width = 10, Height = 10};
 	var static_collider = new Shape(no_collide)
 	{
+		Name = "static_collider",
 		X = 100,
 		Y = 100
 	};
-	var col_poly = new Polygon(4, GetPolyPoints(static_collider.X, static_collider.Y, 32, 32));
-	// var col_poly = Utils.GetEntityPolygon(static_collider);
-	var id = new Checks.Transform2D(0, 0, 0);
+	double timer = 0;
 	Update += () =>
 	{
+		static_collider.Rotation = (float)Engine.Time;
+		Console.WriteLine(static_collider.Width);
+		Console.WriteLine(static_collider.Height);
 		pointer.SetPosition((int)InputSystem.MouseX,(int)InputSystem.MouseY,0,1,1);
-		var pointer_poly = new Polygon(4, GetPolyPoints((int)InputSystem.MouseX, (int)InputSystem.MouseY, 32, 32));
-		// var pointer_poly = Utils.GetEntityPolygon(pointer);
-		static_collider.Color = Checks.CheckCollision(pointer_poly, id, col_poly, id)
+		static_collider.Color = Checks.CheckCollision(pointer, static_collider)
 			? collide
 			: no_collide;
 		
-		Console.WriteLine(Checks.CheckCollision(pointer_poly, id, col_poly, id));
-		var m = Checks.GetManifold(pointer_poly, id, col_poly, id);
-		Console.WriteLine(m.count);
-		Console.WriteLine($"{m.contact_points.e0.x},{m.contact_points.e0.y}");
-		Console.WriteLine($"{m.contact_points.e1.x},{m.contact_points.e1.y}");
+		// var m = Checks.GetManifold(pointer_poly, pointer, col_poly, static_collider);
+		// Console.WriteLine(m.count);
+		// Console.WriteLine($"{m.contact_points.e0.x},{m.contact_points.e0.y}");
+		// Console.WriteLine($"{m.contact_points.e1.x},{m.contact_points.e1.y}");
 	};
-
-	Point[] GetPolyPoints(int x, int y, int w, int h)
-	{
-		return new []
-		{
-			new Point(x, y),
-			new Point(x + w, y),
-			new Point(x + w, y + h),
-			new Point(x, y + h)
-		};
-	}
 }
 
 

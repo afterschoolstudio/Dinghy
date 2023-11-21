@@ -1,9 +1,12 @@
 using System.Numerics;
 using Arch.Core;
 using Arch.Core.Extensions;
+using Dinghy.Collision;
 using Dinghy.Core;
+using Dinghy.Internal.Cute;
 using Dinghy.Internal.Sokol;
 using Dinghy.Internal.STB;
+using Volatile;
 
 namespace Dinghy;
 
@@ -206,6 +209,10 @@ public class Entity
         Engine.GlobalScene.Entities.Remove(this); //TODO: note this assumes a global scene
         Engine.World.Destroy(ECSEntity);
     }
+
+    public static implicit operator Checks.Transform2D(Entity e) =>
+        new Checks.Transform2D(0, 0, e.Rotation);
+        // new Checks.Transform2D(e.X, e.Y, e.Rotation); //we assume world space
 }
 
 public class Component
@@ -259,6 +266,8 @@ public class Shape : Entity, IHasSize
     public Shape(Color color, int width = 32, int height = 32, bool startEnabled = true) : base(startEnabled)
     {
         c = color;
+        this.width = width;
+        this.height = height;
         ECSEntity.Add(new ShapeRenderer(color,width,height));
         ECSEntity.Add(new Collider());
     }

@@ -10,6 +10,7 @@ public static class Checks
     //wrap these:
     //C2.c2Collide();
     //C2.c2Collided();
+    public static readonly Transform2D Identity = new Transform2D(0, 0, 0);
     
     public class Transform2D(int x, int y, float r)
     {
@@ -23,36 +24,46 @@ public static class Checks
                 r = new c2r(){c = Mathf.Cos(d.R),s = Mathf.Sin(d.R)}
             };
     }
-    
-    public static bool CheckCollision(Polygon a, Transform2D at, Polygon b, Transform2D bt)
+
+    public static bool CheckCollision<T>(T a, T b) where T : Entity, IHasSize
     {
-        int c = 0;
+        var ap = Utils.GetEntityPolygon(a);
+        Console.WriteLine($"{a.Name}: X: {a.X} Y: {a.Y} W: {a.Width} H: {a.Height}");
+        var bp = Utils.GetEntityPolygon(b);
+        Console.WriteLine($"{b.Name}: X: {b.X} Y: {b.Y} W: {b.Width} H: {b.Height}");
+        return CheckCollision(ap, a, bp, b);
+    }
+    
+    static bool CheckCollision(Polygon a, Transform2D at, Polygon b, Transform2D bt)
+    {
+        var c = 0;
+        c2x ac2x = at;
+        c2x bc2x = bt;
+        
         unsafe
         {
-            
-            c2x ac2x = at;
-            c2x bc2x = bt;
+            c2x ci = Identity;
+            c2x* cptr = &ci;
             fixed (c2Poly* a_ptr = &a.poly, b_ptr = &b.poly)
             {
-                // c = C2.c2PolytoPoly(a_ptr, &ac2x, b_ptr, &bc2x);
-                c = C2.c2PolytoPoly(a_ptr, null, b_ptr, null);
+                c = C2.c2PolytoPoly(a_ptr, &ac2x, b_ptr, &bc2x); //not working due to rotation matrix stuff
+                // c = C2.c2PolytoPoly(a_ptr, null, b_ptr, null); //working
+                // c = C2.c2PolytoPoly(a_ptr, cptr, b_ptr, cptr);
             }
         }
         return c > 0;
     }
 
-    public static c2Manifold GetManifold(Polygon a, Transform2D at, Polygon b, Transform2D bt)
+    public static c2Manifold GetManifold(Polygon a, Transform2D? at, Polygon b, Transform2D? bt)
     {
         c2Manifold manifold = default;
         unsafe
         {
-            
             c2x ac2x = at;
             c2x bc2x = bt;
             fixed (c2Poly* a_ptr = &a.poly, b_ptr = &b.poly)
             {
-                // C2.c2PolytoPolyManifold(a_ptr, &ac2x, b_ptr, &bc2x,&manifold);
-                C2.c2PolytoPolyManifold(a_ptr, null, b_ptr, null,&manifold);
+                C2.c2PolytoPolyManifold(a_ptr, &ac2x, b_ptr, &bc2x,&manifold);
             }
         }
         return manifold;
