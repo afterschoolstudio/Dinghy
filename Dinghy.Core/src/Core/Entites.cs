@@ -212,6 +212,7 @@ public class Entity
 
     public static implicit operator Checks.Transform2D(Entity e) =>
         new Checks.Transform2D(0, 0, e.Rotation);
+        // new Checks.Transform2D(16, 16, e.Rotation);
         // new Checks.Transform2D(e.X, e.Y, e.Rotation); //we assume world space
 }
 

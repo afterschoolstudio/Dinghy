@@ -13,4 +13,8 @@ public record Point(float X, float Y)
     {
         return new Point(tuple.Item1, tuple.Item2);
     }
+    public static implicit operator Point(c2v c)
+    {
+        return new Point(c.x, c.y);
+    }
 }

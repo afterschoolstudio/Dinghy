@@ -53,6 +53,30 @@ public static class Checks
         }
         return c > 0;
     }
+    
+    public static CollisionResult GetCollisionResult<T>(T a, T b) where T : Entity, IHasSize
+    {
+        var ap = Utils.GetEntityPolygon(a);
+        Transform2D at = a;
+        var bp = Utils.GetEntityPolygon(b);
+        Transform2D bt = b;
+
+        c2v outA = default;
+        c2v outB = default;
+        unsafe
+        {
+            c2x ac2x = at;
+            c2x bc2x = bt;
+            fixed (c2Poly* a_ptr = &ap.poly, b_ptr = &bp.poly)
+            {
+                C2.c2GJK(a_ptr, C2_TYPE.C2_TYPE_POLY, &ac2x, b_ptr, C2_TYPE.C2_TYPE_POLY, &bc2x, &outA, &outB, 0, null, null);
+            }
+        }
+
+        return new CollisionResult(outA,outB);
+    }
+
+    public record CollisionResult(Point a, Point b);
 
     public static c2Manifold GetManifold(Polygon a, Transform2D? at, Polygon b, Transform2D? bt)
     {

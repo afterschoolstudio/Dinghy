@@ -322,11 +322,13 @@ void particle()
 
 void collision()
 {
+	Color pt = Palettes.ENDESGA[1];
 	Color pointer_col = Palettes.ENDESGA[9];
 	Color no_collide = Palettes.ENDESGA[7];
 	Color collide = Palettes.ENDESGA[3];
 	
-	var pointer = new Shape(pointer_col){Name = "pointer",Width = 10, Height = 10};
+	// var pointer = new Shape(pointer_col){Name = "pointer",Width = 10, Height = 10};
+	var pointer = new Shape(pointer_col){Name = "pointer",Width = 32, Height = 32};
 	var static_collider = new Shape(no_collide)
 	{
 		Name = "static_collider",
@@ -334,16 +336,31 @@ void collision()
 		Y = 100
 	};
 	double timer = 0;
+	Shape ptA = null, ptB = null;
 	Update += () =>
 	{
-		static_collider.Rotation = (float)Engine.Time;
-		Console.WriteLine(static_collider.Width);
-		Console.WriteLine(static_collider.Height);
+		if(ptA != null){ptA.DestroyImmediate();}
+		if(ptB != null){ptB.DestroyImmediate();}
+		// static_collider.Rotation = (float)Engine.Time;
 		pointer.SetPosition((int)InputSystem.MouseX,(int)InputSystem.MouseY,0,1,1);
 		static_collider.Color = Checks.CheckCollision(pointer, static_collider)
 			? collide
 			: no_collide;
-		
+		var pts = Checks.GetCollisionResult(pointer, static_collider);
+		ptA = new Shape(pt)
+		{
+			X = (int)pts.a.X,
+			Y = (int)pts.a.Y,
+			Width = 5,
+			Height = 5
+		};
+		ptB = new Shape(pt)
+		{
+			X = (int)pts.b.X,
+			Y = (int)pts.b.Y,
+			Width = 5,
+			Height = 5
+		};
 		// var m = Checks.GetManifold(pointer_poly, pointer, col_poly, static_collider);
 		// Console.WriteLine(m.count);
 		// Console.WriteLine($"{m.contact_points.e0.x},{m.contact_points.e0.y}");
