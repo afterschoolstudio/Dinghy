@@ -1,6 +1,5 @@
 using Dinghy.Core;
 using Dinghy.Internal.Cute;
-using Volatile;
 
 namespace Dinghy.Collision;
 
@@ -21,76 +20,69 @@ public static class Checks
             new c2x()
             {
                 p = new (){x = d.X, y = d.Y},
-                r = new c2r(){c = Mathf.Cos(d.R),s = Mathf.Sin(d.R)}
+                r = new c2r(){c = MathF.Cos(d.R),s = MathF.Sin(d.R)}
             };
     }
 
     public static bool CheckCollision<T>(T a, T b) where T : Entity, IHasSize
     {
         var ap = Utils.GetEntityPolygon(a);
-        Console.WriteLine($"{a.Name}: X: {a.X} Y: {a.Y} W: {a.Width} H: {a.Height}");
         var bp = Utils.GetEntityPolygon(b);
-        Console.WriteLine($"{b.Name}: X: {b.X} Y: {b.Y} W: {b.Width} H: {b.Height}");
-        return CheckCollision(ap, a, bp, b);
-    }
-    
-    static bool CheckCollision(Polygon a, Transform2D at, Polygon b, Transform2D bt)
-    {
         var c = 0;
-        c2x ac2x = at;
-        c2x bc2x = bt;
-        
         unsafe
         {
-            c2x ci = Identity;
-            c2x* cptr = &ci;
-            fixed (c2Poly* a_ptr = &a.poly, b_ptr = &b.poly)
+            fixed (c2Poly* a_ptr = &ap.poly, b_ptr = &bp.poly)
             {
-                c = C2.c2PolytoPoly(a_ptr, &ac2x, b_ptr, &bc2x); //not working due to rotation matrix stuff
-                // c = C2.c2PolytoPoly(a_ptr, null, b_ptr, null); //working
-                // c = C2.c2PolytoPoly(a_ptr, cptr, b_ptr, cptr);
+                c = C2.c2PolytoPoly(a_ptr, null, b_ptr, null);
             }
         }
         return c > 0;
     }
     
-    public static CollisionResult GetCollisionResult<T>(T a, T b) where T : Entity, IHasSize
+    public static (Point a, Point b) GetClosestPoints<T>(T a, T b) where T : Entity, IHasSize
     {
         var ap = Utils.GetEntityPolygon(a);
-        Transform2D at = a;
         var bp = Utils.GetEntityPolygon(b);
-        Transform2D bt = b;
-
         c2v outA = default;
         c2v outB = default;
         unsafe
         {
-            c2x ac2x = at;
-            c2x bc2x = bt;
             fixed (c2Poly* a_ptr = &ap.poly, b_ptr = &bp.poly)
             {
-                C2.c2GJK(a_ptr, C2_TYPE.C2_TYPE_POLY, &ac2x, b_ptr, C2_TYPE.C2_TYPE_POLY, &bc2x, &outA, &outB, 0, null, null);
+                C2.c2GJK(a_ptr, C2_TYPE.C2_TYPE_POLY, null, b_ptr, C2_TYPE.C2_TYPE_POLY, null, &outA, &outB, 0, null, null);
             }
         }
-
-        return new CollisionResult(outA,outB);
+        return (outA,outB);
     }
 
-    public record CollisionResult(Point a, Point b);
-
-    public static c2Manifold GetManifold(Polygon a, Transform2D? at, Polygon b, Transform2D? bt)
+    public static CollisionInfo GetCollisionInfo<T>(T a, T b) where T : Entity, IHasSize
     {
         c2Manifold manifold = default;
+        var ap = Utils.GetEntityPolygon(a);
+        var bp = Utils.GetEntityPolygon(b);
         unsafe
         {
-            c2x ac2x = at;
-            c2x bc2x = bt;
-            fixed (c2Poly* a_ptr = &a.poly, b_ptr = &b.poly)
+            fixed (c2Poly* a_ptr = &ap.poly, b_ptr = &bp.poly)
             {
-                C2.c2PolytoPolyManifold(a_ptr, &ac2x, b_ptr, &bc2x,&manifold);
+                C2.c2PolytoPolyManifold(a_ptr, null, b_ptr, null ,&manifold);
             }
         }
-        return manifold;
+        return new CollisionInfo(manifold);
+    }
+
+    public record CollisionInfo
+    {
+        public int Count { get; init; }
+        public System.Numerics.Vector2 RayFromAToB { get; init; }
+        public Point PointA { get; init; }
+        public Point PointB { get; init; }
+        public CollisionInfo(c2Manifold m)
+        {
+            Count = m.count;
+            RayFromAToB = new System.Numerics.Vector2(m.n.x,m.n.y);
+            PointA = m.contact_points[0];
+            PointB = m.contact_points[1];
+        }
     }
 }
 

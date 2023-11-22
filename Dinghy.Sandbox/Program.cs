@@ -327,8 +327,7 @@ void collision()
 	Color no_collide = Palettes.ENDESGA[7];
 	Color collide = Palettes.ENDESGA[3];
 	
-	// var pointer = new Shape(pointer_col){Name = "pointer",Width = 10, Height = 10};
-	var pointer = new Shape(pointer_col){Name = "pointer",Width = 32, Height = 32};
+	var pointer = new Shape(pointer_col){Name = "pointer",Width = 1, Height = 1};
 	var static_collider = new Shape(no_collide)
 	{
 		Name = "static_collider",
@@ -336,24 +335,20 @@ void collision()
 		Y = 100
 	};
 	double timer = 0;
-	Shape ptA = null, ptB = null;
+	Shape ptB = null;
 	Update += () =>
 	{
-		if(ptA != null){ptA.DestroyImmediate();}
 		if(ptB != null){ptB.DestroyImmediate();}
-		// static_collider.Rotation = (float)Engine.Time;
+		
+		static_collider.Rotation = (float)Engine.Time;
+		static_collider.ScaleX = MathF.Sin((float)Engine.Time) + 2;
+		static_collider.ScaleY = MathF.Sin((float)Engine.Time) + 2;
+		
 		pointer.SetPosition((int)InputSystem.MouseX,(int)InputSystem.MouseY,0,1,1);
 		static_collider.Color = Checks.CheckCollision(pointer, static_collider)
 			? collide
 			: no_collide;
-		var pts = Checks.GetCollisionResult(pointer, static_collider);
-		ptA = new Shape(pt)
-		{
-			X = (int)pts.a.X,
-			Y = (int)pts.a.Y,
-			Width = 5,
-			Height = 5
-		};
+		var pts = Checks.GetClosestPoints(pointer, static_collider);
 		ptB = new Shape(pt)
 		{
 			X = (int)pts.b.X,
@@ -361,10 +356,7 @@ void collision()
 			Width = 5,
 			Height = 5
 		};
-		// var m = Checks.GetManifold(pointer_poly, pointer, col_poly, static_collider);
-		// Console.WriteLine(m.count);
-		// Console.WriteLine($"{m.contact_points.e0.x},{m.contact_points.e0.y}");
-		// Console.WriteLine($"{m.contact_points.e1.x},{m.contact_points.e1.y}");
+		// Console.WriteLine(Checks.GetCollisionInfo(pointer,static_collider));
 	};
 }
 

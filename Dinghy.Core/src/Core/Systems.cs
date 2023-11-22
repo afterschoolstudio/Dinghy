@@ -109,7 +109,7 @@ public class SpriteRenderSystem : RenderSystem
             // PixelCoordinate pivot = new(0, 0);
             // PixelCoordinate pixelCoord = new(p.x, p.y);
             //
-            // // Transformations
+            // // Transformations - need this to calc poly 
             // // PixelCoordinate translated = Translate(pixelCoord, 50, 50);
             // PixelCoordinate rotated = Rotate(pixelCoord, 0, pivot);
             // PixelCoordinate scaled = Scale(rotated, 1, 1, pivot);
@@ -292,7 +292,7 @@ public class FrameAnimationSystem : AnimationSystem
 public class DestructionSystem : DSystem, ICleanupSystem
 {
     QueryDescription query = new QueryDescription().WithAll<Destroy>();
-    QueryDescription managedCleanupQuery = new QueryDescription().WithAll<Destroy>();
+    QueryDescription managedCleanupQuery = new QueryDescription().WithAll<Destroy,HasManagedOwner>();
     public void Cleanup(double dt)
     {
         Engine.World.Query(in managedCleanupQuery, (Arch.Core.Entity e, ref HasManagedOwner owner) =>

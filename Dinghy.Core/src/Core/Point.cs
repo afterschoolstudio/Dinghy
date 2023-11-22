@@ -1,3 +1,4 @@
+using System.Numerics;
 using Dinghy.Internal.Cute;
 
 namespace Dinghy.Core;
@@ -16,5 +17,9 @@ public record Point(float X, float Y)
     public static implicit operator Point(c2v c)
     {
         return new Point(c.x, c.y);
+    }
+    public static implicit operator Point(Vector2 c)
+    {
+        return new Point(c.X, c.Y);
     }
 }
