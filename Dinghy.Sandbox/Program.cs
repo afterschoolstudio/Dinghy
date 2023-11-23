@@ -23,7 +23,8 @@ var logoImage = new TextureData("logo.png");
 // shape();
 // physicsShape();
 // particle();
-collision();;
+// collision();
+grid();
 
 Engine.Run(new Engine.RunOptions(width,height,"dinghy"));
 
@@ -334,12 +335,10 @@ void collision()
 		X = 100,
 		Y = 100
 	};
-	double timer = 0;
 	Shape ptB = null;
 	Update += () =>
 	{
 		if(ptB != null){ptB.DestroyImmediate();}
-		
 		static_collider.Rotation = (float)Engine.Time;
 		static_collider.ScaleX = MathF.Sin((float)Engine.Time) + 2;
 		static_collider.ScaleY = MathF.Sin((float)Engine.Time) + 2;
@@ -357,6 +356,24 @@ void collision()
 			Height = 5
 		};
 		// Console.WriteLine(Checks.GetCollisionInfo(pointer,static_collider));
+	};
+}
+
+void grid()
+{
+	var g = new Grid((150, 150), (150, 150), 10, 10, 30, 30);
+	var shapes = new List<Shape>();
+	foreach (var p in g.Points)
+	{
+		shapes.Add(new Shape(Palettes.ENDESGA[9]){X = (int)p.X,Y = (int)p.Y, Width = 5,Height = 5});
+	}
+	Update += () =>
+	{
+		g.Rotation = (float)Engine.Time;
+		for (int i = 0; i < shapes.Count; i++)
+		{
+			shapes[i].SetPosition((int)g.Points[i].X,(int)g.Points[i].Y,0,1,1);
+		}
 	};
 }
 
