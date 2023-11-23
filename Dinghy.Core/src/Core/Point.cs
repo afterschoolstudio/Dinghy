@@ -46,7 +46,7 @@ public record Point(float X, float Y)
     {
         Vector2 pivotPoint = pivot ?? Vector2.Zero;
         Matrix3x2 transformation =
-            Matrix3x2.CreateTranslation(new Vector2(this.X,this.Y)) *
+            Matrix3x2.CreateTranslation(new Vector2(X,Y)) *
             Matrix3x2.CreateRotation(rotation, pivotPoint) *
             Matrix3x2.CreateScale(scaleX, scaleY, pivotPoint);
         return Vector2.Transform(Vector2.Zero, transformation);

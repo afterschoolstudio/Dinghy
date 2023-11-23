@@ -361,11 +361,11 @@ void collision()
 
 void grid()
 {
-	var g = new Grid((150, 150), (150, 150), 10, 10, 30, 30);
 	var shapes = new List<Shape>();
+	Grid g = new Grid((50,50), (0.5f, 0.5f), 10, 10, 30, 30);
 	foreach (var p in g.Points)
 	{
-		shapes.Add(new Shape(Palettes.ENDESGA[9]){X = (int)p.X,Y = (int)p.Y, Width = 5,Height = 5});
+		shapes.Add(new Shape(Palettes.ENDESGA[9]) { X = (int)p.X, Y = (int)p.Y, Width = 5, Height = 5 });
 	}
 	Update += () =>
 	{
