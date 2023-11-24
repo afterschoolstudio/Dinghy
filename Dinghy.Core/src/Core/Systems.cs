@@ -105,17 +105,6 @@ public class SpriteRenderSystem : RenderSystem
     {
         Engine.World.Query(in query, (Arch.Core.Entity e, ref SpriteRenderer r, ref Position p) =>
         {
-            // // PixelCoordinate objectPosition = new(200, 150);
-            // PixelCoordinate pivot = new(0, 0);
-            // PixelCoordinate pixelCoord = new(p.x, p.y);
-            //
-            // // Transformations - need this to calc poly 
-            // // PixelCoordinate translated = Translate(pixelCoord, 50, 50);
-            // PixelCoordinate rotated = Rotate(pixelCoord, 0, pivot);
-            // PixelCoordinate scaled = Scale(rotated, 1, 1, pivot);
-            // /* GL required transforming to clip, GP handles it directly as pixel coords
-            // ClipSpaceCoordinate clip = ToClipSpace(scaled, pivot);
-            // */
             if (!r.ImageResource.loaded)
             {
                 r.ImageResource.Load();
@@ -123,38 +112,6 @@ public class SpriteRenderSystem : RenderSystem
             Engine.DrawTexturedRect(p.x, p.y,p.rotation,p.scaleX, p.scaleY,r.Frame,r.ImageResource);
         });
     }
-    
-    public record struct PixelCoordinate(int X, int Y);
-    public record struct ClipSpaceCoordinate(float X, float Y);
-    public PixelCoordinate Translate(PixelCoordinate point, int dx, int dy) 
-        => new(point.X + dx, point.Y + dy);
-    public PixelCoordinate Rotate(PixelCoordinate point, double angleDegrees, PixelCoordinate pivot)
-    {
-        double angleRadians = Math.PI * angleDegrees / 180.0;
-        int dx = point.X - pivot.X;
-        int dy = point.Y - pivot.Y;
-    
-        int rotatedX = (int)(dx * Math.Cos(angleRadians) - dy * Math.Sin(angleRadians) + pivot.X);
-        int rotatedY = (int)(dx * Math.Sin(angleRadians) + dy * Math.Cos(angleRadians) + pivot.Y);
-    
-        return new(rotatedX, rotatedY);
-    }
-
-    public PixelCoordinate Scale(PixelCoordinate point, double scaleX, double scaleY, PixelCoordinate pivot) 
-        => new((int)((point.X - pivot.X) * scaleX + pivot.X), (int)((point.Y - pivot.Y) * scaleY + pivot.Y));
-
-    public ClipSpaceCoordinate ToClipSpace(PixelCoordinate pixelCoordinate, PixelCoordinate pivot)
-    {
-        int translatedX = pixelCoordinate.X - pivot.X;
-        int translatedY = pixelCoordinate.Y - pivot.Y;
-
-        float x = (translatedX * 2.0f / Engine.Width) - 1.0f;
-        float y = 1.0f - (translatedY * 2.0f / Engine.Height);
-        
-        return new(x, y);
-    }
-
-
 }
 
 public class ShapeRenderSystem : RenderSystem

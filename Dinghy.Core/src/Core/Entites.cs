@@ -296,6 +296,13 @@ public class AnimatedSprite : Entity
     }
 }
 
+public class ParticleEmitter(ParticleEmitter.Config Config, bool startEnabled = true) : Entity(startEnabled)
+{
+    //want to add in ability to sample a curve for these tbh
+    public record Config(float lifespan, Func<float,float> dx, Func<float,float> dy);
+    
+}
+
 public class TestBunny : Entity
 {
     public SpriteData Data { get; init; }

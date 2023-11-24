@@ -361,19 +361,26 @@ void collision()
 
 void grid()
 {
-	var shapes = new List<Shape>();
-	Grid g = new Grid((50,50), (0.5f, 0.5f), 10, 10, 30, 30);
+	Color shape1c = Palettes.ENDESGA[9];
+	Color shape2c = Palettes.ENDESGA[8];
+	var shapes1 = new List<Shape>();
+	var shapes2 = new List<Shape>();
+	Grid g = new Grid((width/2f,height/2f), (0.5f, 0.5f), 10, 10, (0.5f,0.5f), 30, 30);
 	foreach (var p in g.Points)
 	{
-		shapes.Add(new Shape(Palettes.ENDESGA[9]) { X = (int)p.X, Y = (int)p.Y, Width = 5, Height = 5 });
+		shapes1.Add(new Shape(shape1c) { X = (int)p.X, Y = (int)p.Y, Width = 5, Height = 5 });
+		shapes2.Add(new Shape(shape2c) { X = (int)p.X, Y = (int)p.Y, Width = 5, Height = 5 });
 	}
 	Update += () =>
 	{
+		g.ScaleX = 1f;
+		g.ScaleY = 1f;
 		g.Rotation = (float)Engine.Time;
-		for (int i = 0; i < shapes.Count; i++)
-		{
-			shapes[i].SetPosition((int)g.Points[i].X,(int)g.Points[i].Y,0,1,1);
-		}
+		g.ApplyPositionsToEntites(shapes1);
+		g.Rotation = -(float)Engine.Time;
+		g.ScaleX = MathF.Sin((float)Engine.Time) + 2;
+		g.ScaleY = g.ScaleX;
+		g.ApplyPositionsToEntites(shapes2);
 	};
 }
 

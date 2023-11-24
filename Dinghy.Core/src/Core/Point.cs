@@ -5,6 +5,7 @@ namespace Dinghy.Core;
 
 public record Point(float X, float Y)
 {
+    private Vector2 internalVec2 = new (X, Y);
     public static implicit operator c2v(Point d) => new c2v(){x = d.X,y = d.Y};
     public static implicit operator Point((float, float) tuple)
     {
@@ -46,9 +47,22 @@ public record Point(float X, float Y)
     {
         Vector2 pivotPoint = pivot ?? Vector2.Zero;
         Matrix3x2 transformation =
-            Matrix3x2.CreateTranslation(new Vector2(X,Y)) *
+            Matrix3x2.CreateTranslation(internalVec2) *
             Matrix3x2.CreateRotation(rotation, pivotPoint) *
             Matrix3x2.CreateScale(scaleX, scaleY, pivotPoint);
         return Vector2.Transform(Vector2.Zero, transformation);
     }
+    
+    /*
+     *     public ClipSpaceCoordinate ToClipSpace(PixelCoordinate pixelCoordinate, PixelCoordinate pivot)
+       {
+           int translatedX = pixelCoordinate.X - pivot.X;
+           int translatedY = pixelCoordinate.Y - pivot.Y;
+
+           float x = (translatedX * 2.0f / Engine.Width) - 1.0f;
+           float y = 1.0f - (translatedY * 2.0f / Engine.Height);
+           
+           return new(x, y);
+       }
+     */
 }
