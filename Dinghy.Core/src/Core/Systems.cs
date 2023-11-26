@@ -126,6 +126,56 @@ public class ShapeRenderSystem : RenderSystem
     }
 }
 
+public class ParticleRenderSystem : RenderSystem
+{
+    QueryDescription query = new QueryDescription().WithAll<Active,Position,ParticleEmitterComponent>();      // Should have all specified components
+    protected override void Render(double dt)
+    {
+        Engine.World.Query(in query, (Arch.Core.Entity e, ref Position p, ref ParticleEmitterComponent emitter) =>
+        {
+            //update the particles
+            List<int> activeIndicies = new List<int>();
+            var dt = (float)Engine.DeltaTime;
+            int emitted = 0;
+            var possibleParticleSlots = emitter.Config.emissionRate * dt;
+            emitter.Accumulator += possibleParticleSlots;
+            var freeSlots = (int)emitter.Accumulator;
+            for (int i = 0; i < emitter.Particles.Count; i++)
+            {
+                bool justInit = false;
+                if(freeSlots > 0 && !emitter.Particles[i].Active)
+                {
+                    emitter.Particles[i].Active = true;
+                    emitter.Particles[i].Init();
+                    justInit = true;
+                    freeSlots--;
+                    emitter.Accumulator--;
+                }
+
+                if (!justInit)
+                {
+                    emitter.Particles[i].Age += dt;
+                    if (emitter.Particles[i].Age > emitter.Config.particleConfig.lifespan)
+                    {
+                        emitter.Particles[i].Active = false;
+                    }
+                }
+
+                if (emitter.Particles[i].Active)
+                {
+                    activeIndicies.Add(i);
+                    emitter.Particles[i].X += emitter.Particles[i].DX;
+                    emitter.Particles[i].Y += emitter.Particles[i].DY;
+                }
+            }
+            
+            
+            //draw the particles
+            Engine.DrawParticles(p, emitter, activeIndicies);
+        });
+    }
+}
+
 public class InputSystem : DSystem, IUpdateSystem
 {
     public static float MouseX;

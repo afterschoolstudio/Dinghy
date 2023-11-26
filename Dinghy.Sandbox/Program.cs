@@ -24,7 +24,8 @@ var logoImage = new TextureData("logo.png");
 // physicsShape();
 // particle();
 // collision();
-grid();
+// grid();
+particleSystem();
 
 Engine.Run(new Engine.RunOptions(width,height,"dinghy"));
 
@@ -381,6 +382,16 @@ void grid()
 		g.ScaleX = MathF.Sin((float)Engine.Time) + 2;
 		g.ScaleY = g.ScaleX;
 		g.ApplyPositionsToEntites(shapes2);
+	};
+}
+
+void particleSystem()
+{
+	var emitter = new ParticleEmitter(
+		new(1000, 1, new ParticleEmitterComponent.ParticleConfig(2, null, null)))
+	{
+		X = 100,
+		Y = 100
 	};
 }
 

@@ -26,6 +26,7 @@ public static partial class Engine
         new FrameAnimationSystem(),
         new ManagedComponentSystem(),
         new DestructionSystem(),
+        new ParticleRenderSystem(),
         InputSystem
     };
 
@@ -404,6 +405,23 @@ public static partial class Engine
         GP.sgp_scale_at(scaleX, scaleY, f.width / 2f, f.height / 2f);
         GP.sgp_draw_filled_rect(0,0,f.width,f.height);
         GP.sgp_pop_transform();
+        GP.sgp_reset_color();
+    }
+    
+    public static void DrawParticles(Position p, ParticleEmitterComponent c, List<int> activeIndicies)
+    {
+        GP.sgp_set_blend_mode(sgp_blend_mode.SGP_BLENDMODE_NONE);
+        Color color = Palettes.ENDESGA[4];
+        foreach (var i in activeIndicies)
+        {
+            GP.sgp_set_color(color.internal_color.g, color.internal_color.b, color.internal_color.a, color.internal_color.r);
+            GP.sgp_push_transform();
+            GP.sgp_translate(p.x + c.Particles[i].X,p.x + c.Particles[i].Y);
+            // GP.sgp_rotate_at(rotation, f.width / 2f, f.height / 2f);
+            // GP.sgp_scale_at(scaleX, scaleY, f.width / 2f, f.height / 2f);
+            GP.sgp_draw_filled_rect(0,0,c.Particles[i].Width,c.Particles[i].Height);
+            GP.sgp_pop_transform();
+        }
         GP.sgp_reset_color();
     }
 

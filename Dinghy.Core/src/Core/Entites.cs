@@ -296,11 +296,15 @@ public class AnimatedSprite : Entity
     }
 }
 
-public class ParticleEmitter(ParticleEmitter.Config Config, bool startEnabled = true) : Entity(startEnabled)
+public class ParticleEmitter : Entity
 {
+    //NOTE: this is NOT an entity emitter, this emits a special particle type
     //want to add in ability to sample a curve for these tbh
-    public record Config(float lifespan, Func<float,float> dx, Func<float,float> dy);
-    
+    public ParticleEmitter(ParticleEmitterComponent.EmitterConfig config, bool startEnabled = true) : base(startEnabled)
+    {
+        ECSEntity.Add(
+            new ParticleEmitterComponent(config));
+    }
 }
 
 public class TestBunny : Entity

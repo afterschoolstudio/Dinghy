@@ -58,3 +58,49 @@ public readonly record struct Destroy();
 public record struct Collider(Frame f);
 public readonly record struct Active();
 public readonly record struct HasManagedOwner(Dinghy.Entity e);
+public record ParticleEmitterComponent
+{
+    public readonly record struct EmitterConfig(int maxParticles, float emissionRate, ParticleConfig particleConfig);
+    public readonly record struct ParticleConfig(float lifespan, Func<float, float> dx, Func<float, float> dy);
+    public EmitterConfig Config { get; init; }
+    // public List<bool> ActiveParticles = new List<bool>();
+    public List<Particle> Particles = new List<Particle>();
+    // public int AvailableIndex = 0; //the is the index of the first non-active particle
+    public float Accumulator = 0f;
+    public ParticleEmitterComponent(EmitterConfig c)
+    {
+        Config = c;
+        for (int i = 0; i < c.maxParticles; i++)
+        {
+            Particles.Add(new());
+            // ActiveParticles.Add(false);
+        }
+    }
+    public class Particle
+    {
+        public bool Active;
+        public float X;
+        public float Y;
+        public float DX;
+        public float DY;
+        public float Width;
+        public float Height;
+        public float Age;
+
+        public Particle()
+        {
+            Init();
+        }
+
+        public void Init()
+        {
+            X = 0;
+            Y = 0;
+            DX = 1; //temp
+            DY = 1; //temp
+            Width = 8; // temp
+            Height = 8; //temp
+            Age = 0;
+        }
+    }
+}
