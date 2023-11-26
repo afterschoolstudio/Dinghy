@@ -388,7 +388,7 @@ void grid()
 void particleSystem()
 {
 	var emitter = new ParticleEmitter(
-		new(1000, 1, new ParticleEmitterComponent.ParticleConfig(2, null, null)))
+		new(10000, 200, new ParticleEmitterComponent.ParticleConfig(6)))
 	{
 		X = 100,
 		Y = 100
