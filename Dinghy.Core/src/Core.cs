@@ -420,7 +420,6 @@ public static partial class Engine
             // GP.sgp_rotate_at(rotation, f.width / 2f, f.height / 2f);
             // GP.sgp_scale_at(scaleX, scaleY, f.width / 2f, f.height / 2f);
             GP.sgp_draw_filled_rect(0,0,c.Particles[i].Width,c.Particles[i].Height);
-            GP.sgp_reset_color();
             GP.sgp_pop_transform();
         }
         GP.sgp_reset_color();

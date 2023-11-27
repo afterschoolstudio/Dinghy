@@ -390,7 +390,7 @@ void particleSystem()
 	var startColor = Palettes.ENDESGA[4];
 	var endColor = Palettes.ENDESGA[16];
 	var emitter = new ParticleEmitter(
-		new(100000, 20, new ParticleEmitterComponent.ParticleConfig(
+		new(100000, 2000, new ParticleEmitterComponent.ParticleConfig(
 			(0,0),
 			1f,
 			new (4,0.1f,Easing.EaseInOutQuart),
