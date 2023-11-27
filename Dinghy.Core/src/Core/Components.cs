@@ -82,9 +82,10 @@ public record ParticleEmitterComponent
         public Transition<float> DY;
         public Transition<float> Width;
         public Transition<float> Height;
+        public Transition<Color> Color;
 
         public ParticleConfig(Point emissionPoint, float lifespan, Transition<float> dx, Transition<float> dy, Transition<float> width,
-            Transition<float> height)
+            Transition<float> height, Transition<Color> color)
         {
             EmissionPoint = emissionPoint;
             Lifespan = lifespan;
@@ -92,6 +93,7 @@ public record ParticleEmitterComponent
             DY = dy;
             Width = width;
             Height = height;
+            Color = color;
         }
 
         public ParticleConfig(ParticleConfig c)
@@ -101,6 +103,7 @@ public record ParticleEmitterComponent
             DY = c.DY;
             Width = c.Width;
             Height = c.Height;
+            Color = c.Color;
         }
         
         public struct Transition<T>
@@ -124,6 +127,7 @@ public record ParticleEmitterComponent
             public float DY;
             public float Width;
             public float Height;
+            public Color Color;
         }
 
         public TransitionResolution Resolve(double time)
@@ -135,36 +139,40 @@ public record ParticleEmitterComponent
                 DY = Quick.MapF((float)DY.Sample(sampleTime),0f,1f,DY.StartValue,DY.TargetValue),
                 Width = Quick.MapF((float)Width.Sample(sampleTime),0f,1f,Width.StartValue,Width.TargetValue),
                 Height = Quick.MapF((float)Height.Sample(sampleTime),0f,1f,Height.StartValue,Height.TargetValue),
+                Color = ResolveColorTransition()
             };
+
+            Color ResolveColorTransition()
+            {
+                var a = Quick.MapF((float)Color.Sample(sampleTime),0f,1f,Color.StartValue.internal_color.a,Color.TargetValue.internal_color.a);
+                var r = Quick.MapF((float)Color.Sample(sampleTime),0f,1f,Color.StartValue.internal_color.r,Color.TargetValue.internal_color.r);
+                var g = Quick.MapF((float)Color.Sample(sampleTime),0f,1f,Color.StartValue.internal_color.g,Color.TargetValue.internal_color.g);
+                var b = Quick.MapF((float)Color.Sample(sampleTime),0f,1f,Color.StartValue.internal_color.b,Color.TargetValue.internal_color.b);
+                return new Color(a,r,g,b);
+            }
         }
     }
 
     public class Particle
     {
-        public bool Active;
-        public float X;
-        public float Y;
-        public float DX;
-        public float DY;
-        public float Width;
-        public float Height;
-        public float Age;
+        public bool Active = false;
+        public float X = 0;
+        public float Y = 0;
+        public float DX = 0;
+        public float DY = 0;
+        public float Width = 8;
+        public float Height = 8;
+        public float Age = 0;
+        public Color Color = Palettes.ENDESGA[19];
         public ParticleConfig Config;
 
-        public Particle()
+        public void Reset()
         {
-            Init();
-        }
-
-        public void Init()
-        {
+            Age = 0;
             X = 0;
             Y = 0;
-            DX = 1; //temp
-            DY = 1; //temp
-            Width = 8; // temp
-            Height = 8; //temp
-            Age = 0;
+            DX = 0;
+            DY = 0;
         }
 
         public void Resolve()
@@ -174,6 +182,7 @@ public record ParticleEmitterComponent
             DY = tr.DY;
             Width = tr.Width;
             Height = tr.Height;
+            Color = tr.Color;
         }
     }
 }

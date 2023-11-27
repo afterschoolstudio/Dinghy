@@ -1,4 +1,4 @@
-using Arch.Core;
+﻿using Arch.Core;
 using Dinghy.Internal.Sokol;
 
 namespace Dinghy;
@@ -140,14 +140,13 @@ public class ParticleRenderSystem : RenderSystem
             var possibleParticleSlots = emitter.Config.emissionRate * dt;
             emitter.Accumulator += possibleParticleSlots;
             var freeSlots = (int)emitter.Accumulator;
-            var resolvedSample = new ParticleEmitterComponent.ParticleConfig.TransitionResolution();
             for (int i = 0; i < emitter.Particles.Count; i++)
             {
                 bool justInit = false;
                 if(freeSlots > 0 && !emitter.Particles[i].Active)
                 {
+                    emitter.Particles[i].Reset();
                     emitter.Particles[i].Active = true;
-                    emitter.Particles[i].Init();
                     emitter.Particles[i].Config = new ParticleEmitterComponent.ParticleConfig(emitter.Config.particleConfig);
                     emitter.Particles[i].Config.EmissionPoint = (p.x,p.y);
                     

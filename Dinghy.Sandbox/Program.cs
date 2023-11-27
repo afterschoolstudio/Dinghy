@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Arch.Core.Extensions;
 using Dinghy;
 using Dinghy.Collision;
@@ -387,14 +387,17 @@ void grid()
 
 void particleSystem()
 {
+	var startColor = Palettes.ENDESGA[4];
+	var endColor = Palettes.ENDESGA[16];
 	var emitter = new ParticleEmitter(
-		new(100000, 200, new ParticleEmitterComponent.ParticleConfig(
+		new(100000, 20, new ParticleEmitterComponent.ParticleConfig(
 			(0,0),
-			2f,
-			new (4,0.1f,Easing.EaseOutExpo),
-			new (4,0.1f,Easing.EaseOutExpo),
-			new (4,8,Easing.EaseInElastic),
-			new (4,8,Easing.EaseInElastic)
+			1f,
+			new (4,0.1f,Easing.EaseInOutQuart),
+			new (4,0.1f,Easing.EaseInOutQuart),
+			new (4,16,Easing.EaseOutExpo),
+			new (4,16,Easing.EaseOutExpo),
+			new (startColor,endColor,Easing.EaseInOutExpo)
 		)))
 	{
 		X = 200,
@@ -404,9 +407,8 @@ void particleSystem()
 	{
 		MoveToMouse(emitter);
 		var rand = RandUnitCircle();
-		emitter.Config.particleConfig.DX.StartValue = rand.x * 4 ;
+		emitter.Config.particleConfig.DX.StartValue = rand.x * 4;
 		emitter.Config.particleConfig.DY.StartValue = rand.y * 4;
-		
 	};
 	
 }

@@ -411,16 +411,16 @@ public static partial class Engine
     public static void DrawParticles(Position p, ParticleEmitterComponent c, List<int> activeIndicies)
     {
         GP.sgp_set_blend_mode(sgp_blend_mode.SGP_BLENDMODE_NONE);
-        Color color = Palettes.ENDESGA[4];
         foreach (var i in activeIndicies)
         {
-            GP.sgp_set_color(color.internal_color.g, color.internal_color.b, color.internal_color.a, color.internal_color.r);
             GP.sgp_push_transform();
+            GP.sgp_set_color(c.Particles[i].Color.internal_color.g, c.Particles[i].Color.internal_color.b, c.Particles[i].Color.internal_color.a, c.Particles[i].Color.internal_color.r);
             // GP.sgp_translate(p.x, p.y);
             GP.sgp_translate(c.Particles[i].Config.EmissionPoint.X + c.Particles[i].X,c.Particles[i].Config.EmissionPoint.Y + c.Particles[i].Y);
             // GP.sgp_rotate_at(rotation, f.width / 2f, f.height / 2f);
             // GP.sgp_scale_at(scaleX, scaleY, f.width / 2f, f.height / 2f);
             GP.sgp_draw_filled_rect(0,0,c.Particles[i].Width,c.Particles[i].Height);
+            GP.sgp_reset_color();
             GP.sgp_pop_transform();
         }
         GP.sgp_reset_color();

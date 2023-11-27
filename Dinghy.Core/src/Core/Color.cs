@@ -9,6 +9,17 @@ public class Color
     {
         internal_color = Internal.Sokol.Color.sg_make_color_1i(hex);
     }
+
+    public Color(float a, float r, float g, float b)
+    {
+        internal_color = new sg_color()
+        {
+            a = a,
+            r = r,
+            g = g,
+            b = b
+        };
+    }
     
     public static implicit operator Color(uint c)
     {
