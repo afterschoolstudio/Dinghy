@@ -77,14 +77,16 @@ public record ParticleEmitterComponent
     public class ParticleConfig
     {
         public float Lifespan;
+        public Point EmissionPoint;
         public Transition<float> DX;
         public Transition<float> DY;
         public Transition<float> Width;
         public Transition<float> Height;
 
-        public ParticleConfig(float lifespan, Transition<float> dx, Transition<float> dy, Transition<float> width,
+        public ParticleConfig(Point emissionPoint, float lifespan, Transition<float> dx, Transition<float> dy, Transition<float> width,
             Transition<float> height)
         {
+            EmissionPoint = emissionPoint;
             Lifespan = lifespan;
             DX = dx;
             DY = dy;

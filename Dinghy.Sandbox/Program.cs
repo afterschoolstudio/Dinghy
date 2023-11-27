@@ -389,15 +389,16 @@ void particleSystem()
 {
 	var emitter = new ParticleEmitter(
 		new(100000, 200, new ParticleEmitterComponent.ParticleConfig(
-			3f,
+			(0,0),
+			2f,
 			new (4,0.1f,Easing.EaseOutExpo),
 			new (4,0.1f,Easing.EaseOutExpo),
-			new (4,8,Easing.EaseInExpo),
-			new (4,8,Easing.EaseInExpo)
+			new (4,8,Easing.EaseInElastic),
+			new (4,8,Easing.EaseInElastic)
 		)))
 	{
-		X = 100,
-		Y = 100
+		X = 200,
+		Y = 200
 	};
 	Update += () =>
 	{
@@ -405,6 +406,7 @@ void particleSystem()
 		var rand = RandUnitCircle();
 		emitter.Config.particleConfig.DX.StartValue = rand.x * 4 ;
 		emitter.Config.particleConfig.DY.StartValue = rand.y * 4;
+		
 	};
 	
 }

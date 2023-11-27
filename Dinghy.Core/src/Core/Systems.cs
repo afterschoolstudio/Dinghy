@@ -149,10 +149,8 @@ public class ParticleRenderSystem : RenderSystem
                     emitter.Particles[i].Active = true;
                     emitter.Particles[i].Init();
                     emitter.Particles[i].Config = new ParticleEmitterComponent.ParticleConfig(emitter.Config.particleConfig);
+                    emitter.Particles[i].Config.EmissionPoint = (p.x,p.y);
                     
-                    var rand = Quick.RandUnitCircle();
-                    emitter.Particles[i].DX = rand.x * Quick.RandFloat() * 4;
-                    emitter.Particles[i].DY = rand.y * Quick.RandFloat() * 4;
                     justInit = true;
                     freeSlots--;
                     emitter.Accumulator--;
