@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using Arch.Core.Extensions;
 using Dinghy;
 using Dinghy.Collision;
@@ -22,7 +22,7 @@ var logoImage = new TextureData("logo.png");
 // physics();
 // shape();
 // physicsShape();
-// particle();
+// entityEmitter();
 // collision();
 // grid();
 particleSystem();
@@ -82,7 +82,7 @@ void interaction()
 			0.4f) });
 	var e = new AnimatedSprite(animatedConscript);
 	
-	OnKeyDown += (key) =>  {
+	OnKeyDown += (key,_) =>  {
 		(float dx, float dy) v = key switch {
 			Key.LEFT => (-1f, 0),
 			Key.RIGHT => (1f, 0),
@@ -108,7 +108,7 @@ void bunny()
 
 	Engine.DebugTextStr = $"{bunnies} buns";
 	int addedbuns = 1000;
-	OnKeyDown += (key) =>  {
+	OnKeyDown += (key,mods) =>  {
 		if (key == Key.SPACE)
 		{
 			for (int i = 0; i < addedbuns; i++)
@@ -128,7 +128,7 @@ void asteroidsGame()
 	SpriteData conscript = new(conscriptImage, new Frame(0,0,64,64));
 	var player = new Sprite(logo){Name = "player"};
 	double bulletCooldown = 0;
-	OnKeyDown += (key) =>  {
+	OnKeyDown += (key,_) =>  {
 		(float dx, float dy) v = key switch {
 			Key.LEFT => (-1f, 0),
 			Key.RIGHT => (1f, 0),
@@ -295,10 +295,10 @@ void physicsShape()
 	};
 }
 
-void particle()
+void entityEmitter()
 {
 	double timer = 0;
-	OnKeyDown += (key) =>  {
+	OnKeyDown += (key,_) =>  {
 		if (key == Key.C)
 		{
 			Engine.Clear = !Engine.Clear;

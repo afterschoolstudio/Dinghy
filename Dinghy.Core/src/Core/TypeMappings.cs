@@ -157,6 +157,17 @@ public enum Key
     RIGHT_SUPER = Internal.Sokol.sapp_keycode.SAPP_KEYCODE_RIGHT_SUPER,
     MENU = Internal.Sokol.sapp_keycode.SAPP_KEYCODE_MENU,
 }
+
+public enum Modifiers
+{
+    SHIFT = Internal.Sokol.App.SAPP_MODIFIER_SHIFT,
+    CTRL = Internal.Sokol.App.SAPP_MODIFIER_CTRL,
+    ALT = Internal.Sokol.App.SAPP_MODIFIER_ALT,
+    SUPER = Internal.Sokol.App.SAPP_MODIFIER_SUPER,
+    LMB = Internal.Sokol.App.SAPP_MODIFIER_LMB,
+    RMB = Internal.Sokol.App.SAPP_MODIFIER_RMB,
+    MMB = Internal.Sokol.App.SAPP_MODIFIER_MMB
+}
     
 public enum MouseButton
 {

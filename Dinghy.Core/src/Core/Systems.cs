@@ -1,4 +1,4 @@
-﻿using Arch.Core;
+using Arch.Core;
 using Dinghy.Internal.Sokol;
 
 namespace Dinghy;
@@ -190,9 +190,30 @@ public class InputSystem : DSystem, IUpdateSystem
     {
         public static class Key
         {
-            public static Action<Dinghy.Key> Pressed;
-            public static Action<Dinghy.Key> Down;
-            public static Action<Dinghy.Key> Up;
+            public static Action<Dinghy.Key,List<Modifiers>> Pressed;
+            public static Action<Dinghy.Key, List<Modifiers>> Down;
+            public static Action<Dinghy.Key, List<Modifiers>> Up;
+            public static Action<uint> Char;
+        }
+
+        public static class Mouse
+        {
+            public static Action<List<Modifiers>> Down;
+            public static Action<List<Modifiers>> Up;
+            public static Action<float,float,float,float,List<Modifiers>> Move;
+            public static Action<float,float,List<Modifiers>> Scroll;
+        }
+
+        public static class Window
+        {
+            public static Action<List<Modifiers>> MouseEnter;
+            public static Action<List<Modifiers>> MouseLeave;
+            public static Action Resized;
+            public static Action Focused;
+            public static Action Unfocused;
+            public static Action Suspended;
+            public static Action Resumed;
+            public static Action RequestedQuit;
         }
     }
     public HashSet<sapp_event> FrameEvents = new HashSet<sapp_event>();
@@ -207,28 +228,35 @@ public class InputSystem : DSystem, IUpdateSystem
                 case sapp_event_type.SAPP_EVENTTYPE_KEY_DOWN:
                     if (e.key_repeat > 0)
                     {
-                        Events.Key.Pressed?.Invoke((Key)e.key_code);
+                        Events.Key.Pressed?.Invoke((Key)e.key_code,GetModifier(e.modifiers));
                     }
-                    Events.Key.Down?.Invoke((Key)e.key_code);
+                    Events.Key.Down?.Invoke((Key)e.key_code,GetModifier(e.modifiers));
                     break;
                 case sapp_event_type.SAPP_EVENTTYPE_KEY_UP:
-                    Events.Key.Up?.Invoke((Key)e.key_code);
+                    Events.Key.Up?.Invoke((Key)e.key_code,GetModifier(e.modifiers));
                     break;
                 case sapp_event_type.SAPP_EVENTTYPE_CHAR:
+                    Events.Key.Char?.Invoke(e.char_code);
                     break;
                 case sapp_event_type.SAPP_EVENTTYPE_MOUSE_DOWN:
+                    Events.Mouse.Down?.Invoke(GetModifier(e.modifiers));
                     break;
                 case sapp_event_type.SAPP_EVENTTYPE_MOUSE_UP:
+                    Events.Mouse.Up?.Invoke(GetModifier(e.modifiers));
                     break;
                 case sapp_event_type.SAPP_EVENTTYPE_MOUSE_SCROLL:
+                    Events.Mouse.Scroll?.Invoke(e.scroll_x,e.scroll_y,GetModifier(e.modifiers));
                     break;
                 case sapp_event_type.SAPP_EVENTTYPE_MOUSE_MOVE:
                     MouseX = e.mouse_x;
                     MouseY = e.mouse_y;
+                    Events.Mouse.Move?.Invoke(e.mouse_x,e.mouse_y,e.mouse_dx,e.mouse_dy,GetModifier(e.modifiers));
                     break;
                 case sapp_event_type.SAPP_EVENTTYPE_MOUSE_ENTER:
+                    Events.Window.MouseEnter?.Invoke(GetModifier(e.modifiers));
                     break;
                 case sapp_event_type.SAPP_EVENTTYPE_MOUSE_LEAVE:
+                    Events.Window.MouseLeave?.Invoke(GetModifier(e.modifiers));
                     break;
                 case sapp_event_type.SAPP_EVENTTYPE_TOUCHES_BEGAN:
                     break;
@@ -239,29 +267,47 @@ public class InputSystem : DSystem, IUpdateSystem
                 case sapp_event_type.SAPP_EVENTTYPE_TOUCHES_CANCELLED:
                     break;
                 case sapp_event_type.SAPP_EVENTTYPE_RESIZED:
+                    Events.Window.Resized?.Invoke();
                     break;
                 case sapp_event_type.SAPP_EVENTTYPE_ICONIFIED:
                     break;
                 case sapp_event_type.SAPP_EVENTTYPE_RESTORED:
                     break;
                 case sapp_event_type.SAPP_EVENTTYPE_FOCUSED:
+                    Events.Window.Focused?.Invoke();
                     break;
                 case sapp_event_type.SAPP_EVENTTYPE_UNFOCUSED:
+                    Events.Window.Unfocused?.Invoke();
                     break;
                 case sapp_event_type.SAPP_EVENTTYPE_SUSPENDED:
+                    Events.Window.Suspended?.Invoke();
                     break;
                 case sapp_event_type.SAPP_EVENTTYPE_RESUMED:
+                    Events.Window.Resumed?.Invoke();
                     break;
                 case sapp_event_type.SAPP_EVENTTYPE_QUIT_REQUESTED:
+                    Events.Window.RequestedQuit?.Invoke();
                     break;
                 case sapp_event_type.SAPP_EVENTTYPE_CLIPBOARD_PASTED:
                     break;
                 case sapp_event_type.SAPP_EVENTTYPE_FILES_DROPPED:
                     break;
             }
-            // Console.WriteLine(e.type);
         }
         FrameEvents.Clear();
+    }
+    
+    List<Modifiers> GetModifier(uint v)
+    {
+        var mods = new List<Modifiers>();
+        if ((v & App.SAPP_MODIFIER_SHIFT) > 0) mods.Add(Modifiers.SHIFT);
+        if ((v & App.SAPP_MODIFIER_CTRL) > 0) mods.Add(Modifiers.CTRL);
+        if ((v & App.SAPP_MODIFIER_ALT) > 0) mods.Add(Modifiers.ALT);
+        if ((v & App.SAPP_MODIFIER_SUPER) > 0) mods.Add(Modifiers.SUPER);
+        if ((v & App.SAPP_MODIFIER_LMB) > 0) mods.Add(Modifiers.LMB);
+        if ((v & App.SAPP_MODIFIER_RMB) > 0) mods.Add(Modifiers.RMB);
+        if ((v & App.SAPP_MODIFIER_MMB) > 0) mods.Add(Modifiers.MMB);
+        return mods;
     }
 }
 

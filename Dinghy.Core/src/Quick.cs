@@ -55,19 +55,19 @@ public static class Quick
         get => Engine.Setup;
         set => Engine.Setup += value;
     }
-    public static Action<Key> OnKeyDown
+    public static Action<Key,List<Modifiers>> OnKeyDown
     {
         get => InputSystem.Events.Key.Down;
         set => InputSystem.Events.Key.Down += value;
     }
     
-    public static Action<Key> OnKeyPressed
+    public static Action<Key,List<Modifiers>> OnKeyPressed
     {
         get => InputSystem.Events.Key.Pressed;
         set => InputSystem.Events.Key.Pressed += value;
     }
     
-    public static Action<Key> OnKeyUp
+    public static Action<Key,List<Modifiers>> OnKeyUp
     {
         get => InputSystem.Events.Key.Up;
         set => InputSystem.Events.Key.Up += value;
