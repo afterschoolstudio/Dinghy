@@ -388,11 +388,25 @@ void grid()
 void particleSystem()
 {
 	var emitter = new ParticleEmitter(
-		new(10000, 200, new ParticleEmitterComponent.ParticleConfig(6)))
+		new(100000, 200, new ParticleEmitterComponent.ParticleConfig(
+			3f,
+			new (4,0.1f,Easing.EaseOutExpo),
+			new (4,0.1f,Easing.EaseOutExpo),
+			new (4,8,Easing.EaseInExpo),
+			new (4,8,Easing.EaseInExpo)
+		)))
 	{
 		X = 100,
 		Y = 100
 	};
+	Update += () =>
+	{
+		MoveToMouse(emitter);
+		var rand = RandUnitCircle();
+		emitter.Config.particleConfig.DX.StartValue = rand.x * 4 ;
+		emitter.Config.particleConfig.DY.StartValue = rand.y * 4;
+	};
+	
 }
 
 

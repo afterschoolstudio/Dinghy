@@ -1,4 +1,5 @@
-﻿using static Dinghy.Resources;
+﻿using Dinghy.Core;
+using static Dinghy.Resources;
 
 namespace Dinghy;
 
@@ -61,7 +62,6 @@ public readonly record struct HasManagedOwner(Dinghy.Entity e);
 public record ParticleEmitterComponent
 {
     public readonly record struct EmitterConfig(int maxParticles, float emissionRate, ParticleConfig particleConfig);
-    public readonly record struct ParticleConfig(float lifespan);
     public EmitterConfig Config { get; init; }
     public List<Particle> Particles = new List<Particle>();
     public float Accumulator = 0f;
@@ -73,16 +73,81 @@ public record ParticleEmitterComponent
             Particles.Add(new());
         }
     }
+
+    public class ParticleConfig
+    {
+        public float Lifespan;
+        public Transition<float> DX;
+        public Transition<float> DY;
+        public Transition<float> Width;
+        public Transition<float> Height;
+
+        public ParticleConfig(float lifespan, Transition<float> dx, Transition<float> dy, Transition<float> width,
+            Transition<float> height)
+        {
+            Lifespan = lifespan;
+            DX = dx;
+            DY = dy;
+            Width = width;
+            Height = height;
+        }
+
+        public ParticleConfig(ParticleConfig c)
+        {
+            Lifespan = c.Lifespan;
+            DX = c.DX;
+            DY = c.DY;
+            Width = c.Width;
+            Height = c.Height;
+        }
+        
+        public struct Transition<T>
+        {
+            public T StartValue;
+            public T TargetValue;
+            public delegate double TransitionFunction(double time);
+
+            public TransitionFunction Sample;
+            public Transition(T start, T end, TransitionFunction func)
+            {
+                StartValue = start;
+                TargetValue = end;
+                Sample = func;
+            }
+        }
+
+        public struct TransitionResolution
+        {
+            public float DX;
+            public float DY;
+            public float Width;
+            public float Height;
+        }
+
+        public TransitionResolution Resolve(double time)
+        {
+            var sampleTime = time / Lifespan;
+            return new TransitionResolution()
+            {
+                DX = Quick.MapF((float)DX.Sample(sampleTime),0f,1f,DX.StartValue,DX.TargetValue),
+                DY = Quick.MapF((float)DY.Sample(sampleTime),0f,1f,DY.StartValue,DY.TargetValue),
+                Width = Quick.MapF((float)Width.Sample(sampleTime),0f,1f,Width.StartValue,Width.TargetValue),
+                Height = Quick.MapF((float)Height.Sample(sampleTime),0f,1f,Height.StartValue,Height.TargetValue),
+            };
+        }
+    }
+
     public class Particle
     {
         public bool Active;
         public float X;
         public float Y;
-        public float DX; //mapping this to a curve would be great
+        public float DX;
         public float DY;
         public float Width;
         public float Height;
         public float Age;
+        public ParticleConfig Config;
 
         public Particle()
         {
@@ -98,6 +163,15 @@ public record ParticleEmitterComponent
             Width = 8; // temp
             Height = 8; //temp
             Age = 0;
+        }
+
+        public void Resolve()
+        {
+            var tr = Config.Resolve(Age);
+            DX = tr.DX;
+            DY = tr.DY;
+            Width = tr.Width;
+            Height = tr.Height;
         }
     }
 }

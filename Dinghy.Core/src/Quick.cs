@@ -9,6 +9,22 @@ public static class Quick
     public static int RandInt() => Random.Next();
     public static float RandFloat() => Random.NextSingle();
     public static double RandDouble() => Random.NextDouble();
+    
+    public static double Map(double value, double fromSource, double toSource, double fromTarget, double toTarget)
+    {
+        return (value - fromSource) / (toSource - fromSource) * (toTarget - fromTarget) + fromTarget;
+    }
+    
+    public static float MapF(float value, float fromSource, float toSource, float fromTarget, float toTarget)
+    {
+        return (value - fromSource) / (toSource - fromSource) * (toTarget - fromTarget) + fromTarget;
+    }
+
+    public static void MoveToMouse(Entity e)
+    {
+        e.X = (int)InputSystem.MouseX;
+        e.Y = (int)InputSystem.MouseY;
+    }
 
     public static Vector2 RandUnitCircle()
     {

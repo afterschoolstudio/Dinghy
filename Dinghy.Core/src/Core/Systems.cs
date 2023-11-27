@@ -140,6 +140,7 @@ public class ParticleRenderSystem : RenderSystem
             var possibleParticleSlots = emitter.Config.emissionRate * dt;
             emitter.Accumulator += possibleParticleSlots;
             var freeSlots = (int)emitter.Accumulator;
+            var resolvedSample = new ParticleEmitterComponent.ParticleConfig.TransitionResolution();
             for (int i = 0; i < emitter.Particles.Count; i++)
             {
                 bool justInit = false;
@@ -147,6 +148,7 @@ public class ParticleRenderSystem : RenderSystem
                 {
                     emitter.Particles[i].Active = true;
                     emitter.Particles[i].Init();
+                    emitter.Particles[i].Config = new ParticleEmitterComponent.ParticleConfig(emitter.Config.particleConfig);
                     
                     var rand = Quick.RandUnitCircle();
                     emitter.Particles[i].DX = rand.x * Quick.RandFloat() * 4;
@@ -159,7 +161,7 @@ public class ParticleRenderSystem : RenderSystem
                 if (!justInit)
                 {
                     emitter.Particles[i].Age += dt;
-                    if (emitter.Particles[i].Age > emitter.Config.particleConfig.lifespan)
+                    if (emitter.Particles[i].Age > emitter.Config.particleConfig.Lifespan)
                     {
                         emitter.Particles[i].Active = false;
                     }
@@ -168,6 +170,8 @@ public class ParticleRenderSystem : RenderSystem
                 if (emitter.Particles[i].Active)
                 {
                     activeIndicies.Add(i);
+                    emitter.Particles[i].Resolve();
+                    
                     emitter.Particles[i].X += emitter.Particles[i].DX;
                     emitter.Particles[i].Y += emitter.Particles[i].DY;
                 }

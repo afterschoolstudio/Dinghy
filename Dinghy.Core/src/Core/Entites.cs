@@ -300,11 +300,15 @@ public class ParticleEmitter : Entity
 {
     //NOTE: this is NOT an entity emitter, this emits a special particle type
     //want to add in ability to sample a curve for these tbh
+    public ParticleEmitterComponent.EmitterConfig Config;
     public ParticleEmitter(ParticleEmitterComponent.EmitterConfig config, bool startEnabled = true) : base(startEnabled)
     {
+        Config = config;
         ECSEntity.Add(
             new ParticleEmitterComponent(config));
     }
+
+    // public void PushUpdatedConfig();
 }
 
 public class TestBunny : Entity
