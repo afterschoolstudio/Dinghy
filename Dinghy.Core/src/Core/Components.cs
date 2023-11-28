@@ -76,17 +76,28 @@ public record ParticleEmitterComponent
 
     public class ParticleConfig
     {
+        public enum ParticlePrimitiveType
+        {
+            Rectangle,
+            Line,
+            LineStrip,
+            Triangle,
+            // TriangleStrip looks like shit
+        }
         public float Lifespan;
         public Point EmissionPoint;
+        public ParticlePrimitiveType ParticleType;
         public Transition<float> DX;
         public Transition<float> DY;
         public Transition<float> Width;
         public Transition<float> Height;
+        public Transition<float> Rotation;
         public Transition<Color> Color;
 
-        public ParticleConfig(Point emissionPoint, float lifespan, Transition<float> dx, Transition<float> dy, Transition<float> width,
-            Transition<float> height, Transition<Color> color)
+        public ParticleConfig(Point emissionPoint, ParticlePrimitiveType type, float lifespan, Transition<float> dx, Transition<float> dy, Transition<float> width,
+            Transition<float> height, Transition<Color> color, Transition<float> rotation)
         {
+            ParticleType = type;
             EmissionPoint = emissionPoint;
             Lifespan = lifespan;
             DX = dx;
@@ -94,16 +105,19 @@ public record ParticleEmitterComponent
             Width = width;
             Height = height;
             Color = color;
+            Rotation = rotation;
         }
 
         public ParticleConfig(ParticleConfig c)
         {
+            ParticleType = c.ParticleType;
             Lifespan = c.Lifespan;
             DX = c.DX;
             DY = c.DY;
             Width = c.Width;
             Height = c.Height;
             Color = c.Color;
+            Rotation = c.Rotation;
         }
         
         public struct Transition<T>
@@ -127,6 +141,7 @@ public record ParticleEmitterComponent
             public float DY;
             public float Width;
             public float Height;
+            public float Rotation;
             public Color Color;
         }
 
@@ -139,6 +154,7 @@ public record ParticleEmitterComponent
                 DY = Quick.MapF((float)DY.Sample(sampleTime),0f,1f,DY.StartValue,DY.TargetValue),
                 Width = Quick.MapF((float)Width.Sample(sampleTime),0f,1f,Width.StartValue,Width.TargetValue),
                 Height = Quick.MapF((float)Height.Sample(sampleTime),0f,1f,Height.StartValue,Height.TargetValue),
+                Rotation = Quick.MapF((float)Rotation.Sample(sampleTime),0f,1f,Rotation.StartValue,Rotation.TargetValue),
                 Color = ResolveColorTransition()
             };
 
@@ -162,6 +178,7 @@ public record ParticleEmitterComponent
         public float DY = 0;
         public float Width = 8;
         public float Height = 8;
+        public float Rotation = 0;
         public float Age = 0;
         public Color Color = Palettes.ENDESGA[19];
         public ParticleConfig Config;
@@ -173,6 +190,7 @@ public record ParticleEmitterComponent
             Y = 0;
             DX = 0;
             DY = 0;
+            Rotation = 0;
         }
 
         public void Resolve()
@@ -180,6 +198,7 @@ public record ParticleEmitterComponent
             var tr = Config.Resolve(Age);
             DX = tr.DX;
             DY = tr.DY;
+            Rotation = tr.Rotation;
             Width = tr.Width;
             Height = tr.Height;
             Color = tr.Color;

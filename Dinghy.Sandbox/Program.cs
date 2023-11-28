@@ -187,8 +187,8 @@ void physics()
 			}, 0f);
 		var bod = Engine.PhysicsWorld.CreateStaticBody(bot, 0f, new[] { poly });
 		bod.Set(bot,0f);
-		Console.WriteLine(bod.IsStatic);
-		Console.WriteLine($"{bod.Position.x},{bod.Position.y}");
+		// Console.WriteLine(bod.IsStatic);
+		// Console.WriteLine($"{bod.Position.x},{bod.Position.y}");
 	};
 	
 	Update += () =>
@@ -225,7 +225,7 @@ void physics()
 		foreach (var b in bods)
 		{
 			b.Value.AddForce(new Vector2(0,9.8f));
-			Console.WriteLine($"{b.Key.ECSEntity.Id} {(int)b.Value.Position.x},{(int)b.Value.Position.y}");
+			// Console.WriteLine($"{b.Key.ECSEntity.Id} {(int)b.Value.Position.x},{(int)b.Value.Position.y}");
 			b.Key.SetPosition((int)b.Value.Position.x,(int)b.Value.Position.y,b.Value.Angle,b.Key.ScaleX,b.Key.ScaleY);
 			// transform.rotation = Quaternion.Euler(0.0f, 0.0f, Mathf.Rad2Deg * this.body.Angle);
 		}
@@ -390,14 +390,16 @@ void particleSystem()
 	var startColor = Palettes.ENDESGA[4];
 	var endColor = Palettes.ENDESGA[16];
 	var emitter = new ParticleEmitter(
-		new(100000, 2000, new ParticleEmitterComponent.ParticleConfig(
+		new(100000, 100, new ParticleEmitterComponent.ParticleConfig(
 			(0,0),
-			1f,
+			ParticleEmitterComponent.ParticleConfig.ParticlePrimitiveType.Triangle,
+			1.5f,
 			new (4,0.1f,Easing.EaseInOutQuart),
 			new (4,0.1f,Easing.EaseInOutQuart),
+			new (4,200,Easing.EaseOutExpo),
 			new (4,16,Easing.EaseOutExpo),
-			new (4,16,Easing.EaseOutExpo),
-			new (startColor,endColor,Easing.EaseInOutExpo)
+			new (startColor,endColor,Easing.EaseInOutExpo),
+			new (0,3 *MathF.PI,Easing.Linear)
 		)))
 	{
 		X = 200,
@@ -409,6 +411,12 @@ void particleSystem()
 		var rand = RandUnitCircle();
 		emitter.Config.particleConfig.DX.StartValue = rand.x * 4;
 		emitter.Config.particleConfig.DY.StartValue = rand.y * 4;
+	};
+	OnKeyDown += (key,_) =>  {
+		if (key == Key.C)
+		{
+			Engine.Clear = !Engine.Clear;
+		}
 	};
 	
 }

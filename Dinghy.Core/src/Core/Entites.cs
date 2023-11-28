@@ -10,16 +10,11 @@ using Volatile;
 
 namespace Dinghy;
 
-public class Scene
-{
-    public List<Dinghy.Entity> Entities = new List<Dinghy.Entity>();
-}
-
-
 public class Entity
 {
     public string Name { get; set; } = "entity";
     private bool enabled = true;
+    // public bool DestoryOnLoad = true;
     public bool Enabled
     {
         get => enabled;
@@ -154,7 +149,7 @@ public class Entity
         Arch.Core.Entity e;
         if (startEnabled)
         {
-            e = Engine.World.Create(
+            e = Engine.ECSWorld.Create(
                 new Active(),
                 new HasManagedOwner(this),
                 new Position(X,Y), 
@@ -163,14 +158,14 @@ public class Entity
         }
         else
         {
-            e = Engine.World.Create(
+            e = Engine.ECSWorld.Create(
                 new HasManagedOwner(this),
                 new Position(X,Y), 
                 new Velocity(0,0)
             );
         }
-        ECSEntityReference = Engine.World.Reference(e);
-        Engine.World.Add<Entity>(ECSEntity);
+        ECSEntityReference = Engine.ECSWorld.Reference(e);
+        Engine.ECSWorld.Add<Entity>(ECSEntity);
         if (scene == null)
         {
             Engine.GlobalScene.Entities.Add(this);
@@ -207,7 +202,7 @@ public class Entity
     public void DestroyImmediate()
     {
         Engine.GlobalScene.Entities.Remove(this); //TODO: note this assumes a global scene
-        Engine.World.Destroy(ECSEntity);
+        Engine.ECSWorld.Destroy(ECSEntity);
     }
 
     public static implicit operator Checks.Transform2D(Entity e) =>
