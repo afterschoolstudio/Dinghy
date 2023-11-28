@@ -4,9 +4,6 @@
 [submodule "Dinghy.Bootstrapper/libs/stb/src/stb"]
 	path = Dinghy.Bootstrapper/libs/stb/src/stb
 	url = https://github.com/nothings/stb
-[submodule "Dinghy.Bootstrapper/libs/sokol/src/sokol_gp"]
-	path = Dinghy.Bootstrapper/libs/sokol/src/sokol_gp
-	url = https://github.com/edubart/sokol_gp.git
 [submodule "Dinghy.Bootstrapper/libs/cute/src/cute_headers"]
 	path = Dinghy.Bootstrapper/libs/cute/src/cute_headers
 	url = https://github.com/RandyGaul/cute_headers.git
