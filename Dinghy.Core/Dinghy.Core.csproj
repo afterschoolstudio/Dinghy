@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         <AssemblyName>Dinghy</AssemblyName>
         <RootNamespace>Dinghy</RootNamespace>
-        <LangVersion>preview</LangVersion>
+        <LangVersion>default</LangVersion>
     </PropertyGroup>
 
     <PropertyGroup>

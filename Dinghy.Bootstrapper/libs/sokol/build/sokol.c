@@ -1,6 +1,11 @@
 #define SOKOL_IMPL
 #define SOKOL_DLL
 #define SOKOL_NO_ENTRY
+#define SOKOL_TRACE_HOOKS
+#define CIMGUI_DEFINE_ENUMS_AND_STRUCTS
+// #define STATIC
+// #define IMGUI_STATIC
+// #define IMGUI_STATIC=yes
 // #define SOKOL_DEBUG
 
 // #define USE_SOKOL_APP dont need this anymore says floooh - if it breaks uncomment i guess
@@ -21,6 +26,9 @@
 #include "../src/sokol/sokol_time.h"
 #include "../src/sokol/sokol_log.h"
 
-#include "../src/sokol/util/sokol_gl.h"
 #include "../src/sokol/util/sokol_color.h"
 #include "../src/sokol/util/sokol_debugtext.h"
+#include "../../cimgui/src/cimgui/imgui/imgui.h"
+#include "../../cimgui/src/cimgui/cimgui.h"
+#include "../src/sokol/util/sokol_imgui.h"
+#include "../src/sokol/util/sokol_gfx_imgui.h"

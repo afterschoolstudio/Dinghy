@@ -1,0 +1,11 @@
+@settings.rsp
+--traverse
+../src/sokol/util/sokol_imgui.h
+--file
+sokol_imgui_bindgen_helper.h
+--prefixStrip
+simgui_
+--methodClassName
+ImGUI
+--output
+../../../../Dinghy.Core/src/generated/lib/sokol/Sokol.ImGUI.cs

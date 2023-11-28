@@ -10,3 +10,6 @@
 [submodule "Dinghy.Bootstrapper/libs/sokol/src/sokol_gp"]
 	path = Dinghy.Bootstrapper/libs/sokol/src/sokol_gp
 	url = https://github.com/edubart/sokol_gp.git
+[submodule "Dinghy.Bootstrapper/libs/cimgui/src/cimgui"]
+	path = Dinghy.Bootstrapper/libs/cimgui/src/cimgui
+	url = https://github.com/cimgui/cimgui
