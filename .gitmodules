@@ -7,3 +7,6 @@
 [submodule "Dinghy.Bootstrapper/libs/cute/src/cute_headers"]
 	path = Dinghy.Bootstrapper/libs/cute/src/cute_headers
 	url = https://github.com/RandyGaul/cute_headers.git
+[submodule "Dinghy.Bootstrapper/libs/sokol/src/sokol_gp"]
+	path = Dinghy.Bootstrapper/libs/sokol/src/sokol_gp
+	url = https://github.com/edubart/sokol_gp.git
