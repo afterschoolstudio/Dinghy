@@ -23,18 +23,12 @@ pub const Config = struct {
     enable_wayland: bool = false
 };
 
-// Although this function looks imperative, note that its job is to
-// declaratively construct a build graph that will be executed by an external
-// runner.
 pub fn build(b: *std.Build) void {
 
     var config: Config = .{};
         
     const force_gl = b.option(bool, "gl", "Force GL backend") orelse false;
     config.backend = if (force_gl) .gl else .auto;
-
-    // NOTE: Wayland support is *not* currently supported in the standard sokol-zig bindings,
-    // you need to generate your own bindings using this PR: https://github.com/floooh/sokol/pull/425
     config.enable_wayland = b.option(bool, "wayland", "Compile with wayland-support (default: false)") orelse false;
     config.enable_x11 = b.option(bool, "x11", "Compile with x11-support (default: true)") orelse true;
     config.force_egl = b.option(bool, "egl", "Use EGL instead of GLX if possible (default: false)") orelse false;
@@ -44,23 +38,22 @@ pub fn build(b: *std.Build) void {
     const lib = b.addSharedLibrary(.{
         .name = "sokol",
         .target = target,
-        // Standard optimization options allow the person running `zig build` to select
-        // between Debug, ReleaseSafe, ReleaseFast, and ReleaseSmall. Here we do not
-        // set a preferred release mode, allowing the user to decide how to optimize.
         .optimize = b.standardOptimizeOption(.{})
     });
-    lib.linkLibC();
+    lib.linkLibCpp();
     
     const sokol_path = "";
     const csources = [_][]const u8 {
-        "sokol.c"
-        // "sokol_app.c",
-        // "sokol_gfx.c",
-        // "sokol_time.c",
-        // "sokol_audio.c",
-        // "sokol_gl.c",
-        // "sokol_debugtext.c",
-        // "sokol_shape.c",
+        "../../cimgui/src/cimgui/imgui/imgui.cpp",
+        "../../cimgui/src/cimgui/imgui/imgui_demo.cpp",
+        "../../cimgui/src/cimgui/imgui/imgui_draw.cpp",
+        "../../cimgui/src/cimgui/imgui/imgui_internal.h",
+        "../../cimgui/src/cimgui/imgui/imgui_tables.cpp",
+        "../../cimgui/src/cimgui/imgui/imgui_widgets.cpp",
+        "../../cimgui/src/cimgui/imgui/imstb_rectpack.h",
+        "../../cimgui/src/cimgui/imgui/imstb_textedit.h",
+        "../../cimgui/src/cimgui/imgui/imstb_truetype.h",
+        "sokol.cpp"
     };
     var _backend = config.backend;
     if (_backend == .auto) {
@@ -82,7 +75,7 @@ pub fn build(b: *std.Build) void {
         inline for (csources) |csrc| {
             lib.addCSourceFile(.{
                 .file = .{ .path = sokol_path ++ csrc },
-                .flags = &[_][]const u8{ "-ObjC", "-DIMPL", backend_option },
+                .flags = &[_][]const u8{ "-ObjC++", "-DIMPL", backend_option },
             });
         }
         lib.linkFramework("Cocoa");
@@ -148,18 +141,6 @@ pub fn build(b: *std.Build) void {
         }
     }
     
-    // lib.setBuildMode(mode);
-    // shared_lib.setTarget(target);
-    // shared_lib.addCSourceFile("sokol.c",&.{ "-Wall", "-Werror" });
-    // shared_lib.addCSourceFile("sokol.c",&.{ "-Wall", "-Werror"});
-
-    //windows
-    // shared_lib.linkSystemLibrary("win32");
-    // shared_lib.linkSystemLibrary("kernel32");
-    // shared_lib.linkSystemLibrary("user32");
-    // shared_lib.linkSystemLibrary("shell32");
-    // shared_lib.linkSystemLibrary("dxgi");
-    // shared_lib.linkSystemLibrary("d3d11");
     b.lib_dir = "../../../../Dinghy.Core/libs";
     b.installArtifact(lib);
 }

@@ -53,10 +53,10 @@
       <None Update="libs\stb.dylib">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="libs\sokol.dylib">
+      <None Update="libs\cute.dylib">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="libs\cute.dylib">
+      <None Update="libs\sokol.dylib">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>
