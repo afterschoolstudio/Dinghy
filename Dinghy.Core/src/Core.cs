@@ -79,7 +79,33 @@ public static partial class Engine
     private static unsafe void Event(sapp_event* e)
     {
         sapp_event ev = *e;
-        InputSystem.FrameEvents.Add(ev);
+         if (ImGUI.handle_event(e) > 0)
+         {
+             /*
+              * if you're using sokol_app.h, from inside the sokol_app.h event callback,
+                 call:
+
+                 bool simgui_handle_event(const sapp_event* ev);
+
+                 The return value is the value of ImGui::GetIO().WantCaptureKeyboard,
+                 if this is true, you might want to skip keyboard input handling
+                 in your own event handler.
+
+                 If you want to use the ImGui functions for checking if a key is pressed
+                 (e.g. ImGui::IsKeyPressed()) the following helper function to map
+                 an sapp_keycode to an ImGuiKey value may be useful:
+
+                 int simgui_map_keycode(sapp_keycode c);
+
+                 Note that simgui_map_keycode() can be called outside simgui_setup()/simgui_shutdown().
+              */
+         }
+         else
+         {
+             InputSystem.FrameEvents.Add(ev);
+         }
+        // InputSystem.FrameEvents.Add(ev);
+
         // Console.WriteLine(ev);
         // var width = App.width();
         // var height = App.height();
@@ -104,6 +130,8 @@ public static partial class Engine
     public static bool Clear = true;
 
     public static core_state state = default;
+    
+    public static sg_imgui_t gfx_dbgui = default;
 
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
     private static unsafe void Initialize()
@@ -117,14 +145,22 @@ public static partial class Engine
         // desc.logger.func = (delegate* unmanaged[Cdecl]<sbyte*, uint, uint, sbyte*, uint, sbyte*, void*, void>)NativeLibrary.GetExport(NativeLibrary.Load("libs/sokol"), "slog_func");
         Gfx.setup(&desc);
 
-        /* GL setup
-        sgl_desc_t gl_desc = default;
-        //call our own logger
-        gl_desc.logger.func = &Sokol_Logger;
-        //call native logger
-        // gl_desc.logger.func = (delegate* unmanaged[Cdecl]<sbyte*, uint, uint, sbyte*, uint, sbyte*, void*, void>)NativeLibrary.GetExport(NativeLibrary.Load("libs/sokol"), "slog_func");
-        GL.setup(&gl_desc);
-         */
+        simgui_desc_t imgui_desc = default;
+        imgui_desc.logger.func = &Sokol_Logger;
+        ImGUI.setup(&imgui_desc);
+        
+        sg_imgui_desc_t sg_imgui_desc = default;
+        gfx_dbgui.buffers.open = 1;
+        gfx_dbgui.images.open = 1;
+        gfx_dbgui.samplers.open = 1;
+        gfx_dbgui.shaders.open = 1;
+        gfx_dbgui.pipelines.open = 1;
+        gfx_dbgui.passes.open = 1;
+        gfx_dbgui.capture.open = 1;
+        fixed (sg_imgui_t* ctx = &gfx_dbgui)
+        {
+            GfxDebugGUI.init(ctx,&sg_imgui_desc);
+        }
 
         sgp_desc gp_desc = default;
         gp_desc.max_vertices = 1000000;
@@ -179,25 +215,6 @@ public static partial class Engine
         state.smp = Gfx.make_sampler(&sample_desc);
         // GP.sgp_set_sampler(0,state.smp);
         
-        /* GL setup
-        var d = Gfx.query_sampler_desc(state.smp);
-        Console.WriteLine("init: " + d.mipmap_filter);
-        
-        sg_pipeline_desc pipeline_desc = default;
-        pipeline_desc.colors.e0.write_mask = sg_color_mask.SG_COLORMASK_RGB;
-        pipeline_desc.colors.e0.blend.enabled = 1;
-        pipeline_desc.colors.e0.blend.src_factor_rgb = sg_blend_factor.SG_BLENDFACTOR_SRC_ALPHA;
-        pipeline_desc.colors.e0.blend.dst_factor_rgb = sg_blend_factor.SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA;
-        state.alpha_pip = GL.make_pipeline(&pipeline_desc);
-
-        // default pass action
-        var pass_action = default(sg_pass_action);
-        pass_action.colors.e0.load_action = sg_load_action.SG_LOADACTION_CLEAR;
-        pass_action.colors.e0.clear_value.r = 0f;
-        pass_action.colors.e0.clear_value.g = 0f;
-        pass_action.colors.e0.clear_value.b = 0f;
-        pass_action.colors.e0.clear_value.a = 1.0f;
-        */
         Width = App.width();
         Height = App.height();
         Setup?.Invoke();
@@ -224,15 +241,23 @@ public static partial class Engine
         // Console.WriteLine($"{t}ms");
         Width = App.width();
         Height = App.height();
+
+        simgui_frame_desc_t imgui_frame = default;
+        imgui_frame.width = Width;
+        imgui_frame.height = Height;
+        imgui_frame.delta_time = DeltaTime;
+        imgui_frame.dpi_scale = App.dpi_scale();
+        ImGUI.new_frame(&imgui_frame);
         
-        
-        /* GL frame
-        GL.viewport(0, 0, Width, Height, 1);  
-        scale = 1.0f + MathF.Sin(GL.rad(angle_deg)) * 10.5f;
-        angle_deg += 1.0f * t;
-        GL.defaults();
-        GL.enable_texture();
-         */
+        fixed (sg_imgui_t* ctx = &gfx_dbgui)
+        {
+            GfxDebugGUI.draw(ctx);
+            GfxDebugGUI.draw_pipelines_window(ctx);
+            GfxDebugGUI.draw_pipelines_content(ctx);
+            // GfxDebugGUI.draw_capabilities_window(ctx);
+            // GfxDebugGUI.draw_images_content(ctx);
+            // GfxDebugGUI.menu(&sg_imgui, "sokol-gfx"); why is this not here?
+        }
         
         float ratio = Width/(float)Height;
 
@@ -293,12 +318,12 @@ public static partial class Engine
         fixed (sg_pass_action* pass = &state.pass_action)
         {
             Gfx.begin_default_pass(pass, Width, Height);
-            // GL.draw();
             // Dispatch all draw commands to Sokol GFX.
             GP.sgp_flush();
             // Finish a draw command queue, clearing it.
             GP.sgp_end();
             DebugText.draw();
+            ImGUI.render();
             Gfx.end_pass();
             Gfx.commit();
         }
@@ -521,6 +546,11 @@ public static partial class Engine
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
     private static unsafe void Cleanup()
     {
+        ImGUI.shutdown();
+        fixed (sg_imgui_t* ctx = &gfx_dbgui)
+        {
+            GfxDebugGUI.discard(ctx);
+        }
         // Gfx.destroy_image(image);
         GP.sgp_shutdown();
         // GL.shutdown();

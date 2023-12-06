@@ -73,7 +73,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "resource pipelines.md",
+                "file": "marketing.md",
                 "mode": "source",
                 "source": false
               }
@@ -154,7 +154,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "resource pipelines.md",
+                "file": "marketing.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -171,7 +171,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "resource pipelines.md",
+                "file": "marketing.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -194,7 +194,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "resource pipelines.md"
+                "file": "marketing.md"
               }
             }
           }
@@ -218,32 +218,32 @@
   },
   "active": "7330355a7f7645ff",
   "lastOpenFiles": [
+    "ecs.md",
+    "builtins.md",
+    "references/buildscripts/basic-lib-build.zig.md",
+    "references/buildscripts/fips cmake builder.md",
+    "references/buildscripts/sokol zig build ref.md",
+    "references/buildscripts/sokol dll builder from sokol-samples.md",
+    "todo.md",
+    "resource pipelines.md",
     "performance.md",
+    "how.md",
+    "data description formats.md",
+    "dev/manual adds.md",
+    "dev/clangsharppinvokegenerator notes.md",
+    "dev/bootstrapper.md",
     "marketing.md",
     "ui/yoga.md",
     "Pasted image 20231005144749.png",
     "Pasted image 20231005144819.png",
     "ui/sdf.md",
     "networking.md",
-    "ecs.md",
-    "builtins.md",
-    "resource pipelines.md",
-    "dev/manual adds.md",
-    "dev/bootstrapper.md",
-    "dev/clangsharppinvokegenerator notes.md",
-    "how.md",
-    "references/buildscripts/basic-lib-build.zig.md",
-    "references/buildscripts/fips cmake builder.md",
-    "references/buildscripts/sokol zig build ref.md",
-    "references/buildscripts/sokol dll builder from sokol-samples.md",
     "lygia.md",
     "scriban.md",
-    "data description formats.md",
     "dotnet releaser.md",
     "ideas.md",
     "ui/razor refs.md",
     "ui",
-    "todo.md",
     "references/buildscripts.md",
     "references/buildscripts",
     "references",
