@@ -5223,6 +5223,20 @@ public unsafe partial struct sg_imgui_str_t
         public byte open;
     }
 
+    public partial struct sg_imgui_frame_stats_t
+    {
+        [NativeTypeName("bool")]
+        public byte open;
+
+        [NativeTypeName("bool")]
+        public byte disable_sokol_imgui_stats;
+
+        [NativeTypeName("bool")]
+        public byte in_sokol_imgui;
+
+        public sg_frame_stats stats;
+    }
+
     public unsafe partial struct sg_imgui_allocator_t
     {
         [NativeTypeName("void *(*)(size_t, void *)")]
@@ -5262,6 +5276,8 @@ public unsafe partial struct sg_imgui_str_t
 
         public sg_imgui_caps_t caps;
 
+        public sg_imgui_frame_stats_t frame_stats;
+
         public sg_pipeline cur_pipeline;
 
         public sg_trace_hooks hooks;
@@ -5277,6 +5293,9 @@ public unsafe partial struct sg_imgui_str_t
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_imgui_draw", ExactSpelling = true)]
         public static extern void draw(sg_imgui_t* ctx);
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_imgui_draw_menu", ExactSpelling = true)]
+        public static extern void draw_menu(sg_imgui_t* ctx, [NativeTypeName("const char *")] sbyte* title);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_imgui_draw_buffers_content", ExactSpelling = true)]
         public static extern void draw_buffers_content(sg_imgui_t* ctx);
@@ -5302,6 +5321,9 @@ public unsafe partial struct sg_imgui_str_t
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_imgui_draw_capabilities_content", ExactSpelling = true)]
         public static extern void draw_capabilities_content(sg_imgui_t* ctx);
 
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_imgui_draw_frame_stats_content", ExactSpelling = true)]
+        public static extern void draw_frame_stats_content(sg_imgui_t* ctx);
+
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_imgui_draw_buffers_window", ExactSpelling = true)]
         public static extern void draw_buffers_window(sg_imgui_t* ctx);
 
@@ -5325,4 +5347,7 @@ public unsafe partial struct sg_imgui_str_t
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_imgui_draw_capabilities_window", ExactSpelling = true)]
         public static extern void draw_capabilities_window(sg_imgui_t* ctx);
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_imgui_draw_frame_stats_window", ExactSpelling = true)]
+        public static extern void draw_frame_stats_window(sg_imgui_t* ctx);
     }

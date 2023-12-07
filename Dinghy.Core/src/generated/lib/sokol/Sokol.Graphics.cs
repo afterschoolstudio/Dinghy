@@ -67,7 +67,8 @@ public partial struct sg_buffer
         public float a;
     }
 
-    public enum sg_backend
+    [NativeTypeName("unsigned int")]
+    public enum sg_backend : uint
     {
         SG_BACKEND_GLCORE33,
         SG_BACKEND_GLES3,
@@ -79,7 +80,8 @@ public partial struct sg_buffer
         SG_BACKEND_DUMMY,
     }
 
-    public enum sg_pixel_format
+    [NativeTypeName("unsigned int")]
+    public enum sg_pixel_format : uint
     {
         _SG_PIXELFORMAT_DEFAULT,
         SG_PIXELFORMAT_NONE,
@@ -204,7 +206,8 @@ public partial struct sg_buffer
         public int gl_max_combined_texture_image_units;
     }
 
-    public enum sg_resource_state
+    [NativeTypeName("unsigned int")]
+    public enum sg_resource_state : uint
     {
         SG_RESOURCESTATE_INITIAL,
         SG_RESOURCESTATE_ALLOC,
@@ -214,7 +217,8 @@ public partial struct sg_buffer
         _SG_RESOURCESTATE_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_usage
+    [NativeTypeName("unsigned int")]
+    public enum sg_usage : uint
     {
         _SG_USAGE_DEFAULT,
         SG_USAGE_IMMUTABLE,
@@ -224,7 +228,8 @@ public partial struct sg_buffer
         _SG_USAGE_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_buffer_type
+    [NativeTypeName("unsigned int")]
+    public enum sg_buffer_type : uint
     {
         _SG_BUFFERTYPE_DEFAULT,
         SG_BUFFERTYPE_VERTEXBUFFER,
@@ -233,7 +238,8 @@ public partial struct sg_buffer
         _SG_BUFFERTYPE_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_index_type
+    [NativeTypeName("unsigned int")]
+    public enum sg_index_type : uint
     {
         _SG_INDEXTYPE_DEFAULT,
         SG_INDEXTYPE_NONE,
@@ -243,7 +249,8 @@ public partial struct sg_buffer
         _SG_INDEXTYPE_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_image_type
+    [NativeTypeName("unsigned int")]
+    public enum sg_image_type : uint
     {
         _SG_IMAGETYPE_DEFAULT,
         SG_IMAGETYPE_2D,
@@ -254,27 +261,32 @@ public partial struct sg_buffer
         _SG_IMAGETYPE_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_image_sample_type
+    [NativeTypeName("unsigned int")]
+    public enum sg_image_sample_type : uint
     {
         _SG_IMAGESAMPLETYPE_DEFAULT,
         SG_IMAGESAMPLETYPE_FLOAT,
         SG_IMAGESAMPLETYPE_DEPTH,
         SG_IMAGESAMPLETYPE_SINT,
         SG_IMAGESAMPLETYPE_UINT,
+        SG_IMAGESAMPLETYPE_UNFILTERABLE_FLOAT,
         _SG_IMAGESAMPLETYPE_NUM,
         _SG_IMAGESAMPLETYPE_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_sampler_type
+    [NativeTypeName("unsigned int")]
+    public enum sg_sampler_type : uint
     {
         _SG_SAMPLERTYPE_DEFAULT,
-        SG_SAMPLERTYPE_SAMPLE,
-        SG_SAMPLERTYPE_COMPARE,
+        SG_SAMPLERTYPE_FILTERING,
+        SG_SAMPLERTYPE_NONFILTERING,
+        SG_SAMPLERTYPE_COMPARISON,
         _SG_SAMPLERTYPE_NUM,
         _SG_SAMPLERTYPE_FORCE_U32,
     }
 
-    public enum sg_cube_face
+    [NativeTypeName("unsigned int")]
+    public enum sg_cube_face : uint
     {
         SG_CUBEFACE_POS_X,
         SG_CUBEFACE_NEG_X,
@@ -286,14 +298,16 @@ public partial struct sg_buffer
         _SG_CUBEFACE_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_shader_stage
+    [NativeTypeName("unsigned int")]
+    public enum sg_shader_stage : uint
     {
         SG_SHADERSTAGE_VS,
         SG_SHADERSTAGE_FS,
         _SG_SHADERSTAGE_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_primitive_type
+    [NativeTypeName("unsigned int")]
+    public enum sg_primitive_type : uint
     {
         _SG_PRIMITIVETYPE_DEFAULT,
         SG_PRIMITIVETYPE_POINTS,
@@ -305,7 +319,8 @@ public partial struct sg_buffer
         _SG_PRIMITIVETYPE_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_filter
+    [NativeTypeName("unsigned int")]
+    public enum sg_filter : uint
     {
         _SG_FILTER_DEFAULT,
         SG_FILTER_NONE,
@@ -315,7 +330,8 @@ public partial struct sg_buffer
         _SG_FILTER_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_wrap
+    [NativeTypeName("unsigned int")]
+    public enum sg_wrap : uint
     {
         _SG_WRAP_DEFAULT,
         SG_WRAP_REPEAT,
@@ -326,7 +342,8 @@ public partial struct sg_buffer
         _SG_WRAP_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_border_color
+    [NativeTypeName("unsigned int")]
+    public enum sg_border_color : uint
     {
         _SG_BORDERCOLOR_DEFAULT,
         SG_BORDERCOLOR_TRANSPARENT_BLACK,
@@ -336,7 +353,8 @@ public partial struct sg_buffer
         _SG_BORDERCOLOR_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_vertex_format
+    [NativeTypeName("unsigned int")]
+    public enum sg_vertex_format : uint
     {
         SG_VERTEXFORMAT_INVALID,
         SG_VERTEXFORMAT_FLOAT,
@@ -360,7 +378,8 @@ public partial struct sg_buffer
         _SG_VERTEXFORMAT_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_vertex_step
+    [NativeTypeName("unsigned int")]
+    public enum sg_vertex_step : uint
     {
         _SG_VERTEXSTEP_DEFAULT,
         SG_VERTEXSTEP_PER_VERTEX,
@@ -369,7 +388,8 @@ public partial struct sg_buffer
         _SG_VERTEXSTEP_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_uniform_type
+    [NativeTypeName("unsigned int")]
+    public enum sg_uniform_type : uint
     {
         SG_UNIFORMTYPE_INVALID,
         SG_UNIFORMTYPE_FLOAT,
@@ -385,7 +405,8 @@ public partial struct sg_buffer
         _SG_UNIFORMTYPE_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_uniform_layout
+    [NativeTypeName("unsigned int")]
+    public enum sg_uniform_layout : uint
     {
         _SG_UNIFORMLAYOUT_DEFAULT,
         SG_UNIFORMLAYOUT_NATIVE,
@@ -394,7 +415,8 @@ public partial struct sg_buffer
         _SG_UNIFORMLAYOUT_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_cull_mode
+    [NativeTypeName("unsigned int")]
+    public enum sg_cull_mode : uint
     {
         _SG_CULLMODE_DEFAULT,
         SG_CULLMODE_NONE,
@@ -404,7 +426,8 @@ public partial struct sg_buffer
         _SG_CULLMODE_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_face_winding
+    [NativeTypeName("unsigned int")]
+    public enum sg_face_winding : uint
     {
         _SG_FACEWINDING_DEFAULT,
         SG_FACEWINDING_CCW,
@@ -413,7 +436,8 @@ public partial struct sg_buffer
         _SG_FACEWINDING_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_compare_func
+    [NativeTypeName("unsigned int")]
+    public enum sg_compare_func : uint
     {
         _SG_COMPAREFUNC_DEFAULT,
         SG_COMPAREFUNC_NEVER,
@@ -428,7 +452,8 @@ public partial struct sg_buffer
         _SG_COMPAREFUNC_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_stencil_op
+    [NativeTypeName("unsigned int")]
+    public enum sg_stencil_op : uint
     {
         _SG_STENCILOP_DEFAULT,
         SG_STENCILOP_KEEP,
@@ -443,7 +468,8 @@ public partial struct sg_buffer
         _SG_STENCILOP_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_blend_factor
+    [NativeTypeName("unsigned int")]
+    public enum sg_blend_factor : uint
     {
         _SG_BLENDFACTOR_DEFAULT,
         SG_BLENDFACTOR_ZERO,
@@ -465,7 +491,8 @@ public partial struct sg_buffer
         _SG_BLENDFACTOR_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_blend_op
+    [NativeTypeName("unsigned int")]
+    public enum sg_blend_op : uint
     {
         _SG_BLENDOP_DEFAULT,
         SG_BLENDOP_ADD,
@@ -475,7 +502,8 @@ public partial struct sg_buffer
         _SG_BLENDOP_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_color_mask
+    [NativeTypeName("unsigned int")]
+    public enum sg_color_mask : uint
     {
         _SG_COLORMASK_DEFAULT = 0,
         SG_COLORMASK_NONE = 0x10,
@@ -497,7 +525,8 @@ public partial struct sg_buffer
         _SG_COLORMASK_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_load_action
+    [NativeTypeName("unsigned int")]
+    public enum sg_load_action : uint
     {
         _SG_LOADACTION_DEFAULT,
         SG_LOADACTION_CLEAR,
@@ -506,7 +535,8 @@ public partial struct sg_buffer
         _SG_LOADACTION_FORCE_U32 = 0x7FFFFFFF,
     }
 
-    public enum sg_store_action
+    [NativeTypeName("unsigned int")]
+    public enum sg_store_action : uint
     {
         _SG_STOREACTION_DEFAULT,
         SG_STOREACTION_STORE,
@@ -926,6 +956,9 @@ public partial struct sg_buffer
 
         [NativeTypeName("const void *")]
         public void* wgpu_texture;
+
+        [NativeTypeName("const void *")]
+        public void* wgpu_texture_view;
 
         [NativeTypeName("uint32_t")]
         public uint _end_canary;
@@ -1820,7 +1853,335 @@ public partial struct sg_buffer
         public sg_slot_info slot;
     }
 
-    public enum sg_log_item
+    public partial struct sg_frame_stats_gl
+    {
+        [NativeTypeName("uint32_t")]
+        public uint num_bind_buffer;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_active_texture;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_bind_texture;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_bind_sampler;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_use_program;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_render_state;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_vertex_attrib_pointer;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_vertex_attrib_divisor;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_enable_vertex_attrib_array;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_disable_vertex_attrib_array;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_uniform;
+    }
+
+    public partial struct sg_frame_stats_d3d11_pass
+    {
+        [NativeTypeName("uint32_t")]
+        public uint num_om_set_render_targets;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_clear_render_target_view;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_clear_depth_stencil_view;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_resolve_subresource;
+    }
+
+    public partial struct sg_frame_stats_d3d11_pipeline
+    {
+        [NativeTypeName("uint32_t")]
+        public uint num_rs_set_state;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_om_set_depth_stencil_state;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_om_set_blend_state;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_ia_set_primitive_topology;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_ia_set_input_layout;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_vs_set_shader;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_vs_set_constant_buffers;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_ps_set_shader;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_ps_set_constant_buffers;
+    }
+
+    public partial struct sg_frame_stats_d3d11_bindings
+    {
+        [NativeTypeName("uint32_t")]
+        public uint num_ia_set_vertex_buffers;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_ia_set_index_buffer;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_vs_set_shader_resources;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_ps_set_shader_resources;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_vs_set_samplers;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_ps_set_samplers;
+    }
+
+    public partial struct sg_frame_stats_d3d11_uniforms
+    {
+        [NativeTypeName("uint32_t")]
+        public uint num_update_subresource;
+    }
+
+    public partial struct sg_frame_stats_d3d11_draw
+    {
+        [NativeTypeName("uint32_t")]
+        public uint num_draw_indexed_instanced;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_draw_indexed;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_draw_instanced;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_draw;
+    }
+
+    public partial struct sg_frame_stats_d3d11
+    {
+        public sg_frame_stats_d3d11_pass pass;
+
+        public sg_frame_stats_d3d11_pipeline pipeline;
+
+        public sg_frame_stats_d3d11_bindings bindings;
+
+        public sg_frame_stats_d3d11_uniforms uniforms;
+
+        public sg_frame_stats_d3d11_draw draw;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_map;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_unmap;
+    }
+
+    public partial struct sg_frame_stats_metal_idpool
+    {
+        [NativeTypeName("uint32_t")]
+        public uint num_added;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_released;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_garbage_collected;
+    }
+
+    public partial struct sg_frame_stats_metal_pipeline
+    {
+        [NativeTypeName("uint32_t")]
+        public uint num_set_blend_color;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_set_cull_mode;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_set_front_facing_winding;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_set_stencil_reference_value;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_set_depth_bias;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_set_render_pipeline_state;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_set_depth_stencil_state;
+    }
+
+    public partial struct sg_frame_stats_metal_bindings
+    {
+        [NativeTypeName("uint32_t")]
+        public uint num_set_vertex_buffer;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_set_vertex_texture;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_set_vertex_sampler_state;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_set_fragment_texture;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_set_fragment_sampler_state;
+    }
+
+    public partial struct sg_frame_stats_metal_uniforms
+    {
+        [NativeTypeName("uint32_t")]
+        public uint num_set_vertex_buffer_offset;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_set_fragment_buffer_offset;
+    }
+
+    public partial struct sg_frame_stats_metal
+    {
+        public sg_frame_stats_metal_idpool idpool;
+
+        public sg_frame_stats_metal_pipeline pipeline;
+
+        public sg_frame_stats_metal_bindings bindings;
+
+        public sg_frame_stats_metal_uniforms uniforms;
+    }
+
+    public partial struct sg_frame_stats_wgpu_uniforms
+    {
+        [NativeTypeName("uint32_t")]
+        public uint num_set_bindgroup;
+
+        [NativeTypeName("uint32_t")]
+        public uint size_write_buffer;
+    }
+
+    public partial struct sg_frame_stats_wgpu_bindings
+    {
+        [NativeTypeName("uint32_t")]
+        public uint num_set_vertex_buffer;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_skip_redundant_vertex_buffer;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_set_index_buffer;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_skip_redundant_index_buffer;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_create_bindgroup;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_discard_bindgroup;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_set_bindgroup;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_skip_redundant_bindgroup;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_bindgroup_cache_hits;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_bindgroup_cache_misses;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_bindgroup_cache_collisions;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_bindgroup_cache_hash_vs_key_mismatch;
+    }
+
+    public partial struct sg_frame_stats_wgpu
+    {
+        public sg_frame_stats_wgpu_uniforms uniforms;
+
+        public sg_frame_stats_wgpu_bindings bindings;
+    }
+
+    public partial struct sg_frame_stats
+    {
+        [NativeTypeName("uint32_t")]
+        public uint frame_index;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_passes;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_apply_viewport;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_apply_scissor_rect;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_apply_pipeline;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_apply_bindings;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_apply_uniforms;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_draw;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_update_buffer;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_append_buffer;
+
+        [NativeTypeName("uint32_t")]
+        public uint num_update_image;
+
+        [NativeTypeName("uint32_t")]
+        public uint size_apply_uniforms;
+
+        [NativeTypeName("uint32_t")]
+        public uint size_update_buffer;
+
+        [NativeTypeName("uint32_t")]
+        public uint size_append_buffer;
+
+        [NativeTypeName("uint32_t")]
+        public uint size_update_image;
+
+        public sg_frame_stats_gl gl;
+
+        public sg_frame_stats_d3d11 d3d11;
+
+        public sg_frame_stats_metal metal;
+
+        public sg_frame_stats_wgpu wgpu;
+    }
+
+    [NativeTypeName("unsigned int")]
+    public enum sg_log_item : uint
     {
         SG_LOGITEM_OK,
         SG_LOGITEM_MALLOC_FAILED,
@@ -1831,8 +2192,12 @@ public partial struct sg_buffer
         SG_LOGITEM_GL_SHADER_LINKING_FAILED,
         SG_LOGITEM_GL_VERTEX_ATTRIBUTE_NOT_FOUND_IN_SHADER,
         SG_LOGITEM_GL_TEXTURE_NAME_NOT_FOUND_IN_SHADER,
-        SG_LOGITEM_GL_FRAMEBUFFER_INCOMPLETE,
-        SG_LOGITEM_GL_MSAA_FRAMEBUFFER_INCOMPLETE,
+        SG_LOGITEM_GL_FRAMEBUFFER_STATUS_UNDEFINED,
+        SG_LOGITEM_GL_FRAMEBUFFER_STATUS_INCOMPLETE_ATTACHMENT,
+        SG_LOGITEM_GL_FRAMEBUFFER_STATUS_INCOMPLETE_MISSING_ATTACHMENT,
+        SG_LOGITEM_GL_FRAMEBUFFER_STATUS_UNSUPPORTED,
+        SG_LOGITEM_GL_FRAMEBUFFER_STATUS_INCOMPLETE_MULTISAMPLE,
+        SG_LOGITEM_GL_FRAMEBUFFER_STATUS_UNKNOWN,
         SG_LOGITEM_D3D11_CREATE_BUFFER_FAILED,
         SG_LOGITEM_D3D11_CREATE_DEPTH_TEXTURE_UNSUPPORTED_PIXEL_FORMAT,
         SG_LOGITEM_D3D11_CREATE_DEPTH_TEXTURE_FAILED,
@@ -1869,11 +2234,21 @@ public partial struct sg_buffer
         SG_LOGITEM_METAL_CREATE_RPS_FAILED,
         SG_LOGITEM_METAL_CREATE_RPS_OUTPUT,
         SG_LOGITEM_METAL_CREATE_DSS_FAILED,
-        SG_LOGITEM_WGPU_MAP_UNIFORM_BUFFER_FAILED,
-        SG_LOGITEM_WGPU_STAGING_BUFFER_FULL_COPY_TO_BUFFER,
-        SG_LOGITEM_WGPU_STAGING_BUFFER_FULL_COPY_TO_TEXTURE,
-        SG_LOGITEM_WGPU_RESET_STATE_CACHE_FIXME,
-        SG_LOGITEM_WGPU_ACTIVATE_CONTEXT_FIXME,
+        SG_LOGITEM_WGPU_BINDGROUPS_POOL_EXHAUSTED,
+        SG_LOGITEM_WGPU_BINDGROUPSCACHE_SIZE_GREATER_ONE,
+        SG_LOGITEM_WGPU_BINDGROUPSCACHE_SIZE_POW2,
+        SG_LOGITEM_WGPU_CREATEBINDGROUP_FAILED,
+        SG_LOGITEM_WGPU_CREATE_BUFFER_FAILED,
+        SG_LOGITEM_WGPU_CREATE_TEXTURE_FAILED,
+        SG_LOGITEM_WGPU_CREATE_TEXTURE_VIEW_FAILED,
+        SG_LOGITEM_WGPU_CREATE_SAMPLER_FAILED,
+        SG_LOGITEM_WGPU_CREATE_SHADER_MODULE_FAILED,
+        SG_LOGITEM_WGPU_SHADER_TOO_MANY_IMAGES,
+        SG_LOGITEM_WGPU_SHADER_TOO_MANY_SAMPLERS,
+        SG_LOGITEM_WGPU_SHADER_CREATE_BINDGROUP_LAYOUT_FAILED,
+        SG_LOGITEM_WGPU_CREATE_PIPELINE_LAYOUT_FAILED,
+        SG_LOGITEM_WGPU_CREATE_RENDER_PIPELINE_FAILED,
+        SG_LOGITEM_WGPU_PASS_CREATE_TEXTURE_VIEW_FAILED,
         SG_LOGITEM_UNINIT_BUFFER_ACTIVE_CONTEXT_MISMATCH,
         SG_LOGITEM_UNINIT_IMAGE_ACTIVE_CONTEXT_MISMATCH,
         SG_LOGITEM_UNINIT_SAMPLER_ACTIVE_CONTEXT_MISMATCH,
@@ -1939,6 +2314,7 @@ public partial struct sg_buffer
         SG_LOGITEM_VALIDATE_SAMPLERDESC_CANARY,
         SG_LOGITEM_VALIDATE_SAMPLERDESC_MINFILTER_NONE,
         SG_LOGITEM_VALIDATE_SAMPLERDESC_MAGFILTER_NONE,
+        SG_LOGITEM_VALIDATE_SAMPLERDESC_ANISTROPIC_REQUIRES_LINEAR_FILTERING,
         SG_LOGITEM_VALIDATE_SHADERDESC_CANARY,
         SG_LOGITEM_VALIDATE_SHADERDESC_SOURCE,
         SG_LOGITEM_VALIDATE_SHADERDESC_BYTECODE,
@@ -1959,6 +2335,8 @@ public partial struct sg_buffer
         SG_LOGITEM_VALIDATE_SHADERDESC_IMAGE_SAMPLER_PAIR_HAS_NAME_BUT_NOT_USED,
         SG_LOGITEM_VALIDATE_SHADERDESC_IMAGE_SAMPLER_PAIR_HAS_IMAGE_BUT_NOT_USED,
         SG_LOGITEM_VALIDATE_SHADERDESC_IMAGE_SAMPLER_PAIR_HAS_SAMPLER_BUT_NOT_USED,
+        SG_LOGITEM_VALIDATE_SHADERDESC_NONFILTERING_SAMPLER_REQUIRED,
+        SG_LOGITEM_VALIDATE_SHADERDESC_COMPARISON_SAMPLER_REQUIRED,
         SG_LOGITEM_VALIDATE_SHADERDESC_IMAGE_NOT_REFERENCED_BY_IMAGE_SAMPLER_PAIRS,
         SG_LOGITEM_VALIDATE_SHADERDESC_SAMPLER_NOT_REFERENCED_BY_IMAGE_SAMPLER_PAIRS,
         SG_LOGITEM_VALIDATE_SHADERDESC_NO_CONT_IMAGE_SAMPLER_PAIRS,
@@ -2029,24 +2407,28 @@ public partial struct sg_buffer
         SG_LOGITEM_VALIDATE_ABND_VS_IMG_EXISTS,
         SG_LOGITEM_VALIDATE_ABND_VS_IMAGE_TYPE_MISMATCH,
         SG_LOGITEM_VALIDATE_ABND_VS_IMAGE_MSAA,
+        SG_LOGITEM_VALIDATE_ABND_VS_EXPECTED_FILTERABLE_IMAGE,
+        SG_LOGITEM_VALIDATE_ABND_VS_EXPECTED_DEPTH_IMAGE,
         SG_LOGITEM_VALIDATE_ABND_VS_UNEXPECTED_IMAGE_BINDING,
         SG_LOGITEM_VALIDATE_ABND_VS_EXPECTED_SAMPLER_BINDING,
         SG_LOGITEM_VALIDATE_ABND_VS_UNEXPECTED_SAMPLER_COMPARE_NEVER,
         SG_LOGITEM_VALIDATE_ABND_VS_EXPECTED_SAMPLER_COMPARE_NEVER,
+        SG_LOGITEM_VALIDATE_ABND_VS_EXPECTED_NONFILTERING_SAMPLER,
         SG_LOGITEM_VALIDATE_ABND_VS_UNEXPECTED_SAMPLER_BINDING,
         SG_LOGITEM_VALIDATE_ABND_VS_SMP_EXISTS,
-        SG_LOGITEM_VALIDATE_ABND_VS_IMG_SMP_MIPMAPS,
         SG_LOGITEM_VALIDATE_ABND_FS_EXPECTED_IMAGE_BINDING,
         SG_LOGITEM_VALIDATE_ABND_FS_IMG_EXISTS,
         SG_LOGITEM_VALIDATE_ABND_FS_IMAGE_TYPE_MISMATCH,
         SG_LOGITEM_VALIDATE_ABND_FS_IMAGE_MSAA,
+        SG_LOGITEM_VALIDATE_ABND_FS_EXPECTED_FILTERABLE_IMAGE,
+        SG_LOGITEM_VALIDATE_ABND_FS_EXPECTED_DEPTH_IMAGE,
         SG_LOGITEM_VALIDATE_ABND_FS_UNEXPECTED_IMAGE_BINDING,
         SG_LOGITEM_VALIDATE_ABND_FS_EXPECTED_SAMPLER_BINDING,
         SG_LOGITEM_VALIDATE_ABND_FS_UNEXPECTED_SAMPLER_COMPARE_NEVER,
         SG_LOGITEM_VALIDATE_ABND_FS_EXPECTED_SAMPLER_COMPARE_NEVER,
+        SG_LOGITEM_VALIDATE_ABND_FS_EXPECTED_NONFILTERING_SAMPLER,
         SG_LOGITEM_VALIDATE_ABND_FS_UNEXPECTED_SAMPLER_BINDING,
         SG_LOGITEM_VALIDATE_ABND_FS_SMP_EXISTS,
-        SG_LOGITEM_VALIDATE_ABND_FS_IMG_SMP_MIPMAPS,
         SG_LOGITEM_VALIDATE_AUB_NO_PIPELINE,
         SG_LOGITEM_VALIDATE_AUB_NO_UB_AT_SLOT,
         SG_LOGITEM_VALIDATE_AUB_SIZE,
@@ -2207,8 +2589,6 @@ public partial struct sg_buffer
 
         public int uniform_buffer_size;
 
-        public int staging_buffer_size;
-
         public int max_commit_listeners;
 
         [NativeTypeName("bool")]
@@ -2216,6 +2596,11 @@ public partial struct sg_buffer
 
         [NativeTypeName("bool")]
         public byte mtl_force_managed_storage_mode;
+
+        [NativeTypeName("bool")]
+        public byte wgpu_disable_bindgroups_cache;
+
+        public int wgpu_bindgroups_cache_size;
 
         public sg_allocator allocator;
 
@@ -2227,21 +2612,386 @@ public partial struct sg_buffer
         public uint _end_canary;
     }
 
+    public unsafe partial struct sg_d3d11_buffer_info
+    {
+        [NativeTypeName("const void *")]
+        public void* buf;
+    }
+
+    public unsafe partial struct sg_d3d11_image_info
+    {
+        [NativeTypeName("const void *")]
+        public void* tex2d;
+
+        [NativeTypeName("const void *")]
+        public void* tex3d;
+
+        [NativeTypeName("const void *")]
+        public void* res;
+
+        [NativeTypeName("const void *")]
+        public void* srv;
+    }
+
+    public unsafe partial struct sg_d3d11_sampler_info
+    {
+        [NativeTypeName("const void *")]
+        public void* smp;
+    }
+
+    public unsafe partial struct sg_d3d11_shader_info
+    {
+        [NativeTypeName("const void *[4]")]
+        public _vs_cbufs_e__FixedBuffer vs_cbufs;
+
+        [NativeTypeName("const void *[4]")]
+        public _fs_cbufs_e__FixedBuffer fs_cbufs;
+
+        [NativeTypeName("const void *")]
+        public void* vs;
+
+        [NativeTypeName("const void *")]
+        public void* fs;
+
+        public unsafe partial struct _vs_cbufs_e__FixedBuffer
+        {
+            public void* e0;
+            public void* e1;
+            public void* e2;
+            public void* e3;
+
+            public ref void* this[int index]
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get
+                {
+                    fixed (void** pThis = &e0)
+                    {
+                        return ref pThis[index];
+                    }
+                }
+            }
+        }
+
+        public unsafe partial struct _fs_cbufs_e__FixedBuffer
+        {
+            public void* e0;
+            public void* e1;
+            public void* e2;
+            public void* e3;
+
+            public ref void* this[int index]
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get
+                {
+                    fixed (void** pThis = &e0)
+                    {
+                        return ref pThis[index];
+                    }
+                }
+            }
+        }
+    }
+
+    public unsafe partial struct sg_d3d11_pipeline_info
+    {
+        [NativeTypeName("const void *")]
+        public void* il;
+
+        [NativeTypeName("const void *")]
+        public void* rs;
+
+        [NativeTypeName("const void *")]
+        public void* dss;
+
+        [NativeTypeName("const void *")]
+        public void* bs;
+    }
+
+    public unsafe partial struct sg_d3d11_pass_info
+    {
+        [NativeTypeName("const void *[4]")]
+        public _color_rtv_e__FixedBuffer color_rtv;
+
+        [NativeTypeName("const void *[4]")]
+        public _resolve_rtv_e__FixedBuffer resolve_rtv;
+
+        [NativeTypeName("const void *")]
+        public void* dsv;
+
+        public unsafe partial struct _color_rtv_e__FixedBuffer
+        {
+            public void* e0;
+            public void* e1;
+            public void* e2;
+            public void* e3;
+
+            public ref void* this[int index]
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get
+                {
+                    fixed (void** pThis = &e0)
+                    {
+                        return ref pThis[index];
+                    }
+                }
+            }
+        }
+
+        public unsafe partial struct _resolve_rtv_e__FixedBuffer
+        {
+            public void* e0;
+            public void* e1;
+            public void* e2;
+            public void* e3;
+
+            public ref void* this[int index]
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get
+                {
+                    fixed (void** pThis = &e0)
+                    {
+                        return ref pThis[index];
+                    }
+                }
+            }
+        }
+    }
+
+    public partial struct sg_mtl_buffer_info
+    {
+        [NativeTypeName("const void *[2]")]
+        public _buf_e__FixedBuffer buf;
+
+        public int active_slot;
+
+        public unsafe partial struct _buf_e__FixedBuffer
+        {
+            public void* e0;
+            public void* e1;
+
+            public ref void* this[int index]
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get
+                {
+                    fixed (void** pThis = &e0)
+                    {
+                        return ref pThis[index];
+                    }
+                }
+            }
+        }
+    }
+
+    public partial struct sg_mtl_image_info
+    {
+        [NativeTypeName("const void *[2]")]
+        public _tex_e__FixedBuffer tex;
+
+        public int active_slot;
+
+        public unsafe partial struct _tex_e__FixedBuffer
+        {
+            public void* e0;
+            public void* e1;
+
+            public ref void* this[int index]
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get
+                {
+                    fixed (void** pThis = &e0)
+                    {
+                        return ref pThis[index];
+                    }
+                }
+            }
+        }
+    }
+
+    public unsafe partial struct sg_mtl_sampler_info
+    {
+        [NativeTypeName("const void *")]
+        public void* smp;
+    }
+
+    public unsafe partial struct sg_mtl_shader_info
+    {
+        [NativeTypeName("const void *")]
+        public void* vs_lib;
+
+        [NativeTypeName("const void *")]
+        public void* fs_lib;
+
+        [NativeTypeName("const void *")]
+        public void* vs_func;
+
+        [NativeTypeName("const void *")]
+        public void* fs_func;
+    }
+
+    public unsafe partial struct sg_mtl_pipeline_info
+    {
+        [NativeTypeName("const void *")]
+        public void* rps;
+
+        [NativeTypeName("const void *")]
+        public void* dss;
+    }
+
+    public unsafe partial struct sg_wgpu_buffer_info
+    {
+        [NativeTypeName("const void *")]
+        public void* buf;
+    }
+
+    public unsafe partial struct sg_wgpu_image_info
+    {
+        [NativeTypeName("const void *")]
+        public void* tex;
+
+        [NativeTypeName("const void *")]
+        public void* view;
+    }
+
+    public unsafe partial struct sg_wgpu_sampler_info
+    {
+        [NativeTypeName("const void *")]
+        public void* smp;
+    }
+
+    public unsafe partial struct sg_wgpu_shader_info
+    {
+        [NativeTypeName("const void *")]
+        public void* vs_mod;
+
+        [NativeTypeName("const void *")]
+        public void* fs_mod;
+
+        [NativeTypeName("const void *")]
+        public void* bgl;
+    }
+
+    public unsafe partial struct sg_wgpu_pipeline_info
+    {
+        [NativeTypeName("const void *")]
+        public void* pip;
+    }
+
+    public unsafe partial struct sg_wgpu_pass_info
+    {
+        [NativeTypeName("const void *[4]")]
+        public _color_view_e__FixedBuffer color_view;
+
+        [NativeTypeName("const void *[4]")]
+        public _resolve_view_e__FixedBuffer resolve_view;
+
+        [NativeTypeName("const void *")]
+        public void* ds_view;
+
+        public unsafe partial struct _color_view_e__FixedBuffer
+        {
+            public void* e0;
+            public void* e1;
+            public void* e2;
+            public void* e3;
+
+            public ref void* this[int index]
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get
+                {
+                    fixed (void** pThis = &e0)
+                    {
+                        return ref pThis[index];
+                    }
+                }
+            }
+        }
+
+        public unsafe partial struct _resolve_view_e__FixedBuffer
+        {
+            public void* e0;
+            public void* e1;
+            public void* e2;
+            public void* e3;
+
+            public ref void* this[int index]
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get
+                {
+                    fixed (void** pThis = &e0)
+                    {
+                        return ref pThis[index];
+                    }
+                }
+            }
+        }
+    }
+
+    public unsafe partial struct sg_gl_buffer_info
+    {
+        [NativeTypeName("uint32_t[2]")]
+        public fixed uint buf[2];
+
+        public int active_slot;
+    }
+
+    public unsafe partial struct sg_gl_image_info
+    {
+        [NativeTypeName("uint32_t[2]")]
+        public fixed uint tex[2];
+
+        [NativeTypeName("uint32_t")]
+        public uint tex_target;
+
+        [NativeTypeName("uint32_t")]
+        public uint msaa_render_buffer;
+
+        public int active_slot;
+    }
+
+    public partial struct sg_gl_sampler_info
+    {
+        [NativeTypeName("uint32_t")]
+        public uint smp;
+    }
+
+    public partial struct sg_gl_shader_info
+    {
+        [NativeTypeName("uint32_t")]
+        public uint prog;
+    }
+
+    public unsafe partial struct sg_gl_pass_info
+    {
+        [NativeTypeName("uint32_t")]
+        public uint frame_buffer;
+
+        [NativeTypeName("uint32_t[4]")]
+        public fixed uint msaa_resolve_framebuffer[4];
+    }
+
     public static unsafe partial class Gfx
     {
-        public const int SG_INVALID_ID = 0;
-        public const int SG_NUM_SHADER_STAGES = 2;
-        public const int SG_NUM_INFLIGHT_FRAMES = 2;
-        public const int SG_MAX_COLOR_ATTACHMENTS = 4;
-        public const int SG_MAX_VERTEX_BUFFERS = 8;
-        public const int SG_MAX_SHADERSTAGE_IMAGES = 12;
-        public const int SG_MAX_SHADERSTAGE_SAMPLERS = 8;
-        public const int SG_MAX_SHADERSTAGE_IMAGESAMPLERPAIRS = 12;
-        public const int SG_MAX_SHADERSTAGE_UBS = 4;
-        public const int SG_MAX_UB_MEMBERS = 16;
-        public const int SG_MAX_VERTEX_ATTRIBUTES = 16;
-        public const int SG_MAX_MIPMAPS = 16;
-        public const int SG_MAX_TEXTUREARRAY_LAYERS = 128;
+        public const uint SG_INVALID_ID = 0;
+        public const uint SG_NUM_SHADER_STAGES = 2;
+        public const uint SG_NUM_INFLIGHT_FRAMES = 2;
+        public const uint SG_MAX_COLOR_ATTACHMENTS = 4;
+        public const uint SG_MAX_VERTEX_BUFFERS = 8;
+        public const uint SG_MAX_SHADERSTAGE_IMAGES = 12;
+        public const uint SG_MAX_SHADERSTAGE_SAMPLERS = 8;
+        public const uint SG_MAX_SHADERSTAGE_IMAGESAMPLERPAIRS = 12;
+        public const uint SG_MAX_SHADERSTAGE_UBS = 4;
+        public const uint SG_MAX_UB_MEMBERS = 16;
+        public const uint SG_MAX_VERTEX_ATTRIBUTES = 16;
+        public const uint SG_MAX_MIPMAPS = 16;
+        public const uint SG_MAX_TEXTUREARRAY_LAYERS = 128;
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_setup", ExactSpelling = true)]
         public static extern void setup([NativeTypeName("const sg_desc *")] sg_desc* desc);
@@ -2542,6 +3292,19 @@ public partial struct sg_buffer
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_fail_pass", ExactSpelling = true)]
         public static extern void fail_pass(sg_pass pass);
 
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_enable_frame_stats", ExactSpelling = true)]
+        public static extern void enable_frame_stats();
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_disable_frame_stats", ExactSpelling = true)]
+        public static extern void disable_frame_stats();
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_frame_stats_enabled", ExactSpelling = true)]
+        [return: NativeTypeName("bool")]
+        public static extern byte frame_stats_enabled();
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_frame_stats", ExactSpelling = true)]
+        public static extern sg_frame_stats query_frame_stats();
+
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_setup_context", ExactSpelling = true)]
         public static extern sg_context setup_context();
 
@@ -2555,6 +3318,28 @@ public partial struct sg_buffer
         [return: NativeTypeName("const void *")]
         public static extern void* d3d11_device();
 
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_d3d11_device_context", ExactSpelling = true)]
+        [return: NativeTypeName("const void *")]
+        public static extern void* d3d11_device_context();
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_d3d11_query_buffer_info", ExactSpelling = true)]
+        public static extern sg_d3d11_buffer_info d3d11_query_buffer_info(sg_buffer buf);
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_d3d11_query_image_info", ExactSpelling = true)]
+        public static extern sg_d3d11_image_info d3d11_query_image_info(sg_image img);
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_d3d11_query_sampler_info", ExactSpelling = true)]
+        public static extern sg_d3d11_sampler_info d3d11_query_sampler_info(sg_sampler smp);
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_d3d11_query_shader_info", ExactSpelling = true)]
+        public static extern sg_d3d11_shader_info d3d11_query_shader_info(sg_shader shd);
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_d3d11_query_pipeline_info", ExactSpelling = true)]
+        public static extern sg_d3d11_pipeline_info d3d11_query_pipeline_info(sg_pipeline pip);
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_d3d11_query_pass_info", ExactSpelling = true)]
+        public static extern sg_d3d11_pass_info d3d11_query_pass_info(sg_pass pass);
+
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_mtl_device", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* mtl_device();
@@ -2562,4 +3347,68 @@ public partial struct sg_buffer
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_mtl_render_command_encoder", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* mtl_render_command_encoder();
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_mtl_query_buffer_info", ExactSpelling = true)]
+        public static extern sg_mtl_buffer_info mtl_query_buffer_info(sg_buffer buf);
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_mtl_query_image_info", ExactSpelling = true)]
+        public static extern sg_mtl_image_info mtl_query_image_info(sg_image img);
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_mtl_query_sampler_info", ExactSpelling = true)]
+        public static extern sg_mtl_sampler_info mtl_query_sampler_info(sg_sampler smp);
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_mtl_query_shader_info", ExactSpelling = true)]
+        public static extern sg_mtl_shader_info mtl_query_shader_info(sg_shader shd);
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_mtl_query_pipeline_info", ExactSpelling = true)]
+        public static extern sg_mtl_pipeline_info mtl_query_pipeline_info(sg_pipeline pip);
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_device", ExactSpelling = true)]
+        [return: NativeTypeName("const void *")]
+        public static extern void* wgpu_device();
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_queue", ExactSpelling = true)]
+        [return: NativeTypeName("const void *")]
+        public static extern void* wgpu_queue();
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_command_encoder", ExactSpelling = true)]
+        [return: NativeTypeName("const void *")]
+        public static extern void* wgpu_command_encoder();
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_render_pass_encoder", ExactSpelling = true)]
+        [return: NativeTypeName("const void *")]
+        public static extern void* wgpu_render_pass_encoder();
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_query_buffer_info", ExactSpelling = true)]
+        public static extern sg_wgpu_buffer_info wgpu_query_buffer_info(sg_buffer buf);
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_query_image_info", ExactSpelling = true)]
+        public static extern sg_wgpu_image_info wgpu_query_image_info(sg_image img);
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_query_sampler_info", ExactSpelling = true)]
+        public static extern sg_wgpu_sampler_info wgpu_query_sampler_info(sg_sampler smp);
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_query_shader_info", ExactSpelling = true)]
+        public static extern sg_wgpu_shader_info wgpu_query_shader_info(sg_shader shd);
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_query_pipeline_info", ExactSpelling = true)]
+        public static extern sg_wgpu_pipeline_info wgpu_query_pipeline_info(sg_pipeline pip);
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_query_pass_info", ExactSpelling = true)]
+        public static extern sg_wgpu_pass_info wgpu_query_pass_info(sg_pass pass);
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_gl_query_buffer_info", ExactSpelling = true)]
+        public static extern sg_gl_buffer_info gl_query_buffer_info(sg_buffer buf);
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_gl_query_image_info", ExactSpelling = true)]
+        public static extern sg_gl_image_info gl_query_image_info(sg_image img);
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_gl_query_sampler_info", ExactSpelling = true)]
+        public static extern sg_gl_sampler_info gl_query_sampler_info(sg_sampler smp);
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_gl_query_shader_info", ExactSpelling = true)]
+        public static extern sg_gl_shader_info gl_query_shader_info(sg_shader shd);
+
+        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_gl_query_pass_info", ExactSpelling = true)]
+        public static extern sg_gl_pass_info gl_query_pass_info(sg_pass pass);
     }

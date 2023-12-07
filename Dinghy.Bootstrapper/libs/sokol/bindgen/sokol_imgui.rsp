@@ -1,6 +1,7 @@
 @settings.rsp
 --traverse
 ../src/sokol/util/sokol_imgui.h
+../../cimgui/src/cimgui/cimgui.h
 --file
 sokol_imgui_bindgen_helper.h
 --prefixStrip

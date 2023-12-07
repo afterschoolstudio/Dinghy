@@ -5,7 +5,8 @@ using System.Runtime.InteropServices;
 
 namespace Dinghy.Internal.Sokol;
 
-public enum sgp_error
+[NativeTypeName("unsigned int")]
+public enum sgp_error : uint
 {
     SGP_NO_ERROR = 0,
     SGP_ERROR_SOKOL_INVALID,
@@ -25,7 +26,8 @@ public enum sgp_error
     SGP_ERROR_MAKE_COMMON_PIPELINE_FAILED,
 }
 
-    public enum sgp_blend_mode
+    [NativeTypeName("unsigned int")]
+    public enum sgp_blend_mode : uint
     {
         SGP_BLENDMODE_NONE = 0,
         SGP_BLENDMODE_BLEND,

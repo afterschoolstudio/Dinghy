@@ -2,7 +2,7 @@
 
 public static partial class Engine
 {
-    public enum EventType
+    public enum EventType : uint
     {
         INVALID = Internal.Sokol.sapp_event_type.SAPP_EVENTTYPE_INVALID,
         KEY_DOWN = Internal.Sokol.sapp_event_type.SAPP_EVENTTYPE_KEY_DOWN,
@@ -33,7 +33,7 @@ public static partial class Engine
     }
 }
 
-public enum Key
+public enum Key : uint
 {
     INVALID = Internal.Sokol.sapp_keycode.SAPP_KEYCODE_INVALID,
     SPACE = Internal.Sokol.sapp_keycode.SAPP_KEYCODE_SPACE,
@@ -158,7 +158,7 @@ public enum Key
     MENU = Internal.Sokol.sapp_keycode.SAPP_KEYCODE_MENU,
 }
 
-public enum Modifiers
+public enum Modifiers : uint
 {
     SHIFT = Internal.Sokol.App.SAPP_MODIFIER_SHIFT,
     CTRL = Internal.Sokol.App.SAPP_MODIFIER_CTRL,
@@ -169,7 +169,7 @@ public enum Modifiers
     MMB = Internal.Sokol.App.SAPP_MODIFIER_MMB
 }
     
-public enum MouseButton
+public enum MouseButton : uint
 {
     LEFT = Internal.Sokol.sapp_mousebutton.SAPP_MOUSEBUTTON_LEFT,
     RIGHT = Internal.Sokol.sapp_mousebutton.SAPP_MOUSEBUTTON_RIGHT,

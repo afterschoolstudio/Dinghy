@@ -28,7 +28,6 @@
 
 #include "../src/sokol/util/sokol_color.h"
 #include "../src/sokol/util/sokol_debugtext.h"
-#include "../../cimgui/src/cimgui/imgui/imgui.h"
 #include "../../cimgui/src/cimgui/cimgui.h"
 #include "../src/sokol/util/sokol_imgui.h"
 #include "../src/sokol/util/sokol_gfx_imgui.h"
