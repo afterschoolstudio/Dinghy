@@ -1,9 +1,13 @@
 ﻿--config
 latest-codegen
-single-file
+multi-file
 exclude-funcs-with-body
 generate-aggressive-inlining
 generate-file-scoped-namespaces
 log-exclusions
 log-potential-typedef-remappings
 log-visited-files
+generate-cpp-attributes
+--additional
+-Wno-ignored-attributes
+-Wno-unsupported-attributes

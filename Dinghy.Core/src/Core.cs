@@ -209,7 +209,7 @@ public static partial class Engine
         sg_sampler_desc sample_desc = default;
         sample_desc.min_filter = sg_filter.SG_FILTER_LINEAR;
         sample_desc.mag_filter = sg_filter.SG_FILTER_LINEAR;
-        sample_desc.mipmap_filter = sg_filter.SG_FILTER_NONE;
+        sample_desc.mipmap_filter = sg_filter.SG_FILTER_LINEAR;
         sample_desc.max_anisotropy = 8;
         // sample_desc.mipmap_filter = sg_filter.SG_FILTER_NEAREST;
         state.smp = Gfx.make_sampler(&sample_desc);
@@ -251,12 +251,30 @@ public static partial class Engine
         
         fixed (sg_imgui_t* ctx = &gfx_dbgui)
         {
-            GfxDebugGUI.draw(ctx);
-            GfxDebugGUI.draw_pipelines_window(ctx);
-            GfxDebugGUI.draw_pipelines_content(ctx);
-            // GfxDebugGUI.draw_capabilities_window(ctx);
-            // GfxDebugGUI.draw_images_content(ctx);
-            // GfxDebugGUI.menu(&sg_imgui, "sokol-gfx"); why is this not here?
+            var db_title = System.Text.Encoding.UTF8.GetBytes("debug window");
+            var other_title = System.Text.Encoding.UTF8.GetBytes("hello imgui");
+            var label = System.Text.Encoding.UTF8.GetBytes("label");
+            fixed (byte* ptr = db_title,other_ptr = other_title, label_ptr = label)
+            {
+                var txt = "sokol debug"u8;
+                GfxDebugGUI.draw(ctx);
+                GfxDebugGUI.draw_menu(ctx, (sbyte*)ptr);
+                
+                /*=== UI CODE STARTS HERE ===*/
+                bool open = false;
+                float col = 1f;
+                ImGUI.igSetNextWindowPos(new(){x = 10, y = 10}, (int)ImGuiCond_.ImGuiCond_Once, new(){x = 0, y = 0});
+                ImGUI.igSetNextWindowSize(new(){x = 400, y = 100}, (int)ImGuiCond_.ImGuiCond_Once);
+                ImGUI.igBegin((sbyte*)other_ptr, &open, (int)ImGuiWindowFlags_.ImGuiWindowFlags_None);
+                // ImGUI.igColorEdit3((sbyte*)label_ptr, &state.pass_action.colors[0].clear_value.r, ImGuiColorEditFlags_None);
+                ImGUI.igColorEdit3((sbyte*)label_ptr, &col, (int)ImGuiColorEditFlags_.ImGuiColorEditFlags_None);
+                ImGUI.igEnd();
+                /*=== UI CODE ENDS HERE ===*/
+                // GfxDebugGUI.draw_pipelines_window(ctx);
+                // GfxDebugGUI.draw_pipelines_content(ctx);
+                // GfxDebugGUI.draw_capabilities_window(ctx);
+                // GfxDebugGUI.draw_images_content(ctx);
+            }
         }
         
         float ratio = Width/(float)Height;
@@ -277,13 +295,6 @@ public static partial class Engine
             GP.sgp_reset_color();
         }
 
-        // Draw an animated rectangle that rotates and changes its colors.
-        // double time = frameCount * App.frame_duration();
-        // float r = MathF.Sin((float)time)*0.5f+0.5f, g = MathF.Cos((float)time)*0.5f+0.5f;
-        // GP.sgp_set_color(r, g, 0.3f, 1.0f);
-        // GP.sgp_rotate_at((float)time, 0.0f, 0.0f);
-        // GP.sgp_draw_filled_rect(-0.5f, -0.5f, 1.0f, 1.0f);
-        
         foreach (var s in DefaultSystems)
         {
             //TODO: need to sort systems by priority
