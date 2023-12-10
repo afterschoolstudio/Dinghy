@@ -262,6 +262,8 @@ public static partial class Engine
                 
                 /*=== UI CODE STARTS HERE ===*/
                 bool open = false;
+                ImGUI.igShowDemoWindow(&open);
+                
                 float col = 1f;
                 ImGUI.igSetNextWindowPos(new(){x = 10, y = 10}, (int)ImGuiCond_.ImGuiCond_Once, new(){x = 0, y = 0});
                 ImGUI.igSetNextWindowSize(new(){x = 400, y = 100}, (int)ImGuiCond_.ImGuiCond_Once);
