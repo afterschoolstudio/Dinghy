@@ -233,6 +233,33 @@ public static partial class Engine
 
 
     public static float imguicolortest; 
+    
+    public static ImGUIHelper.MainMenuBar dinghyMenu2 = new([
+        new("Dinghy",[
+            new ("Option1",OnSelected:()=>{Console.WriteLine("selected");}),
+            new ("Option2",OnSelected:()=>{Console.WriteLine("selected2");})
+        ])
+    ]);
+
+    public static ImGUIHelper.MainMenuBar dinghyMenu =
+        ImGUIHelper.MainMenuBarT with {
+            menuOptions = [
+                ImGUIHelper.MenuT with {
+                    Name = "Dinghy",
+                    Items = [
+                        ImGUIHelper.MenuItemT with {
+                            Name = "Option1",
+                            OnSelected = () => {Console.WriteLine("selected");}
+                        },
+                        ImGUIHelper.MenuItemT with {
+                            Name = "Option2",
+                            OnSelected = () => {Console.WriteLine("selected2");}
+                        },
+                        
+                    ]
+                }
+            ]
+        };
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
     private static unsafe void Frame()
     {
@@ -252,6 +279,23 @@ public static partial class Engine
         imgui_frame.delta_time = DeltaTime;
         imgui_frame.dpi_scale = App.dpi_scale();
         ImGUI.new_frame(&imgui_frame);
+
+        
+        dinghyMenu.Render();
+        // ImGUI.igBeginMainMenuBar();
+        // if (ImGUIHelper.BeginMenu("Dinghy"))
+        // {
+        //     ImGUIHelper.MenuItem("DinghyTest1", "");
+        //     ImGUIHelper.MenuItem("DinghyTest2", "");
+        //     ImGUI.igEndMenu();
+        // }
+        // if (ImGUIHelper.BeginMenu("Another"))
+        // {
+        //     ImGUIHelper.MenuItem("A1", "");
+        //     ImGUIHelper.MenuItem("A2", "");
+        //     ImGUI.igEndMenu();
+        // }
+        // ImGUI.igEndMainMenuBar();
         
         fixed (sg_imgui_t* ctx = &gfx_dbgui)
         {
@@ -264,27 +308,10 @@ public static partial class Engine
                 GfxDebugGUI.draw(ctx);
                 GfxDebugGUI.draw_menu(ctx, (sbyte*)ptr);
                 
-                ImGUI.igBeginMainMenuBar();
-                if (ImGUIHelper.BeginMenu("Dinghy"))
-                {
-                    ImGUIHelper.MenuItem("DinghyTest1", "");
-                    ImGUIHelper.MenuItem("DinghyTest2", "");
-                    ImGUI.igEndMenu();
-                }
-                if (ImGUIHelper.BeginMenu("Another"))
-                {
-                    ImGUIHelper.MenuItem("A1", "");
-                    ImGUIHelper.MenuItem("A2", "");
-                    ImGUI.igEndMenu();
-                }
-                ImGUI.igEndMainMenuBar();
-                
-                /*=== UI CODE STARTS HERE ===*/
                 
                 
                 bool open = false;
                 ImGUI.igShowDemoWindow(&open);
-                
                 float col = imguicolortest;
                 ImGUI.igSetNextWindowPos(new(){x = 10, y = 10}, (int)ImGuiCond_.ImGuiCond_Once, new(){x = 0, y = 0});
                 ImGUI.igSetNextWindowSize(new(){x = 400, y = 100}, (int)ImGuiCond_.ImGuiCond_Once);
@@ -293,7 +320,6 @@ public static partial class Engine
                 ImGUI.igColorEdit3((sbyte*)label_ptr, &col, (int)ImGuiColorEditFlags_.ImGuiColorEditFlags_None);
                 imguicolortest = col;
                 ImGUI.igEnd();
-                /*=== UI CODE ENDS HERE ===*/
             }
         }
         
