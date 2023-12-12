@@ -408,7 +408,7 @@ void particleSystem()
 	Update += () =>
 	{
 		MoveToMouse(emitter);
-		DrawEditGUIForObject("particle width",emitter.Config.particleConfig.Width);
+		DrawEditGUIForObject("particle width",ref emitter.Config.particleConfig.Width);
 		Console.WriteLine(emitter.Config.particleConfig.Width.StartValue);
 		var rand = RandUnitCircle();
 		emitter.Config.particleConfig.DX.StartValue = rand.x * 4;

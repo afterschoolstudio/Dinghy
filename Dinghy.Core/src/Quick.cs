@@ -79,7 +79,7 @@ public static class Quick
     
     static Func<FieldInfo,bool> DefaultFieldSkipFunction = (field) => true;
     static BindingFlags FieldBindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy;
-    public static void DrawEditGUIForObject(string name, object o, Func<FieldInfo,bool> validFieldCheck = null)
+    public static void DrawEditGUIForObject<T>(string name, ref T o, Func<FieldInfo,bool> validFieldCheck = null)
     {
         ImGUIHelper.Wrappers.SetNextWindowPosition(10,10,ImGuiCond_.ImGuiCond_Once,0,0);
         ImGUIHelper.Wrappers.Begin(name, ImGuiWindowFlags_.ImGuiWindowFlags_None);
@@ -117,7 +117,8 @@ public static class Quick
                         case nameof(Single):
                             float v = (float)fieldInfo.GetValue(o);
                             ImGUIHelper.Wrappers.DragFloat(fieldInfo.Name,ref v,1f,1f,500f,"",ImGuiSliderFlags_.ImGuiSliderFlags_None);
-                            fieldInfo.SetValue(o,v);
+                            // fieldInfo.SetValue(o,v);
+                            fieldInfo.SetValueDirect(__makeref(o), v);
                             // Console.WriteLine((float)fieldInfo.GetValue(o));
                             break;
                         case nameof(Boolean):
