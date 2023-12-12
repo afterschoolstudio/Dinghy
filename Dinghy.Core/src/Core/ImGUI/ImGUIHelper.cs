@@ -58,6 +58,18 @@ public static class ImGUIHelper
                 Internal.Sokol.ImGUI.igText((sbyte*)t_p);
             }
         }
+
+        public static unsafe void DragFloat(string label, ref float value, float speed, float min, float max, string format, ImGuiSliderFlags_ flags)
+        {
+            var t = System.Text.Encoding.UTF8.GetBytes(label);
+            var f = System.Text.Encoding.UTF8.GetBytes(format);
+            float v = value;
+            fixed (byte* t_p = t,fmt_p = f)
+            {
+                Internal.Sokol.ImGUI.igDragFloat((sbyte*)t_p, &v, speed, min, max, (sbyte*)fmt_p, (int)flags);
+                value = v;
+            }
+        }
         public static void Seperator()
         {
             Internal.Sokol.ImGUI.igSeparator();
@@ -79,6 +91,11 @@ public static class ImGUIHelper
         {
             Internal.Sokol.ImGUI.igEnd();
         }
+
+        public static void SetNextWindowPosition(float x, float y, Internal.Sokol.ImGuiCond_ condition, float pivot_x, float pivot_y)
+        {
+            Internal.Sokol.ImGUI.igSetNextWindowPos(new(){x = x, y=y}, (int)condition, new ImVec2(){x = pivot_x,y=pivot_y});
+        }
         public static unsafe void ShowStats(string frameRate, string entities, string mouse)
         {
             //ported from the demo
@@ -96,8 +113,6 @@ public static class ImGUIHelper
             window_flags |= ImGuiWindowFlags_.ImGuiWindowFlags_NoMove;
             Internal.Sokol.ImGUI.igSetNextWindowBgAlpha(0.35f);
             Begin("Dinghy Stats",window_flags);
-            // Text("Stats");
-            // Seperator();
             Text(frameRate);
             Text(entities);
             Text(mouse);

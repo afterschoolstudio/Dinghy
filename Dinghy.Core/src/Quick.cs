@@ -1,4 +1,7 @@
-﻿using Arch.Core;
+﻿using System.Reflection;
+using Arch.Core;
+using Dinghy.Core.ImGUI;
+using Dinghy.Internal.Sokol;
 using Volatile;
 
 namespace Dinghy;
@@ -71,5 +74,87 @@ public static class Quick
     {
         get => InputSystem.Events.Key.Up;
         set => InputSystem.Events.Key.Up += value;
+    }
+
+    
+    static Func<FieldInfo,bool> DefaultFieldSkipFunction = (field) => true;
+    static BindingFlags FieldBindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy;
+    public static void DrawEditGUIForObject(string name, object o, Func<FieldInfo,bool> validFieldCheck = null)
+    {
+        ImGUIHelper.Wrappers.SetNextWindowPosition(10,10,ImGuiCond_.ImGuiCond_Once,0,0);
+        ImGUIHelper.Wrappers.Begin(name, ImGuiWindowFlags_.ImGuiWindowFlags_None);
+        validFieldCheck = validFieldCheck == null ? DefaultFieldSkipFunction : validFieldCheck;
+        Type t = o.GetType();
+        var sortedFields = new List<(int priority,FieldInfo field)>();
+        foreach (var field in t.GetFields(FieldBindingFlags).Where( x => validFieldCheck(x)))
+        {
+            // var attr = (FieldOrder) Attribute.GetCustomAttribute(field, typeof(FieldOrder));
+            // var priority = attr != null ? attr.Priority : 99;
+            // sortedFields.Add((priority,field));
+            sortedFields.Add((1,field));
+        }
+        foreach (var sortedField in sortedFields.OrderBy(x => x.priority))
+        {
+            var fieldInfo = sortedField.field;
+            // var attr = (EditableField) System.Attribute.GetCustomAttribute(fieldInfo, typeof (EditableField));
+            // if(attr == null)
+            // {
+                //use a default editor for any un-annotated field types
+                if(fieldInfo.FieldType.IsEnum)
+                {
+                    // prefab = ScenarioEditorManager.Instance.ToggleGroup;
+                }
+                else
+                {
+                    switch (fieldInfo.FieldType.Name)
+                    {
+                        case nameof(String):
+                            // prefab = ScenarioEditorManager.Instance.TextInput;
+                            break;
+                        case nameof(Int32):
+                            // prefab = ScenarioEditorManager.Instance.IntInput;
+                            break;
+                        case nameof(Single):
+                            float v = (float)fieldInfo.GetValue(o);
+                            ImGUIHelper.Wrappers.DragFloat(fieldInfo.Name,ref v,1f,1f,500f,"",ImGuiSliderFlags_.ImGuiSliderFlags_None);
+                            fieldInfo.SetValue(o,v);
+                            // Console.WriteLine((float)fieldInfo.GetValue(o));
+                            break;
+                        case nameof(Boolean):
+                            // prefab = ScenarioEditorManager.Instance.WrappedBool;
+                            break;
+                    }
+
+                    // if( prefab == null)
+                    // {
+                    //     var fieldType = fieldInfo.FieldType;
+                    //     if(fieldType.IsGenericType)
+                    //     {
+                    //         //https://stackoverflow.com/questions/45487884/c-sharp-reflection-check-that-fieldtype-is-some-list
+                    //         //https://stackoverflow.com/questions/1043755/c-sharp-generic-list-t-how-to-get-the-type-of-t
+                    //         var typeArg = fieldType.GetGenericArguments()[0];
+                    //         if(typeArg == typeof(TriggerAction))
+                    //         {
+                    //             prefab = ScenarioEditorManager.Instance.ScenarioTriggerActionList;
+                    //         }
+                    //         else if(typeArg == typeof(TriggerCondition))
+                    //         {
+                    //             prefab = ScenarioEditorManager.Instance.ScenarioTriggerConditionList;
+                    //         }
+                    //     }
+                    // }
+                }
+            // }
+            // else
+            // {
+            //     if(attr is NonEditable) {continue;}
+            //     else
+            //     {
+            //         var field = Util.InstantiateAtParent(attr.Prefab, Root).GetComponent<EditorField>();
+            //         field.Setup(o,fieldInfo,ViewPanel,attr);
+            //     }
+            // }
+        } 
+        ImGUIHelper.Wrappers.End();
     }
 }
