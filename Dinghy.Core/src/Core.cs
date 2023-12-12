@@ -232,34 +232,8 @@ public static partial class Engine
     public static double Time;
 
 
-    public static float imguicolortest; 
-    
-    public static ImGUIHelper.MainMenuBar dinghyMenu2 = new([
-        new("Dinghy",[
-            new ("Option1",OnSelected:()=>{Console.WriteLine("selected");}),
-            new ("Option2",OnSelected:()=>{Console.WriteLine("selected2");})
-        ])
-    ]);
+    public static bool showStats = true;
 
-    public static ImGUIHelper.MainMenuBar dinghyMenu =
-        ImGUIHelper.MainMenuBarT with {
-            menuOptions = [
-                ImGUIHelper.MenuT with {
-                    Name = "Dinghy",
-                    Items = [
-                        ImGUIHelper.MenuItemT with {
-                            Name = "Option1",
-                            OnSelected = () => {Console.WriteLine("selected");}
-                        },
-                        ImGUIHelper.MenuItemT with {
-                            Name = "Option2",
-                            OnSelected = () => {Console.WriteLine("selected2");}
-                        },
-                        
-                    ]
-                }
-            ]
-        };
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
     private static unsafe void Frame()
     {
@@ -280,22 +254,32 @@ public static partial class Engine
         imgui_frame.dpi_scale = App.dpi_scale();
         ImGUI.new_frame(&imgui_frame);
 
+        ImGUIHelper.Wrappers.BeginMainMenuBar();
+        if (ImGUIHelper.Wrappers.BeginMenu("Dinghy"))
+        {
+            ImGUIHelper.Wrappers.Checkbox("Show Stats", ref showStats);
+            ImGUIHelper.Wrappers.EndMenu();
+        }
         
-        dinghyMenu.Render();
-        // ImGUI.igBeginMainMenuBar();
-        // if (ImGUIHelper.BeginMenu("Dinghy"))
-        // {
-        //     ImGUIHelper.MenuItem("DinghyTest1", "");
-        //     ImGUIHelper.MenuItem("DinghyTest2", "");
-        //     ImGUI.igEndMenu();
-        // }
-        // if (ImGUIHelper.BeginMenu("Another"))
-        // {
-        //     ImGUIHelper.MenuItem("A1", "");
-        //     ImGUIHelper.MenuItem("A2", "");
-        //     ImGUI.igEndMenu();
-        // }
-        // ImGUI.igEndMainMenuBar();
+        if (ImGUIHelper.Wrappers.BeginMenu("Sokol"))
+        {
+            ImGUIHelper.Wrappers.Checkbox("Capabilities", ref gfx_dbgui.caps.open);
+            ImGUIHelper.Wrappers.Checkbox("Frame Stats", ref gfx_dbgui.frame_stats.open);
+            ImGUIHelper.Wrappers.Checkbox("Buffers", ref gfx_dbgui.buffers.open);
+            ImGUIHelper.Wrappers.Checkbox("Images", ref gfx_dbgui.images.open);
+            ImGUIHelper.Wrappers.Checkbox("Samplers", ref gfx_dbgui.samplers.open);
+            ImGUIHelper.Wrappers.Checkbox("Shaders", ref gfx_dbgui.shaders.open);
+            ImGUIHelper.Wrappers.Checkbox("Pipelines", ref gfx_dbgui.pipelines.open);
+            ImGUIHelper.Wrappers.Checkbox("Passes", ref gfx_dbgui.passes.open);
+            ImGUIHelper.Wrappers.Checkbox("Capture", ref gfx_dbgui.capture.open);
+            ImGUIHelper.Wrappers.EndMenu();
+        }
+        ImGUIHelper.Wrappers.EndMainMenuBar();
+        
+        if (showStats)
+        {
+            ImGUIHelper.Wrappers.ShowStats($"{t}ms",$"Entities: {GlobalScene.Entities.Count}",$"{InputSystem.MouseX},{InputSystem.MouseY}");
+        }
         
         fixed (sg_imgui_t* ctx = &gfx_dbgui)
         {
@@ -306,20 +290,9 @@ public static partial class Engine
             {
                 var txt = "sokol debug"u8;
                 GfxDebugGUI.draw(ctx);
-                GfxDebugGUI.draw_menu(ctx, (sbyte*)ptr);
-                
-                
-                
+                // GfxDebugGUI.draw_menu(ctx, (sbyte*)ptr);
                 bool open = false;
                 ImGUI.igShowDemoWindow(&open);
-                float col = imguicolortest;
-                ImGUI.igSetNextWindowPos(new(){x = 10, y = 10}, (int)ImGuiCond_.ImGuiCond_Once, new(){x = 0, y = 0});
-                ImGUI.igSetNextWindowSize(new(){x = 400, y = 100}, (int)ImGuiCond_.ImGuiCond_Once);
-                ImGUI.igBegin((sbyte*)other_ptr, &open, (int)ImGuiWindowFlags_.ImGuiWindowFlags_None);
-                // ImGUI.igColorEdit3((sbyte*)label_ptr, &state.pass_action.colors[0].clear_value.r, ImGuiColorEditFlags_None);
-                ImGUI.igColorEdit3((sbyte*)label_ptr, &col, (int)ImGuiColorEditFlags_.ImGuiColorEditFlags_None);
-                imguicolortest = col;
-                ImGUI.igEnd();
             }
         }
         
@@ -368,7 +341,7 @@ public static partial class Engine
             }
         }
 
-        drawDebugText(DebugFont.C64,$"{t}ms \ne: {GlobalScene.Entities.Count} \n {InputSystem.MouseX},{InputSystem.MouseY} \n {DebugTextStr}");
+        // drawDebugText(DebugFont.C64,$"{t}ms \ne: {GlobalScene.Entities.Count} \n {InputSystem.MouseX},{InputSystem.MouseY} \n {DebugTextStr}");
 
         // setting this to load instead of clear allows us to toggle sokol_gp clearing
         state.pass_action.colors.e0.load_action = sg_load_action.SG_LOADACTION_LOAD;

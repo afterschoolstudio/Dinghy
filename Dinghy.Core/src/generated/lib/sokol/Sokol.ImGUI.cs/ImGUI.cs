@@ -423,7 +423,7 @@ public static unsafe partial class ImGUI
     public static extern void igTextUnformatted([NativeTypeName("const char *")] sbyte* text, [NativeTypeName("const char *")] sbyte* text_end);
 
     [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-    public static extern void igText([NativeTypeName("const char *")] sbyte* fmt, __arglist);
+    public static extern void igText([NativeTypeName("const char *")] sbyte* fmt, params string[] args);
 
     [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
     public static extern void igTextV([NativeTypeName("const char *")] sbyte* fmt, [NativeTypeName("va_list")] sbyte* args);
