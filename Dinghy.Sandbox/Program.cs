@@ -390,17 +390,7 @@ void particleSystem()
 	var startColor = Palettes.ENDESGA[4];
 	var endColor = Palettes.ENDESGA[16];
 	var emitter = new ParticleEmitter(
-		new(100000, 100, new ParticleEmitterComponent.ParticleConfig(
-			(0,0),
-			ParticleEmitterComponent.ParticleConfig.ParticlePrimitiveType.Triangle,
-			1.5f,
-			new (4,0.1f,Easing.EaseInOutQuart),
-			new (4,0.1f,Easing.EaseInOutQuart),
-			new (4,200,Easing.EaseOutExpo),
-			new (4,16,Easing.EaseOutExpo),
-			new (startColor,endColor,Easing.EaseInOutExpo),
-			new (0,3 *MathF.PI,Easing.Linear)
-		)))
+		new(100000, 100, new ParticleEmitterComponent.ParticleConfig()))
 	{
 		X = 200,
 		Y = 200
@@ -408,7 +398,8 @@ void particleSystem()
 	Update += () =>
 	{
 		MoveToMouse(emitter);
-		DrawEditGUIForObject("particle config",ref emitter.Config.ParticleConfig);
+		// DrawEditGUIForObject("particle config",ref emitter.Config.ParticleConfig);
+		DrawEditGUIForObject("emitter",ref emitter);
 		// var rand = RandUnitCircle();
 		// emitter.Config.particleConfig.DX.StartValue = rand.x * 4;
 		// emitter.Config.particleConfig.DY.StartValue = rand.y * 4;

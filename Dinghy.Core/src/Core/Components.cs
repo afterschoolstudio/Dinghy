@@ -61,7 +61,7 @@ public readonly record struct Active();
 public readonly record struct HasManagedOwner(Dinghy.Entity e);
 public record ParticleEmitterComponent
 {
-    public struct EmitterConfig
+    public class EmitterConfig
     {
         public int MaxParticles;
         public float EmissionRate;
@@ -132,6 +132,18 @@ public record ParticleEmitterComponent
             Rotation = c.Rotation;
         }
         
+        public ParticleConfig()
+        {
+            ParticleType = DefaultParticleConfig.ParticleType;
+            Lifespan = DefaultParticleConfig.Lifespan;
+            DX = DefaultParticleConfig.DX;
+            DY = DefaultParticleConfig.DY;
+            Width = DefaultParticleConfig.Width;
+            Height = DefaultParticleConfig.Height;
+            Color = DefaultParticleConfig.Color;
+            Rotation = DefaultParticleConfig.Rotation;
+        }
+        
         public class Transition<T>
         {
             public T StartValue;
@@ -167,20 +179,29 @@ public record ParticleEmitterComponent
                 Width = Quick.MapF((float)Width.Sample(sampleTime),0f,1f,Width.StartValue,Width.TargetValue),
                 Height = Quick.MapF((float)Height.Sample(sampleTime),0f,1f,Height.StartValue,Height.TargetValue),
                 Rotation = Quick.MapF((float)Rotation.Sample(sampleTime),0f,1f,Rotation.StartValue,Rotation.TargetValue),
-                Color = ResolveColorTransition()
+                Color = ResolveColorTransition(sampleTime)
             };
-
-            Color ResolveColorTransition()
-            {
-                var a = Quick.MapF((float)Color.Sample(sampleTime),0f,1f,Color.StartValue.internal_color.a,Color.TargetValue.internal_color.a);
-                var r = Quick.MapF((float)Color.Sample(sampleTime),0f,1f,Color.StartValue.internal_color.r,Color.TargetValue.internal_color.r);
-                var g = Quick.MapF((float)Color.Sample(sampleTime),0f,1f,Color.StartValue.internal_color.g,Color.TargetValue.internal_color.g);
-                var b = Quick.MapF((float)Color.Sample(sampleTime),0f,1f,Color.StartValue.internal_color.b,Color.TargetValue.internal_color.b);
-                return new Color(a,r,g,b);
-            }
+        }
+        Color ResolveColorTransition(double sampleTime)
+        {
+            float sample = (float)Color.Sample(sampleTime);
+            var a = Quick.MapF(sample,0f,1f,Color.StartValue.internal_color.a,Color.TargetValue.internal_color.a);
+            var r = Quick.MapF(sample,0f,1f,Color.StartValue.internal_color.r,Color.TargetValue.internal_color.r);
+            var g = Quick.MapF(sample,0f,1f,Color.StartValue.internal_color.g,Color.TargetValue.internal_color.g);
+            var b = Quick.MapF(sample,0f,1f,Color.StartValue.internal_color.b,Color.TargetValue.internal_color.b);
+            return new Color(a,r,g,b);
         }
     }
 
+    public static readonly ParticleConfig DefaultParticleConfig = new ParticleConfig((0,0),
+        ParticleEmitterComponent.ParticleConfig.ParticlePrimitiveType.Triangle,
+        1.5f,
+        new (4,0.1f,Easing.EaseInOutQuart),
+        new (4,0.1f,Easing.EaseInOutQuart),
+        new (4,200,Easing.EaseOutExpo),
+        new (4,16,Easing.EaseOutExpo),
+        new (new Color(1,1,1,1),new Color(0,1,1,1),Easing.EaseInOutExpo),
+        new (0,3 *MathF.PI,Easing.Linear));
     public class Particle
     {
         public bool Active = false;
@@ -193,7 +214,9 @@ public record ParticleEmitterComponent
         public float Rotation = 0;
         public float Age = 0;
         public Color Color = Palettes.ENDESGA[19];
-        public ParticleConfig Config;
+        public ParticleConfig Config = DefaultParticleConfig;
+
+        public Particle(){}
 
         public void Reset()
         {
