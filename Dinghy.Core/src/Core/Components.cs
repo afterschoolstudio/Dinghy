@@ -61,14 +61,26 @@ public readonly record struct Active();
 public readonly record struct HasManagedOwner(Dinghy.Entity e);
 public record ParticleEmitterComponent
 {
-    public readonly record struct EmitterConfig(int maxParticles, float emissionRate, ParticleConfig particleConfig);
-    public EmitterConfig Config { get; init; }
+    public struct EmitterConfig
+    {
+        public int MaxParticles;
+        public float EmissionRate;
+        public ParticleConfig ParticleConfig;
+        public EmitterConfig(int maxParticles, float emissionRate, ParticleConfig particleConfig)
+        {
+            MaxParticles = maxParticles;
+            EmissionRate = emissionRate;
+            ParticleConfig = particleConfig;
+        }
+    }
+
+    public EmitterConfig Config { get; set; }
     public List<Particle> Particles = new List<Particle>();
     public float Accumulator = 0f;
     public ParticleEmitterComponent(EmitterConfig c)
     {
         Config = c;
-        for (int i = 0; i < c.maxParticles; i++)
+        for (int i = 0; i < c.MaxParticles; i++)
         {
             Particles.Add(new());
         }
@@ -120,7 +132,7 @@ public record ParticleEmitterComponent
             Rotation = c.Rotation;
         }
         
-        public struct Transition<T>
+        public class Transition<T>
         {
             public T StartValue;
             public T TargetValue;

@@ -137,7 +137,7 @@ public class ParticleRenderSystem : RenderSystem
             List<int> activeIndicies = new List<int>();
             var dt = (float)Engine.DeltaTime;
             int emitted = 0;
-            var possibleParticleSlots = emitter.Config.emissionRate * dt;
+            var possibleParticleSlots = emitter.Config.EmissionRate * dt;
             emitter.Accumulator += possibleParticleSlots;
             var freeSlots = (int)emitter.Accumulator;
             for (int i = 0; i < emitter.Particles.Count; i++)
@@ -147,7 +147,7 @@ public class ParticleRenderSystem : RenderSystem
                 {
                     emitter.Particles[i].Reset();
                     emitter.Particles[i].Active = true;
-                    emitter.Particles[i].Config = new ParticleEmitterComponent.ParticleConfig(emitter.Config.particleConfig);
+                    emitter.Particles[i].Config = new ParticleEmitterComponent.ParticleConfig(emitter.Config.ParticleConfig);
                     emitter.Particles[i].Config.EmissionPoint = (p.x,p.y);
                     
                     justInit = true;
@@ -158,7 +158,7 @@ public class ParticleRenderSystem : RenderSystem
                 if (!justInit)
                 {
                     emitter.Particles[i].Age += dt;
-                    if (emitter.Particles[i].Age > emitter.Config.particleConfig.Lifespan)
+                    if (emitter.Particles[i].Age > emitter.Config.ParticleConfig.Lifespan)
                     {
                         emitter.Particles[i].Active = false;
                     }

@@ -467,7 +467,7 @@ public static partial class Engine
     public static void DrawParticles(Position p, ParticleEmitterComponent c, List<int> activeIndicies)
     {
         GP.sgp_set_blend_mode(sgp_blend_mode.SGP_BLENDMODE_NONE);
-        switch (c.Config.particleConfig.ParticleType)
+        switch (c.Config.ParticleConfig.ParticleType)
         {
             case ParticleEmitterComponent.ParticleConfig.ParticlePrimitiveType.Rectangle:
                 foreach (var i in activeIndicies)
