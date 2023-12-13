@@ -70,6 +70,18 @@ public static class ImGUIHelper
                 value = v;
             }
         }
+        public static unsafe bool SliderFloat(string label, ref float value, float min, float max, string format, ImGuiSliderFlags_ flags)
+        {
+            var t = System.Text.Encoding.UTF8.GetBytes(label);
+            var f = System.Text.Encoding.UTF8.GetBytes(format);
+            float v = value;
+            fixed (byte* t_p = t,fmt_p = f)
+            {
+                var r = Internal.Sokol.ImGUI.igSliderFloat((sbyte*)t_p, &v, min, max, (sbyte*)fmt_p, (int)flags);
+                value = v;
+                return r != 0;
+            }
+        }
         public static void Seperator()
         {
             Internal.Sokol.ImGUI.igSeparator();
