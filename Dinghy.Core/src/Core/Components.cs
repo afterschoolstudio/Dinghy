@@ -159,42 +159,29 @@ public record ParticleEmitterComponent
             }
         }
 
-        public struct TransitionResolution
-        {
-            public float DX;
-            public float DY;
-            public float Width;
-            public float Height;
-            public float Rotation;
-            public Color Color;
-        }
-
-        public TransitionResolution Resolve(double time)
+        public void Resolve(double time,ref float dx, ref float dy, ref float rotation, ref float width,ref float height,ref Color color)
         {
             var sampleTime = time / Lifespan;
-            return new TransitionResolution()
-            {
-                DX = Quick.MapF((float)DX.Sample(sampleTime),0f,1f,DX.StartValue,DX.TargetValue),
-                DY = Quick.MapF((float)DY.Sample(sampleTime),0f,1f,DY.StartValue,DY.TargetValue),
-                Width = Quick.MapF((float)Width.Sample(sampleTime),0f,1f,Width.StartValue,Width.TargetValue),
-                Height = Quick.MapF((float)Height.Sample(sampleTime),0f,1f,Height.StartValue,Height.TargetValue),
-                Rotation = Quick.MapF((float)Rotation.Sample(sampleTime),0f,1f,Rotation.StartValue,Rotation.TargetValue),
-                Color = ResolveColorTransition(sampleTime)
-            };
+            dx = Quick.MapF((float)DX.Sample(sampleTime), 0f, 1f, DX.StartValue, DX.TargetValue);
+            dy = Quick.MapF((float)DY.Sample(sampleTime), 0f, 1f, DY.StartValue, DY.TargetValue);
+            width = Quick.MapF((float)Width.Sample(sampleTime), 0f, 1f, Width.StartValue, Width.TargetValue);
+            height = Quick.MapF((float)Height.Sample(sampleTime), 0f, 1f, Height.StartValue, Height.TargetValue);
+            rotation = Quick.MapF((float)Rotation.Sample(sampleTime), 0f, 1f, Rotation.StartValue,
+                Rotation.TargetValue);
+            ResolveColorTransition(ref color, sampleTime);
         }
-        Color ResolveColorTransition(double sampleTime)
+        void ResolveColorTransition(ref Color color,double sampleTime)
         {
             float sample = (float)Color.Sample(sampleTime);
-            var a = Quick.MapF(sample,0f,1f,Color.StartValue.internal_color.a,Color.TargetValue.internal_color.a);
-            var r = Quick.MapF(sample,0f,1f,Color.StartValue.internal_color.r,Color.TargetValue.internal_color.r);
-            var g = Quick.MapF(sample,0f,1f,Color.StartValue.internal_color.g,Color.TargetValue.internal_color.g);
-            var b = Quick.MapF(sample,0f,1f,Color.StartValue.internal_color.b,Color.TargetValue.internal_color.b);
-            return new Color(a,r,g,b);
+            color.A = Quick.MapF(sample,0f,1f,Color.StartValue.internal_color.a,Color.TargetValue.internal_color.a);
+            color.R = Quick.MapF(sample,0f,1f,Color.StartValue.internal_color.r,Color.TargetValue.internal_color.r);
+            color.G = Quick.MapF(sample,0f,1f,Color.StartValue.internal_color.g,Color.TargetValue.internal_color.g);
+            color.B = Quick.MapF(sample,0f,1f,Color.StartValue.internal_color.b,Color.TargetValue.internal_color.b);
         }
     }
 
     public static readonly ParticleConfig DefaultParticleConfig = new ParticleConfig((0,0),
-        ParticleEmitterComponent.ParticleConfig.ParticlePrimitiveType.Triangle,
+        ParticleEmitterComponent.ParticleConfig.ParticlePrimitiveType.Rectangle,
         1.5f,
         new (4,0.1f,Easing.EaseInOutQuart),
         new (4,0.1f,Easing.EaseInOutQuart),
@@ -230,13 +217,14 @@ public record ParticleEmitterComponent
 
         public void Resolve()
         {
-            var tr = Config.Resolve(Age);
-            DX = tr.DX;
-            DY = tr.DY;
-            Rotation = tr.Rotation;
-            Width = tr.Width;
-            Height = tr.Height;
-            Color = tr.Color;
+            Config.Resolve(Age,ref DX, ref DY, ref Rotation, ref Width,ref Height,ref Color);
+            // var tr = Config.Resolve(Age,ref DX, ref DY, ref Rotation, ref Width,ref Height,ref Color);
+            // DX = tr.DX;
+            // DY = tr.DY;
+            // Rotation = tr.Rotation;
+            // Width = tr.Width;
+            // Height = tr.Height;
+            // Color = tr.Color;
         }
     }
 }
