@@ -31,7 +31,7 @@ var logoImage = new TextureData("logo.png");
 
 Engine.Run(new Engine.RunOptions(width,height,"dinghy", 
 	() => {
-		Engine.MountScene(0,new ParticleSystemDemo());
+		Engine.MountScene(0,new ParticleSystemDemo(){Name = "Particle System Scene"});
 	}, 
 	() =>
 	{

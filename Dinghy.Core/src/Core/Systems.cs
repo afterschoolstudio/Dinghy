@@ -18,7 +18,7 @@ public interface IPostUpdateSystem
 }
 public interface ICleanupSystem
 {
-    void Cleanup(double dt);
+    void Cleanup();
 }
 
 public class ManagedComponentSystem : DSystem, IPreUpdateSystem, IPostUpdateSystem, IUpdateSystem
@@ -368,11 +368,14 @@ public class DestructionSystem : DSystem, ICleanupSystem
 {
     QueryDescription query = new QueryDescription().WithAll<Destroy>();
     QueryDescription managedCleanupQuery = new QueryDescription().WithAll<Destroy,HasManagedOwner>();
-    public void Cleanup(double dt)
+    public void Cleanup()
     {
         Engine.ECSWorld.Query(in managedCleanupQuery, (Arch.Core.Entity e, ref HasManagedOwner owner) =>
         {
-            Engine.SceneEntityMap[owner.e.Scene].Remove(owner.e);
+            if (owner.e.Scene != null)
+            {
+                Engine.SceneEntityMap[owner.e.Scene].Remove(owner.e);
+            }
         });
         Engine.ECSWorld.Destroy(in query);
     }

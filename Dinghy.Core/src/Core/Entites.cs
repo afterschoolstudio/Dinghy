@@ -144,7 +144,7 @@ public class Entity
     public List<Component> Components = new List<Component>();
     public Arch.Core.EntityReference ECSEntityReference;
     public Arch.Core.Entity ECSEntity => ECSEntityReference.Entity;
-    public Scene Scene;
+    public Scene? Scene;
     public Entity(bool startEnabled, Scene scene, bool addToSceneHeirarchy = true)
     {
         Arch.Core.Entity e;
@@ -272,6 +272,7 @@ public class Scene : Entity
         }
     }
     public virtual void Create(){}
+    public virtual void Cleanup(){}
 }
 
 public class Shape : Entity, IHasSize

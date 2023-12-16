@@ -55,6 +55,20 @@ public static partial class Engine
         }
     }
 
+    public static List<Scene> scenesStagedForUnmounting = new List<Scene>();
+    public static void UnmountScene(Scene s)
+    {
+        if (s.Status != Scene.SceneStatus.Unmounted)
+        {
+            var rmentites = new List<Entity>(SceneEntityMap[s]);
+            foreach (var e in rmentites)
+            {
+                e.Destroy();
+            }
+            scenesStagedForUnmounting.Add(s);
+        }
+    }
+
     public record RunOptions(int width, int height, string appName, Action setup = null, Action update = null);
 
     private static RunOptions defaultOpts = new(500, 500, "dinghy",null,null);
@@ -281,6 +295,10 @@ public static partial class Engine
         if (ImGUIHelper.Wrappers.BeginMenu("Dinghy"))
         {
             ImGUIHelper.Wrappers.Checkbox("Show Stats", ref showStats);
+            foreach (var i in MountedScenes)
+            {
+                ImGUIHelper.Wrappers.Text($"{i.Value.Name} {i.Value.Status}");
+            }
             ImGUIHelper.Wrappers.EndMenu();
         }
         
@@ -384,6 +402,30 @@ public static partial class Engine
             ImGUI.render();
             Gfx.end_pass();
             Gfx.commit();
+        }
+        
+        foreach (var s in DefaultSystems)
+        {
+            if (s is ICleanupSystem cs)
+            {
+                cs.Cleanup();
+            }
+        }
+
+        foreach (var s in scenesStagedForUnmounting)
+        {
+            SceneEntityMap.Remove(s);
+            var rm = MountedScenes.Where(x => x.Value == s);
+            foreach (var rms in rm)
+            {
+                MountedScenes.Remove(rms.Key);
+            }
+            s.Status = Scene.SceneStatus.Unmounted;
+        }
+
+        if (scenesStagedForUnmounting.Any())
+        {
+            scenesStagedForUnmounting.Clear();
         }
     }
 

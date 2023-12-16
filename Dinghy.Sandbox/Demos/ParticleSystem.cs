@@ -16,6 +16,11 @@ public class ParticleSystemDemo : Scene
             {
                 Engine.Clear = !Engine.Clear;
             }
+
+            if (key == Key.M)
+            {
+                Engine.UnmountScene(this);
+            }
         };
     }
 
