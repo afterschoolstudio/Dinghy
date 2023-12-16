@@ -28,26 +28,48 @@ public static partial class Engine
         new ManagedComponentSystem(),
         new DestructionSystem(),
         new ParticleRenderSystem(),
+        new SceneSystem(),
         InputSystem
     };
 
     public static uint idCounter;
     public static VoltWorld PhysicsWorld = new ();
     public static World ECSWorld = World.Create();
-    public static readonly Scene GlobalScene = new Scene("global");
+    public static Scene GlobalScene = new(){Name = "Global Scene"};
 
-    public record RunOptions(int width, int height, string appName);
+    public static Dictionary<Scene, List<Entity>> SceneEntityMap = new();
 
-    private static RunOptions defaultOpts = new(500, 500, "dinghy");
-    public static void Run(RunOptions opts = null, Action update = null)
+    static Dictionary<int, Scene> MountedScenes = new();
+    public static void MountScene(int depth, Scene s, bool loadImmediate = true, Action loadCallback = null, bool startAfterLoad = true)
     {
-        if (update != null)
+        MountedScenes.Add(depth,s);
+        s.Status = Scene.SceneStatus.Mounted;
+        if (loadImmediate)
         {
-            Update += update;
+            s.Load(() =>
+            {
+                SceneEntityMap.Add(s,new List<Entity>());
+                loadCallback?.Invoke();
+
+            },startAfterLoad);
         }
-        if (opts == null)
+    }
+
+    public record RunOptions(int width, int height, string appName, Action setup = null, Action update = null);
+
+    private static RunOptions defaultOpts = new(500, 500, "dinghy",null,null);
+    public static void Run(RunOptions opts = null)
+    {
+        if (opts != null)
         {
-            
+            if (opts.update != null)
+            {
+                Update += opts.update;
+            }
+            if (opts.setup != null)
+            {
+                Setup += opts.setup;
+            }
         }
         Boot(opts == null ? defaultOpts : opts);
     }
@@ -218,6 +240,7 @@ public static partial class Engine
         
         Width = App.width();
         Height = App.height();
+        MountScene(-1,GlobalScene);
         Setup?.Invoke();
     }
 
@@ -278,7 +301,12 @@ public static partial class Engine
         
         if (showStats)
         {
-            ImGUIHelper.Wrappers.ShowStats($"{t}ms",$"Entities: {GlobalScene.Entities.Count}",$"{InputSystem.MouseX},{InputSystem.MouseY}");
+            int ec = 0;
+            foreach (var l in SceneEntityMap.Values)
+            {
+                ec += l.Count;
+            }
+            ImGUIHelper.Wrappers.ShowStats($"{t}ms",$"Entities: {ec}",$"{InputSystem.MouseX},{InputSystem.MouseY}");
         }
         
         fixed (sg_imgui_t* ctx = &gfx_dbgui)

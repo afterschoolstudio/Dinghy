@@ -141,7 +141,7 @@ public static class Quick
                             // prefab = ScenarioEditorManager.Instance.WrappedBool;
                             break;
                         default:
-                            Console.WriteLine(fieldInfo.FieldType.Name);
+                            // Console.WriteLine(fieldInfo.FieldType.Name);
                             break;
                     }
 

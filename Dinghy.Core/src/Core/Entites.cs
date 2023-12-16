@@ -144,7 +144,8 @@ public class Entity
     public List<Component> Components = new List<Component>();
     public Arch.Core.EntityReference ECSEntityReference;
     public Arch.Core.Entity ECSEntity => ECSEntityReference.Entity;
-    public Entity(bool startEnabled, Scene? scene = null)
+    public Scene Scene;
+    public Entity(bool startEnabled, Scene scene, bool addToSceneHeirarchy = true)
     {
         Arch.Core.Entity e;
         if (startEnabled)
@@ -166,13 +167,10 @@ public class Entity
         }
         ECSEntityReference = Engine.ECSWorld.Reference(e);
         Engine.ECSWorld.Add<Entity>(ECSEntity);
-        if (scene == null)
+        Scene = scene != null ? scene : Engine.GlobalScene;
+        if (addToSceneHeirarchy)
         {
-            Engine.GlobalScene.Entities.Add(this);
-        }
-        else
-        {
-            scene.Entities.Add(this);
+            Engine.SceneEntityMap[Scene].Add(this);
         }
     }
 
@@ -201,7 +199,7 @@ public class Entity
 
     public void DestroyImmediate()
     {
-        Engine.GlobalScene.Entities.Remove(this); //TODO: note this assumes a global scene
+        Engine.SceneEntityMap[Scene].Remove(this);
         Engine.ECSWorld.Destroy(ECSEntity);
     }
 
@@ -222,6 +220,58 @@ public class Component
     public virtual void PreUpdate(){}
     public virtual void Update(){}
     public virtual void PostUpdate(){}
+}
+
+public class Scene : Entity
+{
+    public enum SceneStatus
+    {
+        Unmounted,
+        Mounted,
+        Loading,
+        Loaded,
+        Creating,
+        Running
+    }
+
+    public SceneStatus Status = SceneStatus.Unmounted; 
+    public Scene(bool startEnabled = true) : base(startEnabled,null,false)
+    {
+        ECSEntity.Add(new SceneComponent(Update,this));
+    }
+
+    public virtual void Update(double dt){}
+    public void Load(Action loadedCallback, bool startAfterLoad = true)
+    {
+        Status = SceneStatus.Loading;
+        Preload();
+        Status = SceneStatus.Loaded;
+        loadedCallback?.Invoke();
+        if (startAfterLoad)
+        {
+            Start();
+        }
+    }
+    public virtual void Preload(){}
+    public void Start()
+    {
+        switch (Status)
+        {
+            case SceneStatus.Unmounted:
+                Console.WriteLine("mount scene before starting it");
+                break;
+            case SceneStatus.Mounted:
+            case SceneStatus.Loading:
+                Console.WriteLine("scene not yet loaded");
+                break;
+            case SceneStatus.Loaded:
+                Status = SceneStatus.Creating;
+                Create();
+                Status = SceneStatus.Running;
+                break;
+        }
+    }
+    public virtual void Create(){}
 }
 
 public class Shape : Entity, IHasSize
@@ -259,7 +309,7 @@ public class Shape : Entity, IHasSize
             c = value;
         }
     }
-    public Shape(Color color, int width = 32, int height = 32, bool startEnabled = true) : base(startEnabled)
+    public Shape(Color color, int width = 32, int height = 32, Scene? scene = null, bool startEnabled = true) : base(startEnabled,scene)
     {
         c = color;
         this.width = width;
@@ -272,7 +322,7 @@ public class Shape : Entity, IHasSize
 public class Sprite : Entity
 {
     public SpriteData Data { get; init; }
-    public Sprite(SpriteData spriteData, bool startEnabled = true) : base(startEnabled)
+    public Sprite(SpriteData spriteData, Scene? scene = null, bool startEnabled = true) : base(startEnabled,scene)
     {
         Data = spriteData;
         ECSEntity.Add(new SpriteRenderer(Data.TextureData.texturePath,Data.Frame));
@@ -282,7 +332,7 @@ public class Sprite : Entity
 public class AnimatedSprite : Entity
 {
     public AnimatedSpriteData Data { get; init; }
-    public AnimatedSprite(AnimatedSpriteData animatedSpriteData, bool startEnabled = true) : base(startEnabled)
+    public AnimatedSprite(AnimatedSpriteData animatedSpriteData, Scene? scene = null, bool startEnabled = true) : base(startEnabled,scene)
     {
         Data = animatedSpriteData;
         ECSEntity.Add(
@@ -296,7 +346,7 @@ public class ParticleEmitter : Entity
     //NOTE: this is NOT an entity emitter, this emits a special particle type
     //want to add in ability to sample a curve for these tbh
     public ParticleEmitterComponent.EmitterConfig Config;
-    public ParticleEmitter(ParticleEmitterComponent.EmitterConfig config, bool startEnabled = true) : base(startEnabled)
+    public ParticleEmitter(ParticleEmitterComponent.EmitterConfig config, Scene? scene = null, bool startEnabled = true) : base(startEnabled,scene)
     {
         Config = config;
         ECSEntity.Add(
@@ -309,7 +359,7 @@ public class ParticleEmitter : Entity
 public class TestBunny : Entity
 {
     public SpriteData Data { get; init; }
-    public TestBunny(SpriteData spriteData, bool startEnabled = true) : base(startEnabled)
+    public TestBunny(SpriteData spriteData, Scene? scene = null, bool startEnabled = true) : base(startEnabled,scene)
     {
         Data = spriteData;
         ECSEntity.Add(

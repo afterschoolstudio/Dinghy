@@ -228,3 +228,14 @@ public record ParticleEmitterComponent
         }
     }
 }
+
+public record SceneComponent
+{
+    public Action<double> Update;
+    public Scene ManagedScene;
+    public SceneComponent(Action<double> update, Scene managedScene)
+    {
+        Update = update;
+        ManagedScene = managedScene;
+    }
+}

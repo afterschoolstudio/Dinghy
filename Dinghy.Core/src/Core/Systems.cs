@@ -89,6 +89,20 @@ public class VelocitySystem : DSystem, IUpdateSystem
         });
     }
 }
+public class SceneSystem : DSystem, IUpdateSystem
+{
+    QueryDescription query = new QueryDescription().WithAll<Active,SceneComponent>();      // Should have all specified components
+    public void Update(double dt)
+    {
+        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref SceneComponent scene) => {
+            if (scene.ManagedScene.Status == Scene.SceneStatus.Running)
+            {
+                scene.Update(dt);
+            }
+        });
+    }
+}
+
 public abstract class RenderSystem : DSystem, IUpdateSystem
 {
     public void Update(double dt)
@@ -358,7 +372,7 @@ public class DestructionSystem : DSystem, ICleanupSystem
     {
         Engine.ECSWorld.Query(in managedCleanupQuery, (Arch.Core.Entity e, ref HasManagedOwner owner) =>
         {
-            Engine.GlobalScene.Entities.Remove(owner.e); //TODO: note this assumes a global scene
+            Engine.SceneEntityMap[owner.e.Scene].Remove(owner.e);
         });
         Engine.ECSWorld.Destroy(in query);
     }

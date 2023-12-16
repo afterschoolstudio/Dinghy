@@ -3,6 +3,7 @@ using Arch.Core.Extensions;
 using Dinghy;
 using Dinghy.Collision;
 using Dinghy.Core;
+using Dinghy.Sandbox.Demos;
 using Volatile;
 using static Dinghy.Quick;
 using Utils = Dinghy.Collision.Utils;
@@ -25,9 +26,18 @@ var logoImage = new TextureData("logo.png");
 // entityEmitter();
 // collision();
 // grid();
-particleSystem();
+// particleSystem();
 
-Engine.Run(new Engine.RunOptions(width,height,"dinghy"));
+
+Engine.Run(new Engine.RunOptions(width,height,"dinghy", 
+	() => {
+		Engine.MountScene(0,new ParticleSystemDemo());
+	}, 
+	() =>
+	{
+		
+	}
+	));
 
 void texture()
 {
