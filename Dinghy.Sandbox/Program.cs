@@ -28,28 +28,23 @@ var logoImage = new TextureData("logo.png");
 // grid();
 // particleSystem();
 
+OnKeyDown += (key,_) =>  {
+	if (key == Key.C)
+	{
+		Engine.Clear = !Engine.Clear;
+	}
+};
 
 Engine.Run(new Engine.RunOptions(width,height,"dinghy", 
 	() => {
-		Engine.MountScene(0,new ParticleSystemDemo(){Name = "Particle System Scene"});
+		// Engine.MountScene(0,new D01_Texture(){Name = "Texture Scene"});
+		Engine.MountScene(0,new D02_TextureFrame(){Name = "Texture Frame Scene"});
+		// Engine.MountScene(0,new D10_ParticleSystem(){Name = "Particle System Scene"});
 	}, 
-	() =>
-	{
+	() => {
 		
 	}
 	));
-
-void texture()
-{
-	SpriteData fullConscript = new(conscriptImage);
-	new Sprite(fullConscript);
-}
-
-void textureFrame()
-{
-	SpriteData conscriptFrame0 = new(conscriptImage, new Frame(0,0,64,64));
-	new Sprite(conscriptFrame0);
-}
 
 void animation()
 {

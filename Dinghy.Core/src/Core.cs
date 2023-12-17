@@ -56,6 +56,7 @@ public static partial class Engine
     }
 
     public static List<Scene> scenesStagedForUnmounting = new List<Scene>();
+    private static bool hasScenesStagedForUnmounting = false;
     public static void UnmountScene(Scene s)
     {
         if (s.Status != Scene.SceneStatus.Unmounted)
@@ -66,6 +67,7 @@ public static partial class Engine
                 e.Destroy();
             }
             scenesStagedForUnmounting.Add(s);
+            hasScenesStagedForUnmounting = true;
         }
     }
 
@@ -412,19 +414,18 @@ public static partial class Engine
             }
         }
 
-        foreach (var s in scenesStagedForUnmounting)
+        if (hasScenesStagedForUnmounting)
         {
-            SceneEntityMap.Remove(s);
-            var rm = MountedScenes.Where(x => x.Value == s);
-            foreach (var rms in rm)
+            foreach (var s in scenesStagedForUnmounting)
             {
-                MountedScenes.Remove(rms.Key);
+                SceneEntityMap.Remove(s);
+                var rm = MountedScenes.Where(x => x.Value == s);
+                foreach (var rms in rm)
+                {
+                    MountedScenes.Remove(rms.Key);
+                }
+                s.Status = Scene.SceneStatus.Unmounted;
             }
-            s.Status = Scene.SceneStatus.Unmounted;
-        }
-
-        if (scenesStagedForUnmounting.Any())
-        {
             scenesStagedForUnmounting.Clear();
         }
     }

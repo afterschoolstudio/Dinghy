@@ -3,27 +3,11 @@ using static Dinghy.Quick;
 
 namespace Dinghy.Sandbox.Demos;
 
-public class ParticleSystemDemo : Scene
+public class D10_ParticleSystem : Scene
 {
     Color startColor = Palettes.ENDESGA[4];
     Color endColor = Palettes.ENDESGA[16];
     ParticleEmitter emitter;
-
-    public override void Preload()
-    {
-        OnKeyDown += (key,_) =>  {
-            if (key == Key.C)
-            {
-                Engine.Clear = !Engine.Clear;
-            }
-
-            if (key == Key.M)
-            {
-                Engine.UnmountScene(this);
-            }
-        };
-    }
-
     public override void Create()
     {
         emitter = new ParticleEmitter(
