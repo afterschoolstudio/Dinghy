@@ -262,7 +262,7 @@ public class Scene : Entity
         MountStatus = SceneMountStatus.Mounted;
     }
 
-    public void Unmount()
+    public void Unmount(Action callback = null)
     {
         if (MountStatus == SceneMountStatus.Mounted)
         {
@@ -272,14 +272,17 @@ public class Scene : Entity
             {
                 e.Destroy();
             }
-            Events.SceneUnmounted?.Invoke(this);
+            Events.SceneUnmounted?.Invoke(this,callback);
         }
     }
     public void Load(Action loadedCallback)
     {
-        LoadStatus = SceneLoadStatus.Loading;
-        Preload();
-        LoadStatus = SceneLoadStatus.Loaded;
+        if (LoadStatus != SceneLoadStatus.Loaded)
+        {
+            LoadStatus = SceneLoadStatus.Loading;
+            Preload();
+            LoadStatus = SceneLoadStatus.Loaded;
+        }
         loadedCallback?.Invoke();
     }
     

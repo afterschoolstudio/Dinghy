@@ -2,5 +2,5 @@ namespace Dinghy.Core;
 
 public static class Events
 {
-    public static Action<Scene> SceneUnmounted;
+    public static Action<Scene,Action> SceneUnmounted;
 }

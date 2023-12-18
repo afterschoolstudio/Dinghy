@@ -39,12 +39,6 @@ OnKeyDown += (key,_) =>  {
 Engine.Run(new Engine.RunOptions(width,height,"dinghy", 
 	() =>
 	{
-		var s = new D01_Texture() { Name = "Texture Scene" };
-		s.Mount(0);
-		s.Load(s.Start);
-		// Engine.MountScene(0,new D01_Texture(){Name = "Texture Scene"});
-		// Engine.MountScene(0,new D02_TextureFrame(){Name = "Texture Frame Scene"});
-		// Engine.MountScene(0,new D10_ParticleSystem(){Name = "Particle System Scene"});
 	}, 
 	() =>
 	{
@@ -57,7 +51,32 @@ void drawDemoOptions()
 	ImGUIHelper.Wrappers.BeginMainMenuBar();
 	if (ImGUIHelper.Wrappers.BeginMenu("Dinghy"))
 	{
-		ImGUIHelper.Wrappers.Text("scene stuff");
+		if (ImGUIHelper.Wrappers.BeginMenu("Demos"))
+		{
+			Scene? scene = null;
+			if(ImGUIHelper.Wrappers.MenuItem("01 Texture"))
+			{
+				scene = new D01_Texture() { Name = "Texture Scene" };
+			}
+			if(ImGUIHelper.Wrappers.MenuItem("02 Texture Frame"))
+			{
+				scene = new D02_TextureFrame() { Name = "Texture Frame Scene" };
+			}
+			if(ImGUIHelper.Wrappers.MenuItem("Particle System"))
+			{
+				scene = new D10_ParticleSystem() { Name = "Particle System Scene" };
+			}
+
+			if (scene != null)
+			{
+				Engine.TargetScene.Unmount(() =>
+				{
+					scene.Mount(0);
+					scene.Load(scene.Start);
+				});
+			}
+			ImGUIHelper.Wrappers.EndMenu();
+		}
 		ImGUIHelper.Wrappers.EndMenu();
 	}
 	ImGUIHelper.Wrappers.EndMainMenuBar();

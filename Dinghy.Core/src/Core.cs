@@ -64,12 +64,12 @@ public static partial class Engine
 
     public static Dictionary<int, Scene> MountedScenes = new();
 
-    public static List<Scene> scenesStagedForUnmounting = new List<Scene>();
+    public static List<(Scene scene,Action callback)> scenesStagedForUnmounting = new ();
     private static bool hasScenesStagedForUnmounting = false;
 
-    static void OnSceneUnmounted(Scene s)
+    static void OnSceneUnmounted(Scene s, Action callback)
     {
-        scenesStagedForUnmounting.Add(s);
+        scenesStagedForUnmounting.Add((s, callback));
         hasScenesStagedForUnmounting = true;
     }
 
@@ -423,16 +423,22 @@ public static partial class Engine
         {
             foreach (var s in scenesStagedForUnmounting)
             {
-                SceneEntityMap.Remove(s);
-                var rm = MountedScenes.Where(x => x.Value == s);
-                foreach (var rms in rm)
-                {
-                    MountedScenes.Remove(rms.Key);
-                }
-                s.MountStatus = Scene.SceneMountStatus.Unmounted;
+                UnmountScene(s);
             }
             scenesStagedForUnmounting.Clear();
         }
+    }
+
+    static void UnmountScene((Scene scene,Action callback) s)
+    {
+        SceneEntityMap.Remove(s.scene);
+        var rm = MountedScenes.Where(x => x.Value == s.scene);
+        foreach (var rms in rm)
+        {
+            MountedScenes.Remove(rms.Key);
+        }
+        s.scene.MountStatus = Scene.SceneMountStatus.Unmounted;
+        s.callback?.Invoke();
     }
 
     public enum DebugFont
