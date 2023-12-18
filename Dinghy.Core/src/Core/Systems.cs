@@ -95,7 +95,7 @@ public class SceneSystem : DSystem, IUpdateSystem
     public void Update(double dt)
     {
         Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref SceneComponent scene) => {
-            if (scene.ManagedScene.Status == Scene.SceneStatus.Running)
+            if (Engine.MountedScenes.ContainsValue(scene.ManagedScene) && scene.ManagedScene.Status == Scene.SceneStatus.Running)
             {
                 scene.Update(dt);
             }

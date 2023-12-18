@@ -12,6 +12,7 @@ public class D01_Texture : Scene
 
     public override void Create()
     {
-        new Sprite(fullConscript,scene:this);
+        Engine.SetTargetScene(this);
+        new Sprite(fullConscript);
     }
 }

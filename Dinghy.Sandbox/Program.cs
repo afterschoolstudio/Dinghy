@@ -3,6 +3,7 @@ using Arch.Core.Extensions;
 using Dinghy;
 using Dinghy.Collision;
 using Dinghy.Core;
+using Dinghy.Core.ImGUI;
 using Dinghy.Sandbox.Demos;
 using Volatile;
 using static Dinghy.Quick;
@@ -36,15 +37,32 @@ OnKeyDown += (key,_) =>  {
 };
 
 Engine.Run(new Engine.RunOptions(width,height,"dinghy", 
-	() => {
+	() =>
+	{
+		var s = new D01_Texture() { Name = "Texture Scene" };
+		s.Mount(0);
+		s.Load(s.Start);
 		// Engine.MountScene(0,new D01_Texture(){Name = "Texture Scene"});
-		Engine.MountScene(0,new D02_TextureFrame(){Name = "Texture Frame Scene"});
+		// Engine.MountScene(0,new D02_TextureFrame(){Name = "Texture Frame Scene"});
 		// Engine.MountScene(0,new D10_ParticleSystem(){Name = "Particle System Scene"});
 	}, 
-	() => {
-		
+	() =>
+	{
+		drawDemoOptions();
 	}
 	));
+
+void drawDemoOptions()
+{
+	ImGUIHelper.Wrappers.BeginMainMenuBar();
+	if (ImGUIHelper.Wrappers.BeginMenu("Dinghy"))
+	{
+		ImGUIHelper.Wrappers.Text("scene stuff");
+		ImGUIHelper.Wrappers.EndMenu();
+	}
+	ImGUIHelper.Wrappers.EndMainMenuBar();
+
+}
 
 void animation()
 {

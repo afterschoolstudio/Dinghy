@@ -13,6 +13,7 @@ public class D02_TextureFrame : Scene
 
     public override void Create()
     {
-        new Sprite(conscriptFrame0,scene:this);
+        Engine.SetTargetScene(this);
+        new Sprite(conscriptFrame0);
     }
 }

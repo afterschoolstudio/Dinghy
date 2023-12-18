@@ -167,7 +167,7 @@ public class Entity
         }
         ECSEntityReference = Engine.ECSWorld.Reference(e);
         Engine.ECSWorld.Add<Entity>(ECSEntity);
-        Scene = scene != null ? scene : Engine.GlobalScene;
+        Scene = scene != null ? scene : Engine.TargetScene;
         if (addToSceneHeirarchy)
         {
             Engine.SceneEntityMap[Scene].Add(this);
@@ -224,52 +224,88 @@ public class Component
 
 public class Scene : Entity
 {
-    public enum SceneStatus
+    public enum SceneLoadStatus
+    {
+        Unloaded,
+        Loading,
+        Loaded
+    }
+
+    public enum SceneMountStatus
     {
         Unmounted,
-        Mounted,
-        Loading,
-        Loaded,
+        Mounted
+    }
+    public enum SceneStatus
+    {
+        Inactive,
         Creating,
         Running
     }
 
-    public SceneStatus Status = SceneStatus.Unmounted; 
+    public SceneStatus Status = SceneStatus.Inactive; 
+    public SceneMountStatus MountStatus = SceneMountStatus.Unmounted; 
+    public SceneLoadStatus LoadStatus = SceneLoadStatus.Unloaded; 
     public Scene(bool startEnabled = true) : base(startEnabled,null,false)
     {
         ECSEntity.Add(new SceneComponent(Update,this));
     }
 
     public virtual void Update(double dt){}
-    public void Load(Action loadedCallback, bool startAfterLoad = true)
+/*
+ * mount -> load -> start -> unmount
+ */
+    public void Mount(int depth)
     {
-        Status = SceneStatus.Loading;
-        Preload();
-        Status = SceneStatus.Loaded;
-        loadedCallback?.Invoke();
-        if (startAfterLoad)
+        Engine.MountedScenes.Add(depth,this);
+        Engine.SceneEntityMap.Add(this,new List<Entity>());
+        MountStatus = SceneMountStatus.Mounted;
+    }
+
+    public void Unmount()
+    {
+        if (MountStatus == SceneMountStatus.Mounted)
         {
-            Start();
+            Cleanup();
+            var rmentites = new List<Entity>(Engine.SceneEntityMap[this]);
+            foreach (var e in rmentites)
+            {
+                e.Destroy();
+            }
+            Events.SceneUnmounted?.Invoke(this);
         }
     }
+    public void Load(Action loadedCallback)
+    {
+        LoadStatus = SceneLoadStatus.Loading;
+        Preload();
+        LoadStatus = SceneLoadStatus.Loaded;
+        loadedCallback?.Invoke();
+    }
+    
     public virtual void Preload(){}
     public void Start()
     {
-        switch (Status)
+        if (MountStatus != SceneMountStatus.Mounted)
         {
-            case SceneStatus.Unmounted:
-                Console.WriteLine("mount scene before starting it");
-                break;
-            case SceneStatus.Mounted:
-            case SceneStatus.Loading:
-                Console.WriteLine("scene not yet loaded");
-                break;
-            case SceneStatus.Loaded:
-                Status = SceneStatus.Creating;
-                Create();
-                Status = SceneStatus.Running;
-                break;
+            Console.WriteLine("mount and load scene before starting it");
+            return;
         }
+        if (LoadStatus != SceneLoadStatus.Loaded)
+        {
+            if (LoadStatus == SceneLoadStatus.Loading)
+            {
+                Console.WriteLine("scene still loading");
+            }
+            else
+            {
+                Console.WriteLine("load scene before starting it");
+            }
+            return;
+        }
+        Status = SceneStatus.Creating;
+        Create();
+        Status = SceneStatus.Running;
     }
     public virtual void Create(){}
     public virtual void Cleanup(){}

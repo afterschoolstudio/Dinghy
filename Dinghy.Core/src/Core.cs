@@ -36,41 +36,44 @@ public static partial class Engine
     public static VoltWorld PhysicsWorld = new ();
     public static World ECSWorld = World.Create();
     public static Scene GlobalScene = new(){Name = "Global Scene"};
+    public static Scene TargetScene { get; private set; } = GlobalScene;
+    public static void SetTargetScene(Scene s)
+    {
+        if (s.MountStatus != Scene.SceneMountStatus.Mounted)
+        {
+            Console.WriteLine("scene must be mounted to be target");
+            return;
+        }
+        if (s.LoadStatus != Scene.SceneLoadStatus.Loaded)
+        {
+            if (s.LoadStatus == Scene.SceneLoadStatus.Loading)
+            {
+                Console.WriteLine("scene cant be target until loading finished");
+            }
+            else
+            {
+                Console.WriteLine("scene must be loaded before becoming target");
+            }
+            return;
+        }
+
+        TargetScene = s;
+    }
 
     public static Dictionary<Scene, List<Entity>> SceneEntityMap = new();
 
-    static Dictionary<int, Scene> MountedScenes = new();
-    public static void MountScene(int depth, Scene s, bool loadImmediate = true, Action loadCallback = null, bool startAfterLoad = true)
-    {
-        MountedScenes.Add(depth,s);
-        s.Status = Scene.SceneStatus.Mounted;
-        if (loadImmediate)
-        {
-            s.Load(() =>
-            {
-                SceneEntityMap.Add(s,new List<Entity>());
-                loadCallback?.Invoke();
-
-            },startAfterLoad);
-        }
-    }
+    public static Dictionary<int, Scene> MountedScenes = new();
 
     public static List<Scene> scenesStagedForUnmounting = new List<Scene>();
     private static bool hasScenesStagedForUnmounting = false;
-    public static void UnmountScene(Scene s)
+
+    static void OnSceneUnmounted(Scene s)
     {
-        if (s.Status != Scene.SceneStatus.Unmounted)
-        {
-            var rmentites = new List<Entity>(SceneEntityMap[s]);
-            foreach (var e in rmentites)
-            {
-                e.Destroy();
-            }
-            scenesStagedForUnmounting.Add(s);
-            hasScenesStagedForUnmounting = true;
-        }
+        scenesStagedForUnmounting.Add(s);
+        hasScenesStagedForUnmounting = true;
     }
 
+    
     public record RunOptions(int width, int height, string appName, Action setup = null, Action update = null);
 
     private static RunOptions defaultOpts = new(500, 500, "dinghy",null,null);
@@ -256,7 +259,9 @@ public static partial class Engine
         
         Width = App.width();
         Height = App.height();
-        MountScene(-1,GlobalScene);
+        GlobalScene.Mount(-1);
+        GlobalScene.Load(() => {GlobalScene.Start();});
+        Events.SceneUnmounted += OnSceneUnmounted;
         Setup?.Invoke();
     }
 
@@ -424,7 +429,7 @@ public static partial class Engine
                 {
                     MountedScenes.Remove(rms.Key);
                 }
-                s.Status = Scene.SceneStatus.Unmounted;
+                s.MountStatus = Scene.SceneMountStatus.Unmounted;
             }
             scenesStagedForUnmounting.Clear();
         }
@@ -647,6 +652,7 @@ public static partial class Engine
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
     private static unsafe void Cleanup()
     {
+        Events.SceneUnmounted -= OnSceneUnmounted;
         ImGUI.shutdown();
         fixed (sg_imgui_t* ctx = &gfx_dbgui)
         {
