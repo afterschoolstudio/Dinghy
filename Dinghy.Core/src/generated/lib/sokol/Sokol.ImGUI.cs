@@ -3893,13 +3893,13 @@ public partial struct ImGuiDockRequest
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             readonly get
             {
-                return (bool)((_bitfield >> 9) & 0x1);
+                return ((_bitfield >> 9) & 0x1) != 0;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                _bitfield = (_bitfield & ~(0x1 << 9)) | (int)((value & 0x1) << 9);
+                _bitfield = (_bitfield & ~(0x1 << 9)) | (((value ? 1 : 0) & 0x1) << 9);
             }
         }
 
@@ -3909,13 +3909,13 @@ public partial struct ImGuiDockRequest
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             readonly get
             {
-                return (bool)((_bitfield >> 10) & 0x1);
+                return ((_bitfield >> 10) & 0x1) != 0;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                _bitfield = (_bitfield & ~(0x1 << 10)) | (int)((value & 0x1) << 10);
+                _bitfield = (_bitfield & ~(0x1 << 10)) | (((value ? 1 : 0) & 0x1) << 10);
             }
         }
 
@@ -3925,13 +3925,13 @@ public partial struct ImGuiDockRequest
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             readonly get
             {
-                return (bool)((_bitfield >> 11) & 0x1);
+                return ((_bitfield >> 11) & 0x1) != 0;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                _bitfield = (_bitfield & ~(0x1 << 11)) | (int)((value & 0x1) << 11);
+                _bitfield = (_bitfield & ~(0x1 << 11)) | (((value ? 1 : 0) & 0x1) << 11);
             }
         }
 
@@ -3941,13 +3941,13 @@ public partial struct ImGuiDockRequest
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             readonly get
             {
-                return (bool)((_bitfield >> 12) & 0x1);
+                return ((_bitfield >> 12) & 0x1) != 0;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                _bitfield = (_bitfield & ~(0x1 << 12)) | (int)((value & 0x1) << 12);
+                _bitfield = (_bitfield & ~(0x1 << 12)) | (((value ? 1 : 0) & 0x1) << 12);
             }
         }
 
@@ -3957,13 +3957,13 @@ public partial struct ImGuiDockRequest
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             readonly get
             {
-                return (bool)((_bitfield >> 13) & 0x1);
+                return ((_bitfield >> 13) & 0x1) != 0;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                _bitfield = (_bitfield & ~(0x1 << 13)) | (int)((value & 0x1) << 13);
+                _bitfield = (_bitfield & ~(0x1 << 13)) | (((value ? 1 : 0) & 0x1) << 13);
             }
         }
 
@@ -3973,13 +3973,13 @@ public partial struct ImGuiDockRequest
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             readonly get
             {
-                return (bool)((_bitfield >> 14) & 0x1);
+                return ((_bitfield >> 14) & 0x1) != 0;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                _bitfield = (_bitfield & ~(0x1 << 14)) | (int)((value & 0x1) << 14);
+                _bitfield = (_bitfield & ~(0x1 << 14)) | (((value ? 1 : 0) & 0x1) << 14);
             }
         }
 
@@ -3989,13 +3989,13 @@ public partial struct ImGuiDockRequest
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             readonly get
             {
-                return (bool)((_bitfield >> 15) & 0x1);
+                return ((_bitfield >> 15) & 0x1) != 0;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                _bitfield = (_bitfield & ~(0x1 << 15)) | (int)((value & 0x1) << 15);
+                _bitfield = (_bitfield & ~(0x1 << 15)) | (((value ? 1 : 0) & 0x1) << 15);
             }
         }
 
@@ -4005,13 +4005,13 @@ public partial struct ImGuiDockRequest
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             readonly get
             {
-                return (bool)((_bitfield >> 16) & 0x1);
+                return ((_bitfield >> 16) & 0x1) != 0;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                _bitfield = (_bitfield & ~(0x1 << 16)) | (int)((value & 0x1) << 16);
+                _bitfield = (_bitfield & ~(0x1 << 16)) | (((value ? 1 : 0) & 0x1) << 16);
             }
         }
 
@@ -4021,13 +4021,13 @@ public partial struct ImGuiDockRequest
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             readonly get
             {
-                return (bool)((_bitfield >> 17) & 0x1);
+                return ((_bitfield >> 17) & 0x1) != 0;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                _bitfield = (_bitfield & ~(0x1 << 17)) | (int)((value & 0x1) << 17);
+                _bitfield = (_bitfield & ~(0x1 << 17)) | (((value ? 1 : 0) & 0x1) << 17);
             }
         }
 
@@ -4037,13 +4037,13 @@ public partial struct ImGuiDockRequest
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             readonly get
             {
-                return (bool)((_bitfield >> 18) & 0x1);
+                return ((_bitfield >> 18) & 0x1) != 0;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                _bitfield = (_bitfield & ~(0x1 << 18)) | (int)((value & 0x1) << 18);
+                _bitfield = (_bitfield & ~(0x1 << 18)) | (((value ? 1 : 0) & 0x1) << 18);
             }
         }
 
@@ -4053,13 +4053,13 @@ public partial struct ImGuiDockRequest
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             readonly get
             {
-                return (bool)((_bitfield >> 19) & 0x1);
+                return ((_bitfield >> 19) & 0x1) != 0;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                _bitfield = (_bitfield & ~(0x1 << 19)) | (int)((value & 0x1) << 19);
+                _bitfield = (_bitfield & ~(0x1 << 19)) | (((value ? 1 : 0) & 0x1) << 19);
             }
         }
 
@@ -5789,13 +5789,13 @@ public partial struct ImGuiDockRequest
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             readonly get
             {
-                return (bool)(_bitfield2 & 0x1);
+                return ((_bitfield2 ? 1 : 0) & 0x1) != 0;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                _bitfield2 = (bool)((_bitfield2 & ~0x1) | (value & 0x1));
+                _bitfield2 = (((_bitfield2 ? 1 : 0) & ~0x1) | ((value ? 1 : 0) & 0x1)) != 0;
             }
         }
 
@@ -5805,13 +5805,13 @@ public partial struct ImGuiDockRequest
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             readonly get
             {
-                return (bool)((_bitfield2 >> 1) & 0x1);
+                return (((_bitfield2 ? 1 : 0) >> 1) & 0x1) != 0;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                _bitfield2 = (bool)((_bitfield2 & ~(0x1 << 1)) | ((value & 0x1) << 1));
+                _bitfield2 = (((_bitfield2 ? 1 : 0) & ~(0x1 << 1)) | (((value ? 1 : 0) & 0x1) << 1)) != 0;
             }
         }
 
@@ -5821,13 +5821,13 @@ public partial struct ImGuiDockRequest
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             readonly get
             {
-                return (bool)((_bitfield2 >> 2) & 0x1);
+                return (((_bitfield2 ? 1 : 0) >> 2) & 0x1) != 0;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                _bitfield2 = (bool)((_bitfield2 & ~(0x1 << 2)) | ((value & 0x1) << 2));
+                _bitfield2 = (((_bitfield2 ? 1 : 0) & ~(0x1 << 2)) | (((value ? 1 : 0) & 0x1) << 2)) != 0;
             }
         }
 
@@ -5837,13 +5837,13 @@ public partial struct ImGuiDockRequest
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             readonly get
             {
-                return (bool)((_bitfield2 >> 3) & 0x1);
+                return (((_bitfield2 ? 1 : 0) >> 3) & 0x1) != 0;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             set
             {
-                _bitfield2 = (bool)((_bitfield2 & ~(0x1 << 3)) | ((value & 0x1) << 3));
+                _bitfield2 = (((_bitfield2 ? 1 : 0) & ~(0x1 << 3)) | (((value ? 1 : 0) & 0x1) << 3)) != 0;
             }
         }
 
@@ -7193,37 +7193,37 @@ public partial struct ImGuiDockRequest
         public static extern void igTextUnformatted([NativeTypeName("const char *")] sbyte* text, [NativeTypeName("const char *")] sbyte* text_end);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void igText([NativeTypeName("const char *")] sbyte* fmt, __arglist);
+        public static extern void igText([NativeTypeName("const char *")] sbyte* fmt, params string[] args);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void igTextV([NativeTypeName("const char *")] sbyte* fmt, [NativeTypeName("va_list")] sbyte* args);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void igTextColored([NativeTypeName("const ImVec4")] ImVec4 col, [NativeTypeName("const char *")] sbyte* fmt, __arglist);
+        public static extern void igTextColored([NativeTypeName("const ImVec4")] ImVec4 col, [NativeTypeName("const char *")] sbyte* fmt, params string[] args);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void igTextColoredV([NativeTypeName("const ImVec4")] ImVec4 col, [NativeTypeName("const char *")] sbyte* fmt, [NativeTypeName("va_list")] sbyte* args);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void igTextDisabled([NativeTypeName("const char *")] sbyte* fmt, __arglist);
+        public static extern void igTextDisabled([NativeTypeName("const char *")] sbyte* fmt, params string[] args);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void igTextDisabledV([NativeTypeName("const char *")] sbyte* fmt, [NativeTypeName("va_list")] sbyte* args);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void igTextWrapped([NativeTypeName("const char *")] sbyte* fmt, __arglist);
+        public static extern void igTextWrapped([NativeTypeName("const char *")] sbyte* fmt, params string[] args);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void igTextWrappedV([NativeTypeName("const char *")] sbyte* fmt, [NativeTypeName("va_list")] sbyte* args);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void igLabelText([NativeTypeName("const char *")] sbyte* label, [NativeTypeName("const char *")] sbyte* fmt, __arglist);
+        public static extern void igLabelText([NativeTypeName("const char *")] sbyte* label, [NativeTypeName("const char *")] sbyte* fmt, params string[] args);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void igLabelTextV([NativeTypeName("const char *")] sbyte* label, [NativeTypeName("const char *")] sbyte* fmt, [NativeTypeName("va_list")] sbyte* args);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void igBulletText([NativeTypeName("const char *")] sbyte* fmt, __arglist);
+        public static extern void igBulletText([NativeTypeName("const char *")] sbyte* fmt, params string[] args);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void igBulletTextV([NativeTypeName("const char *")] sbyte* fmt, [NativeTypeName("va_list")] sbyte* args);
@@ -7488,11 +7488,11 @@ public partial struct ImGuiDockRequest
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
-        public static extern byte igTreeNode_StrStr([NativeTypeName("const char *")] sbyte* str_id, [NativeTypeName("const char *")] sbyte* fmt, __arglist);
+        public static extern byte igTreeNode_StrStr([NativeTypeName("const char *")] sbyte* str_id, [NativeTypeName("const char *")] sbyte* fmt, params string[] args);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
-        public static extern byte igTreeNode_Ptr([NativeTypeName("const void *")] void* ptr_id, [NativeTypeName("const char *")] sbyte* fmt, __arglist);
+        public static extern byte igTreeNode_Ptr([NativeTypeName("const void *")] void* ptr_id, [NativeTypeName("const char *")] sbyte* fmt, params string[] args);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
@@ -7508,11 +7508,11 @@ public partial struct ImGuiDockRequest
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
-        public static extern byte igTreeNodeEx_StrStr([NativeTypeName("const char *")] sbyte* str_id, [NativeTypeName("ImGuiTreeNodeFlags")] int flags, [NativeTypeName("const char *")] sbyte* fmt, __arglist);
+        public static extern byte igTreeNodeEx_StrStr([NativeTypeName("const char *")] sbyte* str_id, [NativeTypeName("ImGuiTreeNodeFlags")] int flags, [NativeTypeName("const char *")] sbyte* fmt, params string[] args);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
-        public static extern byte igTreeNodeEx_Ptr([NativeTypeName("const void *")] void* ptr_id, [NativeTypeName("ImGuiTreeNodeFlags")] int flags, [NativeTypeName("const char *")] sbyte* fmt, __arglist);
+        public static extern byte igTreeNodeEx_Ptr([NativeTypeName("const void *")] void* ptr_id, [NativeTypeName("ImGuiTreeNodeFlags")] int flags, [NativeTypeName("const char *")] sbyte* fmt, params string[] args);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         [return: NativeTypeName("bool")]
@@ -7629,7 +7629,7 @@ public partial struct ImGuiDockRequest
         public static extern void igEndTooltip();
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void igSetTooltip([NativeTypeName("const char *")] sbyte* fmt, __arglist);
+        public static extern void igSetTooltip([NativeTypeName("const char *")] sbyte* fmt, params string[] args);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void igSetTooltipV([NativeTypeName("const char *")] sbyte* fmt, [NativeTypeName("va_list")] sbyte* args);
@@ -7639,7 +7639,7 @@ public partial struct ImGuiDockRequest
         public static extern byte igBeginItemTooltip();
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void igSetItemTooltip([NativeTypeName("const char *")] sbyte* fmt, __arglist);
+        public static extern void igSetItemTooltip([NativeTypeName("const char *")] sbyte* fmt, params string[] args);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void igSetItemTooltipV([NativeTypeName("const char *")] sbyte* fmt, [NativeTypeName("va_list")] sbyte* args);
@@ -9019,13 +9019,13 @@ public partial struct ImGuiDockRequest
         public static extern byte igImCharIsBlankW([NativeTypeName("unsigned int")] uint c);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern int igImFormatString([NativeTypeName("char *")] sbyte* buf, [NativeTypeName("size_t")] nuint buf_size, [NativeTypeName("const char *")] sbyte* fmt, __arglist);
+        public static extern int igImFormatString([NativeTypeName("char *")] sbyte* buf, [NativeTypeName("size_t")] nuint buf_size, [NativeTypeName("const char *")] sbyte* fmt, params string[] args);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern int igImFormatStringV([NativeTypeName("char *")] sbyte* buf, [NativeTypeName("size_t")] nuint buf_size, [NativeTypeName("const char *")] sbyte* fmt, [NativeTypeName("va_list")] sbyte* args);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void igImFormatStringToTempBuffer([NativeTypeName("const char **")] sbyte** out_buf, [NativeTypeName("const char **")] sbyte** out_buf_end, [NativeTypeName("const char *")] sbyte* fmt, __arglist);
+        public static extern void igImFormatStringToTempBuffer([NativeTypeName("const char **")] sbyte** out_buf, [NativeTypeName("const char **")] sbyte** out_buf_end, [NativeTypeName("const char *")] sbyte* fmt, params string[] args);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void igImFormatStringToTempBufferV([NativeTypeName("const char **")] sbyte** out_buf, [NativeTypeName("const char **")] sbyte** out_buf_end, [NativeTypeName("const char *")] sbyte* fmt, [NativeTypeName("va_list")] sbyte* args);
@@ -11089,7 +11089,7 @@ public partial struct ImGuiDockRequest
         public static extern void igGcAwakeTransientWindowBuffers(ImGuiWindow* window);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void igDebugLog([NativeTypeName("const char *")] sbyte* fmt, __arglist);
+        public static extern void igDebugLog([NativeTypeName("const char *")] sbyte* fmt, params string[] args);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern void igDebugLogV([NativeTypeName("const char *")] sbyte* fmt, [NativeTypeName("va_list")] sbyte* args);
@@ -11222,10 +11222,10 @@ public partial struct ImGuiDockRequest
         public static extern void igImFontAtlasBuildMultiplyRectAlpha8([NativeTypeName("const unsigned char[256]")] byte* table, [NativeTypeName("unsigned char *")] byte* pixels, int x, int y, int w, int h, int stride);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void igLogText([NativeTypeName("const char *")] sbyte* fmt, __arglist);
+        public static extern void igLogText([NativeTypeName("const char *")] sbyte* fmt, params string[] args);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void ImGuiTextBuffer_appendf([NativeTypeName("struct ImGuiTextBuffer *")] ImGuiTextBuffer* buffer, [NativeTypeName("const char *")] sbyte* fmt, __arglist);
+        public static extern void ImGuiTextBuffer_appendf([NativeTypeName("struct ImGuiTextBuffer *")] ImGuiTextBuffer* buffer, [NativeTypeName("const char *")] sbyte* fmt, params string[] args);
 
         [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
         public static extern float igGET_FLT_MAX();

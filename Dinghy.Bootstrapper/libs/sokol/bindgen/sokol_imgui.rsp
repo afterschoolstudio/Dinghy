@@ -11,5 +11,6 @@ ImGUI
 --remap
 FILE*=@void*
 __sFILE*=@void*
+__arglist=@params string[] args
 --output
 ../../../../Dinghy.Core/src/generated/lib/sokol/Sokol.ImGUI.cs
