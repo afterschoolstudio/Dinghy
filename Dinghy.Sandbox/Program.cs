@@ -39,6 +39,7 @@ OnKeyDown += (key,_) =>  {
 Engine.Run(new Engine.RunOptions(width,height,"dinghy", 
 	() =>
 	{
+		// animation();
 	}, 
 	() =>
 	{
@@ -56,15 +57,19 @@ void drawDemoOptions()
 			Scene? scene = null;
 			if(ImGUIHelper.Wrappers.MenuItem("01 Texture"))
 			{
-				scene = new D01_Texture() { Name = "Texture Scene" };
+				scene = new Texture() { Name = "Texture Scene" };
 			}
 			if(ImGUIHelper.Wrappers.MenuItem("02 Texture Frame"))
 			{
-				scene = new D02_TextureFrame() { Name = "Texture Frame Scene" };
+				scene = new TextureFrame() { Name = "Texture Frame Scene" };
+			}
+			if(ImGUIHelper.Wrappers.MenuItem("03 Animation"))
+			{
+				scene = new Animation() { Name = "Animation Scene" };
 			}
 			if(ImGUIHelper.Wrappers.MenuItem("Particle System"))
 			{
-				scene = new D10_ParticleSystem() { Name = "Particle System Scene" };
+				scene = new ParticleSystem() { Name = "Particle System Scene" };
 			}
 
 			if (scene != null)
@@ -81,15 +86,6 @@ void drawDemoOptions()
 	}
 	ImGUIHelper.Wrappers.EndMainMenuBar();
 
-}
-
-void animation()
-{
-	AnimatedSpriteData animatedConscript = new AnimatedSpriteData(
-		conscriptImage,
-		new() { new("test", HorizontalFrameSequence(0, 0, 64, 64, 4),
-			0.4f) });
-	new AnimatedSprite(animatedConscript);
 }
 
 void simpleUpdate()

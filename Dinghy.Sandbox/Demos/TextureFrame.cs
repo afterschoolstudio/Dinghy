@@ -1,18 +1,19 @@
 namespace Dinghy.Sandbox.Demos;
 
-public class D01_Texture : Scene
+public class TextureFrame : Scene
 {
     private TextureData conscriptImage;
-    private SpriteData fullConscript;
+    private SpriteData conscriptFrame0;
     public override void Preload()
     {
         conscriptImage = new TextureData("conscript.png");
-        fullConscript = new(conscriptImage);
+        
+        conscriptFrame0 = new(conscriptImage, new Frame(0,0,64,64));
     }
 
     public override void Create()
     {
         Engine.SetTargetScene(this);
-        new Sprite(fullConscript);
+        new Sprite(conscriptFrame0);
     }
 }

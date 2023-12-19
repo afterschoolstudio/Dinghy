@@ -3,7 +3,7 @@ using static Dinghy.Quick;
 
 namespace Dinghy.Sandbox.Demos;
 
-public class D10_ParticleSystem : Scene
+public class ParticleSystem : Scene
 {
     Color startColor = Palettes.ENDESGA[4];
     Color endColor = Palettes.ENDESGA[16];
