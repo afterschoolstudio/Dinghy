@@ -1,6 +1,6 @@
 ﻿--config
 latest-codegen
-multi-file
+single-file
 exclude-funcs-with-body
 generate-aggressive-inlining
 generate-file-scoped-namespaces

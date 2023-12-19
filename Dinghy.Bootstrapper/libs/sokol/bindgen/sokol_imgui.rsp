@@ -8,5 +8,8 @@ sokol_imgui_bindgen_helper.h
 simgui_
 --methodClassName
 ImGUI
+--remap
+FILE*=@void*
+__sFILE*=@void*
 --output
 ../../../../Dinghy.Core/src/generated/lib/sokol/Sokol.ImGUI.cs

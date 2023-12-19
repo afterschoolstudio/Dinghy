@@ -6,6 +6,8 @@ sokol_gfx_imgui_bindgen_helper.h
 --prefixStrip
 sg_imgui_
 --methodClassName
-Gfx.DebugGUI
+GfxDebugGUI
+--remap
+FILE*=@void*
 --output
 ../../../../Dinghy.Core/src/generated/lib/sokol/Sokol.Graphics.DebugGUI.cs
