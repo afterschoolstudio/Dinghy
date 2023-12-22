@@ -1,5 +1,6 @@
 namespace Dinghy.Sandbox.Demos;
 
+[DemoScene("01 Texture")]
 public class Texture : Scene
 {
     private TextureData conscriptImage;

@@ -1,8 +1,8 @@
 using Dinghy.Core;
 
 namespace Dinghy.Sandbox.Demos;
-using static Dinghy.Quick;
 
+[DemoScene("04 Simple Update")]
 public class SimpleUpdate : Scene
 {
     private TextureData conscriptImage;

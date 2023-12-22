@@ -36,10 +36,11 @@ OnKeyDown += (key,_) =>  {
 	}
 };
 
+List<DemoSceneInfo> demoTypes = new();
 Engine.Run(new Engine.RunOptions(width,height,"dinghy", 
 	() =>
 	{
-		// animation();
+		demoTypes = Util.GetDemoSceneTypes().ToList();
 	}, 
 	() =>
 	{
@@ -55,27 +56,15 @@ void drawDemoOptions()
 		if (ImGUIHelper.Wrappers.BeginMenu("Demos"))
 		{
 			Scene? scene = null;
-			if(ImGUIHelper.Wrappers.MenuItem("01 Texture"))
+			
+			foreach (var type in demoTypes)
 			{
-				scene = new Texture() { Name = "Texture Scene" };
+				if(ImGUIHelper.Wrappers.MenuItem(type.Name))
+				{
+					scene = Util.CreateInstance(type.Type) as Scene;
+					scene.Name = type.Name;
+				}
 			}
-			if(ImGUIHelper.Wrappers.MenuItem("02 Texture Frame"))
-			{
-				scene = new TextureFrame() { Name = "Texture Frame Scene" };
-			}
-			if(ImGUIHelper.Wrappers.MenuItem("03 Animation"))
-			{
-				scene = new Animation() { Name = "Animation Scene" };
-			}
-			if(ImGUIHelper.Wrappers.MenuItem("04 Simple Update"))
-			{
-				scene = new SimpleUpdate() { Name = "Simple Update Scene" };
-			}
-			if(ImGUIHelper.Wrappers.MenuItem("Particle System"))
-			{
-				scene = new ParticleSystem() { Name = "Particle System Scene" };
-			}
-
 			if (scene != null)
 			{
 				Engine.TargetScene.Unmount(() =>
@@ -90,27 +79,6 @@ void drawDemoOptions()
 	}
 	ImGUIHelper.Wrappers.EndMainMenuBar();
 
-}
-
-void interaction()
-{
-	AnimatedSpriteData animatedConscript = new AnimatedSpriteData(
-		conscriptImage,
-		new() { new("test", HorizontalFrameSequence(0, 0, 64, 64, 4),
-			0.4f) });
-	var e = new AnimatedSprite(animatedConscript);
-	
-	OnKeyDown += (key,_) =>  {
-		(float dx, float dy) v = key switch {
-			Key.LEFT => (-1f, 0),
-			Key.RIGHT => (1f, 0),
-			Key.UP => (0, -1f),
-			Key.DOWN => (0, 1f),
-			_ => (0, 0)
-		};
-		e.DX += v.dx;
-		e.DY += v.dy;
-	};
 }
 
 void bunny()

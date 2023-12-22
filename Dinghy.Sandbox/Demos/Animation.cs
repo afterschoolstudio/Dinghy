@@ -1,6 +1,7 @@
 namespace Dinghy.Sandbox.Demos;
 using static Dinghy.Quick;
 
+[DemoScene("03 Animation")]
 public class Animation : Scene
 {
     private TextureData conscriptImage;
