@@ -67,6 +67,10 @@ void drawDemoOptions()
 			{
 				scene = new Animation() { Name = "Animation Scene" };
 			}
+			if(ImGUIHelper.Wrappers.MenuItem("04 Simple Update"))
+			{
+				scene = new SimpleUpdate() { Name = "Simple Update Scene" };
+			}
 			if(ImGUIHelper.Wrappers.MenuItem("Particle System"))
 			{
 				scene = new ParticleSystem() { Name = "Particle System Scene" };
@@ -86,30 +90,6 @@ void drawDemoOptions()
 	}
 	ImGUIHelper.Wrappers.EndMainMenuBar();
 
-}
-
-void simpleUpdate()
-{
-	SpriteData conscriptFrame0 = new(conscriptImage, new Frame(0,0,64,64));
-	Sprite e = null;
-	Vector2 startPos = Vector2.zero;
-	Setup += () =>
-	{
-		startPos = new Vector2((Engine.Width / 2f) - 32, (Engine.Height / 2f) - 32);
-		e = new Sprite(conscriptFrame0)
-		{
-			X = (int)startPos.x,
-			Y = (int)startPos.y,
-		};
-	};
-	Update += () =>
-	{
-		e.X = (int)startPos.x + (int)(Math.Sin(Engine.Time) * 100);
-		e.Rotation = (float)Engine.Time;
-		var scale = (Math.Cos(Engine.Time) * 2);
-		e.ScaleX = (float)scale;
-		e.ScaleY = (float)scale;
-	};
 }
 
 void interaction()
