@@ -81,33 +81,6 @@ void drawDemoOptions()
 
 }
 
-void bunny()
-{
-	SpriteData logo = new(logoImage);
-	int bunnies = 10000;
-	TestBunny b = null;
-	for (int i = 0; i < bunnies; i++)
-	{
-		b = new TestBunny(logo);
-		b.SetVelocity(RandFloat() * 10,RandFloat()*10-5);
-	}
-
-	Engine.DebugTextStr = $"{bunnies} buns";
-	int addedbuns = 1000;
-	OnKeyDown += (key,mods) =>  {
-		if (key == Key.SPACE)
-		{
-			for (int i = 0; i < addedbuns; i++)
-			{
-				b = new TestBunny(logo);
-				b.SetVelocity(RandFloat() * 10,RandFloat()*10-5);
-			}
-			bunnies += addedbuns;
-			Engine.DebugTextStr = $"{bunnies} buns";
-		}
-	};
-}
-
 void asteroidsGame()
 {
 	SpriteData logo = new(logoImage);

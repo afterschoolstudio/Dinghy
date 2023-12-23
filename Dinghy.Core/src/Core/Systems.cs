@@ -45,7 +45,7 @@ public class ManagedComponentSystem : DSystem, IPreUpdateSystem, IPostUpdateSyst
 }
 public class VelocitySystem : DSystem, IUpdateSystem
 {
-    QueryDescription query = new QueryDescription().WithAll<Active,HasManagedOwner,Position, Velocity>();      // Should have all specified components
+    QueryDescription query = new QueryDescription().WithAll<Active,HasManagedOwner,Position, Velocity>().WithNone<BunnyMark>();      // Should have all specified components
     QueryDescription bunny = new QueryDescription().WithAll<Active,HasManagedOwner,Position, Velocity,BunnyMark>();      // Should have all specified components
     public void Update(double dt)
     {
@@ -56,8 +56,12 @@ public class VelocitySystem : DSystem, IUpdateSystem
             //has the most recent pos stuff at the start instead of changing it mid frame?
             owner.e.SetPositionRaw(pos.x,pos.y,pos.rotation,pos.scaleX,pos.scaleY);
         });
-        
+
+        float randCheck = 0;
         Engine.ECSWorld.Query(in bunny, (Arch.Core.Entity e, ref HasManagedOwner owner,  ref Position pos, ref Velocity vel) => {
+            pos.x = (int)(pos.x + vel.x);
+            pos.y = (int)(pos.y + vel.y);
+            
             vel.y += 9.8f;
             
             if (pos.x > Engine.Width)
@@ -75,9 +79,10 @@ public class VelocitySystem : DSystem, IUpdateSystem
             {
                 vel.y *= -0.85f;
                 pos.y = Engine.Height;
-                if (Quick.RandFloat() > 0.5)
+                randCheck = Quick.RandFloat();
+                if (randCheck > 0.5)
                 {
-                    vel.y -= (Quick.RandFloat() * 6);
+                    vel.y -= (randCheck * 6);
                 }
             }
             else if (pos.y < 0)
