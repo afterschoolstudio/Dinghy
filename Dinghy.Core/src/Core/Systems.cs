@@ -45,8 +45,7 @@ public class ManagedComponentSystem : DSystem, IPreUpdateSystem, IPostUpdateSyst
 }
 public class VelocitySystem : DSystem, IUpdateSystem
 {
-    QueryDescription query = new QueryDescription().WithAll<Active,HasManagedOwner,Position, Velocity>().WithNone<BunnyMark>();      // Should have all specified components
-    QueryDescription bunny = new QueryDescription().WithAll<Active,HasManagedOwner,Position, Velocity,BunnyMark>();      // Should have all specified components
+    QueryDescription query = new QueryDescription().WithAll<Active,HasManagedOwner,Position, Velocity>();
     public void Update(double dt)
     {
         Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref HasManagedOwner owner, ref Position pos, ref Velocity vel) => {
@@ -54,42 +53,6 @@ public class VelocitySystem : DSystem, IUpdateSystem
             pos.y = (int)(pos.y + vel.y);
             //could maybe grab stuff like this at the top of the frame so an entity
             //has the most recent pos stuff at the start instead of changing it mid frame?
-            owner.e.SetPositionRaw(pos.x,pos.y,pos.rotation,pos.scaleX,pos.scaleY);
-        });
-
-        float randCheck = 0;
-        Engine.ECSWorld.Query(in bunny, (Arch.Core.Entity e, ref HasManagedOwner owner,  ref Position pos, ref Velocity vel) => {
-            pos.x = (int)(pos.x + vel.x);
-            pos.y = (int)(pos.y + vel.y);
-            
-            vel.y += 9.8f;
-            
-            if (pos.x > Engine.Width)
-            {
-                vel.x *= -1;
-                pos.x = Engine.Width;
-            }
-            else if (pos.x < 0)
-            {
-                vel.x *= -1;
-                pos.x = 0;
-            }
-            
-            if (pos.y > Engine.Height)
-            {
-                vel.y *= -0.85f;
-                pos.y = Engine.Height;
-                randCheck = Quick.RandFloat();
-                if (randCheck > 0.5)
-                {
-                    vel.y -= (randCheck * 6);
-                }
-            }
-            else if (pos.y < 0)
-            {
-                vel.y = 0;
-                pos.y = 0;
-            }
             owner.e.SetPositionRaw(pos.x,pos.y,pos.rotation,pos.scaleX,pos.scaleY);
         });
     }

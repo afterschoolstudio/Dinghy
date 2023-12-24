@@ -54,7 +54,6 @@ public record struct SpriteAnimator(HashSet<Animation> animations)
 public record struct Position(int x = 0, int y = 0, float scaleX = 1, float scaleY = 1, float rotation = 0f);
 public record struct Velocity (float x, float y);
 public record ManagedComponent(Component managedComponent);
-public record struct BunnyMark();
 public readonly record struct Destroy();
 public record struct Collider(Frame f);
 public readonly record struct Active();

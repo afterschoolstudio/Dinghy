@@ -395,15 +395,3 @@ public class ParticleEmitter : Entity
 
     // public void PushUpdatedConfig();
 }
-
-public class TestBunny : Entity
-{
-    public SpriteData Data { get; init; }
-    public TestBunny(SpriteData spriteData, Scene? scene = null, bool startEnabled = true) : base(startEnabled,scene)
-    {
-        Data = spriteData;
-        ECSEntity.Add(
-            new SpriteRenderer(Data.TextureData.texturePath, Data.Frame),
-            new BunnyMark());
-    }
-}

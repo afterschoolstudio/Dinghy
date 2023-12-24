@@ -1,3 +1,6 @@
+using Arch.Core;
+using Arch.Core.Extensions;
+
 namespace Dinghy.Sandbox.Demos;
 using static Dinghy.Quick;
 
@@ -6,10 +9,12 @@ public class BunnyMark : Scene
 {
     private TextureData logoImage;
     private SpriteData logo;
+    private BunnySystem system = new BunnySystem();
     public override void Preload()
     {
         var logoImage = new TextureData("logo.png");
         logo = new SpriteData(logoImage);
+        Engine.RegisterSystem(system);
     }
 
     TestBunny b;
@@ -19,8 +24,7 @@ public class BunnyMark : Scene
         Engine.SetTargetScene(this);
         for (int i = 0; i < bunnies; i++)
         {
-            b = new TestBunny(logo);
-            b.SetVelocity(RandFloat() * 10,RandFloat()*10-5);
+            b = new TestBunny(logo,RandFloat() * 10,RandFloat() * 10-5);
         }
         Engine.DebugTextStr = $"{bunnies} buns";
         OnKeyDown += KeyDownListener;
@@ -33,8 +37,7 @@ public class BunnyMark : Scene
         {
             for (int i = 0; i < addedbuns; i++)
             {
-                b = new TestBunny(logo);
-                b.SetVelocity(RandFloat() * 10,RandFloat()*10-5);
+                b = new TestBunny(logo,RandFloat() * 10,RandFloat()*10-5);
             }
             bunnies += addedbuns;
             Engine.DebugTextStr = $"{bunnies} buns";
@@ -44,5 +47,64 @@ public class BunnyMark : Scene
     public override void Cleanup()
     {
         OnKeyDown -= KeyDownListener;
+        Engine.UnregisterSystem(system);
+    }
+}
+
+public record struct BunnyMarkComponent(float x, float y);
+
+public class TestBunny : Entity
+{
+    public SpriteData Data { get; init; }
+    public TestBunny(SpriteData spriteData, float velx, float vely, Scene? scene = null, bool startEnabled = true) : base(startEnabled,scene)
+    {
+        Data = spriteData;
+        ECSEntity.Remove<Velocity>();
+        ECSEntity.Add(
+            new SpriteRenderer(Data.TextureData.texturePath, Data.Frame),
+            new BunnyMarkComponent(velx,vely));
+    }
+}
+
+public class BunnySystem : DSystem, IUpdateSystem
+{
+    QueryDescription bunny = new QueryDescription().WithAll<Active,HasManagedOwner,Position,BunnyMarkComponent>();      // Should have all specified components
+    public void Update(double dt)
+    {
+        float randCheck = 0;
+        Engine.ECSWorld.Query(in bunny, (Arch.Core.Entity e, ref HasManagedOwner owner,  ref Position pos, ref BunnyMarkComponent vel) => {
+            pos.x = (int)(pos.x + vel.x);
+            pos.y = (int)(pos.y + vel.y);
+            
+            vel.y += 9.8f;
+            
+            if (pos.x > Engine.Width)
+            {
+                vel.x *= -1;
+                pos.x = Engine.Width;
+            }
+            else if (pos.x < 0)
+            {
+                vel.x *= -1;
+                pos.x = 0;
+            }
+            
+            if (pos.y > Engine.Height)
+            {
+                vel.y *= -0.85f;
+                pos.y = Engine.Height;
+                randCheck = Quick.RandFloat();
+                if (randCheck > 0.5)
+                {
+                    vel.y -= (randCheck * 6);
+                }
+            }
+            else if (pos.y < 0)
+            {
+                vel.y = 0;
+                pos.y = 0;
+            }
+            owner.e.SetPositionRaw(pos.x,pos.y,pos.rotation,pos.scaleX,pos.scaleY);
+        });
     }
 }

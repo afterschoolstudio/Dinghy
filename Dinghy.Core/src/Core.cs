@@ -31,6 +31,23 @@ public static partial class Engine
         new SceneSystem(),
         InputSystem
     };
+    static HashSet<DSystem> ActiveSystems = new();
+    public static void RegisterSystem(DSystem system)
+    {
+        ActiveSystems.Add(system);
+    }
+    public static void RegisterSystems(HashSet<DSystem> systems)
+    {
+        ActiveSystems.UnionWith(systems);
+    }
+    public static void UnregisterSystems(HashSet<DSystem> systems)
+    {
+        ActiveSystems.ExceptWith(systems);
+    }
+    public static void UnregisterSystem(DSystem system)
+    {
+        ActiveSystems.Remove(system);
+    }
 
     public static uint idCounter;
     public static VoltWorld PhysicsWorld = new ();
@@ -259,6 +276,9 @@ public static partial class Engine
         
         Width = App.width();
         Height = App.height();
+
+        ActiveSystems = new HashSet<DSystem>(DefaultSystems);
+        
         GlobalScene.Mount(-1);
         GlobalScene.Load(() => {GlobalScene.Start();});
         Events.SceneUnmounted += OnSceneUnmounted;
@@ -367,7 +387,7 @@ public static partial class Engine
             GP.sgp_reset_color();
         }
 
-        foreach (var s in DefaultSystems)
+        foreach (var s in ActiveSystems)
         {
             //TODO: need to sort systems by priority
             if (s is IPreUpdateSystem us)
@@ -377,7 +397,7 @@ public static partial class Engine
         }
         PhysicsWorld.Update();
         Update?.Invoke();
-        foreach (var s in DefaultSystems)
+        foreach (var s in ActiveSystems)
         {
             //TODO: need to sort systems by priority
             if (s is IUpdateSystem us)
@@ -385,7 +405,7 @@ public static partial class Engine
                 us.Update(DeltaTime);
             }
         }
-        foreach (var s in DefaultSystems)
+        foreach (var s in ActiveSystems)
         {
             //TODO: need to sort systems by priority
             if (s is IPostUpdateSystem ps)
@@ -411,7 +431,7 @@ public static partial class Engine
             Gfx.commit();
         }
         
-        foreach (var s in DefaultSystems)
+        foreach (var s in ActiveSystems)
         {
             if (s is ICleanupSystem cs)
             {
