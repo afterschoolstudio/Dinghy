@@ -1,33 +1,7 @@
-﻿using System.Diagnostics;
-using Arch.Core.Extensions;
-using Dinghy;
-using Dinghy.Collision;
-using Dinghy.Core;
+﻿using Dinghy;
 using Dinghy.Core.ImGUI;
 using Dinghy.Sandbox.Demos;
-using Volatile;
 using static Dinghy.Quick;
-using Utils = Dinghy.Collision.Utils;
-
-var width = 500;
-var height = 500;
-var conscriptImage = new TextureData("conscript.png");
-var logoImage = new TextureData("logo.png");
-
-// texture();
-// textureFrame();
-// animation();
-// simpleUpdate();
-// interaction();
-// bunny();
-// asteroidsGame();
-// physics();
-// shape();
-// physicsShape();
-// entityEmitter();
-// collision();
-// grid();
-// particleSystem();
 
 OnKeyDown += (key,_) =>  {
 	if (key == Key.C)
@@ -37,7 +11,7 @@ OnKeyDown += (key,_) =>  {
 };
 
 List<DemoSceneInfo> demoTypes = new();
-Engine.Run(new Engine.RunOptions(width,height,"dinghy", 
+Engine.Run(new Engine.RunOptions(500,500,"dinghy", 
 	() =>
 	{
 		demoTypes = Util.GetDemoSceneTypes().ToList();
@@ -83,8 +57,10 @@ void drawDemoOptions()
 
 void asteroidsGame()
 {
-	SpriteData logo = new(logoImage);
-	SpriteData conscript = new(conscriptImage, new Frame(0,0,64,64));
+	// SpriteData logo = new(logoImage);
+	// SpriteData conscript = new(conscriptImage, new Frame(0,0,64,64));
+	SpriteData logo = null;
+	SpriteData conscript = null;
 	var player = new Sprite(logo){Name = "player"};
 	double bulletCooldown = 0;
 	OnKeyDown += (key,_) =>  {
