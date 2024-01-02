@@ -27,7 +27,7 @@ public class BunnyMark : Scene
             b = new TestBunny(logo,RandFloat() * 10,RandFloat() * 10-5);
         }
         Engine.DebugTextStr = $"{bunnies} buns";
-        OnKeyDown += KeyDownListener;
+        InputSystem.Events.Key.Down += KeyDownListener;
     }
 
     void KeyDownListener(Key key, List<Modifiers> mods)
@@ -46,7 +46,7 @@ public class BunnyMark : Scene
 
     public override void Cleanup()
     {
-        OnKeyDown -= KeyDownListener;
+        InputSystem.Events.Key.Down -= KeyDownListener;
         Engine.UnregisterSystem(system);
     }
 }

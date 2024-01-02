@@ -21,7 +21,8 @@ public class Interaction : Scene
         Engine.SetTargetScene(this);
         
         e = new AnimatedSprite(animatedConscript);
-        OnKeyDown += KeyDownListener;
+        Console.WriteLine("subbing");
+        InputSystem.Events.Key.Down += KeyDownListener;
     }
 
     void KeyDownListener(Key key, List<Modifiers> mods)
@@ -39,7 +40,8 @@ public class Interaction : Scene
 
     public override void Cleanup()
     {
-        OnKeyDown -= KeyDownListener;
+	    Console.WriteLine("unsubbing");
+	    InputSystem.Events.Key.Down -= KeyDownListener;
     }
 }
 

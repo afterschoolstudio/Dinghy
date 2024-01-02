@@ -297,6 +297,7 @@ public static partial class Engine
 
 
     public static bool showStats = true;
+    public static bool showIMGUIDemo = false;
 
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
     private static unsafe void Frame()
@@ -322,6 +323,7 @@ public static partial class Engine
         if (ImGUIHelper.Wrappers.BeginMenu("Dinghy"))
         {
             ImGUIHelper.Wrappers.Checkbox("Show Stats", ref showStats);
+            ImGUIHelper.Wrappers.Checkbox("Show IMGUI Demo", ref showIMGUIDemo);
             foreach (var i in MountedScenes)
             {
                 ImGUIHelper.Wrappers.Text($"{i.Value.Name} {i.Value.Status}");
@@ -353,7 +355,15 @@ public static partial class Engine
             }
             ImGUIHelper.Wrappers.ShowStats($"{t}ms",$"Entities: {ec}",$"{InputSystem.MouseX},{InputSystem.MouseY}");
         }
-        
+
+        fixed (bool* dem_ptr = &showIMGUIDemo)
+        {
+            if (showIMGUIDemo)
+            {
+                ImGUI.igShowDemoWindow(dem_ptr);
+            }
+        }
+
         fixed (sg_imgui_t* ctx = &gfx_dbgui)
         {
             var db_title = System.Text.Encoding.UTF8.GetBytes("debug window");
@@ -363,9 +373,6 @@ public static partial class Engine
             {
                 var txt = "sokol debug"u8;
                 GfxDebugGUI.draw(ctx);
-                // GfxDebugGUI.draw_menu(ctx, (sbyte*)ptr);
-                bool open = false;
-                ImGUI.igShowDemoWindow(&open);
             }
         }
         

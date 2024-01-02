@@ -3,7 +3,7 @@ using Dinghy.Core.ImGUI;
 using Dinghy.Sandbox.Demos;
 using static Dinghy.Quick;
 
-OnKeyDown += (key,_) =>  {
+InputSystem.Events.Key.Down += (key,_) =>  {
 	if (key == Key.C)
 	{
 		Engine.Clear = !Engine.Clear;
@@ -11,10 +11,12 @@ OnKeyDown += (key,_) =>  {
 };
 
 List<DemoSceneInfo> demoTypes = new();
-Engine.Run(new Engine.RunOptions(500,500,"dinghy", 
+List<DemoSceneInfo> genuaryDemoTypes = new();
+Engine.Run(new Engine.RunOptions(800,600,"dinghy", 
 	() =>
 	{
 		demoTypes = Util.GetDemoSceneTypes().ToList();
+		genuaryDemoTypes = Util.GetGenuarySceneTypes().ToList();
 	}, 
 	() =>
 	{
@@ -30,15 +32,33 @@ void drawDemoOptions()
 		if (ImGUIHelper.Wrappers.BeginMenu("Demos"))
 		{
 			Scene? scene = null;
-			
-			foreach (var type in demoTypes)
+
+			if (ImGUIHelper.Wrappers.BeginMenu("Examples"))
 			{
-				if(ImGUIHelper.Wrappers.MenuItem(type.Name))
+				foreach (var type in demoTypes)
 				{
-					scene = Util.CreateInstance(type.Type) as Scene;
-					scene.Name = type.Name;
+					if (ImGUIHelper.Wrappers.MenuItem(type.Name))
+					{
+						scene = Util.CreateInstance(type.Type) as Scene;
+						scene.Name = type.Name;
+					}
 				}
+				ImGUIHelper.Wrappers.EndMenu();
 			}
+			
+			if (ImGUIHelper.Wrappers.BeginMenu("Genuary"))
+			{
+				foreach (var type in genuaryDemoTypes)
+				{
+					if (ImGUIHelper.Wrappers.MenuItem(type.Name))
+					{
+						scene = Util.CreateInstance(type.Type) as Scene;
+						scene.Name = type.Name;
+					}
+				}
+				ImGUIHelper.Wrappers.EndMenu();
+			}
+
 			if (scene != null)
 			{
 				Engine.TargetScene.Unmount(() =>
@@ -63,7 +83,7 @@ void asteroidsGame()
 	SpriteData conscript = null;
 	var player = new Sprite(logo){Name = "player"};
 	double bulletCooldown = 0;
-	OnKeyDown += (key,_) =>  {
+	InputSystem.Events.Key.Down += (key,_) =>  {
 		(float dx, float dy) v = key switch {
 			Key.LEFT => (-1f, 0),
 			Key.RIGHT => (1f, 0),

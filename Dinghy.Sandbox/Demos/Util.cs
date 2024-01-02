@@ -31,6 +31,20 @@ public static class Util
             .Select(t => new DemoSceneInfo(t.Type, t.Attribute.Name))
             .OrderBy((info => info.Name));
     }
+    
+    public static IEnumerable<DemoSceneInfo> GetGenuarySceneTypes()
+    {
+        return Assembly.GetExecutingAssembly().GetTypes()
+            .Where(type => type.Namespace == "Dinghy.Sandbox.Demos.Genuary24")
+            .Select(type => new
+            {
+                Type = type,
+                Attribute = type.GetCustomAttribute<DemoSceneAttribute>()
+            })
+            .Where(t => t.Attribute != null)
+            .Select(t => new DemoSceneInfo(t.Type, t.Attribute.Name))
+            .OrderBy((info => info.Name));
+    }
 
     public static object CreateInstance(Type type)
     {
