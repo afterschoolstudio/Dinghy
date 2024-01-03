@@ -13,7 +13,7 @@ public class ParticleSystem : Scene
     {
         Engine.SetTargetScene(this);
         emitter = new ParticleEmitter(
-            new(100000, 100, new ParticleEmitterComponent.ParticleConfig()),this)
+            new(100000, 100, new ParticleEmitterComponent.ParticleConfig()))
         {
             X = 200,
             Y = 200
