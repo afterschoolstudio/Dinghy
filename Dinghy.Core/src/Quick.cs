@@ -98,7 +98,7 @@ public static class Quick
                     // {
                     //     ImGUIHelper.Wrappers.RadioButton(en[i],ref value,i);
                     // }
-                    ImGUIHelper.Wrappers.Combo(fieldInfo.Name, en, ref value);
+                    ImGUIHelper.Wrappers.Combo(objectName + "_" + fieldInfo.Name, en, ref value);
                     fieldInfo.SetValue(o,value);
                 }
                 else if (fieldInfo.FieldType.IsClass || fieldInfo.FieldType.IsGenericType)
@@ -107,7 +107,7 @@ public static class Quick
                     {
                         case "Color":
                             Color value = (Color)fieldInfo.GetValue(o);
-                            ImGUIHelper.Wrappers.Color(fieldInfo.Name, ref value);
+                            ImGUIHelper.Wrappers.Color(objectName + "_" + fieldInfo.Name, ref value);
                             fieldInfo.SetValue(o,value);
                             break;
                         default:
@@ -115,7 +115,7 @@ public static class Quick
                             if (cv != null)
                             {
                                 ImGUIHelper.Wrappers.Text(fieldInfo.Name);
-                                DrawObjectFields(fieldInfo.Name,ref cv,validFieldCheck);
+                                DrawObjectFields(objectName + "_" + fieldInfo.Name,ref cv,validFieldCheck);
                             }
                             break;
                     }

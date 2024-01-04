@@ -147,15 +147,51 @@ public record ParticleEmitterComponent
         {
             public T StartValue;
             public T TargetValue;
-            public delegate double TransitionFunction(double time);
+            public Easing.Option EasingOption;
+            // public delegate double TransitionFunction(double time);
 
-            public TransitionFunction Sample;
-            public Transition(T start, T end, TransitionFunction func)
+            // public TransitionFunction Sample;
+            public Transition(T start, T end, Easing.Option option)
             {
                 StartValue = start;
                 TargetValue = end;
-                Sample = func;
+                EasingOption = option;
             }
+
+            public double Sample(double time) => EasingOption switch
+            {
+                Easing.Option.Linear => Easing.Linear(time),
+                Easing.Option.EaseInQuad => Easing.EaseInQuad(time),
+                Easing.Option.EaseOutQuad => Easing.EaseOutQuad(time),
+                Easing.Option.EaseInOutQuad => Easing.EaseInOutQuad(time),
+                Easing.Option.EaseInCubic => Easing.EaseInCubic(time),
+                Easing.Option.EaseOutCubic => Easing.EaseOutCubic(time),
+                Easing.Option.EaseInOutCubic => Easing.EaseInOutCubic(time),
+                Easing.Option.EaseInQuart => Easing.EaseInQuart(time),
+                Easing.Option.EaseOutQuart => Easing.EaseOutQuart(time),
+                Easing.Option.EaseInOutQuart => Easing.EaseInOutQuart(time),
+                Easing.Option.EaseInQuint => Easing.EaseInQuint(time),
+                Easing.Option.EaseOutQuint => Easing.EaseOutQuint(time),
+                Easing.Option.EaseInOutQuint => Easing.EaseInOutQuint(time),
+                Easing.Option.EaseInSine => Easing.EaseInSine(time),
+                Easing.Option.EaseOutSine => Easing.EaseOutSine(time),
+                Easing.Option.EaseInOutSine => Easing.EaseInOutSine(time),
+                Easing.Option.EaseInExpo => Easing.EaseInExpo(time),
+                Easing.Option.EaseOutExpo => Easing.EaseOutExpo(time),
+                Easing.Option.EaseInOutExpo => Easing.EaseInOutExpo(time),
+                Easing.Option.EaseInCirc => Easing.EaseInCirc(time),
+                Easing.Option.EaseOutCirc => Easing.EaseOutCirc(time),
+                Easing.Option.EaseInOutCirc => Easing.EaseInOutCirc(time),
+                Easing.Option.EaseInBack => Easing.EaseInBack(time),
+                Easing.Option.EaseOutBack => Easing.EaseOutBack(time),
+                Easing.Option.EaseInOutBack => Easing.EaseInOutBack(time),
+                Easing.Option.EaseInElastic => Easing.EaseInElastic(time),
+                Easing.Option.EaseOutElastic => Easing.EaseOutElastic(time),
+                Easing.Option.EaseInOutElastic => Easing.EaseInOutElastic(time),
+                Easing.Option.EaseInBounce => Easing.EaseInBounce(time),
+                Easing.Option.EaseOutBounce => Easing.EaseOutBounce(time),
+                Easing.Option.EaseInOutBounce => Easing.EaseInOutBounce(time)
+            };
         }
 
         public void Resolve(double time,ref float dx, ref float dy, ref float rotation, ref float width,ref float height,ref Color color)
@@ -182,12 +218,12 @@ public record ParticleEmitterComponent
     public static readonly ParticleConfig DefaultParticleConfig = new ParticleConfig((0,0),
         ParticleEmitterComponent.ParticleConfig.ParticlePrimitiveType.Rectangle,
         1.5f,
-        new (4,0.1f,Easing.EaseInOutQuart),
-        new (4,0.1f,Easing.EaseInOutQuart),
-        new (4,200,Easing.EaseOutExpo),
-        new (4,16,Easing.EaseOutExpo),
-        new (new Color(1,1,1,1),new Color(0,1,1,1),Easing.EaseInOutExpo),
-        new (0,3 *MathF.PI,Easing.Linear));
+        new (4,0.1f,Easing.Option.EaseInOutExpo),
+        new (4,0.1f,Easing.Option.EaseInOutExpo),
+        new (4,200,Easing.Option.EaseInOutExpo),
+        new (4,16,Easing.Option.EaseInOutExpo),
+        new (new Color(1,1,1,1),new Color(0,1,1,1),Easing.Option.EaseInOutExpo),
+        new (0,3 *MathF.PI,Easing.Option.EaseInOutExpo));
     public class Particle
     {
         public bool Active = false;
@@ -217,13 +253,6 @@ public record ParticleEmitterComponent
         public void Resolve()
         {
             Config.Resolve(Age,ref DX, ref DY, ref Rotation, ref Width,ref Height,ref Color);
-            // var tr = Config.Resolve(Age,ref DX, ref DY, ref Rotation, ref Width,ref Height,ref Color);
-            // DX = tr.DX;
-            // DY = tr.DY;
-            // Rotation = tr.Rotation;
-            // Width = tr.Width;
-            // Height = tr.Height;
-            // Color = tr.Color;
         }
     }
 }
