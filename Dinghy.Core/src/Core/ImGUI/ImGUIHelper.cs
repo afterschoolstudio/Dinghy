@@ -82,6 +82,56 @@ public static class ImGUIHelper
                 return r != 0;
             }
         }
+
+        public static unsafe bool RadioButton(string label, ref int value, int optionIndex)
+        {
+            var b = System.Text.Encoding.UTF8.GetBytes(label);
+            int v = value;
+            fixed (byte* ptr = b)
+            {
+                var r = Internal.Sokol.ImGUI.igRadioButton_IntPtr((sbyte*)ptr,&v,optionIndex);
+                value = v;
+                return r != 0;
+            }
+        }
+
+        public static unsafe bool Combo(string label, IEnumerable<string> items, ref int value)
+        {
+            var b = System.Text.Encoding.UTF8.GetBytes(label);
+            var str_items = System.Text.Encoding.UTF8.GetBytes(String.Join("\0",items));
+            int v = value;
+            fixed (byte* ptr = b, items_ptr = str_items)
+            {
+                var r = Internal.Sokol.ImGUI.igCombo_Str((sbyte*)ptr,&v,(sbyte*)items_ptr,4);
+                value = v;
+                return r != 0;
+            }
+        }
+
+        public static unsafe bool Color(string label, ref Color c)
+        {
+            var b = System.Text.Encoding.UTF8.GetBytes(label);
+            // var str_items = System.Text.Encoding.UTF8.GetBytes(String.Join("\0",items));
+            // int v = value;
+            float[] c_arr = [c.R, c.G, c.B, c.A];
+            fixed (byte* ptr = b)
+            {
+                fixed (float* colPtr = c_arr)
+                {
+                    var r = Internal.Sokol.ImGUI.igColorEdit4((sbyte*)ptr, colPtr,0);
+                    c.R = c_arr[0];
+                    c.G = c_arr[1];
+                    c.B = c_arr[2];
+                    c.A = c_arr[3];
+                    return r != 0;
+                }
+            }
+        }
+
+        public static void SameLine()
+        {
+            Internal.Sokol.ImGUI.igSameLine(0,10);
+        }
         public static void Seperator()
         {
             Internal.Sokol.ImGUI.igSeparator();

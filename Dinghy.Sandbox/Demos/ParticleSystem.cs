@@ -6,14 +6,19 @@ namespace Dinghy.Sandbox.Demos;
 [DemoScene("14 Particle System")]
 public class ParticleSystem : Scene
 {
-    Color startColor = Palettes.ENDESGA[4];
-    Color endColor = Palettes.ENDESGA[16];
+    // Color startColor = Palettes.ENDESGA[4];
+    private Color startColor = new Color(1.0f, 1.0f, 0f, 0f);
+    private Color endColor = new Color(1.0f, 0.0f, 1.0f, 0f);
+    // Color endColor = Palettes.ENDESGA[16];
     ParticleEmitter emitter;
     public override void Create()
     {
         Engine.SetTargetScene(this);
         emitter = new ParticleEmitter(
-            new(100000, 100, new ParticleEmitterComponent.ParticleConfig()))
+            new(100000, 100, new ParticleEmitterComponent.ParticleConfig()
+            {
+                Color = new ParticleEmitterComponent.ParticleConfig.Transition<Color>(startColor,endColor,Easing.Linear)
+            }))
         {
             X = 200,
             Y = 200

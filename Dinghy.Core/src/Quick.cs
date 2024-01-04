@@ -92,17 +92,35 @@ public static class Quick
                 if(fieldInfo.FieldType.IsEnum)
                 {
                     // prefab = ScenarioEditorManager.Instance.ToggleGroup;
+                    var en = fieldInfo.FieldType.GetEnumNames();
+                    int value = (int)fieldInfo.GetValue(o);
+                    // for (int i = 0; i < en.Length; i++)
+                    // {
+                    //     ImGUIHelper.Wrappers.RadioButton(en[i],ref value,i);
+                    // }
+                    ImGUIHelper.Wrappers.Combo(fieldInfo.Name, en, ref value);
+                    fieldInfo.SetValue(o,value);
                 }
                 else if (fieldInfo.FieldType.IsClass || fieldInfo.FieldType.IsGenericType)
                 {
-                    var cv = fieldInfo.GetValue(o);
-                    if (cv != null)
+                    switch (fieldInfo.FieldType.Name)
                     {
-                        ImGUIHelper.Wrappers.Text(fieldInfo.Name);
-                        DrawObjectFields(fieldInfo.Name,ref cv,validFieldCheck);
+                        case "Color":
+                            Color value = (Color)fieldInfo.GetValue(o);
+                            ImGUIHelper.Wrappers.Color(fieldInfo.Name, ref value);
+                            fieldInfo.SetValue(o,value);
+                            break;
+                        default:
+                            var cv = fieldInfo.GetValue(o);
+                            if (cv != null)
+                            {
+                                ImGUIHelper.Wrappers.Text(fieldInfo.Name);
+                                DrawObjectFields(fieldInfo.Name,ref cv,validFieldCheck);
+                            }
+                            break;
                     }
                 }
-                else
+                else //primitives
                 {
                     switch (fieldInfo.FieldType.Name)
                     {
@@ -116,8 +134,8 @@ public static class Quick
                             float v = (float)fieldInfo.GetValue(o);
                             ImGUIHelper.Wrappers.SliderFloat(objectName + "_" + fieldInfo.Name, ref v, 1f, 1000f, "",
                                 ImGuiSliderFlags_.ImGuiSliderFlags_None);
-                            fieldInfo.SetValueDirect(__makeref(o), v);
-                            // fieldInfo.SetValue(o,v);
+                            // fieldInfo.SetValueDirect(__makeref(o), v);
+                            fieldInfo.SetValue(o,v);
                             break;
                         case nameof(Boolean):
                             // prefab = ScenarioEditorManager.Instance.WrappedBool;

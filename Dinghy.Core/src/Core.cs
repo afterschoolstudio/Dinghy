@@ -389,7 +389,6 @@ public static partial class Engine
         if (Clear)
         {
             GP.sgp_set_color(ClearColor.internal_color.r, ClearColor.internal_color.g, ClearColor.internal_color.b, ClearColor.internal_color.a);
-            // GP.sgp_set_color(ClearColor.internal_color.r, ClearColor.internal_color.g, ClearColor.internal_color.b, 1f);
             GP.sgp_clear();
             GP.sgp_reset_color();
         }
@@ -562,7 +561,7 @@ public static partial class Engine
     {
         //argb
         //rgba
-        GP.sgp_set_color(c.internal_color.g, c.internal_color.b, c.internal_color.a, c.internal_color.r);
+        GP.sgp_set_color(c.internal_color.r, c.internal_color.g, c.internal_color.b, c.internal_color.a);
         GP.sgp_set_blend_mode(sgp_blend_mode.SGP_BLENDMODE_NONE);
         GP.sgp_push_transform();
         GP.sgp_translate(x,y);
@@ -575,14 +574,14 @@ public static partial class Engine
     
     public static void DrawParticles(Position p, ParticleEmitterComponent c, List<int> activeIndicies)
     {
-        GP.sgp_set_blend_mode(sgp_blend_mode.SGP_BLENDMODE_NONE);
+        GP.sgp_set_blend_mode(sgp_blend_mode.SGP_BLENDMODE_BLEND);
         switch (c.Config.ParticleConfig.ParticleType)
         {
             case ParticleEmitterComponent.ParticleConfig.ParticlePrimitiveType.Rectangle:
                 foreach (var i in activeIndicies)
                 {
                     GP.sgp_push_transform();
-                    GP.sgp_set_color(c.Particles[i].Color.internal_color.g, c.Particles[i].Color.internal_color.b, c.Particles[i].Color.internal_color.a, c.Particles[i].Color.internal_color.r);
+                    GP.sgp_set_color(c.Particles[i].Color.internal_color.r, c.Particles[i].Color.internal_color.g, c.Particles[i].Color.internal_color.b, c.Particles[i].Color.internal_color.a);
                     // GP.sgp_translate(p.x, p.y); makes all particles move as if emission point was p.x,p.y
                     GP.sgp_translate(c.Particles[i].Config.EmissionPoint.X + c.Particles[i].X,c.Particles[i].Config.EmissionPoint.Y + c.Particles[i].Y);
                     GP.sgp_rotate_at(c.Particles[i].Rotation, c.Particles[i].Width / 2f, c.Particles[i].Height / 2f);
@@ -595,7 +594,7 @@ public static partial class Engine
                 foreach (var i in activeIndicies)
                 {
                     GP.sgp_push_transform();
-                    GP.sgp_set_color(c.Particles[i].Color.internal_color.g, c.Particles[i].Color.internal_color.b, c.Particles[i].Color.internal_color.a, c.Particles[i].Color.internal_color.r);
+                    GP.sgp_set_color(c.Particles[i].Color.internal_color.r, c.Particles[i].Color.internal_color.g, c.Particles[i].Color.internal_color.b, c.Particles[i].Color.internal_color.a);
                     // GP.sgp_translate(p.x, p.y); makes all particles move as if emission point was p.x,p.y
                     GP.sgp_translate(c.Particles[i].Config.EmissionPoint.X + c.Particles[i].X,c.Particles[i].Config.EmissionPoint.Y + c.Particles[i].Y);
                     GP.sgp_rotate_at(c.Particles[i].Rotation, c.Particles[i].Width / 2f, c.Particles[i].Height / 2f);
@@ -608,7 +607,7 @@ public static partial class Engine
                 foreach (var i in activeIndicies)
                 {
                     GP.sgp_push_transform();
-                    GP.sgp_set_color(c.Particles[i].Color.internal_color.g, c.Particles[i].Color.internal_color.b, c.Particles[i].Color.internal_color.a, c.Particles[i].Color.internal_color.r);
+                    GP.sgp_set_color(c.Particles[i].Color.internal_color.r, c.Particles[i].Color.internal_color.g, c.Particles[i].Color.internal_color.b, c.Particles[i].Color.internal_color.a);
                     // GP.sgp_translate(p.x, p.y); makes all particles move as if emission point was p.x,p.y
                     GP.sgp_translate(c.Particles[i].Config.EmissionPoint.X + c.Particles[i].X,c.Particles[i].Config.EmissionPoint.Y + c.Particles[i].Y);
                     GP.sgp_rotate_at(c.Particles[i].Rotation, c.Particles[i].Width / 2f, c.Particles[i].Height / 2f);
@@ -627,7 +626,8 @@ public static partial class Engine
                     ct++;
                 }
                 GP.sgp_push_transform();
-                GP.sgp_set_color(c.Particles[first].Color.internal_color.g, c.Particles[first].Color.internal_color.b, c.Particles[first].Color.internal_color.a, c.Particles[0].Color.internal_color.r);
+                GP.sgp_set_color(c.Particles[first].Color.internal_color.r, c.Particles[first].Color.internal_color.g, c.Particles[first].Color.internal_color.b, c.Particles[first].Color.internal_color.a);
+
                 // GP.sgp_translate(p.x, p.y);
                 GP.sgp_translate(c.Particles[first].Config.EmissionPoint.X + c.Particles[first].X,c.Particles[first].Config.EmissionPoint.Y + c.Particles[first].Y);
                 GP.sgp_rotate_at(c.Particles[first].Rotation, c.Particles[first].Width / 2f, c.Particles[first].Height / 2f);

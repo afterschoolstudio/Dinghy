@@ -75,7 +75,7 @@ public record ParticleEmitterComponent
 
     public EmitterConfig Config { get; set; }
     public List<Particle> Particles = new List<Particle>();
-    public float Accumulator = 0f;
+    public double Accumulator = 0f;
     public ParticleEmitterComponent(EmitterConfig c)
     {
         Config = c;
@@ -198,7 +198,7 @@ public record ParticleEmitterComponent
         public float Width = 8;
         public float Height = 8;
         public float Rotation = 0;
-        public float Age = 0;
+        public double Age = 0;
         public Color Color = Palettes.ENDESGA[19];
         public ParticleConfig Config = DefaultParticleConfig;
 

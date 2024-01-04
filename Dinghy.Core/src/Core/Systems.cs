@@ -117,7 +117,6 @@ public class ParticleRenderSystem : RenderSystem
         {
             //update the particles
             List<int> activeIndicies = new List<int>();
-            var dt = (float)Engine.DeltaTime;
             int emitted = 0;
             var possibleParticleSlots = emitter.Config.EmissionRate * dt;
             emitter.Accumulator += possibleParticleSlots;
