@@ -115,51 +115,80 @@ public class ParticleRenderSystem : RenderSystem
     {
         Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref Position p, ref ParticleEmitterComponent emitter) =>
         {
-            //update the particles
-            List<int> activeIndicies = new List<int>();
-            int emitted = 0;
+            // Update the particles
+            List<int> activeIndices = new List<int>();
+            // List<int> newIndicies = new List<int>();
             var possibleParticleSlots = emitter.Config.EmissionRate * dt;
             emitter.Accumulator += possibleParticleSlots;
             var freeSlots = (int)emitter.Accumulator;
+
+            // Reactivate old inactive particles if possible
             for (int i = 0; i < emitter.Particles.Count; i++)
             {
-                bool justInit = false;
-                if(freeSlots > 0 && !emitter.Particles[i].Active)
-                {
-                    emitter.Particles[i].Reset();
-                    emitter.Particles[i].Active = true;
-                    emitter.Particles[i].Config = new ParticleEmitterComponent.ParticleConfig(emitter.Config.ParticleConfig);
-                    emitter.Particles[i].Config.EmissionPoint = (p.x,p.y);
-                    
-                    justInit = true;
-                    freeSlots--;
-                    emitter.Accumulator--;
-                }
-
-                if (!justInit)
+                if (emitter.Particles[i].Active)
                 {
                     emitter.Particles[i].Age += dt;
                     if (emitter.Particles[i].Age > emitter.Config.ParticleConfig.Lifespan)
                     {
-                        emitter.Particles[i].Active = false;
+                        //staged for inactive
+                        if (freeSlots == 0)
+                        {
+                            //go inactive if no free slots
+                            emitter.Particles[i].Active = false;
+                            continue;
+                        }
+                        
+                        //otherwise remake this particle
+                        emitter.Particles[i].Reset();
+                        emitter.Particles[i].Config = new ParticleEmitterComponent.ParticleConfig(emitter.Config.ParticleConfig);
+                        emitter.Particles[i].Config.EmissionPoint = (p.x, p.y);
+                        emitter.Particles[i].Resolve();
+                
+                        activeIndices.Add(i);
+                        freeSlots--;
+                        emitter.Accumulator--;
+                    }
+
+                    else
+                    {
+                        //particle still active
+                        emitter.Particles[i].Resolve();
+                        emitter.Particles[i].X += emitter.Particles[i].DX;
+                        emitter.Particles[i].Y += emitter.Particles[i].DY;
+                        activeIndices.Add(i);
                     }
                 }
-
-                if (emitter.Particles[i].Active)
+                else if (freeSlots > 0)
                 {
-                    activeIndicies.Add(i);
+                    //reset and toggle to active if there is a slot 
+                    emitter.Particles[i].Reset();
+                    emitter.Particles[i].Active = true;
+                    emitter.Particles[i].Config = new ParticleEmitterComponent.ParticleConfig(emitter.Config.ParticleConfig);
+                    emitter.Particles[i].Config.EmissionPoint = (p.x, p.y);
                     emitter.Particles[i].Resolve();
-                    
-                    emitter.Particles[i].X += emitter.Particles[i].DX;
-                    emitter.Particles[i].Y += emitter.Particles[i].DY;
+                
+                    activeIndices.Add(i);
+                    freeSlots--;
+                    emitter.Accumulator--;
                 }
             }
-            
-            
-            //draw the particles
-            if (activeIndicies.Count > 0)
+
+            // Create new particles if needed and maximum limit is not reached
+            while (freeSlots > 0 && emitter.Particles.Count < emitter.Config.MaxParticles)
             {
-                Engine.DrawParticles(p, emitter, activeIndicies);
+                ParticleEmitterComponent.Particle newParticle = new();
+                newParticle.Active = true;
+                emitter.Particles.Add(newParticle);
+                newParticle.Resolve();
+                activeIndices.Add(emitter.Particles.Count - 1);
+                freeSlots--;
+                emitter.Accumulator--;
+            }
+
+            // Draw the particles
+            if (activeIndices.Count > 0)
+            {
+                Engine.DrawParticles(p, emitter, activeIndices);
             }
         });
     }

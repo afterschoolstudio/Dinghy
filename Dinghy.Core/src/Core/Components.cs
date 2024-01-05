@@ -79,10 +79,7 @@ public record ParticleEmitterComponent
     public ParticleEmitterComponent(EmitterConfig c)
     {
         Config = c;
-        for (int i = 0; i < c.MaxParticles; i++)
-        {
-            Particles.Add(new());
-        }
+        Particles = new List<Particle>(c.MaxParticles);
     }
 
     public class ParticleConfig
