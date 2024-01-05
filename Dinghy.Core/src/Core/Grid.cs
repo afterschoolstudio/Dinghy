@@ -2,7 +2,19 @@ namespace Dinghy.Core;
 
 public class Grid
 {
-    public Point Pivot { get; }
+    private Point pivot;
+    public Point Pivot
+    {
+        get => pivot;
+        set
+        {
+            pivot = value;
+            for (int i = 0; i < Points.Count; i++)
+            {
+                Points[i] = OriginalPoints[i].Transform(rotation, scaleX, scaleY, Pivot);
+            }
+        }
+    }
     public List<Point> Points { get; }
     List<Point> OriginalPoints;
     private float rotation = 0f;
@@ -46,33 +58,62 @@ public class Grid
             }
         }
     }
+
+    public class GridCreationParams
+    {
+        public Point Pivot;
+        public Point NormalizedPivotPos;
+        public Point NormalizedCellOffset;
+        public int CellWidth;
+        public int CellHeight;
+        public int Xcount;
+        public int Ycount;
+        public GridCreationParams(Point pivot,
+            Point normalizedPivotPos,
+            int cellWidth,
+            int cellHeight,
+            Point normalizedCellOffset,
+            int xcount,
+            int ycount)
+        {
+            Pivot = pivot;
+            NormalizedPivotPos = normalizedPivotPos;
+            NormalizedCellOffset = normalizedCellOffset;
+            CellWidth = cellWidth;
+            CellHeight = cellHeight;
+            Xcount = xcount;
+            Ycount = ycount;
+        }
+    }
     
     //start is world space point, pivot is what start is meant to be interpreted as in normal space relative to to whole grid
-    public Grid(Point pivot, Point normalizedPivotPos, int cellWidth, int cellHeight, Point normalizedCellOffset, int xcount, int ycount)
+    public Grid(GridCreationParams p)
     {
         Points = new List<Point>();
-        var x_max = xcount * cellWidth;
-        var y_max = ycount * cellHeight;
+        var x_max = p.Xcount * p.CellWidth;
+        var y_max = p.Ycount * p.CellHeight;
 
-        Point cellOffset = (normalizedCellOffset.X * cellWidth, normalizedCellOffset.Y * cellHeight);
-        Point gridStart = pivot - (
-            x_max * normalizedPivotPos.X,
-            y_max * normalizedPivotPos.Y
+        Point cellOffset = (p.NormalizedCellOffset.X * p.CellWidth, p.NormalizedCellOffset.Y * p.CellHeight);
+        Point gridStart = p.Pivot - (
+            x_max * p.NormalizedPivotPos.X,
+            y_max * p.NormalizedPivotPos.Y
         ) + cellOffset;
-        Pivot = pivot + cellOffset;
-        for (int y = 0; y < ycount; y++)
+        this.pivot = p.Pivot + cellOffset;
+        for (int y = 0; y < p.Ycount; y++)
         {
-            for (int x = 0; x < xcount; x++)
+            for (int x = 0; x < p.Xcount; x++)
             {
                 Points.Add((
-                        gridStart.X + (x * cellWidth),
-                        gridStart.Y + (y * cellHeight)
+                        gridStart.X + (x * p.CellWidth),
+                        gridStart.Y + (y * p.CellHeight)
                 ) + cellOffset);
             }
         }
 
         OriginalPoints = new List<Point>(Points);
     }
+    
+    
 
     public void ApplyPositionsToEntites<T>(List<T> entities) where T : Entity
     {

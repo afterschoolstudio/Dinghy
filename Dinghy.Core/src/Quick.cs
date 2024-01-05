@@ -128,14 +128,23 @@ public static class Quick
                             // prefab = ScenarioEditorManager.Instance.TextInput;
                             break;
                         case nameof(Int32):
-                            // prefab = ScenarioEditorManager.Instance.IntInput;
+                            {
+                                int v = (int)fieldInfo.GetValue(o);
+                                ImGUIHelper.Wrappers.SliderInt(objectName + "_" + fieldInfo.Name, ref v, 1, 1000, "",
+                                    ImGuiSliderFlags_.ImGuiSliderFlags_None);
+                                // fieldInfo.SetValueDirect(__makeref(o), v);
+                                fieldInfo.SetValue(o,v);
+                                // prefab = ScenarioEditorManager.Instance.IntInput;
+                            }
                             break;
                         case nameof(Single):
-                            float v = (float)fieldInfo.GetValue(o);
-                            ImGUIHelper.Wrappers.SliderFloat(objectName + "_" + fieldInfo.Name, ref v, 1f, 1000f, "",
-                                ImGuiSliderFlags_.ImGuiSliderFlags_None);
-                            // fieldInfo.SetValueDirect(__makeref(o), v);
-                            fieldInfo.SetValue(o,v);
+                            {
+                                float v = (float)fieldInfo.GetValue(o);
+                                ImGUIHelper.Wrappers.SliderFloat(objectName + "_" + fieldInfo.Name, ref v, 1f, 1000f, "",
+                                    ImGuiSliderFlags_.ImGuiSliderFlags_None);
+                                // fieldInfo.SetValueDirect(__makeref(o), v);
+                                fieldInfo.SetValue(o,v);
+                            }
                             break;
                         case nameof(Boolean):
                             // prefab = ScenarioEditorManager.Instance.WrappedBool;

@@ -82,6 +82,19 @@ public static class ImGUIHelper
                 return r != 0;
             }
         }
+        
+        public static unsafe bool SliderInt(string label, ref int value, int min, int max, string format, ImGuiSliderFlags_ flags)
+        {
+            var t = System.Text.Encoding.UTF8.GetBytes(label);
+            var f = System.Text.Encoding.UTF8.GetBytes(format);
+            int v = value;
+            fixed (byte* t_p = t,fmt_p = f)
+            {
+                var r = Internal.Sokol.ImGUI.igSliderInt((sbyte*)t_p, &v, min, max, (sbyte*)fmt_p, (int)flags);
+                value = v;
+                return r != 0;
+            }
+        }
 
         public static unsafe bool RadioButton(string label, ref int value, int optionIndex)
         {

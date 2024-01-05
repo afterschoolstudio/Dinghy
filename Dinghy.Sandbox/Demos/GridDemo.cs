@@ -9,7 +9,7 @@ public class GridDemo : Scene
     Color shape2c = Palettes.ENDESGA[8];
     List<Shape> shapes1 = new();
     List<Shape> shapes2 = new();
-    Grid g = new Grid((Engine.Width/2f,Engine.Height/2f), (0.5f, 0.5f), 10, 10, (0.5f,0.5f), 30, 30);
+    Grid g = new Grid(new ((Engine.Width / 2f, Engine.Height / 2f), (0.5f, 0.5f), 10, 10, (0.5f, 0.5f), 30, 30));
     public override void Create()
     {
         Engine.SetTargetScene(this);
