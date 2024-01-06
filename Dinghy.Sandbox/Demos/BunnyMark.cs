@@ -61,7 +61,7 @@ public class TestBunny : Entity
         Data = spriteData;
         ECSEntity.Remove<Velocity>();
         ECSEntity.Add(
-            new SpriteRenderer(Data.TextureData.texturePath, Data.Frame),
+            new SpriteRenderer(Data.TextureData.texturePath, Data.Rect),
             new BunnyMarkComponent(velx,vely));
     }
 }

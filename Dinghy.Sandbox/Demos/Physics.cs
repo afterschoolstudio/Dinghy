@@ -11,7 +11,7 @@ public class Physics : Scene
     {
         conscriptImage = new TextureData("conscript.png");
         
-        conscript = new(conscriptImage, new Frame(0,0,64,64));
+        conscript = new(conscriptImage, new Rect(0,0,64,64));
         VoltConfig.AreaMassRatio = 0.000007f;
     }
     

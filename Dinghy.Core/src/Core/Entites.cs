@@ -36,8 +36,8 @@ public class Entity
             enabled = value;
         }
     }
-    private int x = 0;
-    public int X
+    private float x = 0;
+    public float X
     {
         get => x;
         set
@@ -48,8 +48,8 @@ public class Entity
         }
     }
 
-    private int y = 0;
-    public int Y
+    private float y = 0;
+    public float Y
     {
         get => y;
         set
@@ -97,7 +97,7 @@ public class Entity
     }
 
 
-    public void SetPositionRaw(int x, int y, float rotation, float scaleX, float scaleY)
+    public void SetPositionRaw(float x, float y, float rotation, float scaleX, float scaleY)
     {
         this.x = x;
         this.y = y;
@@ -106,7 +106,7 @@ public class Entity
         this.rotation = rotation;
     }
 
-    public void SetPosition(int x, int y, float rotation, float scaleX, float scaleY)
+    public void SetPosition(float x, float y, float rotation, float scaleX, float scaleY)
     {
         ref var pos = ref ECSEntity.Get<Position>();
         pos.x = x;
@@ -174,7 +174,7 @@ public class Entity
         }
     }
 
-    public void Shift(int x, int y)
+    public void Shift(float x, float y)
     {
         this.x += x;
         this.y += y;
@@ -365,7 +365,7 @@ public class Sprite : Entity
     public Sprite(SpriteData spriteData, Scene? scene = null, bool startEnabled = true) : base(startEnabled,scene)
     {
         Data = spriteData;
-        ECSEntity.Add(new SpriteRenderer(Data.TextureData.texturePath,Data.Frame));
+        ECSEntity.Add(new SpriteRenderer(Data.TextureData.texturePath,Data.Rect));
     }
 }
 

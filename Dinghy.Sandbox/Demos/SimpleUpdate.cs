@@ -11,7 +11,7 @@ public class SimpleUpdate : Scene
     {
         conscriptImage = new TextureData("conscript.png");
         
-        conscriptFrame0 = new(conscriptImage, new Frame(0,0,64,64));
+        conscriptFrame0 = new(conscriptImage, new Rect(0,0,64,64));
     }
 
     Sprite e;

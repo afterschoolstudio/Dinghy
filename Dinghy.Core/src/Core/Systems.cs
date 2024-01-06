@@ -49,8 +49,8 @@ public class VelocitySystem : DSystem, IUpdateSystem
     public void Update(double dt)
     {
         Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref HasManagedOwner owner, ref Position pos, ref Velocity vel) => {
-            pos.x = (int)(pos.x + vel.x);
-            pos.y = (int)(pos.y + vel.y);
+            pos.x += vel.x;
+            pos.y += vel.y;
             //could maybe grab stuff like this at the top of the frame so an entity
             //has the most recent pos stuff at the start instead of changing it mid frame?
             owner.e.SetPositionRaw(pos.x,pos.y,pos.rotation,pos.scaleX,pos.scaleY);
@@ -91,7 +91,7 @@ public class SpriteRenderSystem : RenderSystem
             {
                 r.ImageResource.Load();
             }
-            Engine.DrawTexturedRect(p.x, p.y,p.rotation,p.scaleX, p.scaleY,r.Frame,r.ImageResource);
+            Engine.DrawTexturedRect(p.x, p.y,p.rotation,p.scaleX, p.scaleY,r.Rect,r.SizeRect,r.ImageResource);
         });
     }
 }
@@ -103,7 +103,7 @@ public class ShapeRenderSystem : RenderSystem
     {
         Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref ShapeRenderer r, ref Position p) =>
         {
-            Engine.DrawShape(p.x, p.y,p.rotation, p.scaleX, p.scaleY, r.Color, new Frame(0,0,(int)r.Width,(int)r.Height));
+            Engine.DrawShape(p.x, p.y,p.rotation, p.scaleX, p.scaleY, r.Color, new Rect(0,0,r.Width,r.Height));
         });
     }
 }
@@ -344,7 +344,7 @@ public class FrameAnimationSystem : AnimationSystem
             {
                 //we do this to pump the first animation frame to the renderer so we dont render the whole texture first
                 a.AnimationStarted = true;
-                r.UpdateFrame(a.CurrentAnimationFrame);
+                r.UpdateRect(a.CurrentAnimationFrame);
             }
             else
             {
@@ -353,7 +353,7 @@ public class FrameAnimationSystem : AnimationSystem
                 a.TickAnimation();
                     
                 //note that there is currently no binding glue to imply that SpriteAnimator will work directly on an attached SpriteRenderer
-                r.UpdateFrame(a.CurrentAnimationFrame);
+                r.UpdateRect(a.CurrentAnimationFrame);
                 a.AnimationTime = 0;
             }
         });

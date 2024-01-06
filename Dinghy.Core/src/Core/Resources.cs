@@ -9,7 +9,7 @@ public static class Resources
     public record Image(string texturePath, bool alphaIsTransparecy)
     {
         public LoadedImageResource internalData { get; private set; }
-        public Frame DefaultFrame { get; private set; }
+        public Rect DefaultRect { get; private set; }
         public bool loaded { get; private set; } = false;
         public int Width => internalData.width;
         public int Height => internalData.height;
@@ -23,7 +23,7 @@ public static class Resources
                 return;
             }
             var img = Engine.LoadImage(texturePath, out var w, out var h);
-            DefaultFrame = new Frame(0, 0, w, h); //default is the full texture
+            DefaultRect = new Rect(0, 0, w, h); //default is the full texture
             // var state = Internal.Sokol.Gfx.query_image_state(img);
             // Console.WriteLine(state);
             internalData = new LoadedImageResource(img,w,h);
@@ -31,27 +31,19 @@ public static class Resources
             loaded = true;
         }
     }
-    public record Animation(string Name, List<Frame> Frames, float animationTime = 1f)
+    public record Animation(string Name, List<Rect> Frames, float animationTime = 1f)
     {
         public int FrameCount { get; } = Frames.Count;
         public float FrameTime { get; } = animationTime / Frames.Count;
     }
 }
 
-public readonly record struct Frame(int startX, int startY, int width, int height)
+public readonly record struct Rect(float startX, float startY, float width, float height)
 {
     public readonly Internal.Sokol.sgp_rect InternalRect { get; } = new sgp_rect()
     {
         x = startX,
         y = startY,
-        w = width,
-        h = height
-    };
-    
-    public readonly Internal.Sokol.sgp_rect SizeRect { get; } = new sgp_rect()
-    {
-        x = 0,
-        y = 0,
         w = width,
         h = height
     };

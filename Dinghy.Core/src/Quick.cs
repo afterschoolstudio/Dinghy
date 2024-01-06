@@ -36,12 +36,12 @@ public static class Quick
             (float)Math.Cos(radian),
             (float)Math.Sin(radian));
     }
-    public static List<Frame> HorizontalFrameSequence(int startX, int startY, int frameWidth, int frameHeight, int frameCount)
+    public static List<Rect> HorizontalFrameSequence(int startX, int startY, int frameWidth, int frameHeight, int frameCount)
     {
-        List<Frame> frames = new List<Frame>();
+        List<Rect> frames = new List<Rect>();
         for (int i = 0; i < frameCount; i++)
         {
-            frames.Add(new Frame(startX + i * frameWidth, startY, frameWidth, frameHeight));
+            frames.Add(new Rect(startX + i * frameWidth, startY, frameWidth, frameHeight));
         }
 
         return frames;

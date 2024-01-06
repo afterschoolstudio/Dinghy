@@ -6,16 +6,19 @@ namespace Dinghy;
 public record struct SpriteRenderer
 {
     public Resources.Image ImageResource { get;  set; }
-    public Frame Frame { get; private set; }
-    public SpriteRenderer(string texture, Frame r, bool alphaIsTransparency = true)
+    public Rect Rect { get; private set; }
+    public Rect SizeRect { get; private set; }
+    public SpriteRenderer(string texture, Rect r, bool alphaIsTransparency = true)
     {
         ImageResource = new (texture, alphaIsTransparency);
-        Frame = r;
+        Rect = r;
+        SizeRect = new Rect(0, 0, Rect.width, Rect.height);
     }
 
-    public void UpdateFrame(Frame r)
+    public void UpdateRect(Rect r)
     {
-        Frame = r;
+        Rect = r;
+        SizeRect = new Rect(0, 0, Rect.width, Rect.height);
     }
 }
 
@@ -23,7 +26,7 @@ public record struct ShapeRenderer(Color Color, float Width, float Height);
 public record struct SpriteAnimator(HashSet<Animation> animations)
 {
     public Animation CurrentAnimation { get; private set; } = animations.First();
-    public Frame CurrentAnimationFrame => CurrentAnimation.Frames[animationIndex];
+    public Rect CurrentAnimationFrame => CurrentAnimation.Frames[animationIndex];
     public double AnimationTime = 0f;
     public bool AnimationStarted = false;
 
@@ -51,11 +54,11 @@ public record struct SpriteAnimator(HashSet<Animation> animations)
         }
     }
 }
-public record struct Position(int x = 0, int y = 0, float scaleX = 1, float scaleY = 1, float rotation = 0f);
+public record struct Position(float x = 0, float y = 0, float scaleX = 1, float scaleY = 1, float rotation = 0f);
 public record struct Velocity (float x, float y);
 public record ManagedComponent(Component managedComponent);
 public readonly record struct Destroy();
-public record struct Collider(Frame f);
+public record struct Collider(Rect f);
 public readonly record struct Active();
 public readonly record struct HasManagedOwner(Dinghy.Entity e);
 public record ParticleEmitterComponent

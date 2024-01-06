@@ -499,21 +499,21 @@ public static partial class Engine
         }
     }
 
-    public static void DrawTexturedRect(float x, float y, float rotation, float scaleX, float scaleY, Frame f, Resources.Image img)
+    public static void DrawTexturedRect(float x, float y, float rotation, float scaleX, float scaleY, Rect source, Rect dest, Resources.Image img)
     {
         GP.sgp_set_color(1.0f, 1.0f, 1.0f, 1.0f);
         GP.sgp_set_blend_mode(sgp_blend_mode.SGP_BLENDMODE_BLEND);
         GP.sgp_set_image(0,img.internalData.sg_image);
         GP.sgp_push_transform();
         GP.sgp_translate(x,y);
-        GP.sgp_rotate_at(rotation, f.width / 2f, f.height / 2f);
-        GP.sgp_scale_at(scaleX, scaleY, f.width / 2f, f.height / 2f);
+        GP.sgp_rotate_at(rotation, source.width / 2f, source.height / 2f);
+        GP.sgp_scale_at(scaleX, scaleY, source.width / 2f, source.height / 2f);
         GP.sgp_draw_textured_rect(0,
             //this is the rect to draw the source "to", basically can scale the rect (maybe do wrapping?)
             //we assume this is the width and height of the frame itself
-            f.SizeRect,
+            dest.InternalRect,
             //this is the rect index into the texture itself
-            f.InternalRect);
+            source.InternalRect);
         GP.sgp_pop_transform();
         // GP.sgp_draw_filled_rect(x,y,img.internalData.width,img.internalData.height);
         GP.sgp_reset_image(0);
@@ -557,7 +557,7 @@ public static partial class Engine
         */
     }
     
-    public static void DrawShape(float x, float y, float rotation, float scaleX, float scaleY, Color c, Frame f)
+    public static void DrawShape(float x, float y, float rotation, float scaleX, float scaleY, Color c, Rect f)
     {
         //argb
         //rgba

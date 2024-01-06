@@ -6,7 +6,7 @@ public record TextureData(string texturePath);
 public record SpriteData
 {
     public TextureData TextureData { get; init; }
-    public Frame Frame { get; set; }
+    public Rect Rect { get; set; }
     public SpriteData(TextureData Texture)
     {
         TextureData = Texture;
@@ -18,14 +18,14 @@ public record SpriteData
             {
                 int imgx, imgy, channels;
                 var ok = STB.stbi_info_from_memory(imgptr, fileBytes.Length, &imgx, &imgy, &channels);
-                Frame = new Frame(0, 0, imgx, imgy);
+                Rect = new Rect(0, 0, imgx, imgy);
             }
         }
     }
-    public SpriteData(TextureData Texture, Frame Frame)
+    public SpriteData(TextureData Texture, Rect Rect)
     {
         TextureData = Texture;
-        this.Frame = Frame;
+        this.Rect = Rect;
     }
 }
 
