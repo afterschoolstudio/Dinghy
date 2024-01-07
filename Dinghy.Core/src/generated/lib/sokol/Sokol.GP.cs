@@ -1,5 +1,3 @@
-using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -35,6 +33,13 @@ public enum sgp_error : uint
         SGP_BLENDMODE_MOD,
         SGP_BLENDMODE_MUL,
         _SGP_BLENDMODE_NUM,
+    }
+
+    [NativeTypeName("unsigned int")]
+    public enum sgp_vs_attr_location : uint
+    {
+        SGP_VS_ATTR_COORD = 0,
+        SGP_VS_ATTR_COLOR = 1,
     }
 
     public partial struct sgp_isize
@@ -101,10 +106,16 @@ public enum sgp_error : uint
         public sgp_vec2 c;
     }
 
-    public unsafe partial struct sgp_mat2x3
+    public partial struct sgp_mat2x3
     {
         [NativeTypeName("float[2][3]")]
-        public fixed float v[2 * 3];
+        public _v_e__FixedBuffer v;
+
+        [InlineArray(2 * 3)]
+        public partial struct _v_e__FixedBuffer
+        {
+            public float e0_0;
+        }
     }
 
     public partial struct sgp_color
@@ -118,13 +129,34 @@ public enum sgp_error : uint
         public float a;
     }
 
-    public unsafe partial struct sgp_uniform
+    public partial struct sgp_color_ub4
+    {
+        [NativeTypeName("uint8_t")]
+        public byte r;
+
+        [NativeTypeName("uint8_t")]
+        public byte g;
+
+        [NativeTypeName("uint8_t")]
+        public byte b;
+
+        [NativeTypeName("uint8_t")]
+        public byte a;
+    }
+
+    public partial struct sgp_uniform
     {
         [NativeTypeName("uint32_t")]
         public uint size;
 
         [NativeTypeName("float[4]")]
-        public fixed float content[4];
+        public _content_e__FixedBuffer content;
+
+        [InlineArray(4)]
+        public partial struct _content_e__FixedBuffer
+        {
+            public float e0;
+        }
     }
 
     public partial struct sgp_textures_uniform
@@ -138,48 +170,16 @@ public enum sgp_error : uint
         [NativeTypeName("sg_sampler[4]")]
         public _samplers_e__FixedBuffer samplers;
 
+        [InlineArray(4)]
         public partial struct _images_e__FixedBuffer
         {
             public sg_image e0;
-            public sg_image e1;
-            public sg_image e2;
-            public sg_image e3;
-
-            [UnscopedRef]
-            public ref sg_image this[int index]
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get
-                {
-                    return ref AsSpan()[index];
-                }
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            [UnscopedRef]
-            public Span<sg_image> AsSpan() => MemoryMarshal.CreateSpan(ref e0, 4);
         }
 
+        [InlineArray(4)]
         public partial struct _samplers_e__FixedBuffer
         {
             public sg_sampler e0;
-            public sg_sampler e1;
-            public sg_sampler e2;
-            public sg_sampler e3;
-
-            [UnscopedRef]
-            public ref sg_sampler this[int index]
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get
-                {
-                    return ref AsSpan()[index];
-                }
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            [UnscopedRef]
-            public Span<sg_sampler> AsSpan() => MemoryMarshal.CreateSpan(ref e0, 4);
         }
     }
 
@@ -199,7 +199,7 @@ public enum sgp_error : uint
 
         public float thickness;
 
-        public sgp_color color;
+        public sgp_color_ub4 color;
 
         public sgp_textures_uniform textures;
 
@@ -227,7 +227,11 @@ public enum sgp_error : uint
         [NativeTypeName("uint32_t")]
         public uint max_commands;
 
-        public sg_pixel_format pixel_format;
+        public sg_pixel_format color_format;
+
+        public sg_pixel_format depth_format;
+
+        public int sample_count;
     }
 
     public partial struct sgp_pipeline_desc
@@ -238,7 +242,14 @@ public enum sgp_error : uint
 
         public sgp_blend_mode blend_mode;
 
-        public sg_pixel_format pixel_format;
+        public sg_pixel_format color_format;
+
+        public sg_pixel_format depth_format;
+
+        public int sample_count;
+
+        [NativeTypeName("bool")]
+        public byte has_vs_color;
     }
 
     public static unsafe partial class GP
