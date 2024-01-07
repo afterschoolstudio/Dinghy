@@ -14,6 +14,6 @@ public class Texture : Scene
     public override void Create()
     {
         Engine.SetTargetScene(this);
-        new Sprite(fullConscript);
+        new Sprite(fullConscript){X = Engine.Width/2f,Y = Engine.Height/2f};
     }
 }

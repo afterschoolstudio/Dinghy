@@ -83,6 +83,24 @@ public static class ImGUIHelper
             }
         }
         
+        public static unsafe bool SliderFloat2(string label, ref float value1, ref float value2, float min, float max, string format, ImGuiSliderFlags_ flags)
+        {
+            var t = System.Text.Encoding.UTF8.GetBytes(label);
+            var f = System.Text.Encoding.UTF8.GetBytes(format);
+            float[] v_arr = [value1,value2];
+            fixed (byte* t_p = t,fmt_p = f)
+            {
+                fixed (float* vptr = v_arr)
+                {
+                    var r = Internal.Sokol.ImGUI.igSliderFloat2((sbyte*)t_p, vptr, min, max, (sbyte*)fmt_p, (int)flags);
+                    value1 = v_arr[0];
+                    value2 = v_arr[1];
+                    return r != 0;
+                }
+
+            }
+        }
+        
         public static unsafe bool SliderInt(string label, ref int value, int min, int max, string format, ImGuiSliderFlags_ flags)
         {
             var t = System.Text.Encoding.UTF8.GetBytes(label);

@@ -24,7 +24,7 @@ public static class Checks
             };
     }
 
-    public static bool CheckCollision<T>(T a, T b) where T : Entity, IHasSize
+    public static bool CheckCollision<T,U>(T a, U b) where T : Entity, IHasSize where U : Entity, IHasSize
     {
         var ap = Utils.GetEntityPolygon(a);
         var bp = Utils.GetEntityPolygon(b);

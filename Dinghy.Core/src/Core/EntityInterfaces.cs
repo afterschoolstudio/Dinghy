@@ -4,8 +4,8 @@ namespace Dinghy.Core;
 
 public interface IHasSize
 {
-    public float Width { get; set; }
-    public float Height { get; set; }
+    public float Width { get;}
+    public float Height { get;}
 }
 
 public static partial class Utils

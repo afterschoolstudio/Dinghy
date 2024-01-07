@@ -15,8 +15,8 @@ public class GridDemo : Scene
         Engine.SetTargetScene(this);
         foreach (var p in g.Points)
         {
-            shapes1.Add(new Shape(shape1c) { X = (int)p.X, Y = (int)p.Y, Width = 5, Height = 5 });
-            shapes2.Add(new Shape(shape2c) { X = (int)p.X, Y = (int)p.Y, Width = 5, Height = 5 });
+            shapes1.Add(new Shape(shape1c,5,5) { X = (int)p.X, Y = (int)p.Y});
+            shapes2.Add(new Shape(shape2c,5,5) { X = (int)p.X, Y = (int)p.Y});
         }
     }
 

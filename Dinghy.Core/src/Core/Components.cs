@@ -8,6 +8,8 @@ public record struct SpriteRenderer
     public Resources.Image ImageResource { get;  set; }
     public Rect Rect { get; private set; }
     public Rect SizeRect { get; private set; }
+    public float Width => SizeRect.width;
+    public float Height => SizeRect.height;
     public SpriteRenderer(string texture, Rect r, bool alphaIsTransparency = true)
     {
         ImageResource = new (texture, alphaIsTransparency);
@@ -122,6 +124,7 @@ public record ParticleEmitterComponent
         public ParticleConfig(ParticleConfig c)
         {
             ParticleType = c.ParticleType;
+            EmissionPoint = c.EmissionPoint;
             Lifespan = c.Lifespan;
             DX = c.DX;
             DY = c.DY;
@@ -133,6 +136,7 @@ public record ParticleEmitterComponent
         
         public ParticleConfig()
         {
+            EmissionPoint = (0, 0);
             ParticleType = DefaultParticleConfig.ParticleType;
             Lifespan = DefaultParticleConfig.Lifespan;
             DX = DefaultParticleConfig.DX;

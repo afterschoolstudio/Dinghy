@@ -10,8 +10,8 @@ public class ShapeDemo : Scene
         Engine.SetTargetScene(this);
         new Shape(new Color(Palettes.ENDESGA[9]))
         {
-            X = (int)(Engine.Width / 2f),
-            Y = (int)(Engine.Height / 2f),
+            X = Engine.Width / 2f,
+            Y = Engine.Height / 2f
         };
     }
 }

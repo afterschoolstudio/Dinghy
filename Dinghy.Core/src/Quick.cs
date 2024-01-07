@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Arch.Core;
+using Dinghy.Core;
 using Dinghy.Core.ImGUI;
 using Dinghy.Internal.Sokol;
 using Volatile;
@@ -85,6 +86,7 @@ public static class Quick
         foreach (var sortedField in sortedFields.OrderBy(x => x.priority))
         {
             var fieldInfo = sortedField.field;
+            var editLabelName = objectName + "_" + fieldInfo.Name;
             // var attr = (EditableField) System.Attribute.GetCustomAttribute(fieldInfo, typeof (EditableField));
             // if(attr == null)
             // {
@@ -98,7 +100,7 @@ public static class Quick
                     // {
                     //     ImGUIHelper.Wrappers.RadioButton(en[i],ref value,i);
                     // }
-                    ImGUIHelper.Wrappers.Combo(objectName + "_" + fieldInfo.Name, en, ref value);
+                    ImGUIHelper.Wrappers.Combo(editLabelName, en, ref value);
                     fieldInfo.SetValue(o,value);
                 }
                 else if (fieldInfo.FieldType.IsClass || fieldInfo.FieldType.IsGenericType)
@@ -106,16 +108,30 @@ public static class Quick
                     switch (fieldInfo.FieldType.Name)
                     {
                         case "Color":
+                        {
                             Color value = (Color)fieldInfo.GetValue(o);
-                            ImGUIHelper.Wrappers.Color(objectName + "_" + fieldInfo.Name, ref value);
+                            ImGUIHelper.Wrappers.Color(editLabelName, ref value);
                             fieldInfo.SetValue(o,value);
                             break;
+                        }
+                        case "Point":
+                        {
+                            Point value = (Point)fieldInfo.GetValue(o);
+                            float x = value.X;
+                            float y = value.Y;
+                            ImGUIHelper.Wrappers.SliderFloat2(editLabelName, ref x, ref y, 1f, 1000f, "",
+                                ImGuiSliderFlags_.ImGuiSliderFlags_None);
+                            fieldInfo.SetValue(o, new Point(x,y));
+                            break;
+                        }
+                            
+                                
                         default:
                             var cv = fieldInfo.GetValue(o);
                             if (cv != null)
                             {
                                 ImGUIHelper.Wrappers.Text(fieldInfo.Name);
-                                DrawObjectFields(objectName + "_" + fieldInfo.Name,ref cv,validFieldCheck);
+                                DrawObjectFields(editLabelName,ref cv,validFieldCheck);
                             }
                             break;
                     }
@@ -130,7 +146,7 @@ public static class Quick
                         case nameof(Int32):
                             {
                                 int v = (int)fieldInfo.GetValue(o);
-                                ImGUIHelper.Wrappers.SliderInt(objectName + "_" + fieldInfo.Name, ref v, 1, 1000, "",
+                                ImGUIHelper.Wrappers.SliderInt(editLabelName, ref v, 1, 1000, "",
                                     ImGuiSliderFlags_.ImGuiSliderFlags_None);
                                 // fieldInfo.SetValueDirect(__makeref(o), v);
                                 fieldInfo.SetValue(o,v);
@@ -140,7 +156,7 @@ public static class Quick
                         case nameof(Single):
                             {
                                 float v = (float)fieldInfo.GetValue(o);
-                                ImGUIHelper.Wrappers.SliderFloat(objectName + "_" + fieldInfo.Name, ref v, 1f, 1000f, "",
+                                ImGUIHelper.Wrappers.SliderFloat(editLabelName, ref v, 1f, 1000f, "",
                                     ImGuiSliderFlags_.ImGuiSliderFlags_None);
                                 // fieldInfo.SetValueDirect(__makeref(o), v);
                                 fieldInfo.SetValue(o,v);

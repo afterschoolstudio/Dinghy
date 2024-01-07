@@ -173,16 +173,7 @@ public class Entity
             Engine.SceneEntityMap[Scene].Add(this);
         }
     }
-
-    public void Shift(float x, float y)
-    {
-        this.x += x;
-        this.y += y;
-        ref var pos = ref ECSEntity.Get<Position>();
-        pos.x = this.x;
-        pos.y = this.y;
-    }
-
+    
     public void SetVelocity(float x, float y)
     {
         dx = x;
@@ -318,27 +309,8 @@ public class Shape : Entity, IHasSize
 {
     private Color c;
     private float height = 0;
-    public float Height
-    {
-        get => height;
-        set
-        {
-            ref var r = ref ECSEntity.Get<ShapeRenderer>();
-            r.Height = value;
-            height = value;
-        }
-    }
-    private float width = 0;
-    public float Width
-    {
-        get => width;
-        set
-        {
-            ref var r = ref ECSEntity.Get<ShapeRenderer>();
-            r.Width = value;
-            width = value;
-        }
-    }
+    public float Height => ECSEntity.Get<ShapeRenderer>().Height;
+    public float Width => ECSEntity.Get<ShapeRenderer>().Width;
     public Color Color
     {
         get => c;
@@ -352,15 +324,15 @@ public class Shape : Entity, IHasSize
     public Shape(Color color, int width = 32, int height = 32, Scene? scene = null, bool startEnabled = true) : base(startEnabled,scene)
     {
         c = color;
-        this.width = width;
-        this.height = height;
         ECSEntity.Add(new ShapeRenderer(color,width,height));
         ECSEntity.Add(new Collider());
     }
 }
 
-public class Sprite : Entity
+public class Sprite : Entity, IHasSize
 {
+    public float Height => ECSEntity.Get<SpriteRenderer>().Height;
+    public float Width => ECSEntity.Get<SpriteRenderer>().Width;
     public SpriteData Data { get; init; }
     public Sprite(SpriteData spriteData, Scene? scene = null, bool startEnabled = true) : base(startEnabled,scene)
     {
@@ -369,8 +341,10 @@ public class Sprite : Entity
     }
 }
 
-public class AnimatedSprite : Entity
+public class AnimatedSprite : Entity, IHasSize
 {
+    public float Height => ECSEntity.Get<SpriteRenderer>().Height;
+    public float Width => ECSEntity.Get<SpriteRenderer>().Width;
     public AnimatedSpriteData Data { get; init; }
     public AnimatedSprite(AnimatedSpriteData animatedSpriteData, Scene? scene = null, bool startEnabled = true) : base(startEnabled,scene)
     {
@@ -383,8 +357,6 @@ public class AnimatedSprite : Entity
 
 public class ParticleEmitter : Entity
 {
-    //NOTE: this is NOT an entity emitter, this emits a special particle type
-    //want to add in ability to sample a curve for these tbh
     public ParticleEmitterComponent.EmitterConfig Config;
     public ParticleEmitter(ParticleEmitterComponent.EmitterConfig config, Scene? scene = null, bool startEnabled = true) : base(startEnabled,scene)
     {
@@ -392,6 +364,4 @@ public class ParticleEmitter : Entity
         ECSEntity.Add(
             new ParticleEmitterComponent(config));
     }
-
-    // public void PushUpdatedConfig();
 }

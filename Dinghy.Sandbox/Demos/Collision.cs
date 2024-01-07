@@ -17,12 +17,12 @@ public class Collision : Scene
     {
         Engine.SetTargetScene(this);
         
-        pointer = new Shape(pointer_col){Name = "pointer",Width = 1, Height = 1};
+        pointer = new Shape(pointer_col,1,1){Name = "pointer"};
         static_collider = new Shape(no_collide)
         {
             Name = "static_collider",
-            X = 100,
-            Y = 100
+            X = Engine.Width/2f,
+            Y = Engine.Height/2f
         };
     }
 
@@ -38,12 +38,10 @@ public class Collision : Scene
             ? collide
             : no_collide;
         var pts = Checks.GetClosestPoints(pointer, static_collider);
-        ptB = new Shape(pt)
+        ptB = new Shape(pt,5,5)
         {
             X = (int)pts.b.X,
             Y = (int)pts.b.Y,
-            Width = 5,
-            Height = 5
         };
         // Console.WriteLine(Checks.GetCollisionInfo(pointer,static_collider));
     }
