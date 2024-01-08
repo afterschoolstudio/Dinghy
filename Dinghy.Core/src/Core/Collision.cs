@@ -88,9 +88,44 @@ public static class Checks
 
 public static class Utils
 {
-    public static Polygon GetEntityPolygon<T>(T e) where T : Entity, IHasSize
+    public static Polygon GetColliderBounds(Collider c)
     {
-        return new Polygon(4,Core.Utils.GetEntityBounds(e));
+        return new Polygon(4,GetBounds(c.p,c.sizeProvider));
+    }
+    
+    public static Point[] GetBounds(Position e, IHasSize size)
+    {
+        var pivot = new Vector2(e.x + size.Width / 2f, e.y + size.Height / 2f);
+        Point[] pts = [
+            TransformEntityPoint((e.x, e.y),e,pivot),
+            TransformEntityPoint((e.x + size.Width, e.y),e,pivot),
+            TransformEntityPoint((e.x + size.Width, e.y + size.Height),e,pivot),
+            TransformEntityPoint((e.x, e.y + size.Height),e,pivot)
+        ];
+        return pts;
+
+        Point TransformEntityPoint(Point p, Position e, Vector2 pivot)
+        {
+            return TransformPoint(new Vector2(p.X,p.Y),e.rotation, e.scaleX, e.scaleY, pivot);
+        }
+
+        Vector2 TransformPoint(
+            Vector2 point, 
+            float rotation, 
+            float scaleX, 
+            float scaleY, 
+            Vector2? pivot = null)
+        {
+            Vector2 pivotPoint = pivot ?? Vector2.Zero;
+            Matrix3x2 transformation =
+                Matrix3x2.CreateTranslation(point) *
+                Matrix3x2.CreateRotation(rotation, pivotPoint) *
+                Matrix3x2.CreateScale(scaleX, scaleY, pivotPoint);
+
+                
+
+            return Vector2.Transform(Vector2.Zero, transformation);
+        }
     }
 }
 

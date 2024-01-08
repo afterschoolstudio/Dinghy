@@ -17,7 +17,7 @@ public class ParticleSystem : Scene
         emitter = new ParticleEmitter(
             new(100000, 100, new ParticleEmitterComponent.ParticleConfig()
             {
-                Color = new ParticleEmitterComponent.ParticleConfig.Transition<Color>(startColor,endColor,Easing.Option.EaseInOutExpo)
+                Color = new Transition<Color>(startColor,endColor,Easing.Option.EaseInOutExpo)
             }))
         {
             X = 200,

@@ -3,7 +3,7 @@ using static Dinghy.Resources;
 
 namespace Dinghy;
 
-public record struct SpriteRenderer
+public record struct SpriteRenderer : IHasSize
 {
     public Resources.Image ImageResource { get;  set; }
     public Rect Rect { get; private set; }
@@ -24,7 +24,7 @@ public record struct SpriteRenderer
     }
 }
 
-public record struct ShapeRenderer(Color Color, float Width, float Height);
+public record struct ShapeRenderer(Color Color, float Width, float Height) : IHasSize;
 public record struct SpriteAnimator(HashSet<Animation> animations)
 {
     public Animation CurrentAnimation { get; private set; } = animations.First();
@@ -60,7 +60,6 @@ public record struct Position(float x = 0, float y = 0, float scaleX = 1, float 
 public record struct Velocity (float x, float y);
 public record ManagedComponent(Component managedComponent);
 public readonly record struct Destroy();
-public record struct Collider(Rect f);
 public readonly record struct Active();
 public readonly record struct HasManagedOwner(Dinghy.Entity e);
 public record ParticleEmitterComponent
@@ -133,7 +132,7 @@ public record ParticleEmitterComponent
             Color = c.Color;
             Rotation = c.Rotation;
         }
-        
+
         public ParticleConfig()
         {
             EmissionPoint = (0, 0);
@@ -145,57 +144,6 @@ public record ParticleEmitterComponent
             Height = DefaultParticleConfig.Height;
             Color = DefaultParticleConfig.Color;
             Rotation = DefaultParticleConfig.Rotation;
-        }
-        
-        public class Transition<T>
-        {
-            public T StartValue;
-            public T TargetValue;
-            public Easing.Option EasingOption;
-            // public delegate double TransitionFunction(double time);
-
-            // public TransitionFunction Sample;
-            public Transition(T start, T end, Easing.Option option)
-            {
-                StartValue = start;
-                TargetValue = end;
-                EasingOption = option;
-            }
-
-            public double Sample(double time) => EasingOption switch
-            {
-                Easing.Option.Linear => Easing.Linear(time),
-                Easing.Option.EaseInQuad => Easing.EaseInQuad(time),
-                Easing.Option.EaseOutQuad => Easing.EaseOutQuad(time),
-                Easing.Option.EaseInOutQuad => Easing.EaseInOutQuad(time),
-                Easing.Option.EaseInCubic => Easing.EaseInCubic(time),
-                Easing.Option.EaseOutCubic => Easing.EaseOutCubic(time),
-                Easing.Option.EaseInOutCubic => Easing.EaseInOutCubic(time),
-                Easing.Option.EaseInQuart => Easing.EaseInQuart(time),
-                Easing.Option.EaseOutQuart => Easing.EaseOutQuart(time),
-                Easing.Option.EaseInOutQuart => Easing.EaseInOutQuart(time),
-                Easing.Option.EaseInQuint => Easing.EaseInQuint(time),
-                Easing.Option.EaseOutQuint => Easing.EaseOutQuint(time),
-                Easing.Option.EaseInOutQuint => Easing.EaseInOutQuint(time),
-                Easing.Option.EaseInSine => Easing.EaseInSine(time),
-                Easing.Option.EaseOutSine => Easing.EaseOutSine(time),
-                Easing.Option.EaseInOutSine => Easing.EaseInOutSine(time),
-                Easing.Option.EaseInExpo => Easing.EaseInExpo(time),
-                Easing.Option.EaseOutExpo => Easing.EaseOutExpo(time),
-                Easing.Option.EaseInOutExpo => Easing.EaseInOutExpo(time),
-                Easing.Option.EaseInCirc => Easing.EaseInCirc(time),
-                Easing.Option.EaseOutCirc => Easing.EaseOutCirc(time),
-                Easing.Option.EaseInOutCirc => Easing.EaseInOutCirc(time),
-                Easing.Option.EaseInBack => Easing.EaseInBack(time),
-                Easing.Option.EaseOutBack => Easing.EaseOutBack(time),
-                Easing.Option.EaseInOutBack => Easing.EaseInOutBack(time),
-                Easing.Option.EaseInElastic => Easing.EaseInElastic(time),
-                Easing.Option.EaseOutElastic => Easing.EaseOutElastic(time),
-                Easing.Option.EaseInOutElastic => Easing.EaseInOutElastic(time),
-                Easing.Option.EaseInBounce => Easing.EaseInBounce(time),
-                Easing.Option.EaseOutBounce => Easing.EaseOutBounce(time),
-                Easing.Option.EaseInOutBounce => Easing.EaseInOutBounce(time)
-            };
         }
 
         public void Resolve(double time,ref float dx, ref float dy, ref float rotation, ref float width,ref float height,ref Color color)
@@ -271,3 +219,5 @@ public record SceneComponent
         ManagedScene = managedScene;
     }
 }
+
+public readonly record struct Collider(Position p, IHasSize sizeProvider);
