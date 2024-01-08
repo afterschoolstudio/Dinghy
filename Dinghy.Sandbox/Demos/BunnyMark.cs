@@ -73,8 +73,8 @@ public class BunnySystem : DSystem, IUpdateSystem
     {
         float randCheck = 0;
         Engine.ECSWorld.Query(in bunny, (Arch.Core.Entity e, ref HasManagedOwner owner,  ref Position pos, ref BunnyMarkComponent vel) => {
-            pos.x = (int)(pos.x + vel.x);
-            pos.y = (int)(pos.y + vel.y);
+            pos.x += vel.x;
+            pos.y += vel.y;
             
             vel.y += 9.8f;
             
@@ -104,7 +104,6 @@ public class BunnySystem : DSystem, IUpdateSystem
                 vel.y = 0;
                 pos.y = 0;
             }
-            owner.e.SetPositionRaw(pos.x,pos.y,pos.rotation,pos.scaleX,pos.scaleY);
         });
     }
 }
