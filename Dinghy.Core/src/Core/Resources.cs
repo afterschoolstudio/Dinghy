@@ -47,6 +47,11 @@ public readonly record struct Rect(float startX, float startY, float width, floa
         w = width,
         h = height
     };
+    
+    public static implicit operator Rect((float startX, float startY, float width, float height) tuple)
+    {
+        return new Rect(tuple.startX, tuple.startY,tuple.width,tuple.height);
+    }
 }
 
 

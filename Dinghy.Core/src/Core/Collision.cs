@@ -132,6 +132,9 @@ public static class Utils
         var xpos = entityPosition.x + c.x;
         var ypos = entityPosition.y + c.y;
         //note this is the implicit entity pivot — may eventually want to change to be passed in
+        //right now this pivot is sort of weird - its kind of the center of the collider but that may be irrelevant
+        //to the position of the actual entity
+        //instead need to just take in an entity Pivot directly
         var pivot = new Vector2(xpos + c.width / 2f, ypos + c.height / 2f);
         Point[] pts = [
             TransformEntityPoint((xpos, ypos),entityPosition,pivot),

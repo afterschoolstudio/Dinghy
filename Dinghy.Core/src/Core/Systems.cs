@@ -1,4 +1,4 @@
-﻿using Arch.Core;
+using Arch.Core;
 using Arch.Core.Extensions;
 using Dinghy.Core;
 using Dinghy.Internal.Sokol;
