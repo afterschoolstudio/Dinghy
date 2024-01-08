@@ -305,12 +305,10 @@ public class Scene : Entity
     public virtual void Cleanup(){}
 }
 
-public class Shape : Entity, IHasSize
+public class Shape : Entity
 {
     private Color c;
     private float height = 0;
-    public float Height => ECSEntity.Get<ShapeRenderer>().Height;
-    public float Width => ECSEntity.Get<ShapeRenderer>().Width;
     public Color Color
     {
         get => c;
@@ -324,34 +322,37 @@ public class Shape : Entity, IHasSize
     public Shape(Color color, int width = 32, int height = 32, Scene? scene = null, bool startEnabled = true) : base(startEnabled,scene)
     {
         c = color;
-        ECSEntity.Add(new ShapeRenderer(color,width,height));
-        ECSEntity.Add(new Collider());
+        var rend = new ShapeRenderer(color, width, height);
+        ECSEntity.Add(
+            rend,
+            new Collider(0,0,width,height));
     }
 }
 
-public class Sprite : Entity, IHasSize
+public class Sprite : Entity
 {
-    public float Height => ECSEntity.Get<SpriteRenderer>().Height;
-    public float Width => ECSEntity.Get<SpriteRenderer>().Width;
     public SpriteData Data { get; init; }
     public Sprite(SpriteData spriteData, Scene? scene = null, bool startEnabled = true) : base(startEnabled,scene)
     {
         Data = spriteData;
-        ECSEntity.Add(new SpriteRenderer(Data.TextureData.texturePath,Data.Rect));
+        var rend = new SpriteRenderer(Data.TextureData.texturePath, Data.Rect);
+        ECSEntity.Add(
+            rend,
+            new Collider(0,0,Data.Rect.width,Data.Rect.height));
     }
 }
 
-public class AnimatedSprite : Entity, IHasSize
+public class AnimatedSprite : Entity
 {
-    public float Height => ECSEntity.Get<SpriteRenderer>().Height;
-    public float Width => ECSEntity.Get<SpriteRenderer>().Width;
     public AnimatedSpriteData Data { get; init; }
     public AnimatedSprite(AnimatedSpriteData animatedSpriteData, Scene? scene = null, bool startEnabled = true) : base(startEnabled,scene)
     {
         Data = animatedSpriteData;
+        var rend = new SpriteRenderer(Data.TextureData.texturePath, Data.Animations.First().Frames[0]);
         ECSEntity.Add(
-            new SpriteRenderer(Data.TextureData.texturePath, Data.Animations.First().Frames[0]),
-            new SpriteAnimator(Data.Animations));
+            rend,
+            new SpriteAnimator(Data.Animations),
+            new Collider(0,0,Data.Animations.First().Frames[0].width,Data.Animations.First().Frames[0].height));
     }
 }
 

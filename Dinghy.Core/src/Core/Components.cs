@@ -220,4 +220,4 @@ public record SceneComponent
     }
 }
 
-public readonly record struct Collider(Position p, IHasSize sizeProvider);
+public record struct Collider(float x, float y, float width, float height);

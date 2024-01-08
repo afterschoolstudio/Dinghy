@@ -1,3 +1,5 @@
+using System.Numerics;
+using Arch.Core.Extensions;
 using Dinghy.Core;
 using Dinghy.Internal.Cute;
 
@@ -24,10 +26,21 @@ public static class Checks
             };
     }
 
-    public static bool CheckCollision<T,U>(T a, U b) where T : Entity, IHasSize where U : Entity, IHasSize
+    public static bool CheckCollision(Entity e1, Entity e2)
     {
-        var ap = Utils.GetEntityPolygon(a);
-        var bp = Utils.GetEntityPolygon(b);
+        if (e1.ECSEntity.Has<Collider>() && e2.ECSEntity.Has<Collider>())
+        {
+            return CheckCollision(e1.ECSEntity.Get<Collider>(), e1.ECSEntity.Get<Position>(), e2.ECSEntity.Get<Collider>(), e2.ECSEntity.Get<Position>());
+        }
+        
+        Console.WriteLine("entites don't have colliders for collision checking");
+        return false;
+    }
+
+    public static bool CheckCollision(Collider a, Position app, Collider b, Position bpp)
+    {
+        var ap = Utils.GetColliderBounds(a,app);
+        var bp = Utils.GetColliderBounds(b,bpp);
         var c = 0;
         unsafe
         {
@@ -39,10 +52,21 @@ public static class Checks
         return c > 0;
     }
     
-    public static (Point a, Point b) GetClosestPoints<T>(T a, T b) where T : Entity, IHasSize
+    public static (Point a, Point b) GetClosestPoints(Entity e1, Entity e2)
     {
-        var ap = Utils.GetEntityPolygon(a);
-        var bp = Utils.GetEntityPolygon(b);
+        if (e1.ECSEntity.Has<Collider>() && e2.ECSEntity.Has<Collider>())
+        {
+            return GetClosestPoints(e1.ECSEntity.Get<Collider>(), e1.ECSEntity.Get<Position>(), e2.ECSEntity.Get<Collider>(), e2.ECSEntity.Get<Position>());
+        }
+        
+        Console.WriteLine("entites don't have colliders for collision checking");
+        return (null,null);
+    }
+    
+    public static (Point a, Point b) GetClosestPoints(Collider a, Position app, Collider b, Position bpp)
+    {
+        var ap = Utils.GetColliderBounds(a,app);
+        var bp = Utils.GetColliderBounds(b,bpp);
         c2v outA = default;
         c2v outB = default;
         unsafe
@@ -54,12 +78,22 @@ public static class Checks
         }
         return (outA,outB);
     }
-
-    public static CollisionInfo GetCollisionInfo<T>(T a, T b) where T : Entity, IHasSize
+    
+    public static CollisionInfo GetCollisionInfo(Entity e1, Entity e2)
+    {
+        if (e1.ECSEntity.Has<Collider>() && e2.ECSEntity.Has<Collider>())
+        {
+            return GetCollisionInfo(e1.ECSEntity.Get<Collider>(), e1.ECSEntity.Get<Position>(), e2.ECSEntity.Get<Collider>(), e2.ECSEntity.Get<Position>());
+        }
+        
+        Console.WriteLine("entites don't have colliders for collision checking");
+        return null;
+    }
+    public static CollisionInfo GetCollisionInfo(Collider a, Position app, Collider b, Position bpp)
     {
         c2Manifold manifold = default;
-        var ap = Utils.GetEntityPolygon(a);
-        var bp = Utils.GetEntityPolygon(b);
+        var ap = Utils.GetColliderBounds(a,app);
+        var bp = Utils.GetColliderBounds(b,bpp);
         unsafe
         {
             fixed (c2Poly* a_ptr = &ap.poly, b_ptr = &bp.poly)
@@ -88,19 +122,20 @@ public static class Checks
 
 public static class Utils
 {
-    public static Polygon GetColliderBounds(Collider c)
+    public static Polygon GetColliderBounds(Collider c, Position entityPosition)
     {
-        return new Polygon(4,GetBounds(c.p,c.sizeProvider));
+        return new Polygon(4,GetBounds(c,entityPosition));
     }
     
-    public static Point[] GetBounds(Position e, IHasSize size)
+    public static Point[] GetBounds(Collider c, Position entityPosition)
     {
-        var pivot = new Vector2(e.x + size.Width / 2f, e.y + size.Height / 2f);
+        //TODO: when collision can be offet, need to use entityPosition + c.x/c.y for proper offset calc
+        var pivot = new Vector2(c.x + c.width / 2f, c.y + c.height / 2f);
         Point[] pts = [
-            TransformEntityPoint((e.x, e.y),e,pivot),
-            TransformEntityPoint((e.x + size.Width, e.y),e,pivot),
-            TransformEntityPoint((e.x + size.Width, e.y + size.Height),e,pivot),
-            TransformEntityPoint((e.x, e.y + size.Height),e,pivot)
+            TransformEntityPoint((c.x, c.y),entityPosition,pivot),
+            TransformEntityPoint((c.x + c.width, c.y),entityPosition,pivot),
+            TransformEntityPoint((c.x + c.width, c.y + c.height),entityPosition,pivot),
+            TransformEntityPoint((c.x, c.y + c.height),entityPosition,pivot)
         ];
         return pts;
 

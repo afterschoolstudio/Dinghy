@@ -1,4 +1,6 @@
 ﻿using Arch.Core;
+using Dinghy.Collision;
+using Dinghy.Core;
 using Dinghy.Internal.Sokol;
 
 namespace Dinghy;
@@ -377,16 +379,41 @@ public class DestructionSystem : DSystem, ICleanupSystem
     }
 }
 
-public class BasicCollisionSystem : DSystem, IUpdateSystem
+public class CollisionSystem : DSystem, IUpdateSystem
 {
-    QueryDescription query = new QueryDescription().WithAll<Collider,Position>();
+    QueryDescription query = new QueryDescription().WithAll<Active,Collider>();
+    private Dictionary<int,(Collider c,Position p)> colliders = new();
     public void Update(double dt)
     {
-        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref Collider c, ref Position a) =>
+        colliders.Clear();
+        //currently have no broadphase
+        int index = 0;
+        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref Position p, ref Collider c) =>
         {
-            //get collider position
-            // c.f.
+            //TODO: need to support offset in colliders
+            //for now pos and collider pos are the same
+            c.x = p.x;
+            c.y = p.y;
+            colliders.Add(index,(c,p));
+            index++;
         });
+
+        for (int i = 0; i < colliders.Count - 1; i++)
+        {
+            iteratePossibleCollisions(colliders[i],i+1);
+        }
+
+    }
+    
+    void iteratePossibleCollisions((Collider c, Position p) colCheck, int colIndex)
+    {
+        for (int i = colIndex; i < colliders.Count; i++)
+        {
+            if (Checks.CheckCollision(colCheck.c,colCheck.p, colliders[i].c,colliders[i].p))
+            {
+                Console.WriteLine("system colliding " + Engine.Time);
+            }
+        }
     }
 
 }

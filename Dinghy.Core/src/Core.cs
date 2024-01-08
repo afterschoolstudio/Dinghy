@@ -29,6 +29,7 @@ public static partial class Engine
         new DestructionSystem(),
         new ParticleRenderSystem(),
         new SceneSystem(),
+        new CollisionSystem(),
         InputSystem
     };
     static HashSet<DSystem> ActiveSystems = new();

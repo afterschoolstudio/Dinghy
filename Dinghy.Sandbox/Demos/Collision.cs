@@ -17,7 +17,7 @@ public class Collision : Scene
     {
         Engine.SetTargetScene(this);
         
-        pointer = new Shape(pointer_col,1,1){Name = "pointer"};
+        pointer = new Shape(pointer_col,10,10){Name = "pointer"};
         static_collider = new Shape(no_collide)
         {
             Name = "static_collider",
