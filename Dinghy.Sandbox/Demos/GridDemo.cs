@@ -15,20 +15,16 @@ public class GridDemo : Scene
         Engine.SetTargetScene(this);
         foreach (var p in g.Points)
         {
-            shapes1.Add(new Shape(shape1c,5,5) { X = (int)p.X, Y = (int)p.Y});
-            shapes2.Add(new Shape(shape2c,5,5) { X = (int)p.X, Y = (int)p.Y});
+            shapes1.Add(new Shape(shape1c,5,5) { X = (int)p.X, Y = (int)p.Y, ColliderActive = false});
+            shapes2.Add(new Shape(shape2c,5,5) { X = (int)p.X, Y = (int)p.Y, ColliderActive = false});
         }
     }
 
     public override void Update(double dt)
     {
-        g.ScaleX = 1f;
-        g.ScaleY = 1f;
-        g.Rotation = (float)Engine.Time;
+        g.SetAndApplyGridTransforms((float)Engine.Time,1f,1f);
         g.ApplyPositionsToEntites(shapes1);
-        g.Rotation = -(float)Engine.Time;
-        g.ScaleX = MathF.Sin((float)Engine.Time) + 2;
-        g.ScaleY = g.ScaleX;
+        g.SetAndApplyGridTransforms(-(float)Engine.Time,MathF.Sin((float)Engine.Time) + 2,MathF.Sin((float)Engine.Time) + 2);
         g.ApplyPositionsToEntites(shapes2);
     }
 }

@@ -220,4 +220,4 @@ public record SceneComponent
     }
 }
 
-public record struct Collider(float x, float y, float width, float height, bool active = true);
+public record struct Collider(float x, float y, float width, float height, bool active = false);

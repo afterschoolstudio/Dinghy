@@ -15,13 +15,14 @@ public class Collision : Scene
     {
         Engine.SetTargetScene(this);
         
-        pointer = new Shape(pointer_col,1,1){Name = "pointer"};
+        pointer = new Shape(pointer_col,1,1){Name = "pointer",ColliderActive = true};
         pointer.OnCollision += CollisionCallbackTest;
         static_collider = new Shape(no_collide)
         {
             Name = "static_collider",
             X = Engine.Width/2f,
-            Y = Engine.Height/2f
+            Y = Engine.Height/2f,
+            ColliderActive = true
         };
     }
 
@@ -53,8 +54,7 @@ public class Collision : Scene
         ptB = new Shape(pt,5,5)
         {
             X = (int)pts.b.X,
-            Y = (int)pts.b.Y,
-            ColliderActive = false
+            Y = (int)pts.b.Y
         };
         collidedThisFrame = false;
     }

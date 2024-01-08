@@ -38,7 +38,8 @@ public class PhysicsShape : Scene
             var startPos = new Vector2(InputSystem.MouseX, InputSystem.MouseY);
             var a = new Shape(new Color(Palettes.ENDESGA[Quick.Random.Next(Palettes.ENDESGA.Count)])) {
                 X = (int)startPos.x,
-                Y = (int)startPos.y
+                Y = (int)startPos.y,
+                ColliderActive = false
             };
             var poly = Engine.PhysicsWorld.CreatePolygonWorldSpace(
                 new Vector2[]

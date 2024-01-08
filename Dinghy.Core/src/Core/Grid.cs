@@ -59,6 +59,17 @@ public class Grid
         }
     }
 
+    public void SetAndApplyGridTransforms(float rotation, float scaleX, float scaleY)
+    {
+        this.rotation = rotation;
+        this.scaleX = scaleX;
+        this.scaleY = scaleY;
+        for (int i = 0; i < Points.Count; i++)
+        {
+            Points[i] = OriginalPoints[i].Transform(this.rotation, this.scaleY, this.scaleY, Pivot);
+        }
+    }
+
     public class GridCreationParams
     {
         public Point Pivot;
