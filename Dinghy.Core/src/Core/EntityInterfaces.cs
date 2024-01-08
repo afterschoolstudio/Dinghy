@@ -2,8 +2,8 @@ using System.Numerics;
 
 namespace Dinghy.Core;
 
-public interface IHasSize
+public interface ICollideable
 {
-    public float Width { get;}
-    public float Height { get;}
+    public bool ColliderActive { get; set; }
+    public Action<Entity> OnCollision { get; set; }
 }

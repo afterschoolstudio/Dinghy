@@ -1,5 +1,5 @@
 ﻿using Arch.Core;
-using Dinghy.Collision;
+using Arch.Core.Extensions;
 using Dinghy.Core;
 using Dinghy.Internal.Sokol;
 
@@ -381,40 +381,28 @@ public class DestructionSystem : DSystem, ICleanupSystem
 
 public class CollisionSystem : DSystem, IUpdateSystem
 {
-    QueryDescription query = new QueryDescription().WithAll<Active,Collider>();
-    private Dictionary<int,(Collider c,Position p)> colliders = new();
+    QueryDescription query = new QueryDescription().WithAll<Active,Collider,Position,HasManagedOwner>();
+    private Dictionary<int,(Arch.Core.Entity e,Collider c,Position p)> colliders = new();
     public void Update(double dt)
     {
         colliders.Clear();
         //currently have no broadphase
         int index = 0;
-        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref Position p, ref Collider c) =>
+        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref Position p, ref Collider c, ref HasManagedOwner o) =>
         {
-            //TODO: need to support offset in colliders
-            //for now pos and collider pos are the same
-            c.x = p.x;
-            c.y = p.y;
-            colliders.Add(index,(c,p));
+            if(!c.active){return;}
+            colliders.Add(index,(e,c,p));
+            for (int i = 0; i < colliders.Count; i++)
+            {
+                if (i == index) {continue;}
+                if (Collision.CheckCollision(c,p, colliders[i].c,colliders[i].p))
+                {
+                    ((ICollideable)o.e).OnCollision?.Invoke(colliders[i].e.Get<HasManagedOwner>().e);
+                    // Console.WriteLine($"system colliding {e.Id} with {colliders[i].e.Id} " + Engine.Time);
+                }
+            }
             index++;
         });
-
-        for (int i = 0; i < colliders.Count - 1; i++)
-        {
-            iteratePossibleCollisions(colliders[i],i+1);
-        }
-
     }
-    
-    void iteratePossibleCollisions((Collider c, Position p) colCheck, int colIndex)
-    {
-        for (int i = colIndex; i < colliders.Count; i++)
-        {
-            if (Checks.CheckCollision(colCheck.c,colCheck.p, colliders[i].c,colliders[i].p))
-            {
-                Console.WriteLine("system colliding " + Engine.Time);
-            }
-        }
-    }
-
 }
 

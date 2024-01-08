@@ -3,7 +3,7 @@ using static Dinghy.Resources;
 
 namespace Dinghy;
 
-public record struct SpriteRenderer : IHasSize
+public record struct SpriteRenderer
 {
     public Resources.Image ImageResource { get;  set; }
     public Rect Rect { get; private set; }
@@ -24,7 +24,7 @@ public record struct SpriteRenderer : IHasSize
     }
 }
 
-public record struct ShapeRenderer(Color Color, float Width, float Height) : IHasSize;
+public record struct ShapeRenderer(Color Color, float Width, float Height);
 public record struct SpriteAnimator(HashSet<Animation> animations)
 {
     public Animation CurrentAnimation { get; private set; } = animations.First();
@@ -220,4 +220,4 @@ public record SceneComponent
     }
 }
 
-public record struct Collider(float x, float y, float width, float height);
+public record struct Collider(float x, float y, float width, float height, bool active = true);

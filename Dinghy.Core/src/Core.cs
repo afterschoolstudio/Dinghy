@@ -28,9 +28,9 @@ public static partial class Engine
         new ManagedComponentSystem(),
         new DestructionSystem(),
         new ParticleRenderSystem(),
-        new SceneSystem(),
         new CollisionSystem(),
-        InputSystem
+        InputSystem,
+        new SceneSystem()
     };
     static HashSet<DSystem> ActiveSystems = new();
     public static void RegisterSystem(DSystem system)
@@ -242,7 +242,7 @@ public static partial class Engine
         var checkSize = checkerboardTexSize / 8;
         uint WHITE = 0xFFFFFFFF;
         uint BLUE = 0xFFFF0000;
-        var pixels = new Utils.NativeArray<uint>(checkerboardTexSize*checkerboardTexSize);
+        var pixels = new Dinghy.NativeInterop.Utils.NativeArray<uint>(checkerboardTexSize*checkerboardTexSize);
         for (int i = 0; i < (checkerboardTexSize*checkerboardTexSize); i++)
         {
             var x = i % checkerboardTexSize;
@@ -618,7 +618,7 @@ public static partial class Engine
                 }
                 break;
             case ParticleEmitterComponent.ParticleConfig.ParticlePrimitiveType.LineStrip:
-                var pts = new Utils.NativeArray<sgp_vec2>(activeIndicies.Count);
+                var pts = new Dinghy.NativeInterop.Utils.NativeArray<sgp_vec2>(activeIndicies.Count);
                 int first = activeIndicies[0];
                 int ct = 0;
                 foreach (var i in activeIndicies)

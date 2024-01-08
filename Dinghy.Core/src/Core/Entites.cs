@@ -1,7 +1,6 @@
 using System.Numerics;
 using Arch.Core;
 using Arch.Core.Extensions;
-using Dinghy.Collision;
 using Dinghy.Core;
 using Dinghy.Internal.Cute;
 using Dinghy.Internal.Sokol;
@@ -194,10 +193,10 @@ public class Entity
         Engine.ECSWorld.Destroy(ECSEntity);
     }
 
-    public static implicit operator Checks.Transform2D(Entity e) =>
-        new Checks.Transform2D(0, 0, 0);
-        // new Checks.Transform2D(e.X, e.Y, e.Rotation);
-        // new Checks.Transform2D(e.X, e.Y, e.Rotation); //we assume world space
+    // public static implicit operator Checks.Transform2D(Entity e) =>
+    //     new Checks.Transform2D(0, 0, 0);
+    //     // new Checks.Transform2D(e.X, e.Y, e.Rotation);
+    //     // new Checks.Transform2D(e.X, e.Y, e.Rotation); //we assume world space
 }
 
 public class Component
@@ -305,7 +304,7 @@ public class Scene : Entity
     public virtual void Cleanup(){}
 }
 
-public class Shape : Entity
+public class Shape : Entity, ICollideable
 {
     private Color c;
     private float height = 0;
@@ -327,9 +326,27 @@ public class Shape : Entity
             rend,
             new Collider(0,0,width,height));
     }
+
+
+    private bool colliderActive;
+    public bool ColliderActive
+    {
+        get => colliderActive;
+        set
+        {
+            ref var c = ref ECSEntity.Get<Collider>();
+            c.active = value;
+            colliderActive = value;
+        }
+    }
+
+    public Action<Entity> OnCollision { get; set; }
+
+    // [BindECSComponentValue<Collider>("active")]
+    // private bool colliderActives;
 }
 
-public class Sprite : Entity
+public class Sprite : Entity, ICollideable
 {
     public SpriteData Data { get; init; }
     public Sprite(SpriteData spriteData, Scene? scene = null, bool startEnabled = true) : base(startEnabled,scene)
@@ -340,9 +357,23 @@ public class Sprite : Entity
             rend,
             new Collider(0,0,Data.Rect.width,Data.Rect.height));
     }
+    
+    private bool colliderActive;
+    public bool ColliderActive
+    {
+        get => colliderActive;
+        set
+        {
+            ref var c = ref ECSEntity.Get<Collider>();
+            c.active = value;
+            colliderActive = value;
+        }
+    }
+    
+    public Action<Entity> OnCollision { get; set; }
 }
 
-public class AnimatedSprite : Entity
+public class AnimatedSprite : Entity, ICollideable
 {
     public AnimatedSpriteData Data { get; init; }
     public AnimatedSprite(AnimatedSpriteData animatedSpriteData, Scene? scene = null, bool startEnabled = true) : base(startEnabled,scene)
@@ -354,6 +385,20 @@ public class AnimatedSprite : Entity
             new SpriteAnimator(Data.Animations),
             new Collider(0,0,Data.Animations.First().Frames[0].width,Data.Animations.First().Frames[0].height));
     }
+    
+    private bool colliderActive;
+    public bool ColliderActive
+    {
+        get => colliderActive;
+        set
+        {
+            ref var c = ref ECSEntity.Get<Collider>();
+            c.active = value;
+            colliderActive = value;
+        }
+    }
+    
+    public Action<Entity> OnCollision { get; set; }
 }
 
 public class ParticleEmitter : Entity

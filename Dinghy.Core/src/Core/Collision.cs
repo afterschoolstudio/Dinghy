@@ -3,9 +3,9 @@ using Arch.Core.Extensions;
 using Dinghy.Core;
 using Dinghy.Internal.Cute;
 
-namespace Dinghy.Collision;
+namespace Dinghy;
 
-public static class Checks
+public static class Collision
 {
     //TODO:
     //wrap these:
@@ -129,13 +129,15 @@ public static class Utils
     
     public static Point[] GetBounds(Collider c, Position entityPosition)
     {
-        //TODO: when collision can be offet, need to use entityPosition + c.x/c.y for proper offset calc
-        var pivot = new Vector2(c.x + c.width / 2f, c.y + c.height / 2f);
+        var xpos = entityPosition.x + c.x;
+        var ypos = entityPosition.y + c.y;
+        //note this is the implicit entity pivot — may eventually want to change to be passed in
+        var pivot = new Vector2(xpos + c.width / 2f, ypos + c.height / 2f);
         Point[] pts = [
-            TransformEntityPoint((c.x, c.y),entityPosition,pivot),
-            TransformEntityPoint((c.x + c.width, c.y),entityPosition,pivot),
-            TransformEntityPoint((c.x + c.width, c.y + c.height),entityPosition,pivot),
-            TransformEntityPoint((c.x, c.y + c.height),entityPosition,pivot)
+            TransformEntityPoint((xpos, ypos),entityPosition,pivot),
+            TransformEntityPoint((xpos + c.width, ypos),entityPosition,pivot),
+            TransformEntityPoint((xpos + c.width, ypos + c.height),entityPosition,pivot),
+            TransformEntityPoint((xpos, ypos + c.height),entityPosition,pivot)
         ];
         return pts;
 
