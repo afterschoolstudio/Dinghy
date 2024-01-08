@@ -106,21 +106,21 @@ void asteroidsGame()
 	};
 
 	double timer = 0;
-	Update += () =>
-	{
-		//spawn asteroids
-		timer += Engine.DeltaTime;
-		bulletCooldown += Engine.DeltaTime;
-		if (timer > 2)
-		{
-			var a = new Sprite(conscript) {
-				X = Engine.Width, 
-				Y = (int)((Engine.Height / 2f) + MathF.Sin(RandFloat() * 2 - 1) * Engine.Height / 2.5f)
-			};
-			a.SetVelocity(-2,0);
-			timer = 0;
-		}
-	};
+	// Update += () =>
+	// {
+	// 	//spawn asteroids
+	// 	timer += Engine.DeltaTime;
+	// 	bulletCooldown += Engine.DeltaTime;
+	// 	if (timer > 2)
+	// 	{
+	// 		var a = new Sprite(conscript) {
+	// 			X = Engine.Width, 
+	// 			Y = (int)((Engine.Height / 2f) + MathF.Sin(RandFloat() * 2 - 1) * Engine.Height / 2.5f)
+	// 		};
+	// 		a.SetVelocity(-2,0);
+	// 		timer = 0;
+	// 	}
+	// };
 }
 
 /*

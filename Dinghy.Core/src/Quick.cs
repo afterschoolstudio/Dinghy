@@ -37,29 +37,7 @@ public static class Quick
             (float)Math.Cos(radian),
             (float)Math.Sin(radian));
     }
-    public static List<Rect> HorizontalFrameSequence(int startX, int startY, int frameWidth, int frameHeight, int frameCount)
-    {
-        List<Rect> frames = new List<Rect>();
-        for (int i = 0; i < frameCount; i++)
-        {
-            frames.Add(new Rect(startX + i * frameWidth, startY, frameWidth, frameHeight));
-        }
 
-        return frames;
-    }
-
-    public static Action Update
-    {
-        get => Engine.Update;
-        set => Engine.Update += value;
-    }
-    
-    public static Action Setup
-    {
-        get => Engine.Setup;
-        set => Engine.Setup += value;
-    }
-    
     static Func<FieldInfo,bool> DefaultFieldSkipFunction = (field) => true;
     static BindingFlags FieldBindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy;
 
@@ -200,5 +178,20 @@ public static class Quick
             //     }
             // }
         } 
+    }
+
+    public static Rect[] CreateTextureSlices(int textureWidth, int textureHeight, int cellWidth, int cellHeight)
+    {
+        var widths = textureWidth / cellWidth;
+        var heights = textureHeight / cellHeight;
+        var rects = new Rect[widths*heights];
+        for (int h = 0; h < heights; h++)
+        {
+            for (int w = 0; w < widths; w++)
+            {
+                rects[h*widths+w] = new Rect(w*cellWidth,h*cellHeight,cellWidth,cellHeight);
+            }
+        }
+        return rects;
     }
 }

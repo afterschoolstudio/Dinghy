@@ -9,9 +9,10 @@ public class Interaction : Scene
     public override void Preload()
     {
         conscriptImage = new TextureData("conscript.png");
+        var rects = Quick.CreateTextureSlices(512, 512, 64, 64);
         animatedConscript = new AnimatedSpriteData(
             conscriptImage,
-            new() { new("test", HorizontalFrameSequence(0, 0, 64, 64, 4),
+            new() { new("test", rects[..3],
                 0.4f) });
     }
 
