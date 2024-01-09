@@ -383,26 +383,25 @@ public class DestructionSystem : DSystem, ICleanupSystem
 public class CollisionSystem : DSystem, IUpdateSystem
 {
     QueryDescription query = new QueryDescription().WithAll<Active,Collider,Position,HasManagedOwner>();
-    private Dictionary<int,(Arch.Core.Entity e,Collider c,Position p)> colliders = new();
+    private List<(Arch.Core.Entity e,Collider c,Position p)> colliders = new();
     public void Update(double dt)
     {
         colliders.Clear();
         //currently have no broadphase
-        int index = 0;
+        List<(Entity self,Entity other)> collisions = new();
         Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref Position p, ref Collider c, ref HasManagedOwner o) =>
         {
             if(!c.active){return;}
-            colliders.Add(index,(e,c,p));
             for (int i = 0; i < colliders.Count; i++)
             {
-                if (i == index) {continue;}
                 if (Collision.CheckCollision(c,p, colliders[i].c,colliders[i].p))
                 {
-                    ((ICollideable)o.e).OnCollision?.Invoke(colliders[i].e.Get<HasManagedOwner>().e);
-                    // Console.WriteLine($"system colliding {e.Id} with {colliders[i].e.Id} " + Engine.Time);
+                    //note we cal the collision event for both participants in the collision
+                    ((ICollideable)o.e).Collide(o.e,colliders[i].e.Get<HasManagedOwner>().e);
+                    ((ICollideable)colliders[i].e.Get<HasManagedOwner>().e).Collide(colliders[i].e.Get<HasManagedOwner>().e,o.e);
                 }
             }
-            index++;
+            colliders.Add((e,c,p));
         });
     }
 }

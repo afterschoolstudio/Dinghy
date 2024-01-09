@@ -184,7 +184,10 @@ public class Entity
 
     public void Destroy()
     {
-        ECSEntity.Add(new Destroy());
+        if (!ECSEntity.Has<Destroy>())
+        {
+            ECSEntity.Add(new Destroy());
+        }
     }
 
     public void DestroyImmediate()
@@ -340,7 +343,7 @@ public class Shape : Entity, ICollideable
         }
     }
 
-    public Action<Entity> OnCollision { get; set; }
+    public Action<Entity,Entity>  OnCollision { get; set; }
 
     // [BindECSComponentValue<Collider>("active")]
     // private bool colliderActives;
@@ -370,7 +373,7 @@ public class Sprite : Entity, ICollideable
         }
     }
     
-    public Action<Entity> OnCollision { get; set; }
+    public Action<Entity,Entity>  OnCollision { get; set; }
 }
 
 public class AnimatedSprite : Entity, ICollideable
@@ -398,7 +401,7 @@ public class AnimatedSprite : Entity, ICollideable
         }
     }
     
-    public Action<Entity> OnCollision { get; set; }
+    public Action<Entity,Entity>  OnCollision { get; set; }
 }
 
 public class ParticleEmitter : Entity

@@ -16,7 +16,7 @@ public class AsteroidsGame : Scene
     public override void Create()
     {
         Engine.SetTargetScene(this);
-        player = new Sprite(fullConscript){Name = "player",X = Engine.Width/2f,Y = Engine.Height/2f,ColliderActive = true};
+        player = new Sprite(fullConscript){Name = "player",X = Engine.Width/2f,Y = Engine.Height/2f};
         InputSystem.Events.Key.Down += OnKeyDown;
     }
 
@@ -25,29 +25,32 @@ public class AsteroidsGame : Scene
     private List<Asteroid> asteroids = new List<Asteroid>();
     private void OnKeyDown(Key key, List<Modifiers> arg2)
     {
-	    (float dx, float dy) v = key switch {
-		    Key.LEFT => (-0.2f, 0),
-		    Key.RIGHT => (0.2f, 0),
-		    Key.UP => (0, -0.2f),
-		    Key.DOWN => (0, 0.2f),
-		    _ => (0, 0)
-	    };
-	    player.SetVelocity(player.DX + v.dx, player.DY + v.dy);
+	    // (float dx, float dy) v = key switch {
+		   //  Key.LEFT => (-0.2f, 0),
+		   //  Key.RIGHT => (0.2f, 0),
+		   //  Key.UP => (0, -0.2f),
+		   //  Key.DOWN => (0, 0.2f),
+		   //  _ => (0, 0)
+	    // };
+	    // player.SetVelocity(player.DX + v.dx, player.DY + v.dy);
 
 	    if (key == Key.SPACE)
 	    {
 		    //spawn bullets
 		    var bullet =new Bullet(fullConscript) {
+			    Name = "bullet",
 			    X = player.X, 
 			    Y = player.Y,
-			    DX = 2.5f,
+			    DX = 1.5f,
 			    ColliderActive = true,
-			    OnCollision = (e) =>
+			    OnCollision = (bullet,e) =>
 			    {
 				    if (e is Asteroid a)
 				    {
 					    asteroids.Remove(a);
-					    e.Destroy();
+					    a.Destroy();
+						bullets.Remove(bullet as Bullet);
+					    bullet.Destroy();
 				    }
 			    }
 		    };
@@ -57,24 +60,19 @@ public class AsteroidsGame : Scene
     }
 
     private double timer = 0;
-    private List<Shape> colTest = new();
     public override void Update(double dt)
     {
-	    foreach (var c in colTest)
-	    {
-		    c.Destroy();
-	    }
-	    colTest.Clear();
 	    Quick.MoveToMouse(player);
 	    //spawn asteroids
 	    timer += Engine.DeltaTime;
 	    bulletCooldown += Engine.DeltaTime;
-	    if (timer > 2)
+	    if (timer > 1)
 	    {
 	    	var a = new Asteroid(fullConscript) {
+			    Name = "Asteroid",
 	    		X = Engine.Width, 
 	    		Y = (int)((Engine.Height / 2f) + MathF.Sin(Quick.RandFloat() * 2 - 1) * Engine.Height / 2.5f),
-			    DX = -2f,
+			    DX = -1.5f,
 			    ColliderActive = true
 	    	};
 		    asteroids.Add(a);
@@ -100,20 +98,6 @@ public class AsteroidsGame : Scene
 		    }
 		    return false;
 	    });
-
-	    var bullet = bullets.Any() ? bullets[0] : null;
-	    if (bullet != null)
-	    {
-		    foreach (var a in asteroids)
-		    {
-			    var pts = Dinghy.Collision.GetClosestPoints(bullet, a);
-			    colTest.Add(new Shape(Palettes.ENDESGA[1],5,5)
-			    {
-				    X = pts.b.X,
-				    Y = pts.b.Y
-			    });
-		    }
-	    }
     }
 
     public override void Cleanup()

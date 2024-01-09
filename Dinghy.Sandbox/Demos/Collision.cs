@@ -8,30 +8,60 @@ public class Collision : Scene
     Color no_collide = Palettes.ENDESGA[7];
     Color collide = Palettes.ENDESGA[3];
 
-    private Shape static_collider;
+    private Shape static_colliderA;
+    private Shape static_colliderB;
+    private Shape static_colliderC;
     private Shape pointer;
+    private Shape ptA;
     private Shape ptB;
+    private Shape ptC;
     public override void Create()
     {
         Engine.SetTargetScene(this);
         
         pointer = new Shape(pointer_col,1,1){Name = "pointer",ColliderActive = true};
         pointer.OnCollision += CollisionCallbackTest;
-        static_collider = new Shape(no_collide)
+        static_colliderA = new Shape(no_collide)
         {
-            Name = "static_collider",
+            Name = "static_colliderA",
             X = Engine.Width/2f,
             Y = Engine.Height/2f,
             ColliderActive = true
         };
+        
+        static_colliderB = new Shape(no_collide)
+        {
+            Name = "static_colliderB",
+            X = Engine.Width/2f - 200f,
+            Y = Engine.Height/2f - 200f,
+            ColliderActive = true
+        };
+        
+        static_colliderC = new Shape(no_collide)
+        {
+            Name = "static_colliderB",
+            X = Engine.Width/2f + 200f,
+            Y = Engine.Height/2f - 200f,
+            ColliderActive = true
+        };
     }
 
-    private bool collidedThisFrame = false;
-    public void CollisionCallbackTest(Entity e)
+    private bool collidedThisFrameA = false;
+    private bool collidedThisFrameB = false;
+    private bool collidedThisFrameC = false;
+    public void CollisionCallbackTest(Entity pointer, Entity other)
     {
-        if (e == static_collider)
+        if (other == static_colliderA)
         {
-            collidedThisFrame = true;
+            collidedThisFrameA = true;
+        }
+        if (other == static_colliderB)
+        {
+            collidedThisFrameB = true;
+        }
+        if (other == static_colliderC)
+        {
+            collidedThisFrameC = true;
         }
         // way to get other collision meta
         // Console.WriteLine(CollisionChecks.GetCollisionInfo(pointer,static_collider));
@@ -39,24 +69,53 @@ public class Collision : Scene
 
     public override void Update(double dt)
     {
+        if(ptA != null){ptA.DestroyImmediate();}
         if(ptB != null){ptB.DestroyImmediate();}
-        static_collider.Rotation = (float)Engine.Time;
-        static_collider.ScaleX = MathF.Sin((float)Engine.Time) + 2;
-        static_collider.ScaleY = MathF.Sin((float)Engine.Time) + 2;
+        if(ptC != null){ptC.DestroyImmediate();}
+        
+        static_colliderA.Rotation = (float)Engine.Time;
+        static_colliderA.ScaleX = MathF.Sin((float)Engine.Time) + 2;
+        static_colliderA.ScaleY = MathF.Sin((float)Engine.Time) + 2;
+        static_colliderA.X = Engine.Width/2f + MathF.Cos((float)Engine.Time) * 50;
+        static_colliderB.Rotation = (float)Engine.Time;
+        static_colliderB.ScaleX = MathF.Sin((float)Engine.Time) + 2;
+        static_colliderB.ScaleY = MathF.Sin((float)Engine.Time) + 2;
+        static_colliderC.Rotation = (float)Engine.Time;
+        static_colliderC.ScaleX = MathF.Sin((float)Engine.Time) + 2;
+        static_colliderC.ScaleY = MathF.Sin((float)Engine.Time) + 2;
 		
         pointer.SetPosition((int)InputSystem.MouseX,(int)InputSystem.MouseY,0,1,1);
         // raw way to get collision data instead of relying on the system callbacks
         // static_collider.Color = CollisionChecks.CheckCollision(pointer, static_collider)
         //     ? collide
         //     : no_collide;
-        static_collider.Color = collidedThisFrame ? collide : no_collide;
-        var pts = Dinghy.Collision.GetClosestPoints(pointer, static_collider);
+        static_colliderA.Color = collidedThisFrameA ? collide : no_collide;
+        static_colliderB.Color = collidedThisFrameB ? collide : no_collide;
+        static_colliderC.Color = collidedThisFrameC ? collide : no_collide;
+        
+        var ptsA = Dinghy.Collision.GetClosestPoints(pointer, static_colliderA);
+        ptA = new Shape(pt,5,5)
+        {
+            X = ptsA.b.X,
+            Y = ptsA.b.Y
+        };
+        var ptsB = Dinghy.Collision.GetClosestPoints(pointer, static_colliderB);
         ptB = new Shape(pt,5,5)
         {
-            X = pts.b.X,
-            Y = pts.b.Y
+            X = ptsB.b.X,
+            Y = ptsB.b.Y
         };
-        collidedThisFrame = false;
+        var ptsC = Dinghy.Collision.GetClosestPoints(pointer, static_colliderC);
+        ptC = new Shape(pt,5,5)
+        {
+            X = ptsC.b.X,
+            Y = ptsC.b.Y
+        };
+        
+        
+        collidedThisFrameA = false;
+        collidedThisFrameB = false;
+        collidedThisFrameC = false;
     }
 
     public override void Cleanup()
