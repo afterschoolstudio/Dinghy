@@ -16,18 +16,20 @@ public class AsteroidsGame : Scene
     public override void Create()
     {
         Engine.SetTargetScene(this);
-        player = new Sprite(fullConscript){Name = "player",X = Engine.Width/2f,Y = Engine.Height/2f};
+        player = new Sprite(fullConscript){Name = "player",X = Engine.Width/2f,Y = Engine.Height/2f,ColliderActive = true};
         InputSystem.Events.Key.Down += OnKeyDown;
     }
 
     double bulletCooldown = 0;
+    private List<Bullet> bullets = new List<Bullet>();
+    private List<Asteroid> asteroids = new List<Asteroid>();
     private void OnKeyDown(Key key, List<Modifiers> arg2)
     {
 	    (float dx, float dy) v = key switch {
-		    Key.LEFT => (-1f, 0),
-		    Key.RIGHT => (1f, 0),
-		    Key.UP => (0, -1f),
-		    Key.DOWN => (0, 1f),
+		    Key.LEFT => (-0.2f, 0),
+		    Key.RIGHT => (0.2f, 0),
+		    Key.UP => (0, -0.2f),
+		    Key.DOWN => (0, 0.2f),
 		    _ => (0, 0)
 	    };
 	    player.SetVelocity(player.DX + v.dx, player.DY + v.dy);
@@ -35,29 +37,82 @@ public class AsteroidsGame : Scene
 	    if (key == Key.SPACE)
 	    {
 		    //spawn bullets
-		    var a = new Sprite(fullConscript) {
+		    var bullet =new Bullet(fullConscript) {
 			    X = player.X, 
-			    Y = player.Y
+			    Y = player.Y,
+			    DX = 2.5f,
+			    ColliderActive = true,
+			    OnCollision = (e) =>
+			    {
+				    if (e is Asteroid a)
+				    {
+					    asteroids.Remove(a);
+					    e.Destroy();
+				    }
+			    }
 		    };
-		    a.SetVelocity(2.5f,0);
+		    bullets.Add(bullet);
 		    bulletCooldown = 0f;
 	    }
     }
 
     private double timer = 0;
+    private List<Shape> colTest = new();
     public override void Update(double dt)
     {
+	    foreach (var c in colTest)
+	    {
+		    c.Destroy();
+	    }
+	    colTest.Clear();
+	    Quick.MoveToMouse(player);
 	    //spawn asteroids
 	    timer += Engine.DeltaTime;
 	    bulletCooldown += Engine.DeltaTime;
 	    if (timer > 2)
 	    {
-	    	var a = new Sprite(fullConscript) {
+	    	var a = new Asteroid(fullConscript) {
 	    		X = Engine.Width, 
-	    		Y = (int)((Engine.Height / 2f) + MathF.Sin(Quick.RandFloat() * 2 - 1) * Engine.Height / 2.5f)
+	    		Y = (int)((Engine.Height / 2f) + MathF.Sin(Quick.RandFloat() * 2 - 1) * Engine.Height / 2.5f),
+			    DX = -2f,
+			    ColliderActive = true
 	    	};
-	    	a.SetVelocity(-2,0);
+		    asteroids.Add(a);
 	    	timer = 0;
+	    }
+
+	    bullets.RemoveAll(b =>
+	    {
+		    if (b.X > Engine.Width)
+		    {
+			    b.Destroy();
+			    return true;
+		    }
+		    return false;
+	    });
+	    
+	    asteroids.RemoveAll(a =>
+	    {
+		    if (a.X < -10)
+		    {
+			    a.Destroy();
+			    return true;
+		    }
+		    return false;
+	    });
+
+	    var bullet = bullets.Any() ? bullets[0] : null;
+	    if (bullet != null)
+	    {
+		    foreach (var a in asteroids)
+		    {
+			    var pts = Dinghy.Collision.GetClosestPoints(bullet, a);
+			    colTest.Add(new Shape(Palettes.ENDESGA[1],5,5)
+			    {
+				    X = pts.b.X,
+				    Y = pts.b.Y
+			    });
+		    }
 	    }
     }
 
@@ -65,6 +120,15 @@ public class AsteroidsGame : Scene
     {
 	    InputSystem.Events.Key.Down -= OnKeyDown;
     }
+
+    public class Bullet(SpriteData spriteData) : Sprite(spriteData);
+    public class Asteroid(SpriteData spriteData) : Sprite(spriteData);
+    
+    //could also do it an ecs way
+    //public readonly record struct Bullet();
+    //public readonly record struct Asteroid();
+    //bullet.ECSEntity.Add<Bullet>();
+    //then in the collision check if the ECSEntity.Has<Bullet>()
 }
 
 /*

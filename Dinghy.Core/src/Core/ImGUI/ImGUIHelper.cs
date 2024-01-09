@@ -15,6 +15,28 @@ public static class ImGUIHelper
             }
         }
         public static void EndMenu() => Internal.Sokol.ImGUI.igEndMenu();
+        public static void SetNextWindowPosition(Point p)
+        {
+            SetNextWindowPosition(p.X,p.Y,Internal.Sokol.ImGuiCond_.ImGuiCond_Always,0,0);
+        }
+        public static void SetNextWindowPosition(float x, float y, Internal.Sokol.ImGuiCond_ condition, float pivot_x, float pivot_y)
+        {
+            Internal.Sokol.ImGUI.igSetNextWindowPos(new(){x = x, y=y}, (int)condition, new ImVec2(){x = pivot_x,y=pivot_y});
+        }
+        public static unsafe void SetNextWindowSize(float width, float height)
+        {
+            Internal.Sokol.ImGUI.igSetNextWindowSize(new ImVec2(){x =width,y=height},(int)Internal.Sokol.ImGuiCond_.ImGuiCond_Always);
+        }
+        
+        public static void SetNextWindowBGAlpha(float alpha)
+        {
+            Internal.Sokol.ImGUI.igSetNextWindowBgAlpha(alpha);
+        }
+        public static unsafe void DrawQuad(Point a, Point b, Point c, Point d)
+        {
+            var p = Internal.Sokol.ImGUI.igGetWindowDrawList();
+            Internal.Sokol.ImGUI.ImDrawList_AddQuadFilled(Internal.Sokol.ImGUI.igGetWindowDrawList(),a,b,c,d,Palettes.ONE_BIT_MONITOR_GLOW[1]);
+        }
         
         public static unsafe bool MenuItem(string name, string shortcut = "", bool selected = false, bool enabled = true)
         {
@@ -183,11 +205,6 @@ public static class ImGUIHelper
         public static void End()
         {
             Internal.Sokol.ImGUI.igEnd();
-        }
-
-        public static void SetNextWindowPosition(float x, float y, Internal.Sokol.ImGuiCond_ condition, float pivot_x, float pivot_y)
-        {
-            Internal.Sokol.ImGUI.igSetNextWindowPos(new(){x = x, y=y}, (int)condition, new ImVec2(){x = pivot_x,y=pivot_y});
         }
         public static unsafe void ShowStats(string frameRate, string entities, string mouse)
         {

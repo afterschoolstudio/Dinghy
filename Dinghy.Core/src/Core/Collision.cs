@@ -1,7 +1,9 @@
 using System.Numerics;
 using Arch.Core.Extensions;
 using Dinghy.Core;
+using Dinghy.Core.ImGUI;
 using Dinghy.Internal.Cute;
+using Dinghy.Internal.Sokol;
 
 namespace Dinghy;
 
@@ -146,7 +148,7 @@ public static class Utils
 
         Point TransformEntityPoint(Point p, Position e, Vector2 pivot)
         {
-            return TransformPoint(new Vector2(p.X,p.Y),e.rotation, e.scaleX, e.scaleY, pivot);
+            return TransformPoint(p,e.rotation, e.scaleX, e.scaleY, pivot);
         }
 
         Vector2 TransformPoint(

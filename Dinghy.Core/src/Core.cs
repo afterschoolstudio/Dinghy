@@ -29,6 +29,7 @@ public static partial class Engine
         new DestructionSystem(),
         new ParticleRenderSystem(),
         new CollisionSystem(),
+        new DebugOverlaySystem(),
         InputSystem,
         new SceneSystem()
     };
@@ -299,6 +300,7 @@ public static partial class Engine
 
     public static bool showStats = true;
     public static bool showIMGUIDemo = false;
+    public static bool drawDebugOverlay = false;
 
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
     private static unsafe void Frame()
@@ -325,6 +327,7 @@ public static partial class Engine
         {
             ImGUIHelper.Wrappers.Checkbox("Show Stats", ref showStats);
             ImGUIHelper.Wrappers.Checkbox("Show IMGUI Demo", ref showIMGUIDemo);
+            ImGUIHelper.Wrappers.Checkbox("Draw Debug Overlay", ref drawDebugOverlay);
             foreach (var i in MountedScenes)
             {
                 ImGUIHelper.Wrappers.Text($"{i.Value.Name} {i.Value.Status}");
@@ -409,7 +412,17 @@ public static partial class Engine
             //TODO: need to sort systems by priority
             if (s is IUpdateSystem us)
             {
-                us.Update(DeltaTime);
+                if (s is DebugOverlaySystem)
+                {
+                    if (drawDebugOverlay)
+                    {
+                        us.Update(DeltaTime);
+                    }
+                }
+                else
+                {
+                    us.Update(DeltaTime);
+                }
             }
         }
         foreach (var s in ActiveSystems)

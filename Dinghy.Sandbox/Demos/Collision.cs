@@ -53,8 +53,8 @@ public class Collision : Scene
         var pts = Dinghy.Collision.GetClosestPoints(pointer, static_collider);
         ptB = new Shape(pt,5,5)
         {
-            X = (int)pts.b.X,
-            Y = (int)pts.b.Y
+            X = pts.b.X,
+            Y = pts.b.Y
         };
         collidedThisFrame = false;
     }

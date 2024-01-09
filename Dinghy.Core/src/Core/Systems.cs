@@ -1,6 +1,7 @@
 using Arch.Core;
 using Arch.Core.Extensions;
 using Dinghy.Core;
+using Dinghy.Core.ImGUI;
 using Dinghy.Internal.Sokol;
 
 namespace Dinghy;
@@ -403,6 +404,35 @@ public class CollisionSystem : DSystem, IUpdateSystem
             }
             index++;
         });
+    }
+}
+
+public class DebugOverlaySystem : DSystem, IUpdateSystem
+{
+    QueryDescription colliderDebug = new QueryDescription().WithAll<Active,Collider,Position,HasManagedOwner>();
+    public void Update(double dt)
+    {
+        Engine.ECSWorld.Query(in colliderDebug,
+            (Arch.Core.Entity e, ref Position p, ref Collider c, ref HasManagedOwner o) =>
+            {
+                ImGUIHelper.Wrappers.SetNextWindowSize(100, 100);
+                ImGUIHelper.Wrappers.SetNextWindowPosition((p.x, p.y));
+                ImGUIHelper.Wrappers.SetNextWindowBGAlpha(0f);
+                ImGUIHelper.Wrappers.Begin($"e{e.Id}", 
+                    ImGuiWindowFlags_.ImGuiWindowFlags_NoTitleBar | 
+                    ImGuiWindowFlags_.ImGuiWindowFlags_NoMouseInputs |
+                    ImGuiWindowFlags_.ImGuiWindowFlags_NoMove |
+                    ImGuiWindowFlags_.ImGuiWindowFlags_NoResize |
+                    ImGuiWindowFlags_.ImGuiWindowFlags_NoBringToFrontOnFocus);
+                var x = p.x + c.x;
+                var y = p.y + c.y;
+                ImGUIHelper.Wrappers.DrawQuad(
+                    (x,y),
+                    (x,y+c.height),
+                    (x + c.width,y +c.height),
+                    (x + c.width,y));
+                ImGUIHelper.Wrappers.End();
+            });
     }
 }
 

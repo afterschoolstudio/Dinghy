@@ -1,5 +1,6 @@
 using System.Numerics;
 using Dinghy.Internal.Cute;
+using Dinghy.Internal.Sokol;
 
 namespace Dinghy.Core;
 
@@ -27,6 +28,11 @@ public record Point(float X, float Y)
     public static implicit operator Vector2(Point p)
     {
         return new Vector2(p.X, p.Y);
+    }
+    
+    public static implicit operator ImVec2(Point p)
+    {
+        return new ImVec2(){x =p.X, y=p.Y};
     }
     
     public static Point operator +(Point a, Point b)
