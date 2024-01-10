@@ -11,7 +11,9 @@ public class ShapeDemo : Scene
         new Shape(new Color(Palettes.ENDESGA[9]))
         {
             X = Engine.Width / 2f,
-            Y = Engine.Height / 2f
+            Y = Engine.Height / 2f,
+            PivotX = 16,
+            PivotY = 16
         };
     }
 }

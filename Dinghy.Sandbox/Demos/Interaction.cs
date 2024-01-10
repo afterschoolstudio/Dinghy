@@ -21,7 +21,7 @@ public class Interaction : Scene
     {
         Engine.SetTargetScene(this);
         
-        e = new AnimatedSprite(animatedConscript){X = Engine.Width/2f,Y = Engine.Height/2f};
+        e = new AnimatedSprite(animatedConscript){X = Engine.Width/2f,Y = Engine.Height/2f, PivotX = 32,PivotY = 32};
         Console.WriteLine("subbing");
         InputSystem.Events.Key.Down += KeyDownListener;
     }
