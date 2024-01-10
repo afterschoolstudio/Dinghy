@@ -94,18 +94,44 @@ public class Entity
             rotation = value;
         }
     }
+    
+    private float pivotX = 0;
+    public float PivotX
+    {
+        get => pivotX;
+        set
+        {
+            ref var pos = ref ECSEntity.Get<Position>();
+            pos.pivotX = value;
+            pivotX = value;
+        }
+    }
+    
+    private float pivotY = 0;
+    public float PivotY
+    {
+        get => pivotY;
+        set
+        {
+            ref var pos = ref ECSEntity.Get<Position>();
+            pos.pivotY = value;
+            pivotY = value;
+        }
+    }
 
 
-    public void SetPositionRaw(float x, float y, float rotation, float scaleX, float scaleY)
+    public void SetPositionRaw(float x, float y, float rotation, float scaleX, float scaleY, float pivotX, float pivotY)
     {
         this.x = x;
         this.y = y;
         this.scaleX = scaleX;
         this.scaleY = scaleY;
         this.rotation = rotation;
+        this.pivotX = pivotX;
+        this.pivotY = pivotY;
     }
 
-    public void SetPosition(float x, float y, float rotation, float scaleX, float scaleY)
+    public void SetPosition(float x, float y, float rotation, float scaleX, float scaleY, float pivotX, float pivotY)
     {
         ref var pos = ref ECSEntity.Get<Position>();
         pos.x = x;
@@ -113,7 +139,9 @@ public class Entity
         pos.scaleY = scaleY;
         pos.scaleX = scaleX;
         pos.rotation = rotation;
-        SetPositionRaw(x,y,rotation,scaleX,scaleY);
+        pos.pivotX = pivotX;
+        pos.pivotY = pivotY;
+        SetPositionRaw(x,y,rotation,scaleX,scaleY,pivotX,pivotY);
     }
     
     private float dx = 0;

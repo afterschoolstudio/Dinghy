@@ -132,7 +132,7 @@ public class Grid
         {
             if (i < Points.Count)
             {
-                entities[i].SetPosition((int)Points[i].X,(int)Points[i].Y,entities[i].Rotation,entities[i].ScaleX,entities[i].ScaleY);
+                entities[i].SetPosition((int)Points[i].X,(int)Points[i].Y,entities[i].Rotation,entities[i].ScaleX,entities[i].ScaleY,entities[i].PivotX,entities[i].PivotY);
             }
         }
     }

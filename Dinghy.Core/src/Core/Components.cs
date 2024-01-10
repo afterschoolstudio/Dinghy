@@ -56,7 +56,7 @@ public record struct SpriteAnimator(HashSet<Animation> animations)
         }
     }
 }
-public record struct Position(float x = 0, float y = 0, float scaleX = 1, float scaleY = 1, float rotation = 0f);
+public record struct Position(float x = 0, float y = 0, float scaleX = 1, float scaleY = 1, float rotation = 0f, float pivotX = 0, float pivotY = 0);
 public record struct Velocity (float x, float y);
 public record ManagedComponent(Component managedComponent);
 public readonly record struct Destroy();

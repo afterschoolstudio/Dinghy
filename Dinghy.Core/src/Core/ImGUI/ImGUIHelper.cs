@@ -37,6 +37,11 @@ public static class ImGUIHelper
             var p = Internal.Sokol.ImGUI.igGetWindowDrawList();
             Internal.Sokol.ImGUI.ImDrawList_AddQuadFilled(Internal.Sokol.ImGUI.igGetWindowDrawList(),a,b,c,d,Palettes.ONE_BIT_MONITOR_GLOW[1]);
         }
+        public static unsafe void DrawQuad(Point[] points)
+        {
+            var p = Internal.Sokol.ImGUI.igGetWindowDrawList();
+            Internal.Sokol.ImGUI.ImDrawList_AddQuadFilled(Internal.Sokol.ImGUI.igGetWindowDrawList(),points[0],points[1],points[2],points[3],Palettes.ONE_BIT_MONITOR_GLOW[1]);
+        }
         
         public static unsafe bool MenuItem(string name, string shortcut = "", bool selected = false, bool enabled = true)
         {

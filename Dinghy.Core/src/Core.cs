@@ -513,21 +513,21 @@ public static partial class Engine
         }
     }
 
-    public static void DrawTexturedRect(float x, float y, float rotation, float scaleX, float scaleY, Rect source, Rect dest, Resources.Image img)
+    public static void DrawTexturedRect(Position p, SpriteRenderer r)
     {
         GP.sgp_set_color(1.0f, 1.0f, 1.0f, 1.0f);
         GP.sgp_set_blend_mode(sgp_blend_mode.SGP_BLENDMODE_BLEND);
-        GP.sgp_set_image(0,img.internalData.sg_image);
+        GP.sgp_set_image(0,r.ImageResource.internalData.sg_image);
         GP.sgp_push_transform();
-        GP.sgp_translate(x,y);
-        GP.sgp_rotate_at(rotation, source.width / 2f, source.height / 2f);
-        GP.sgp_scale_at(scaleX, scaleY, source.width / 2f, source.height / 2f);
+        GP.sgp_translate(p.x - p.pivotX,p.y - p.pivotY);
+        GP.sgp_rotate_at(p.rotation, p.pivotX, p.pivotY);
+        GP.sgp_scale_at(p.scaleX, p.scaleY, p.pivotX, p.pivotY);
         GP.sgp_draw_textured_rect(0,
             //this is the rect to draw the source "to", basically can scale the rect (maybe do wrapping?)
             //we assume this is the width and height of the frame itself
-            dest.InternalRect,
+            r.SizeRect.InternalRect,
             //this is the rect index into the texture itself
-            source.InternalRect);
+            r.Rect.InternalRect);
         GP.sgp_pop_transform();
         // GP.sgp_draw_filled_rect(x,y,img.internalData.width,img.internalData.height);
         GP.sgp_reset_image(0);
@@ -571,17 +571,17 @@ public static partial class Engine
         */
     }
     
-    public static void DrawShape(float x, float y, float rotation, float scaleX, float scaleY, Color c, Rect f)
+    public static void DrawShape(Position p, ShapeRenderer r)
     {
         //argb
         //rgba
-        GP.sgp_set_color(c.internal_color.r, c.internal_color.g, c.internal_color.b, c.internal_color.a);
+        GP.sgp_set_color(r.Color.internal_color.r, r.Color.internal_color.g, r.Color.internal_color.b, r.Color.internal_color.a);
         GP.sgp_set_blend_mode(sgp_blend_mode.SGP_BLENDMODE_NONE);
         GP.sgp_push_transform();
-        GP.sgp_translate(x,y);
-        GP.sgp_rotate_at(rotation, f.width / 2f, f.height / 2f);
-        GP.sgp_scale_at(scaleX, scaleY, f.width / 2f, f.height / 2f);
-        GP.sgp_draw_filled_rect(0,0,f.width,f.height);
+        GP.sgp_translate(p.x - p.pivotX,p.y - p.pivotY);
+        GP.sgp_rotate_at(p.rotation, p.pivotX, p.pivotY);
+        GP.sgp_scale_at(p.scaleX, p.scaleY, p.pivotX, p.pivotY);
+        GP.sgp_draw_filled_rect(0,0,r.Width,r.Height);
         GP.sgp_pop_transform();
         GP.sgp_reset_color();
     }

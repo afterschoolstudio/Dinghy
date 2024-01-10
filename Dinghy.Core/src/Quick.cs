@@ -26,8 +26,8 @@ public static class Quick
 
     public static void MoveToMouse(Entity e)
     {
-        e.X = (int)InputSystem.MouseX;
-        e.Y = (int)InputSystem.MouseY;
+        e.X = InputSystem.MouseX;
+        e.Y = InputSystem.MouseY;
     }
 
     public static Vector2 RandUnitCircle()

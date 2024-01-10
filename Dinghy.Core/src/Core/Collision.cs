@@ -137,7 +137,7 @@ public static class Utils
         //right now this pivot is sort of weird - its kind of the center of the collider but that may be irrelevant
         //to the position of the actual entity
         //instead need to just take in an entity Pivot directly
-        var pivot = new Vector2(xpos + c.width / 2f, ypos + c.height / 2f);
+        var pivot = new Vector2(entityPosition.x - entityPosition.pivotX, entityPosition.y - entityPosition.pivotY);
         Point[] pts = [
             TransformEntityPoint((xpos, ypos),entityPosition,pivot),
             TransformEntityPoint((xpos + c.width, ypos),entityPosition,pivot),
@@ -148,7 +148,7 @@ public static class Utils
 
         Point TransformEntityPoint(Point p, Position e, Vector2 pivot)
         {
-            return TransformPoint(p,e.rotation, e.scaleX, e.scaleY, pivot);
+            return TransformPoint(p,e.rotation, e.scaleX, e.scaleY,pivot);
         }
 
         Vector2 TransformPoint(
@@ -156,16 +156,12 @@ public static class Utils
             float rotation, 
             float scaleX, 
             float scaleY, 
-            Vector2? pivot = null)
+            Vector2 pivot)
         {
-            Vector2 pivotPoint = pivot ?? Vector2.Zero;
             Matrix3x2 transformation =
                 Matrix3x2.CreateTranslation(point) *
-                Matrix3x2.CreateRotation(rotation, pivotPoint) *
-                Matrix3x2.CreateScale(scaleX, scaleY, pivotPoint);
-
-                
-
+                Matrix3x2.CreateRotation(rotation, pivot) *
+                Matrix3x2.CreateScale(scaleX, scaleY, pivot);
             return Vector2.Transform(Vector2.Zero, transformation);
         }
     }

@@ -1,3 +1,4 @@
+using System.Numerics;
 using Arch.Core;
 using Arch.Core.Extensions;
 using Dinghy.Core;
@@ -56,7 +57,7 @@ public class VelocitySystem : DSystem, IUpdateSystem
             pos.y += vel.y;
             //could maybe grab stuff like this at the top of the frame so an entity
             //has the most recent pos stuff at the start instead of changing it mid frame?
-            owner.e.SetPositionRaw(pos.x,pos.y,pos.rotation,pos.scaleX,pos.scaleY);
+            owner.e.SetPositionRaw(pos.x,pos.y,pos.rotation,pos.scaleX,pos.scaleY,pos.pivotX,pos.pivotY);
         });
     }
 }
@@ -94,7 +95,7 @@ public class SpriteRenderSystem : RenderSystem
             {
                 r.ImageResource.Load();
             }
-            Engine.DrawTexturedRect(p.x, p.y,p.rotation,p.scaleX, p.scaleY,r.Rect,r.SizeRect,r.ImageResource);
+            Engine.DrawTexturedRect(p,r);
         });
     }
 }
@@ -106,7 +107,7 @@ public class ShapeRenderSystem : RenderSystem
     {
         Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref ShapeRenderer r, ref Position p) =>
         {
-            Engine.DrawShape(p.x, p.y,p.rotation, p.scaleX, p.scaleY, r.Color, new Rect(0,0,r.Width,r.Height));
+            Engine.DrawShape(p, r);
         });
     }
 }
@@ -423,15 +424,26 @@ public class DebugOverlaySystem : DSystem, IUpdateSystem
                     ImGuiWindowFlags_.ImGuiWindowFlags_NoMove |
                     ImGuiWindowFlags_.ImGuiWindowFlags_NoResize |
                     ImGuiWindowFlags_.ImGuiWindowFlags_NoBringToFrontOnFocus);
-                var x = p.x + c.x;
-                var y = p.y + c.y;
-                ImGUIHelper.Wrappers.DrawQuad(
-                    (x,y),
-                    (x,y+c.height),
-                    (x + c.width,y +c.height),
-                    (x + c.width,y));
+                ImGUIHelper.Wrappers.Text(e.Id.ToString());
+                ImGUIHelper.Wrappers.DrawQuad(Utils.GetBounds(c, p));
                 ImGUIHelper.Wrappers.End();
             });
+        
+        // Vector2 TransformPoint(
+        //     Vector2 point, 
+        //     float scaleX, 
+        //     float scaleY, 
+        //     Vector2? pivot = null)
+        // {
+        //     Vector2 pivotPoint = pivot ?? Vector2.Zero;
+        //     Matrix3x2 transformation =
+        //         Matrix3x2.CreateTranslation(point) *
+        //         Matrix3x2.CreateScale(scaleX, scaleY, pivotPoint);
+        //
+        //         
+        //
+        //     return Vector2.Transform(Vector2.Zero, transformation);
+        // }
     }
 }
 

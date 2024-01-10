@@ -83,8 +83,8 @@ public class Collision : Scene
         static_colliderC.Rotation = (float)Engine.Time;
         static_colliderC.ScaleX = MathF.Sin((float)Engine.Time) + 2;
         static_colliderC.ScaleY = MathF.Sin((float)Engine.Time) + 2;
-		
-        pointer.SetPosition((int)InputSystem.MouseX,(int)InputSystem.MouseY,0,1,1);
+        
+        Quick.MoveToMouse(pointer);
         // raw way to get collision data instead of relying on the system callbacks
         // static_collider.Color = CollisionChecks.CheckCollision(pointer, static_collider)
         //     ? collide
