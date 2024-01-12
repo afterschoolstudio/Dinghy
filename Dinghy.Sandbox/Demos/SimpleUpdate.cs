@@ -9,7 +9,7 @@ public class SimpleUpdate : Scene
     private SpriteData conscriptFrame0;
     public override void Preload()
     {
-        conscriptImage = new TextureData("conscript.png");
+        conscriptImage = new TextureData("res/conscript.png");
         
         conscriptFrame0 = new(conscriptImage, new Rect(0,0,64,64));
     }

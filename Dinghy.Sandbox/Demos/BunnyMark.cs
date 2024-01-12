@@ -12,7 +12,7 @@ public class BunnyMark : Scene
     private BunnySystem system = new BunnySystem();
     public override void Preload()
     {
-        var logoImage = new TextureData("logo.png");
+        var logoImage = new TextureData("res/logo.png");
         logo = new SpriteData(logoImage);
         Engine.RegisterSystem(system);
     }

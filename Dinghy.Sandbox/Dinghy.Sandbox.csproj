@@ -18,19 +18,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Dinghy.Core\Dinghy.Core.csproj" />
+        <Content Include="res\**\*">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="logo.png">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="up.png">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="conscript.png">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
+      <ProjectReference Include="..\Dinghy.Core\Dinghy.Core.csproj" />
+      <ProjectReference Include="..\Dinghy.Magic\Dinghy.Magic\Dinghy.Magic.csproj" />
     </ItemGroup>
 
 </Project>

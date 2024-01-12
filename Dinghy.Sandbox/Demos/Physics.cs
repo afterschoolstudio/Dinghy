@@ -9,7 +9,7 @@ public class Physics : Scene
     private SpriteData conscript;
     public override void Preload()
     {
-        conscriptImage = new TextureData("conscript.png");
+        conscriptImage = new TextureData("res/conscript.png");
         
         conscript = new(conscriptImage, new Rect(0,0,64,64));
         VoltConfig.AreaMassRatio = 0.000007f;

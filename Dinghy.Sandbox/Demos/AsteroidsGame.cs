@@ -9,7 +9,7 @@ public class AsteroidsGame : Scene
     private Sprite player;
     public override void Preload()
     {
-        conscriptImage = new TextureData("conscript.png");
+        conscriptImage = new TextureData("res/conscript.png");
         fullConscript = new(conscriptImage,(0,0,64,64));
     }
 

@@ -8,7 +8,7 @@ public class Animation : Scene
     private AnimatedSpriteData animatedConscript;
     public override void Preload()
     {
-        conscriptImage = new TextureData("conscript.png");
+        conscriptImage = new TextureData("res/conscript.png");
         var rects = Quick.CreateTextureSlices(512, 512, 64, 64);
         animatedConscript = new AnimatedSpriteData(
             conscriptImage,
