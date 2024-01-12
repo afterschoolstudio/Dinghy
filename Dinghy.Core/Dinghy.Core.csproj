@@ -7,6 +7,7 @@
         <AssemblyName>Dinghy</AssemblyName>
         <RootNamespace>Dinghy</RootNamespace>
         <LangVersion>default</LangVersion>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -16,49 +17,28 @@
     <ItemGroup>
       <PackageReference Include="Arch" Version="1.2.7" />
     </ItemGroup>
+    
+
+
 
 
 
 
     <ItemGroup>
-      <Folder Include="libs\" />
+        <Content Include="libs\**\*">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
 
 
 
-
-
-
+    <ItemGroup>
+      <ProjectReference Include="..\Dinghy.Magic\Dinghy.Magic\Dinghy.Magic.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
+    </ItemGroup>
 
     <ItemGroup>
-      <None Update="libs\sokol.dll">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="libs\sokol.lib">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="libs\sokol.pdb">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="libs\stb.dll">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="libs\stb.lib">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="libs\stb.pdb">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="libs\stb.dylib">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="libs\cute.dylib">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="libs\sokol.dylib">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
+        <None Include="..\Dinghy.Magic\Dinghy.Magic\bin\$(Configuration)\netstandard2.0\Dinghy.Magic.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>
 
 </Project>

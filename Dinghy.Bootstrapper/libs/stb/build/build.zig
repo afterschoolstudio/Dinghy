@@ -27,6 +27,16 @@ pub fn build(b: *std.Build) void {
         .file = .{ .path = "stb.c" },
         .flags = &[_][]const u8{},
     });
-    b.lib_dir = "../../../../Dinghy.Core/libs";
+    
+    if (dll.target.isDarwin()) {
+        b.lib_dir = "../../../../Dinghy.Core/libs/osx-x64/native";
+    } else {
+        if (dll.target.isLinux()) {
+            b.lib_dir = "../../../../Dinghy.Core/libs/linux-x64/native";
+        }
+        else if (dll.target.isWindows()) {
+            b.lib_dir = "../../../../Dinghy.Core/libs/win-x64/native";
+        }
+    }
     b.installArtifact(lib);
 }

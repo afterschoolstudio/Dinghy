@@ -75,6 +75,8 @@ pub fn build(b: *std.Build) void {
     };
 
     if (dll.target.isDarwin()) {
+        b.lib_dir = "../../../../Dinghy.Core/libs/osx-x64/native";
+        
         inline for (c_sources) |csrc| {
             dll.addCSourceFile(.{
                 .file = .{ .path = csrc },
@@ -116,6 +118,8 @@ pub fn build(b: *std.Build) void {
         }
 
         if (dll.target.isLinux()) {
+            b.lib_dir = "../../../../Dinghy.Core/libs/linux-x64/native";
+        
             var link_egl = config.force_egl or config.enable_wayland;
             var egl_ensured = (config.force_egl and config.enable_x11) or config.enable_wayland;
 
@@ -147,6 +151,8 @@ pub fn build(b: *std.Build) void {
             }
         }
         else if (dll.target.isWindows()) {
+            b.lib_dir = "../../../../Dinghy.Core/libs/win-x64/native";
+        
             dll.linkSystemLibraryName("kernel32");
             dll.linkSystemLibraryName("user32");
             dll.linkSystemLibraryName("gdi32");
@@ -158,6 +164,5 @@ pub fn build(b: *std.Build) void {
         }
     }
     
-    b.lib_dir = "../../../../Dinghy.Core/libs";
     b.installArtifact(dll);
 }

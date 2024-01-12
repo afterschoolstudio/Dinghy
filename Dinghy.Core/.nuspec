@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+<metadata>
+    <!-- Required elements-->
+    <id></id>
+    <version></version>
+    <description></description>
+    <authors></authors>
+
+
+    <!-- Optional elements -->
+    <!-- ... -->
+</metadata>
+<files>
+    <file src="libs\**" target="runtimes" />
+</files>
+<!-- Optional 'files' node -->
+</package>
