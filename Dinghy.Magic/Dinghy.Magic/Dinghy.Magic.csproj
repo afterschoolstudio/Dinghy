@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
-        <IsPackable>false</IsPackable>
+        <IsPackable>true</IsPackable>
         <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>
 
@@ -11,6 +11,8 @@
 
         <RootNamespace>Dinghy.Magic</RootNamespace>
         <PackageId>Dinghy.Magic</PackageId>
+        <!-- https://github.com/dotnet/roslyn/blob/main/docs/features/source-generators.cookbook.md#package-a-generator-as-a-nuget-package -->
+        <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
 
     <ItemGroup>
@@ -23,7 +25,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="src\" />
+        <!-- Package the generator in the analyzer directory of the nuget package -->
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="src\aseprite\" />
+      <Folder Include="src\cue\" />
+      <Folder Include="src\ldtk\" />
     </ItemGroup>
 
 
