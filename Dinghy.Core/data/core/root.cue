@@ -16,8 +16,3 @@ ally2: Entities.#Sprite & {
     Position:X: 1
     Renderer:Path: "ally.png"
 } & { customData : "some custom data"}
-
-//ally2 = Sprite with {
-//	Position.X = 1,
-//	Renderer.Path = "ally.png"
-//}

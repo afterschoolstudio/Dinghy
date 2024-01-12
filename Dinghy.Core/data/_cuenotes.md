@@ -16,3 +16,7 @@ https://kubevela.io/docs/platform-engineers/cue/basic/
 https://www.youtube.com/watch?v=b3fhA12KS48
 https://blog.cedriccharly.com/post/20191109-the-configuration-complexity-curse/
 https://earthly.dev/blog/yaml-validate-and-lint-cue-lang/
+
+--other
+KCL?
+https://github.com/oilshell/oil/wiki/Survey-of-Config-Languages
