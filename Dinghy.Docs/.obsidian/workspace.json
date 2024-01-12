@@ -73,7 +73,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "marketing.md",
+                "file": "_currentstructure.md",
                 "mode": "source",
                 "source": false
               }
@@ -154,7 +154,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "marketing.md",
+                "file": "_currentstructure.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -171,7 +171,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "marketing.md",
+                "file": "_currentstructure.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -194,7 +194,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "marketing.md"
+                "file": "_currentstructure.md"
               }
             }
           }
@@ -218,6 +218,9 @@
   },
   "active": "7330355a7f7645ff",
   "lastOpenFiles": [
+    "nuget.md",
+    "_currentstructure.md",
+    "marketing.md",
     "ecs.md",
     "builtins.md",
     "references/buildscripts/basic-lib-build.zig.md",
@@ -232,7 +235,6 @@
     "dev/manual adds.md",
     "dev/clangsharppinvokegenerator notes.md",
     "dev/bootstrapper.md",
-    "marketing.md",
     "ui/yoga.md",
     "Pasted image 20231005144749.png",
     "Pasted image 20231005144819.png",
@@ -247,7 +249,6 @@
     "references/buildscripts.md",
     "references/buildscripts",
     "references",
-    "bootstrapper.md",
     "dev"
   ]
 }
