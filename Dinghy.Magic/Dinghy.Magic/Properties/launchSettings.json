@@ -3,7 +3,7 @@
   "profiles": {
     "DebugRoslynSourceGenerator": {
       "commandName": "DebugRoslynComponent",
-      "targetProject": "../Dinghy.Magic.Sample/Dinghy.Magic.Sample.csproj"
+      "targetProject": "../../Dinghy.Sandbox/Dinghy.Sandbox.csproj"
     }
   }
 }

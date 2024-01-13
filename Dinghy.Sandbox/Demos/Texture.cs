@@ -7,7 +7,8 @@ public class Texture : Scene
     private SpriteData fullConscript;
     public override void Preload()
     {
-        conscriptImage = new TextureData("res/conscript.png");
+        // conscriptImage = new TextureData("res/conscript.png");
+        conscriptImage = new TextureData(Res.Assets.conscript.Path);
         fullConscript = new(conscriptImage);
     }
 

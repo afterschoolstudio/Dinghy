@@ -33,6 +33,7 @@
       <Folder Include="src\aseprite\" />
       <Folder Include="src\cue\" />
       <Folder Include="src\ldtk\" />
+      <Folder Include="src\tiled\" />
     </ItemGroup>
 
 

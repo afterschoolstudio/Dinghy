@@ -8,3 +8,7 @@ note: Dinghy.Magic could be packaged as its own nupkg (but right now isnt)
 
 this is THE WAY for generator packing:
 https://github.com/dotnet/roslyn/issues/55229#issuecomment-933233861
+
+
+runtime identifiers (RIDs)
+https://learn.microsoft.com/en-us/dotnet/core/rid-catalog

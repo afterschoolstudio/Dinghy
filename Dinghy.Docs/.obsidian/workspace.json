@@ -73,7 +73,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_currentstructure.md",
+                "file": "source generators.md",
                 "mode": "source",
                 "source": false
               }
@@ -154,7 +154,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "_currentstructure.md",
+                "file": "source generators.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -171,7 +171,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "_currentstructure.md",
+                "file": "source generators.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -194,7 +194,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "_currentstructure.md"
+                "file": "source generators.md"
               }
             }
           }
@@ -218,8 +218,10 @@
   },
   "active": "7330355a7f7645ff",
   "lastOpenFiles": [
-    "nuget.md",
+    "shaders.md",
+    "source generators.md",
     "_currentstructure.md",
+    "nuget.md",
     "marketing.md",
     "ecs.md",
     "builtins.md",
@@ -244,9 +246,7 @@
     "scriban.md",
     "dotnet releaser.md",
     "ideas.md",
-    "ui/razor refs.md",
     "ui",
-    "references/buildscripts.md",
     "references/buildscripts",
     "references",
     "dev"

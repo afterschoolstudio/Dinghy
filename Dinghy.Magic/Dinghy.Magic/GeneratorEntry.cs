@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.CodeAnalysis;
 
@@ -9,7 +10,7 @@ namespace Dinghy.Magic;
 /// When using a simple text file as a baseline, we can create a non-incremental source generator.
 /// </summary>
 [Generator]
-public class SampleSourceGenerator : ISourceGenerator
+public class GeneratorEntry : ISourceGenerator
 {
     public void Initialize(GeneratorInitializationContext context)
     {
@@ -24,7 +25,7 @@ public class SampleSourceGenerator : ISourceGenerator
         
         // If you would like to put some data to non-compilable file (e.g. a .txt file), mark it as an Additional File.
         // Go through all files marked as an Additional File in file properties.
-        FileInfo f;
+        List<(AdditionalText,string)> resFiles = new ();
         foreach (var additionalFile in context.AdditionalFiles)
         {
             if (additionalFile == null)
@@ -37,11 +38,11 @@ public class SampleSourceGenerator : ISourceGenerator
                 var ext = Path.GetExtension(additionalFile.Path);
                 if (ext == null)
                     continue;
-                AssetRouter.RouteAsset(context,additionalFile,ext);
-                continue;
+                resFiles.Add((additionalFile,ext));
             }
             //could check for other dirs with a .zinc in them or something?
         }
+        AssetRouter.HandleResFiles(context,resFiles);
     }
     
     public bool ContainsPath(DirectoryInfo baseDir, string checkPath)
