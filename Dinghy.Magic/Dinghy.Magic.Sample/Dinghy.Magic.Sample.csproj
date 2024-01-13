@@ -4,6 +4,7 @@
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <RootNamespace>Dinghy.Magic.Sample</RootNamespace>
+        <OutputType>Exe</OutputType>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,7 +13,10 @@
 
     <ItemGroup>
         <None Remove="DDD.UbiquitousLanguageRegistry.txt"/>
-        <AdditionalFiles Include="DDD.UbiquitousLanguageRegistry.txt"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <AdditionalFiles Include="res\**\*"/>
     </ItemGroup>
 
 </Project>
