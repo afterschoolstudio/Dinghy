@@ -4,11 +4,11 @@ using static Dinghy.Quick;
 [DemoScene("03 Animation")]
 public class Animation : Scene
 {
-    private TextureData conscriptImage;
+    private Resources.Texture conscriptImage;
     private AnimatedSpriteData animatedConscript;
     public override void Preload()
     {
-        conscriptImage = new TextureData("res/conscript.png");
+        conscriptImage = new Resources.Texture("res/conscript.png");
         var rects = Quick.CreateTextureSlices(512, 512, 64, 64);
         animatedConscript = new AnimatedSpriteData(
             conscriptImage,

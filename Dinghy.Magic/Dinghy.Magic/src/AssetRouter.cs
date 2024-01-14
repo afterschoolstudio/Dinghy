@@ -11,8 +11,16 @@ public static class AssetRouter
     {
         var cw = new CodeWriter();
         cw.OpenScope("namespace Res");
-        cw.OpenScope("public static partial class Assets");
-        cw.AddLine("public record Asset(string Path);");
+            cw.OpenScope("public static partial class Assets");
+                cw.AddLine("public record Asset(string Path);");
+                cw.AddLine(@$"
+public record ImageAsset(string Path) : base(Path) 
+{{
+    public TextureData TextureData = new (Path);
+    public SpriteData SpriteData = new(TextureData);
+}}
+");
+                cw.CloseScope();
         
         foreach (var f in resFiles)
         {

@@ -5,11 +5,11 @@ namespace Dinghy.Sandbox.Demos;
 [DemoScene("04 Simple Update")]
 public class SimpleUpdate : Scene
 {
-    private TextureData conscriptImage;
+    private Resources.Texture conscriptImage;
     private SpriteData conscriptFrame0;
     public override void Preload()
     {
-        conscriptImage = new TextureData("res/conscript.png");
+        conscriptImage = new Resources.Texture("res/conscript.png");
         
         conscriptFrame0 = new(conscriptImage, new Rect(0,0,64,64));
     }

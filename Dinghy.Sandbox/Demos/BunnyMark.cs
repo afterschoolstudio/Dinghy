@@ -7,12 +7,12 @@ using static Dinghy.Quick;
 [DemoScene("06 Bunnymark")]
 public class BunnyMark : Scene
 {
-    private TextureData logoImage;
+    private Resources.Texture logoImage;
     private SpriteData logo;
     private BunnySystem system = new BunnySystem();
     public override void Preload()
     {
-        var logoImage = new TextureData("res/logo.png");
+        var logoImage = new Resources.Texture("res/logo.png");
         logo = new SpriteData(logoImage);
         Engine.RegisterSystem(system);
     }
@@ -61,7 +61,7 @@ public class TestBunny : Entity
         Data = spriteData;
         ECSEntity.Remove<Velocity>();
         ECSEntity.Add(
-            new SpriteRenderer(Data.TextureData.texturePath, Data.Rect),
+            new SpriteRenderer(Data.Texture.Path, Data.Rect),
             new BunnyMarkComponent(velx,vely));
     }
 }

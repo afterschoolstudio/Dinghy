@@ -91,9 +91,9 @@ public class SpriteRenderSystem : RenderSystem
     {
         Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref SpriteRenderer r, ref Position p) =>
         {
-            if (!r.ImageResource.loaded)
+            if (!r.Texture.DataLoaded)
             {
-                r.ImageResource.Load();
+                r.Texture.Load();
             }
             Engine.DrawTexturedRect(p,r);
         });

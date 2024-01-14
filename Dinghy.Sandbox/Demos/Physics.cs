@@ -5,11 +5,11 @@ namespace Dinghy.Sandbox.Demos;
 [DemoScene("07 Physics")]
 public class Physics : Scene
 {
-    private TextureData conscriptImage;
+    private Resources.Texture conscriptImage;
     private SpriteData conscript;
     public override void Preload()
     {
-        conscriptImage = new TextureData("res/conscript.png");
+        conscriptImage = new Resources.Texture("res/conscript.png");
         
         conscript = new(conscriptImage, new Rect(0,0,64,64));
         VoltConfig.AreaMassRatio = 0.000007f;

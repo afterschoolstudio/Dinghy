@@ -3,13 +3,13 @@ namespace Dinghy.Sandbox.Demos;
 [DemoScene("15 Asteroids")]
 public class AsteroidsGame : Scene
 {
-    private TextureData conscriptImage;
+    private Resources.Texture conscriptImage;
     private SpriteData fullConscript;
 
     private Sprite player;
     public override void Preload()
     {
-        conscriptImage = new TextureData("res/conscript.png");
+        conscriptImage = new Resources.Texture("res/conscript.png");
         fullConscript = new(conscriptImage,(0,0,64,64));
     }
 

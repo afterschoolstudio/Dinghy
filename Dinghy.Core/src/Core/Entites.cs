@@ -377,13 +377,14 @@ public class Shape : Entity, ICollideable
     // private bool colliderActives;
 }
 
+public record SpriteData(Resources.Texture Texture, Rect Rect);
 public class Sprite : Entity, ICollideable
 {
     public SpriteData Data { get; init; }
     public Sprite(SpriteData spriteData, Scene? scene = null, bool startEnabled = true) : base(startEnabled,scene)
     {
         Data = spriteData;
-        var rend = new SpriteRenderer(Data.TextureData.texturePath, Data.Rect);
+        var rend = new SpriteRenderer(Data.Texture, Data.Rect);
         ECSEntity.Add(
             rend,
             new Collider(0,0,Data.Rect.width,Data.Rect.height));
@@ -404,13 +405,14 @@ public class Sprite : Entity, ICollideable
     public Action<Entity,Entity>  OnCollision { get; set; }
 }
 
+public record AnimatedSpriteData(Resources.Texture Texture, HashSet<Resources.Animation> Animations);
 public class AnimatedSprite : Entity, ICollideable
 {
     public AnimatedSpriteData Data { get; init; }
     public AnimatedSprite(AnimatedSpriteData animatedSpriteData, Scene? scene = null, bool startEnabled = true) : base(startEnabled,scene)
     {
         Data = animatedSpriteData;
-        var rend = new SpriteRenderer(Data.TextureData.texturePath, Data.Animations.First().Frames[0]);
+        var rend = new SpriteRenderer(Data.Texture, Data.Animations.First().Frames[0]);
         ECSEntity.Add(
             rend,
             new SpriteAnimator(Data.Animations),

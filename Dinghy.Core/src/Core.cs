@@ -517,7 +517,7 @@ public static partial class Engine
     {
         GP.sgp_set_color(1.0f, 1.0f, 1.0f, 1.0f);
         GP.sgp_set_blend_mode(sgp_blend_mode.SGP_BLENDMODE_BLEND);
-        GP.sgp_set_image(0,r.ImageResource.internalData.sg_image);
+        GP.sgp_set_image(0,r.Texture.Data);
         GP.sgp_push_transform();
         GP.sgp_translate(p.x - p.pivotX,p.y - p.pivotY);
         GP.sgp_rotate_at(p.rotation, p.pivotX, p.pivotY);
@@ -728,17 +728,23 @@ public static partial class Engine
     // }
     
 
-    public static sg_image LoadImage(string path, out int width, out int height)
+    public static bool LoadImage(string path, out int width, out int height, out sg_image img)
     {
-        var logo_desc = default(sg_image_desc);
         var fileBytes = File.ReadAllBytes(path);
+        img = default;
+        height = 0;
+        width = 0;
         unsafe
         {
             fixed (byte* imgptr = fileBytes)
             {
                 int imgx, imgy, channels;
-                var ok = STB.stbi_info_from_memory(imgptr, fileBytes.Length, &imgx, &imgy, &channels); 
-                Console.WriteLine($"mem test: {ok}: {imgx} {imgy} {channels}");
+                var ok = STB.stbi_info_from_memory(imgptr, fileBytes.Length, &imgx, &imgy, &channels);
+                // Console.WriteLine($"mem test: {ok}: {imgx} {imgy} {channels}");
+                if (ok == 0)
+                {
+                    return false;
+                }
                 // STB.stbi_set_flip_vertically_on_load(1);
                 var stbimg = STB.stbi_load_from_memory(imgptr, fileBytes.Length, &imgx,&imgy, &channels, 4);
                 sg_image_desc stb_img_desc = default;
@@ -749,12 +755,13 @@ public static partial class Engine
                 stb_img_desc.data.subimage.e0_0.ptr = stbimg;
                 stb_img_desc.data.subimage.e0_0.size = (nuint)(imgx * imgy * 4);
 
-                var img = Gfx.make_image(&stb_img_desc);
+                img = Gfx.make_image(&stb_img_desc);
                 STB.stbi_image_free(stbimg);
                 width = imgx;
                 height = imgy;
-                return img;
             }
+
+            return true;
         }
     }
 }

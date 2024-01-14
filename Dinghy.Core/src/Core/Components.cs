@@ -5,14 +5,14 @@ namespace Dinghy;
 
 public record struct SpriteRenderer
 {
-    public Resources.Image ImageResource { get;  set; }
+    public Texture Texture { get;  set; }
     public Rect Rect { get; private set; }
     public Rect SizeRect { get; private set; }
     public float Width => SizeRect.width;
     public float Height => SizeRect.height;
-    public SpriteRenderer(string texture, Rect r, bool alphaIsTransparency = true)
+    public SpriteRenderer(Texture t, Rect r)
     {
-        ImageResource = new (texture, alphaIsTransparency);
+        Texture = t;
         Rect = r;
         SizeRect = new Rect(0, 0, Rect.width, Rect.height);
     }

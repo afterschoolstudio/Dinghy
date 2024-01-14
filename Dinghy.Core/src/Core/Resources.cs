@@ -1,36 +1,47 @@
 ﻿using Dinghy.Internal.Sokol;
+using Dinghy.Internal.STB;
 
 namespace Dinghy;
 
 public static class Resources
 {
-    static Dictionary<string, LoadedImageResource> LoadedImageResources = new Dictionary<string, LoadedImageResource>();
-    public record LoadedImageResource(sg_image sg_image, int width, int height); 
-    public record Image(string texturePath, bool alphaIsTransparecy)
+    public record Texture
     {
-        public LoadedImageResource internalData { get; private set; }
-        public Rect DefaultRect { get; private set; }
-        public bool loaded { get; private set; } = false;
-        public int Width => internalData.width;
-        public int Height => internalData.height;
-        public void Load()
+        public string Path { get; init; }
+        public int? Width { get; private set; }
+        public int? Height { get; private set; }
+        public sg_image Data { get; private set; }
+        public bool DataLoaded { get; private set; }
+        /// <summary>
+        /// Create a texture from a path. Populates Width/Height via a loading the file (so a bit slower that applying that directly)
+        /// </summary>
+        /// <param name="path"></param>
+        public Texture(string path, int? width = null, int? height = null, bool loadImmediate = true)
         {
-            //we dont load the same image more than once
-            if (LoadedImageResources.TryGetValue(texturePath, out var loadedResource))
+            Path = path;
+            Width = width;
+            Height = height;
+            if (loadImmediate)
             {
-                internalData = loadedResource;
-                loaded = true;
-                return;
+                Load();
             }
-            var img = Engine.LoadImage(texturePath, out var w, out var h);
-            DefaultRect = new Rect(0, 0, w, h); //default is the full texture
-            // var state = Internal.Sokol.Gfx.query_image_state(img);
-            // Console.WriteLine(state);
-            internalData = new LoadedImageResource(img,w,h);
-            LoadedImageResources.Add(texturePath,internalData);
-            loaded = true;
+        }
+        public bool Load(bool forceReload = false)
+        {
+            if (DataLoaded && !forceReload) { return true; }
+            if (Engine.LoadImage(Path, out var width, out var height, out var img))
+            {
+                Width = width;
+                Height = height;
+                Data = img;
+                DataLoaded = true;
+                return true;
+            }
+            DataLoaded = false;
+            return false;
         }
     }
+    
     public record Animation(string Name, Rect[] Frames, float animationTime = 1f)
     {
         public int FrameCount { get; } = Frames.Length;
