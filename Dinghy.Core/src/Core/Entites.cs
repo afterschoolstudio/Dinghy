@@ -405,7 +405,7 @@ public class Sprite : Entity, ICollideable
     public Action<Entity,Entity>  OnCollision { get; set; }
 }
 
-public record AnimatedSpriteData(Resources.Texture Texture, HashSet<Resources.Animation> Animations);
+public record AnimatedSpriteData(Resources.Texture Texture, HashSet<Animation> Animations);
 public class AnimatedSprite : Entity, ICollideable
 {
     public AnimatedSpriteData Data { get; init; }

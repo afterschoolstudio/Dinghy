@@ -8,7 +8,6 @@ InputSystem.Events.Key.Down += (key,_) =>  {
 	{
 		Engine.Clear = !Engine.Clear;
 	}
-	Res.Assets.Asset up = new("/Users/kyle/Workspace/Dinghy/Dinghy.Sandbox/res/up.png");
 };
 
 List<DemoSceneInfo> demoTypes = new();  

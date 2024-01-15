@@ -13,7 +13,7 @@ public class BunnyMark : Scene
     public override void Preload()
     {
         var logoImage = new Resources.Texture("res/logo.png");
-        logo = new SpriteData(logoImage);
+        logo = new SpriteData(logoImage,logoImage.GetFullRect());
         Engine.RegisterSystem(system);
     }
 
@@ -61,7 +61,7 @@ public class TestBunny : Entity
         Data = spriteData;
         ECSEntity.Remove<Velocity>();
         ECSEntity.Add(
-            new SpriteRenderer(Data.Texture.Path, Data.Rect),
+            new SpriteRenderer(Data.Texture, Data.Rect),
             new BunnyMarkComponent(velx,vely));
     }
 }
