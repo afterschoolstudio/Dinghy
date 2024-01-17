@@ -308,7 +308,7 @@ public class Scene : Entity
     }
     
     public virtual void Preload(){}
-    public void Start()
+    public void Start(bool setAsTargetScene = true)
     {
         if (MountStatus != SceneMountStatus.Mounted)
         {
@@ -328,6 +328,10 @@ public class Scene : Entity
             return;
         }
         Status = SceneStatus.Creating;
+        if (setAsTargetScene)
+        {
+            Engine.SetTargetScene(this);
+        }
         Create();
         Status = SceneStatus.Running;
     }

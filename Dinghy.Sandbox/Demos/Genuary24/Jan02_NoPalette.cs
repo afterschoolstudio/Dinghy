@@ -14,7 +14,6 @@ public class Jan02_NoPalette : Scene
     private List<Shape> shapes = new List<Shape>();
     public override void Create()
     {
-        Engine.SetTargetScene(this);
         gp = new Grid.GridCreationParams((Engine.Width / 2f, Engine.Height / 2f),
             (0.5f, 0.5f), 30, 30, (0.5f, 0.5f), 50, 50);
         g = new Grid(gp);

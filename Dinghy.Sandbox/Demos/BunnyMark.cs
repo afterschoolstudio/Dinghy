@@ -21,7 +21,6 @@ public class BunnyMark : Scene
     int bunnies = 10000;
     public override void Create()
     {
-        Engine.SetTargetScene(this);
         for (int i = 0; i < bunnies; i++)
         {
             b = new TestBunny(logo,RandFloat() * 10,RandFloat() * 10-5);

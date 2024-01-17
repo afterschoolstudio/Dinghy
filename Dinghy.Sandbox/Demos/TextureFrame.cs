@@ -14,7 +14,6 @@ public class TextureFrame : Scene
 
     public override void Create()
     {
-        Engine.SetTargetScene(this);
         new Sprite(conscriptFrame0){X = Engine.Width/2f,Y = Engine.Height/2f,PivotX = 32,PivotY = 32};
     }
 }

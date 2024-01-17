@@ -64,7 +64,7 @@ void drawDemoOptions()
 				Engine.TargetScene.Unmount(() =>
 				{
 					scene.Mount(0);
-					scene.Load(scene.Start);
+					scene.Load(() => scene.Start());
 				});
 			}
 			ImGUIHelper.Wrappers.EndMenu();

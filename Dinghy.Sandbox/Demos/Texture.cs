@@ -5,7 +5,6 @@ public class Texture : Scene
 {
     public override void Create()
     {
-        Engine.SetTargetScene(this);
         var tex = Res.Assets.conscript.CreateSprite();
         tex.X = Engine.Width / 2f;
         tex.Y = Engine.Height / 2f;

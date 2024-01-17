@@ -8,11 +8,6 @@ namespace Dinghy.Sandbox.Demos;
 [DemoScene("11 Entity Emitter")]
 public class EntityEmitter : Scene
 {
-    public override void Create()
-    {
-        Engine.SetTargetScene(this);
-    }
-
     double timer = 0;
     private int emissionRate = 1;
     public override void Update(double dt)

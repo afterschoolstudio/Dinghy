@@ -12,7 +12,6 @@ public class GridDemo : Scene
     Grid g = new Grid(new ((Engine.Width / 2f, Engine.Height / 2f), (0.5f, 0.5f), 10, 10, (0.5f, 0.5f), 30, 30));
     public override void Create()
     {
-        Engine.SetTargetScene(this);
         foreach (var p in g.Points)
         {
             shapes1.Add(new Shape(shape1c,5,5) { X = (int)p.X, Y = (int)p.Y, ColliderActive = false, PivotX = 2.5f, PivotY = 2.5f});

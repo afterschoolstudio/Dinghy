@@ -13,8 +13,6 @@ public class PhysicsShape : Scene
     Dictionary<Shape, VoltBody> bods = new Dictionary<Shape, VoltBody>();
     public override void Create()
     {
-        Engine.SetTargetScene(this);
-        
         var bot = new Vector2(0, Engine.Height / 2f);
         var poly = Engine.PhysicsWorld.CreatePolygonWorldSpace(
             new Vector2[]

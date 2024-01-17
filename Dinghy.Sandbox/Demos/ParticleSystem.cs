@@ -13,7 +13,6 @@ public class ParticleSystem : Scene
     ParticleEmitter emitter;
     public override void Create()
     {
-        Engine.SetTargetScene(this);
         emitter = new ParticleEmitter(
             new(100000, 100, new ParticleEmitterComponent.ParticleConfig()
             {

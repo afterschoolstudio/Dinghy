@@ -17,8 +17,6 @@ public class Collision : Scene
     private Shape ptC;
     public override void Create()
     {
-        Engine.SetTargetScene(this);
-        
         pointer = new Shape(pointer_col,1,1){Name = "pointer",ColliderActive = true};
         pointer.OnCollision += CollisionCallbackTest;
         static_colliderA = new Shape(no_collide)

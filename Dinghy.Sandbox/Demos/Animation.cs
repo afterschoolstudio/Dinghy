@@ -18,7 +18,6 @@ public class Animation : Scene
 
     public override void Create()
     {
-        Engine.SetTargetScene(this);
         new AnimatedSprite(animatedConscript){X = Engine.Width/2f,Y = Engine.Height/2f};
     }
 }

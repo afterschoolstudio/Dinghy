@@ -18,7 +18,6 @@ public class SimpleUpdate : Scene
     Point startPos = (0,0);
     public override void Create()
     {
-        Engine.SetTargetScene(this);
         startPos = ((Engine.Width / 2f) - 32, (Engine.Height / 2f) - 32);
         e = new Sprite(conscriptFrame0)
         {

@@ -19,7 +19,6 @@ public class Jan01_Particles : Scene
         gp = new Grid.GridCreationParams((Engine.Width / 2f, Engine.Height / 2f),
             (0.5f, 0.5f), 30, 30, (0.5f, 0.5f), 10, 10);
         g = new Grid(gp);
-        Engine.SetTargetScene(this);
         foreach (var p in g.Points)
         {
             emitters.Add(new ParticleEmitter(ec)
