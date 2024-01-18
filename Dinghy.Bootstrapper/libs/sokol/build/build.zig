@@ -151,7 +151,10 @@ pub fn build(b: *std.Build) void {
             }
         }
         else if (dll.target.isWindows()) {
-            b.lib_dir = "../../../../Dinghy.Core/libs/win-x64/native";
+            //if running zig build in same folder
+            // b.lib_dir = "../../../../Dinghy.Core/libs/win-x64/native";
+            //if running zig build from parent project folder
+            b.lib_dir = "../Dinghy.Core/libs/win-x64/native";
         
             dll.linkSystemLibraryName("kernel32");
             dll.linkSystemLibraryName("user32");

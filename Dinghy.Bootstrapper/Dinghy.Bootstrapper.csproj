@@ -17,5 +17,10 @@
       <ClCompile Include="libs\stb\build\stb.c" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Bullseye" Version="5.0.0" />
+      <PackageReference Include="SimpleExec" Version="12.0.0" />
+    </ItemGroup>
+
 
 </Project>
