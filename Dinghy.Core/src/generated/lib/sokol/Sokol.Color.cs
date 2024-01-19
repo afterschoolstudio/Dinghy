@@ -4,19 +4,19 @@ namespace Dinghy.Internal.Sokol;
 
 public static unsafe partial class Color
 {
-    [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+    [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
     public static extern sg_color sg_make_color_4b([NativeTypeName("uint8_t")] byte r, [NativeTypeName("uint8_t")] byte g, [NativeTypeName("uint8_t")] byte b, [NativeTypeName("uint8_t")] byte a);
 
-    [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+    [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
     public static extern sg_color sg_make_color_1i([NativeTypeName("uint32_t")] uint rgba);
 
-    [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_color_lerp", ExactSpelling = true)]
+    [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_color_lerp", ExactSpelling = true)]
     public static extern sg_color lerp([NativeTypeName("const sg_color *")] sg_color* color_a, [NativeTypeName("const sg_color *")] sg_color* color_b, float amount);
 
-    [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_color_lerp_precise", ExactSpelling = true)]
+    [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_color_lerp_precise", ExactSpelling = true)]
     public static extern sg_color lerp_precise([NativeTypeName("const sg_color *")] sg_color* color_a, [NativeTypeName("const sg_color *")] sg_color* color_b, float amount);
 
-    [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_color_multiply", ExactSpelling = true)]
+    [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_color_multiply", ExactSpelling = true)]
     public static extern sg_color multiply([NativeTypeName("const sg_color *")] sg_color* color, float scale);
 
     [NativeTypeName("const sg_color")]

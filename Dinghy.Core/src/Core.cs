@@ -178,7 +178,6 @@ public static partial class Engine
         public sg_pass_action pass_action;
         public imageInfo checkerboard;
         public sg_sampler smp;
-        public sgl_pipeline alpha_pip;
     }
 
     public struct imageInfo
@@ -225,15 +224,15 @@ public static partial class Engine
 
         sgp_desc gp_desc = default;
         gp_desc.max_vertices = 1000000;
-        GP.sgp_setup(&gp_desc);
+        GP.setup(&gp_desc);
 
         sdtx_desc_t debug_text_desc = default;
-        debug_text_desc.fonts.e0 = DebugText.font_kc853();
-        debug_text_desc.fonts.e1 = DebugText.font_kc854();
-        debug_text_desc.fonts.e2 = DebugText.font_z1013();
-        debug_text_desc.fonts.e3 = DebugText.font_cpc();
-        debug_text_desc.fonts.e4 = DebugText.font_c64();
-        debug_text_desc.fonts.e5 = DebugText.font_oric();
+        debug_text_desc.fonts[0] = DebugText.font_kc853();
+        debug_text_desc.fonts[1] = DebugText.font_kc854();
+        debug_text_desc.fonts[2] = DebugText.font_z1013();
+        debug_text_desc.fonts[3] = DebugText.font_cpc();
+        debug_text_desc.fonts[4] = DebugText.font_c64();
+        debug_text_desc.fonts[5] = DebugText.font_oric();
         debug_text_desc.logger.func = &Sokol_Logger;
         DebugText.setup(&debug_text_desc);
         
@@ -383,18 +382,18 @@ public static partial class Engine
         float ratio = Width/(float)Height;
 
         // Begin recording draw commands for a frame buffer of size (width, height).
-        GP.sgp_begin(Width, Height);
+        GP.begin(Width, Height);
         // Set frame buffer drawing region to (0,0,width,height).
-        GP.sgp_viewport(0, 0, Width, Height);
+        GP.viewport(0, 0, Width, Height);
         // Set drawing coordinate space to (left=-ratio, right=ratio, top=1, bottom=-1).
         // GP.sgp_project(-ratio, ratio, 1.0f, -1.0f);
 
         // Clear the frame buffer.
         if (Clear)
         {
-            GP.sgp_set_color(ClearColor.internal_color.r, ClearColor.internal_color.g, ClearColor.internal_color.b, ClearColor.internal_color.a);
-            GP.sgp_clear();
-            GP.sgp_reset_color();
+            GP.set_color(ClearColor.internal_color.r, ClearColor.internal_color.g, ClearColor.internal_color.b, ClearColor.internal_color.a);
+            GP.clear();
+            GP.reset_color();
         }
 
         foreach (var s in ActiveSystems)
@@ -442,9 +441,9 @@ public static partial class Engine
         {
             Gfx.begin_default_pass(pass, Width, Height);
             // Dispatch all draw commands to Sokol GFX.
-            GP.sgp_flush();
+            GP.flush();
             // Finish a draw command queue, clearing it.
-            GP.sgp_end();
+            GP.end();
             DebugText.draw();
             ImGUI.render();
             Gfx.end_pass();
@@ -515,22 +514,22 @@ public static partial class Engine
 
     public static void DrawTexturedRect(Position p, SpriteRenderer r)
     {
-        GP.sgp_set_color(1.0f, 1.0f, 1.0f, 1.0f);
-        GP.sgp_set_blend_mode(sgp_blend_mode.SGP_BLENDMODE_BLEND);
-        GP.sgp_set_image(0,r.Texture.Data);
-        GP.sgp_push_transform();
-        GP.sgp_translate(p.x - p.pivotX,p.y - p.pivotY);
-        GP.sgp_rotate_at(p.rotation, p.pivotX, p.pivotY);
-        GP.sgp_scale_at(p.scaleX, p.scaleY, p.pivotX, p.pivotY);
-        GP.sgp_draw_textured_rect(0,
+        GP.set_color(1.0f, 1.0f, 1.0f, 1.0f);
+        GP.set_blend_mode(sgp_blend_mode.SGP_BLENDMODE_BLEND);
+        GP.set_image(0,r.Texture.Data);
+        GP.push_transform();
+        GP.translate(p.x - p.pivotX,p.y - p.pivotY);
+        GP.rotate_at(p.rotation, p.pivotX, p.pivotY);
+        GP.scale_at(p.scaleX, p.scaleY, p.pivotX, p.pivotY);
+        GP.draw_textured_rect(0,
             //this is the rect to draw the source "to", basically can scale the rect (maybe do wrapping?)
             //we assume this is the width and height of the frame itself
             r.SizeRect.InternalRect,
             //this is the rect index into the texture itself
             r.Rect.InternalRect);
-        GP.sgp_pop_transform();
-        // GP.sgp_draw_filled_rect(x,y,img.internalData.width,img.internalData.height);
-        GP.sgp_reset_image(0);
+        GP.pop_transform();
+        // GP.draw_filled_rect(x,y,img.internalData.width,img.internalData.height);
+        GP.reset_image(0);
         
         /*
         // (float x, float y) clipPos = 
@@ -575,59 +574,59 @@ public static partial class Engine
     {
         //argb
         //rgba
-        GP.sgp_set_color(r.Color.internal_color.r, r.Color.internal_color.g, r.Color.internal_color.b, r.Color.internal_color.a);
-        GP.sgp_set_blend_mode(sgp_blend_mode.SGP_BLENDMODE_NONE);
-        GP.sgp_push_transform();
-        GP.sgp_translate(p.x - p.pivotX,p.y - p.pivotY);
-        GP.sgp_rotate_at(p.rotation, p.pivotX, p.pivotY);
-        GP.sgp_scale_at(p.scaleX, p.scaleY, p.pivotX, p.pivotY);
-        GP.sgp_draw_filled_rect(0,0,r.Width,r.Height);
-        GP.sgp_pop_transform();
-        GP.sgp_reset_color();
+        GP.set_color(r.Color.internal_color.r, r.Color.internal_color.g, r.Color.internal_color.b, r.Color.internal_color.a);
+        GP.set_blend_mode(sgp_blend_mode.SGP_BLENDMODE_NONE);
+        GP.push_transform();
+        GP.translate(p.x - p.pivotX,p.y - p.pivotY);
+        GP.rotate_at(p.rotation, p.pivotX, p.pivotY);
+        GP.scale_at(p.scaleX, p.scaleY, p.pivotX, p.pivotY);
+        GP.draw_filled_rect(0,0,r.Width,r.Height);
+        GP.pop_transform();
+        GP.reset_color();
     }
     
     public static void DrawParticles(Position p, ParticleEmitterComponent c, List<int> activeIndicies)
     {
-        GP.sgp_set_blend_mode(sgp_blend_mode.SGP_BLENDMODE_BLEND);
+        GP.set_blend_mode(sgp_blend_mode.SGP_BLENDMODE_BLEND);
         switch (c.Config.ParticleConfig.ParticleType)
         {
             case ParticleEmitterComponent.ParticleConfig.ParticlePrimitiveType.Rectangle:
                 foreach (var i in activeIndicies)
                 {
-                    GP.sgp_push_transform();
-                    GP.sgp_set_color(c.Particles[i].Color.internal_color.r, c.Particles[i].Color.internal_color.g, c.Particles[i].Color.internal_color.b, c.Particles[i].Color.internal_color.a);
+                    GP.push_transform();
+                    GP.set_color(c.Particles[i].Color.internal_color.r, c.Particles[i].Color.internal_color.g, c.Particles[i].Color.internal_color.b, c.Particles[i].Color.internal_color.a);
                     // GP.sgp_translate(p.x, p.y); makes all particles move as if emission point was p.x,p.y
-                    GP.sgp_translate(c.Particles[i].Config.EmissionPoint.X + c.Particles[i].X,c.Particles[i].Config.EmissionPoint.Y + c.Particles[i].Y);
-                    GP.sgp_rotate_at(c.Particles[i].Rotation, c.Particles[i].Width / 2f, c.Particles[i].Height / 2f);
-                    // GP.sgp_scale_at(scaleX, scaleY, f.width / 2f, f.height / 2f); we dont scale, just use width/height
-                    GP.sgp_draw_filled_rect(0,0,c.Particles[i].Width,c.Particles[i].Height);
-                    GP.sgp_pop_transform();
+                    GP.translate(c.Particles[i].Config.EmissionPoint.X + c.Particles[i].X,c.Particles[i].Config.EmissionPoint.Y + c.Particles[i].Y);
+                    GP.rotate_at(c.Particles[i].Rotation, c.Particles[i].Width / 2f, c.Particles[i].Height / 2f);
+                    // GP.scale_at(scaleX, scaleY, f.width / 2f, f.height / 2f); we dont scale, just use width/height
+                    GP.draw_filled_rect(0,0,c.Particles[i].Width,c.Particles[i].Height);
+                    GP.pop_transform();
                 }
                 break;
             case ParticleEmitterComponent.ParticleConfig.ParticlePrimitiveType.Line:
                 foreach (var i in activeIndicies)
                 {
-                    GP.sgp_push_transform();
-                    GP.sgp_set_color(c.Particles[i].Color.internal_color.r, c.Particles[i].Color.internal_color.g, c.Particles[i].Color.internal_color.b, c.Particles[i].Color.internal_color.a);
+                    GP.push_transform();
+                    GP.set_color(c.Particles[i].Color.internal_color.r, c.Particles[i].Color.internal_color.g, c.Particles[i].Color.internal_color.b, c.Particles[i].Color.internal_color.a);
                     // GP.sgp_translate(p.x, p.y); makes all particles move as if emission point was p.x,p.y
-                    GP.sgp_translate(c.Particles[i].Config.EmissionPoint.X + c.Particles[i].X,c.Particles[i].Config.EmissionPoint.Y + c.Particles[i].Y);
-                    GP.sgp_rotate_at(c.Particles[i].Rotation, c.Particles[i].Width / 2f, c.Particles[i].Height / 2f);
-                    // GP.sgp_scale_at(scaleX, scaleY, f.width / 2f, f.height / 2f); we dont scale, just use width/height
-                    GP.sgp_draw_line(0,0,c.Particles[i].Width,c.Particles[i].Height);
-                    GP.sgp_pop_transform();
+                    GP.translate(c.Particles[i].Config.EmissionPoint.X + c.Particles[i].X,c.Particles[i].Config.EmissionPoint.Y + c.Particles[i].Y);
+                    GP.rotate_at(c.Particles[i].Rotation, c.Particles[i].Width / 2f, c.Particles[i].Height / 2f);
+                    // GP.scale_at(scaleX, scaleY, f.width / 2f, f.height / 2f); we dont scale, just use width/height
+                    GP.draw_line(0,0,c.Particles[i].Width,c.Particles[i].Height);
+                    GP.pop_transform();
                 }
                 break;
             case ParticleEmitterComponent.ParticleConfig.ParticlePrimitiveType.Triangle:
                 foreach (var i in activeIndicies)
                 {
-                    GP.sgp_push_transform();
-                    GP.sgp_set_color(c.Particles[i].Color.internal_color.r, c.Particles[i].Color.internal_color.g, c.Particles[i].Color.internal_color.b, c.Particles[i].Color.internal_color.a);
+                    GP.push_transform();
+                    GP.set_color(c.Particles[i].Color.internal_color.r, c.Particles[i].Color.internal_color.g, c.Particles[i].Color.internal_color.b, c.Particles[i].Color.internal_color.a);
                     // GP.sgp_translate(p.x, p.y); makes all particles move as if emission point was p.x,p.y
-                    GP.sgp_translate(c.Particles[i].Config.EmissionPoint.X + c.Particles[i].X,c.Particles[i].Config.EmissionPoint.Y + c.Particles[i].Y);
-                    GP.sgp_rotate_at(c.Particles[i].Rotation, c.Particles[i].Width / 2f, c.Particles[i].Height / 2f);
-                    // GP.sgp_scale_at(scaleX, scaleY, f.width / 2f, f.height / 2f); we dont scale, just use width/height
-                    GP.sgp_draw_filled_triangle(0,0,c.Particles[i].Width,0,c.Particles[i].Width / 2f,c.Particles[i].Height);
-                    GP.sgp_pop_transform();
+                    GP.translate(c.Particles[i].Config.EmissionPoint.X + c.Particles[i].X,c.Particles[i].Config.EmissionPoint.Y + c.Particles[i].Y);
+                    GP.rotate_at(c.Particles[i].Rotation, c.Particles[i].Width / 2f, c.Particles[i].Height / 2f);
+                    // GP.scale_at(scaleX, scaleY, f.width / 2f, f.height / 2f); we dont scale, just use width/height
+                    GP.draw_filled_triangle(0,0,c.Particles[i].Width,0,c.Particles[i].Width / 2f,c.Particles[i].Height);
+                    GP.pop_transform();
                 }
                 break;
             case ParticleEmitterComponent.ParticleConfig.ParticlePrimitiveType.LineStrip:
@@ -639,18 +638,18 @@ public static partial class Engine
                     pts[ct] = new sgp_vec2() { x = c.Particles[i].X, y = c.Particles[i].Y };
                     ct++;
                 }
-                GP.sgp_push_transform();
-                GP.sgp_set_color(c.Particles[first].Color.internal_color.r, c.Particles[first].Color.internal_color.g, c.Particles[first].Color.internal_color.b, c.Particles[first].Color.internal_color.a);
+                GP.push_transform();
+                GP.set_color(c.Particles[first].Color.internal_color.r, c.Particles[first].Color.internal_color.g, c.Particles[first].Color.internal_color.b, c.Particles[first].Color.internal_color.a);
 
                 // GP.sgp_translate(p.x, p.y);
-                GP.sgp_translate(c.Particles[first].Config.EmissionPoint.X + c.Particles[first].X,c.Particles[first].Config.EmissionPoint.Y + c.Particles[first].Y);
-                GP.sgp_rotate_at(c.Particles[first].Rotation, c.Particles[first].Width / 2f, c.Particles[first].Height / 2f);
+                GP.translate(c.Particles[first].Config.EmissionPoint.X + c.Particles[first].X,c.Particles[first].Config.EmissionPoint.Y + c.Particles[first].Y);
+                GP.rotate_at(c.Particles[first].Rotation, c.Particles[first].Width / 2f, c.Particles[first].Height / 2f);
                 // GP.sgp_scale_at(scaleX, scaleY, f.width / 2f, f.height / 2f); we dont scale, just use width/height
                 unsafe
                 {
-                    GP.sgp_draw_lines_strip(pts.Ptr,(uint)activeIndicies.Count);
+                    GP.draw_lines_strip(pts.Ptr,(uint)activeIndicies.Count);
                 }
-                GP.sgp_pop_transform();
+                GP.pop_transform();
                 break;
             // case ParticleEmitterComponent.ParticleConfig.ParticlePrimitiveType.TriangleStrip:
             //     var strip_pts = new Utils.NativeArray<sgp_vec2>(activeIndicies.Count);
@@ -675,7 +674,7 @@ public static partial class Engine
             //     break;
             
         }
-        GP.sgp_reset_color();
+        GP.reset_color();
     }
 
     public enum LogLevel
@@ -706,7 +705,7 @@ public static partial class Engine
             GfxDebugGUI.discard(ctx);
         }
         // Gfx.destroy_image(image);
-        GP.sgp_shutdown();
+        GP.shutdown();
         // GL.shutdown();
         Gfx.shutdown();
     }

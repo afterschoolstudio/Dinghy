@@ -254,161 +254,161 @@ public enum sgp_error : uint
 
     public static unsafe partial class GP
     {
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_setup([NativeTypeName("const sgp_desc *")] sgp_desc* desc);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_setup", ExactSpelling = true)]
+        public static extern void setup([NativeTypeName("const sgp_desc *")] sgp_desc* desc);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_shutdown();
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_shutdown", ExactSpelling = true)]
+        public static extern void shutdown();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_is_valid", ExactSpelling = true)]
         [return: NativeTypeName("bool")]
-        public static extern byte sgp_is_valid();
+        public static extern byte is_valid();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern sgp_error sgp_get_last_error();
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_get_last_error", ExactSpelling = true)]
+        public static extern sgp_error get_last_error();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_get_error_message", ExactSpelling = true)]
         [return: NativeTypeName("const char *")]
-        public static extern sbyte* sgp_get_error_message(sgp_error error);
+        public static extern sbyte* get_error_message(sgp_error error);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern sg_pipeline sgp_make_pipeline([NativeTypeName("const sgp_pipeline_desc *")] sgp_pipeline_desc* desc);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_make_pipeline", ExactSpelling = true)]
+        public static extern sg_pipeline make_pipeline([NativeTypeName("const sgp_pipeline_desc *")] sgp_pipeline_desc* desc);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_begin(int width, int height);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_begin", ExactSpelling = true)]
+        public static extern void begin(int width, int height);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_flush();
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_flush", ExactSpelling = true)]
+        public static extern void flush();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_end();
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_end", ExactSpelling = true)]
+        public static extern void end();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_project(float left, float right, float top, float bottom);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_project", ExactSpelling = true)]
+        public static extern void project(float left, float right, float top, float bottom);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_reset_project();
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_reset_project", ExactSpelling = true)]
+        public static extern void reset_project();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_push_transform();
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_push_transform", ExactSpelling = true)]
+        public static extern void push_transform();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_pop_transform();
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_pop_transform", ExactSpelling = true)]
+        public static extern void pop_transform();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_reset_transform();
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_reset_transform", ExactSpelling = true)]
+        public static extern void reset_transform();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_translate(float x, float y);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_translate", ExactSpelling = true)]
+        public static extern void translate(float x, float y);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_rotate(float theta);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_rotate", ExactSpelling = true)]
+        public static extern void rotate(float theta);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_rotate_at(float theta, float x, float y);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_rotate_at", ExactSpelling = true)]
+        public static extern void rotate_at(float theta, float x, float y);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_scale(float sx, float sy);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_scale", ExactSpelling = true)]
+        public static extern void scale(float sx, float sy);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_scale_at(float sx, float sy, float x, float y);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_scale_at", ExactSpelling = true)]
+        public static extern void scale_at(float sx, float sy, float x, float y);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_set_pipeline(sg_pipeline pipeline);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_set_pipeline", ExactSpelling = true)]
+        public static extern void set_pipeline(sg_pipeline pipeline);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_reset_pipeline();
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_reset_pipeline", ExactSpelling = true)]
+        public static extern void reset_pipeline();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_set_uniform([NativeTypeName("const void *")] void* data, [NativeTypeName("uint32_t")] uint size);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_set_uniform", ExactSpelling = true)]
+        public static extern void set_uniform([NativeTypeName("const void *")] void* data, [NativeTypeName("uint32_t")] uint size);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_reset_uniform();
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_reset_uniform", ExactSpelling = true)]
+        public static extern void reset_uniform();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_set_blend_mode(sgp_blend_mode blend_mode);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_set_blend_mode", ExactSpelling = true)]
+        public static extern void set_blend_mode(sgp_blend_mode blend_mode);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_reset_blend_mode();
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_reset_blend_mode", ExactSpelling = true)]
+        public static extern void reset_blend_mode();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_set_color(float r, float g, float b, float a);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_set_color", ExactSpelling = true)]
+        public static extern void set_color(float r, float g, float b, float a);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_reset_color();
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_reset_color", ExactSpelling = true)]
+        public static extern void reset_color();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_set_image(int channel, sg_image image);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_set_image", ExactSpelling = true)]
+        public static extern void set_image(int channel, sg_image image);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_unset_image(int channel);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_unset_image", ExactSpelling = true)]
+        public static extern void unset_image(int channel);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_reset_image(int channel);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_reset_image", ExactSpelling = true)]
+        public static extern void reset_image(int channel);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_set_sampler(int channel, sg_sampler sampler);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_set_sampler", ExactSpelling = true)]
+        public static extern void set_sampler(int channel, sg_sampler sampler);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_reset_sampler(int channel);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_reset_sampler", ExactSpelling = true)]
+        public static extern void reset_sampler(int channel);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_viewport(int x, int y, int w, int h);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_viewport", ExactSpelling = true)]
+        public static extern void viewport(int x, int y, int w, int h);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_reset_viewport();
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_reset_viewport", ExactSpelling = true)]
+        public static extern void reset_viewport();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_scissor(int x, int y, int w, int h);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_scissor", ExactSpelling = true)]
+        public static extern void scissor(int x, int y, int w, int h);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_reset_scissor();
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_reset_scissor", ExactSpelling = true)]
+        public static extern void reset_scissor();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_reset_state();
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_reset_state", ExactSpelling = true)]
+        public static extern void reset_state();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_clear();
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_clear", ExactSpelling = true)]
+        public static extern void clear();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_draw_points([NativeTypeName("const sgp_point *")] sgp_vec2* points, [NativeTypeName("uint32_t")] uint count);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_draw_points", ExactSpelling = true)]
+        public static extern void draw_points([NativeTypeName("const sgp_point *")] sgp_vec2* points, [NativeTypeName("uint32_t")] uint count);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_draw_point(float x, float y);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_draw_point", ExactSpelling = true)]
+        public static extern void draw_point(float x, float y);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_draw_lines([NativeTypeName("const sgp_line *")] sgp_line* lines, [NativeTypeName("uint32_t")] uint count);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_draw_lines", ExactSpelling = true)]
+        public static extern void draw_lines([NativeTypeName("const sgp_line *")] sgp_line* lines, [NativeTypeName("uint32_t")] uint count);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_draw_line(float ax, float ay, float bx, float by);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_draw_line", ExactSpelling = true)]
+        public static extern void draw_line(float ax, float ay, float bx, float by);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_draw_lines_strip([NativeTypeName("const sgp_point *")] sgp_vec2* points, [NativeTypeName("uint32_t")] uint count);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_draw_lines_strip", ExactSpelling = true)]
+        public static extern void draw_lines_strip([NativeTypeName("const sgp_point *")] sgp_vec2* points, [NativeTypeName("uint32_t")] uint count);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_draw_filled_triangles([NativeTypeName("const sgp_triangle *")] sgp_triangle* triangles, [NativeTypeName("uint32_t")] uint count);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_draw_filled_triangles", ExactSpelling = true)]
+        public static extern void draw_filled_triangles([NativeTypeName("const sgp_triangle *")] sgp_triangle* triangles, [NativeTypeName("uint32_t")] uint count);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_draw_filled_triangle(float ax, float ay, float bx, float by, float cx, float cy);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_draw_filled_triangle", ExactSpelling = true)]
+        public static extern void draw_filled_triangle(float ax, float ay, float bx, float by, float cx, float cy);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_draw_filled_triangles_strip([NativeTypeName("const sgp_point *")] sgp_vec2* points, [NativeTypeName("uint32_t")] uint count);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_draw_filled_triangles_strip", ExactSpelling = true)]
+        public static extern void draw_filled_triangles_strip([NativeTypeName("const sgp_point *")] sgp_vec2* points, [NativeTypeName("uint32_t")] uint count);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_draw_filled_rects([NativeTypeName("const sgp_rect *")] sgp_rect* rects, [NativeTypeName("uint32_t")] uint count);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_draw_filled_rects", ExactSpelling = true)]
+        public static extern void draw_filled_rects([NativeTypeName("const sgp_rect *")] sgp_rect* rects, [NativeTypeName("uint32_t")] uint count);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_draw_filled_rect(float x, float y, float w, float h);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_draw_filled_rect", ExactSpelling = true)]
+        public static extern void draw_filled_rect(float x, float y, float w, float h);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_draw_textured_rects(int channel, [NativeTypeName("const sgp_textured_rect *")] sgp_textured_rect* rects, [NativeTypeName("uint32_t")] uint count);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_draw_textured_rects", ExactSpelling = true)]
+        public static extern void draw_textured_rects(int channel, [NativeTypeName("const sgp_textured_rect *")] sgp_textured_rect* rects, [NativeTypeName("uint32_t")] uint count);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern void sgp_draw_textured_rect(int channel, sgp_rect dest_rect, sgp_rect src_rect);
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_draw_textured_rect", ExactSpelling = true)]
+        public static extern void draw_textured_rect(int channel, sgp_rect dest_rect, sgp_rect src_rect);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern sgp_state* sgp_query_state();
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_query_state", ExactSpelling = true)]
+        public static extern sgp_state* query_state();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, ExactSpelling = true)]
-        public static extern sgp_desc sgp_query_desc();
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sgp_query_desc", ExactSpelling = true)]
+        public static extern sgp_desc query_desc();
     }

@@ -28,14 +28,17 @@ pub fn build(b: *std.Build) void {
         .flags = &[_][]const u8{},
     });
     
-    if (dll.target.isDarwin()) {
-        b.lib_dir = "../../../../Dinghy.Core/libs/osx-x64/native";
+    if (lib.target.isDarwin()) {
+        // b.lib_dir = "../../../../Dinghy.Core/libs/osx-x64/native";
+        b.lib_dir = "../Dinghy.Core/lib/osx-x64/native";
     } else {
-        if (dll.target.isLinux()) {
-            b.lib_dir = "../../../../Dinghy.Core/libs/linux-x64/native";
+        if (lib.target.isLinux()) {
+            // b.lib_dir = "../../../../Dinghy.Core/libs/linux-x64/native";
+            b.lib_dir = "../Dinghy.Core/lib/linux-x64/native";
         }
-        else if (dll.target.isWindows()) {
-            b.lib_dir = "../../../../Dinghy.Core/libs/win-x64/native";
+        else if (lib.target.isWindows()) {
+            // b.lib_dir = "../../../../Dinghy.Core/libs/win-x64/native";
+            b.lib_dir = "../Dinghy.Core/lib/win-x64/native";
         }
     }
     b.installArtifact(lib);

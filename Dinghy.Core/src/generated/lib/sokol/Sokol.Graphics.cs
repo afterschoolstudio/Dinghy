@@ -1,5 +1,3 @@
-using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -587,26 +585,10 @@ public partial struct sg_buffer
         [NativeTypeName("uint32_t")]
         public uint _end_canary;
 
+        [InlineArray(4)]
         public partial struct _colors_e__FixedBuffer
         {
             public sg_color_attachment_action e0;
-            public sg_color_attachment_action e1;
-            public sg_color_attachment_action e2;
-            public sg_color_attachment_action e3;
-
-            [UnscopedRef]
-            public ref sg_color_attachment_action this[int index]
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get
-                {
-                    return ref AsSpan()[index];
-                }
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            [UnscopedRef]
-            public Span<sg_color_attachment_action> AsSpan() => MemoryMarshal.CreateSpan(ref e0, 4);
         }
     }
 
@@ -618,64 +600,20 @@ public partial struct sg_buffer
         [NativeTypeName("sg_sampler[8]")]
         public _samplers_e__FixedBuffer samplers;
 
+        [InlineArray(12)]
         public partial struct _images_e__FixedBuffer
         {
             public sg_image e0;
-            public sg_image e1;
-            public sg_image e2;
-            public sg_image e3;
-            public sg_image e4;
-            public sg_image e5;
-            public sg_image e6;
-            public sg_image e7;
-            public sg_image e8;
-            public sg_image e9;
-            public sg_image e10;
-            public sg_image e11;
-
-            [UnscopedRef]
-            public ref sg_image this[int index]
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get
-                {
-                    return ref AsSpan()[index];
-                }
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            [UnscopedRef]
-            public Span<sg_image> AsSpan() => MemoryMarshal.CreateSpan(ref e0, 12);
         }
 
+        [InlineArray(8)]
         public partial struct _samplers_e__FixedBuffer
         {
             public sg_sampler e0;
-            public sg_sampler e1;
-            public sg_sampler e2;
-            public sg_sampler e3;
-            public sg_sampler e4;
-            public sg_sampler e5;
-            public sg_sampler e6;
-            public sg_sampler e7;
-
-            [UnscopedRef]
-            public ref sg_sampler this[int index]
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get
-                {
-                    return ref AsSpan()[index];
-                }
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            [UnscopedRef]
-            public Span<sg_sampler> AsSpan() => MemoryMarshal.CreateSpan(ref e0, 8);
         }
     }
 
-    public unsafe partial struct sg_bindings
+    public partial struct sg_bindings
     {
         [NativeTypeName("uint32_t")]
         public uint _start_canary;
@@ -684,7 +622,7 @@ public partial struct sg_buffer
         public _vertex_buffers_e__FixedBuffer vertex_buffers;
 
         [NativeTypeName("int[8]")]
-        public fixed int vertex_buffer_offsets[8];
+        public _vertex_buffer_offsets_e__FixedBuffer vertex_buffer_offsets;
 
         public sg_buffer index_buffer;
 
@@ -697,30 +635,16 @@ public partial struct sg_buffer
         [NativeTypeName("uint32_t")]
         public uint _end_canary;
 
+        [InlineArray(8)]
         public partial struct _vertex_buffers_e__FixedBuffer
         {
             public sg_buffer e0;
-            public sg_buffer e1;
-            public sg_buffer e2;
-            public sg_buffer e3;
-            public sg_buffer e4;
-            public sg_buffer e5;
-            public sg_buffer e6;
-            public sg_buffer e7;
+        }
 
-            [UnscopedRef]
-            public ref sg_buffer this[int index]
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get
-                {
-                    return ref AsSpan()[index];
-                }
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            [UnscopedRef]
-            public Span<sg_buffer> AsSpan() => MemoryMarshal.CreateSpan(ref e0, 8);
+        [InlineArray(8)]
+        public partial struct _vertex_buffer_offsets_e__FixedBuffer
+        {
+            public int e0;
         }
     }
 
@@ -742,7 +666,7 @@ public partial struct sg_buffer
         public sbyte* label;
 
         [NativeTypeName("uint32_t[2]")]
-        public fixed uint gl_buffers[2];
+        public _gl_buffers_e__FixedBuffer gl_buffers;
 
         [NativeTypeName("const void *[2]")]
         public _mtl_buffers_e__FixedBuffer mtl_buffers;
@@ -755,6 +679,12 @@ public partial struct sg_buffer
 
         [NativeTypeName("uint32_t")]
         public uint _end_canary;
+
+        [InlineArray(2)]
+        public partial struct _gl_buffers_e__FixedBuffer
+        {
+            public uint e0;
+        }
 
         public unsafe partial struct _mtl_buffers_e__FixedBuffer
         {
@@ -780,133 +710,10 @@ public partial struct sg_buffer
         [NativeTypeName("sg_range[6][16]")]
         public _subimage_e__FixedBuffer subimage;
 
+        [InlineArray(6 * 16)]
         public partial struct _subimage_e__FixedBuffer
         {
             public sg_range e0_0;
-            public sg_range e1_0;
-            public sg_range e2_0;
-            public sg_range e3_0;
-            public sg_range e4_0;
-            public sg_range e5_0;
-
-            public sg_range e0_1;
-            public sg_range e1_1;
-            public sg_range e2_1;
-            public sg_range e3_1;
-            public sg_range e4_1;
-            public sg_range e5_1;
-
-            public sg_range e0_2;
-            public sg_range e1_2;
-            public sg_range e2_2;
-            public sg_range e3_2;
-            public sg_range e4_2;
-            public sg_range e5_2;
-
-            public sg_range e0_3;
-            public sg_range e1_3;
-            public sg_range e2_3;
-            public sg_range e3_3;
-            public sg_range e4_3;
-            public sg_range e5_3;
-
-            public sg_range e0_4;
-            public sg_range e1_4;
-            public sg_range e2_4;
-            public sg_range e3_4;
-            public sg_range e4_4;
-            public sg_range e5_4;
-
-            public sg_range e0_5;
-            public sg_range e1_5;
-            public sg_range e2_5;
-            public sg_range e3_5;
-            public sg_range e4_5;
-            public sg_range e5_5;
-
-            public sg_range e0_6;
-            public sg_range e1_6;
-            public sg_range e2_6;
-            public sg_range e3_6;
-            public sg_range e4_6;
-            public sg_range e5_6;
-
-            public sg_range e0_7;
-            public sg_range e1_7;
-            public sg_range e2_7;
-            public sg_range e3_7;
-            public sg_range e4_7;
-            public sg_range e5_7;
-
-            public sg_range e0_8;
-            public sg_range e1_8;
-            public sg_range e2_8;
-            public sg_range e3_8;
-            public sg_range e4_8;
-            public sg_range e5_8;
-
-            public sg_range e0_9;
-            public sg_range e1_9;
-            public sg_range e2_9;
-            public sg_range e3_9;
-            public sg_range e4_9;
-            public sg_range e5_9;
-
-            public sg_range e0_10;
-            public sg_range e1_10;
-            public sg_range e2_10;
-            public sg_range e3_10;
-            public sg_range e4_10;
-            public sg_range e5_10;
-
-            public sg_range e0_11;
-            public sg_range e1_11;
-            public sg_range e2_11;
-            public sg_range e3_11;
-            public sg_range e4_11;
-            public sg_range e5_11;
-
-            public sg_range e0_12;
-            public sg_range e1_12;
-            public sg_range e2_12;
-            public sg_range e3_12;
-            public sg_range e4_12;
-            public sg_range e5_12;
-
-            public sg_range e0_13;
-            public sg_range e1_13;
-            public sg_range e2_13;
-            public sg_range e3_13;
-            public sg_range e4_13;
-            public sg_range e5_13;
-
-            public sg_range e0_14;
-            public sg_range e1_14;
-            public sg_range e2_14;
-            public sg_range e3_14;
-            public sg_range e4_14;
-            public sg_range e5_14;
-
-            public sg_range e0_15;
-            public sg_range e1_15;
-            public sg_range e2_15;
-            public sg_range e3_15;
-            public sg_range e4_15;
-            public sg_range e5_15;
-
-            [UnscopedRef]
-            public ref sg_range this[int index]
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get
-                {
-                    return ref AsSpan()[index];
-                }
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            [UnscopedRef]
-            public Span<sg_range> AsSpan() => MemoryMarshal.CreateSpan(ref e0_0, 96);
         }
     }
 
@@ -940,7 +747,7 @@ public partial struct sg_buffer
         public sbyte* label;
 
         [NativeTypeName("uint32_t[2]")]
-        public fixed uint gl_textures[2];
+        public _gl_textures_e__FixedBuffer gl_textures;
 
         [NativeTypeName("uint32_t")]
         public uint gl_texture_target;
@@ -962,6 +769,12 @@ public partial struct sg_buffer
 
         [NativeTypeName("uint32_t")]
         public uint _end_canary;
+
+        [InlineArray(2)]
+        public partial struct _gl_textures_e__FixedBuffer
+        {
+            public uint e0;
+        }
 
         public unsafe partial struct _mtl_textures_e__FixedBuffer
         {
@@ -1060,38 +873,10 @@ public partial struct sg_buffer
         [NativeTypeName("sg_shader_uniform_desc[16]")]
         public _uniforms_e__FixedBuffer uniforms;
 
+        [InlineArray(16)]
         public partial struct _uniforms_e__FixedBuffer
         {
             public sg_shader_uniform_desc e0;
-            public sg_shader_uniform_desc e1;
-            public sg_shader_uniform_desc e2;
-            public sg_shader_uniform_desc e3;
-            public sg_shader_uniform_desc e4;
-            public sg_shader_uniform_desc e5;
-            public sg_shader_uniform_desc e6;
-            public sg_shader_uniform_desc e7;
-            public sg_shader_uniform_desc e8;
-            public sg_shader_uniform_desc e9;
-            public sg_shader_uniform_desc e10;
-            public sg_shader_uniform_desc e11;
-            public sg_shader_uniform_desc e12;
-            public sg_shader_uniform_desc e13;
-            public sg_shader_uniform_desc e14;
-            public sg_shader_uniform_desc e15;
-
-            [UnscopedRef]
-            public ref sg_shader_uniform_desc this[int index]
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get
-                {
-                    return ref AsSpan()[index];
-                }
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            [UnscopedRef]
-            public Span<sg_shader_uniform_desc> AsSpan() => MemoryMarshal.CreateSpan(ref e0, 16);
         }
     }
 
@@ -1154,112 +939,28 @@ public partial struct sg_buffer
         [NativeTypeName("sg_shader_image_sampler_pair_desc[12]")]
         public _image_sampler_pairs_e__FixedBuffer image_sampler_pairs;
 
+        [InlineArray(4)]
         public partial struct _uniform_blocks_e__FixedBuffer
         {
             public sg_shader_uniform_block_desc e0;
-            public sg_shader_uniform_block_desc e1;
-            public sg_shader_uniform_block_desc e2;
-            public sg_shader_uniform_block_desc e3;
-
-            [UnscopedRef]
-            public ref sg_shader_uniform_block_desc this[int index]
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get
-                {
-                    return ref AsSpan()[index];
-                }
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            [UnscopedRef]
-            public Span<sg_shader_uniform_block_desc> AsSpan() => MemoryMarshal.CreateSpan(ref e0, 4);
         }
 
+        [InlineArray(12)]
         public partial struct _images_e__FixedBuffer
         {
             public sg_shader_image_desc e0;
-            public sg_shader_image_desc e1;
-            public sg_shader_image_desc e2;
-            public sg_shader_image_desc e3;
-            public sg_shader_image_desc e4;
-            public sg_shader_image_desc e5;
-            public sg_shader_image_desc e6;
-            public sg_shader_image_desc e7;
-            public sg_shader_image_desc e8;
-            public sg_shader_image_desc e9;
-            public sg_shader_image_desc e10;
-            public sg_shader_image_desc e11;
-
-            [UnscopedRef]
-            public ref sg_shader_image_desc this[int index]
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get
-                {
-                    return ref AsSpan()[index];
-                }
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            [UnscopedRef]
-            public Span<sg_shader_image_desc> AsSpan() => MemoryMarshal.CreateSpan(ref e0, 12);
         }
 
+        [InlineArray(8)]
         public partial struct _samplers_e__FixedBuffer
         {
             public sg_shader_sampler_desc e0;
-            public sg_shader_sampler_desc e1;
-            public sg_shader_sampler_desc e2;
-            public sg_shader_sampler_desc e3;
-            public sg_shader_sampler_desc e4;
-            public sg_shader_sampler_desc e5;
-            public sg_shader_sampler_desc e6;
-            public sg_shader_sampler_desc e7;
-
-            [UnscopedRef]
-            public ref sg_shader_sampler_desc this[int index]
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get
-                {
-                    return ref AsSpan()[index];
-                }
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            [UnscopedRef]
-            public Span<sg_shader_sampler_desc> AsSpan() => MemoryMarshal.CreateSpan(ref e0, 8);
         }
 
+        [InlineArray(12)]
         public partial struct _image_sampler_pairs_e__FixedBuffer
         {
             public sg_shader_image_sampler_pair_desc e0;
-            public sg_shader_image_sampler_pair_desc e1;
-            public sg_shader_image_sampler_pair_desc e2;
-            public sg_shader_image_sampler_pair_desc e3;
-            public sg_shader_image_sampler_pair_desc e4;
-            public sg_shader_image_sampler_pair_desc e5;
-            public sg_shader_image_sampler_pair_desc e6;
-            public sg_shader_image_sampler_pair_desc e7;
-            public sg_shader_image_sampler_pair_desc e8;
-            public sg_shader_image_sampler_pair_desc e9;
-            public sg_shader_image_sampler_pair_desc e10;
-            public sg_shader_image_sampler_pair_desc e11;
-
-            [UnscopedRef]
-            public ref sg_shader_image_sampler_pair_desc this[int index]
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get
-                {
-                    return ref AsSpan()[index];
-                }
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            [UnscopedRef]
-            public Span<sg_shader_image_sampler_pair_desc> AsSpan() => MemoryMarshal.CreateSpan(ref e0, 12);
         }
     }
 
@@ -1281,38 +982,10 @@ public partial struct sg_buffer
         [NativeTypeName("uint32_t")]
         public uint _end_canary;
 
+        [InlineArray(16)]
         public partial struct _attrs_e__FixedBuffer
         {
             public sg_shader_attr_desc e0;
-            public sg_shader_attr_desc e1;
-            public sg_shader_attr_desc e2;
-            public sg_shader_attr_desc e3;
-            public sg_shader_attr_desc e4;
-            public sg_shader_attr_desc e5;
-            public sg_shader_attr_desc e6;
-            public sg_shader_attr_desc e7;
-            public sg_shader_attr_desc e8;
-            public sg_shader_attr_desc e9;
-            public sg_shader_attr_desc e10;
-            public sg_shader_attr_desc e11;
-            public sg_shader_attr_desc e12;
-            public sg_shader_attr_desc e13;
-            public sg_shader_attr_desc e14;
-            public sg_shader_attr_desc e15;
-
-            [UnscopedRef]
-            public ref sg_shader_attr_desc this[int index]
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get
-                {
-                    return ref AsSpan()[index];
-                }
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            [UnscopedRef]
-            public Span<sg_shader_attr_desc> AsSpan() => MemoryMarshal.CreateSpan(ref e0, 16);
         }
     }
 
@@ -1342,64 +1015,16 @@ public partial struct sg_buffer
         [NativeTypeName("sg_vertex_attr_state[16]")]
         public _attrs_e__FixedBuffer attrs;
 
+        [InlineArray(8)]
         public partial struct _buffers_e__FixedBuffer
         {
             public sg_vertex_buffer_layout_state e0;
-            public sg_vertex_buffer_layout_state e1;
-            public sg_vertex_buffer_layout_state e2;
-            public sg_vertex_buffer_layout_state e3;
-            public sg_vertex_buffer_layout_state e4;
-            public sg_vertex_buffer_layout_state e5;
-            public sg_vertex_buffer_layout_state e6;
-            public sg_vertex_buffer_layout_state e7;
-
-            [UnscopedRef]
-            public ref sg_vertex_buffer_layout_state this[int index]
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get
-                {
-                    return ref AsSpan()[index];
-                }
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            [UnscopedRef]
-            public Span<sg_vertex_buffer_layout_state> AsSpan() => MemoryMarshal.CreateSpan(ref e0, 8);
         }
 
+        [InlineArray(16)]
         public partial struct _attrs_e__FixedBuffer
         {
             public sg_vertex_attr_state e0;
-            public sg_vertex_attr_state e1;
-            public sg_vertex_attr_state e2;
-            public sg_vertex_attr_state e3;
-            public sg_vertex_attr_state e4;
-            public sg_vertex_attr_state e5;
-            public sg_vertex_attr_state e6;
-            public sg_vertex_attr_state e7;
-            public sg_vertex_attr_state e8;
-            public sg_vertex_attr_state e9;
-            public sg_vertex_attr_state e10;
-            public sg_vertex_attr_state e11;
-            public sg_vertex_attr_state e12;
-            public sg_vertex_attr_state e13;
-            public sg_vertex_attr_state e14;
-            public sg_vertex_attr_state e15;
-
-            [UnscopedRef]
-            public ref sg_vertex_attr_state this[int index]
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get
-                {
-                    return ref AsSpan()[index];
-                }
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            [UnscopedRef]
-            public Span<sg_vertex_attr_state> AsSpan() => MemoryMarshal.CreateSpan(ref e0, 16);
         }
     }
 
@@ -1515,26 +1140,10 @@ public partial struct sg_buffer
         [NativeTypeName("uint32_t")]
         public uint _end_canary;
 
+        [InlineArray(4)]
         public partial struct _colors_e__FixedBuffer
         {
             public sg_color_target_state e0;
-            public sg_color_target_state e1;
-            public sg_color_target_state e2;
-            public sg_color_target_state e3;
-
-            [UnscopedRef]
-            public ref sg_color_target_state this[int index]
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get
-                {
-                    return ref AsSpan()[index];
-                }
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            [UnscopedRef]
-            public Span<sg_color_target_state> AsSpan() => MemoryMarshal.CreateSpan(ref e0, 4);
         }
     }
 
@@ -1566,48 +1175,16 @@ public partial struct sg_buffer
         [NativeTypeName("uint32_t")]
         public uint _end_canary;
 
+        [InlineArray(4)]
         public partial struct _color_attachments_e__FixedBuffer
         {
             public sg_pass_attachment_desc e0;
-            public sg_pass_attachment_desc e1;
-            public sg_pass_attachment_desc e2;
-            public sg_pass_attachment_desc e3;
-
-            [UnscopedRef]
-            public ref sg_pass_attachment_desc this[int index]
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get
-                {
-                    return ref AsSpan()[index];
-                }
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            [UnscopedRef]
-            public Span<sg_pass_attachment_desc> AsSpan() => MemoryMarshal.CreateSpan(ref e0, 4);
         }
 
+        [InlineArray(4)]
         public partial struct _resolve_attachments_e__FixedBuffer
         {
             public sg_pass_attachment_desc e0;
-            public sg_pass_attachment_desc e1;
-            public sg_pass_attachment_desc e2;
-            public sg_pass_attachment_desc e3;
-
-            [UnscopedRef]
-            public ref sg_pass_attachment_desc this[int index]
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get
-                {
-                    return ref AsSpan()[index];
-                }
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            [UnscopedRef]
-            public Span<sg_pass_attachment_desc> AsSpan() => MemoryMarshal.CreateSpan(ref e0, 4);
         }
     }
 
@@ -2934,18 +2511,24 @@ public partial struct sg_buffer
         }
     }
 
-    public unsafe partial struct sg_gl_buffer_info
+    public partial struct sg_gl_buffer_info
     {
         [NativeTypeName("uint32_t[2]")]
-        public fixed uint buf[2];
+        public _buf_e__FixedBuffer buf;
 
         public int active_slot;
+
+        [InlineArray(2)]
+        public partial struct _buf_e__FixedBuffer
+        {
+            public uint e0;
+        }
     }
 
-    public unsafe partial struct sg_gl_image_info
+    public partial struct sg_gl_image_info
     {
         [NativeTypeName("uint32_t[2]")]
-        public fixed uint tex[2];
+        public _tex_e__FixedBuffer tex;
 
         [NativeTypeName("uint32_t")]
         public uint tex_target;
@@ -2954,6 +2537,12 @@ public partial struct sg_buffer
         public uint msaa_render_buffer;
 
         public int active_slot;
+
+        [InlineArray(2)]
+        public partial struct _tex_e__FixedBuffer
+        {
+            public uint e0;
+        }
     }
 
     public partial struct sg_gl_sampler_info
@@ -2968,13 +2557,19 @@ public partial struct sg_buffer
         public uint prog;
     }
 
-    public unsafe partial struct sg_gl_pass_info
+    public partial struct sg_gl_pass_info
     {
         [NativeTypeName("uint32_t")]
         public uint frame_buffer;
 
         [NativeTypeName("uint32_t[4]")]
-        public fixed uint msaa_resolve_framebuffer[4];
+        public _msaa_resolve_framebuffer_e__FixedBuffer msaa_resolve_framebuffer;
+
+        [InlineArray(4)]
+        public partial struct _msaa_resolve_framebuffer_e__FixedBuffer
+        {
+            public uint e0;
+        }
     }
 
     public static unsafe partial class Gfx
@@ -2993,422 +2588,422 @@ public partial struct sg_buffer
         public const uint SG_MAX_MIPMAPS = 16;
         public const uint SG_MAX_TEXTUREARRAY_LAYERS = 128;
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_setup", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_setup", ExactSpelling = true)]
         public static extern void setup([NativeTypeName("const sg_desc *")] sg_desc* desc);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_shutdown", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_shutdown", ExactSpelling = true)]
         public static extern void shutdown();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_isvalid", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_isvalid", ExactSpelling = true)]
         [return: NativeTypeName("bool")]
         public static extern byte isvalid();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_reset_state_cache", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_reset_state_cache", ExactSpelling = true)]
         public static extern void reset_state_cache();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_install_trace_hooks", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_install_trace_hooks", ExactSpelling = true)]
         public static extern sg_trace_hooks install_trace_hooks([NativeTypeName("const sg_trace_hooks *")] sg_trace_hooks* trace_hooks);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_push_debug_group", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_push_debug_group", ExactSpelling = true)]
         public static extern void push_debug_group([NativeTypeName("const char *")] sbyte* name);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_pop_debug_group", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_pop_debug_group", ExactSpelling = true)]
         public static extern void pop_debug_group();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_add_commit_listener", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_add_commit_listener", ExactSpelling = true)]
         [return: NativeTypeName("bool")]
         public static extern byte add_commit_listener(sg_commit_listener listener);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_remove_commit_listener", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_remove_commit_listener", ExactSpelling = true)]
         [return: NativeTypeName("bool")]
         public static extern byte remove_commit_listener(sg_commit_listener listener);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_make_buffer", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_make_buffer", ExactSpelling = true)]
         public static extern sg_buffer make_buffer([NativeTypeName("const sg_buffer_desc *")] sg_buffer_desc* desc);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_make_image", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_make_image", ExactSpelling = true)]
         public static extern sg_image make_image([NativeTypeName("const sg_image_desc *")] sg_image_desc* desc);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_make_sampler", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_make_sampler", ExactSpelling = true)]
         public static extern sg_sampler make_sampler([NativeTypeName("const sg_sampler_desc *")] sg_sampler_desc* desc);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_make_shader", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_make_shader", ExactSpelling = true)]
         public static extern sg_shader make_shader([NativeTypeName("const sg_shader_desc *")] sg_shader_desc* desc);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_make_pipeline", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_make_pipeline", ExactSpelling = true)]
         public static extern sg_pipeline make_pipeline([NativeTypeName("const sg_pipeline_desc *")] sg_pipeline_desc* desc);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_make_pass", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_make_pass", ExactSpelling = true)]
         public static extern sg_pass make_pass([NativeTypeName("const sg_pass_desc *")] sg_pass_desc* desc);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_destroy_buffer", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_destroy_buffer", ExactSpelling = true)]
         public static extern void destroy_buffer(sg_buffer buf);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_destroy_image", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_destroy_image", ExactSpelling = true)]
         public static extern void destroy_image(sg_image img);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_destroy_sampler", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_destroy_sampler", ExactSpelling = true)]
         public static extern void destroy_sampler(sg_sampler smp);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_destroy_shader", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_destroy_shader", ExactSpelling = true)]
         public static extern void destroy_shader(sg_shader shd);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_destroy_pipeline", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_destroy_pipeline", ExactSpelling = true)]
         public static extern void destroy_pipeline(sg_pipeline pip);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_destroy_pass", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_destroy_pass", ExactSpelling = true)]
         public static extern void destroy_pass(sg_pass pass);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_update_buffer", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_update_buffer", ExactSpelling = true)]
         public static extern void update_buffer(sg_buffer buf, [NativeTypeName("const sg_range *")] sg_range* data);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_update_image", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_update_image", ExactSpelling = true)]
         public static extern void update_image(sg_image img, [NativeTypeName("const sg_image_data *")] sg_image_data* data);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_append_buffer", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_append_buffer", ExactSpelling = true)]
         public static extern int append_buffer(sg_buffer buf, [NativeTypeName("const sg_range *")] sg_range* data);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_buffer_overflow", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_buffer_overflow", ExactSpelling = true)]
         [return: NativeTypeName("bool")]
         public static extern byte query_buffer_overflow(sg_buffer buf);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_buffer_will_overflow", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_buffer_will_overflow", ExactSpelling = true)]
         [return: NativeTypeName("bool")]
         public static extern byte query_buffer_will_overflow(sg_buffer buf, [NativeTypeName("size_t")] nuint size);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_begin_default_pass", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_begin_default_pass", ExactSpelling = true)]
         public static extern void begin_default_pass([NativeTypeName("const sg_pass_action *")] sg_pass_action* pass_action, int width, int height);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_begin_default_passf", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_begin_default_passf", ExactSpelling = true)]
         public static extern void begin_default_passf([NativeTypeName("const sg_pass_action *")] sg_pass_action* pass_action, float width, float height);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_begin_pass", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_begin_pass", ExactSpelling = true)]
         public static extern void begin_pass(sg_pass pass, [NativeTypeName("const sg_pass_action *")] sg_pass_action* pass_action);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_apply_viewport", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_apply_viewport", ExactSpelling = true)]
         public static extern void apply_viewport(int x, int y, int width, int height, [NativeTypeName("bool")] byte origin_top_left);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_apply_viewportf", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_apply_viewportf", ExactSpelling = true)]
         public static extern void apply_viewportf(float x, float y, float width, float height, [NativeTypeName("bool")] byte origin_top_left);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_apply_scissor_rect", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_apply_scissor_rect", ExactSpelling = true)]
         public static extern void apply_scissor_rect(int x, int y, int width, int height, [NativeTypeName("bool")] byte origin_top_left);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_apply_scissor_rectf", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_apply_scissor_rectf", ExactSpelling = true)]
         public static extern void apply_scissor_rectf(float x, float y, float width, float height, [NativeTypeName("bool")] byte origin_top_left);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_apply_pipeline", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_apply_pipeline", ExactSpelling = true)]
         public static extern void apply_pipeline(sg_pipeline pip);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_apply_bindings", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_apply_bindings", ExactSpelling = true)]
         public static extern void apply_bindings([NativeTypeName("const sg_bindings *")] sg_bindings* bindings);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_apply_uniforms", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_apply_uniforms", ExactSpelling = true)]
         public static extern void apply_uniforms(sg_shader_stage stage, int ub_index, [NativeTypeName("const sg_range *")] sg_range* data);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_draw", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_draw", ExactSpelling = true)]
         public static extern void draw(int base_element, int num_elements, int num_instances);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_end_pass", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_end_pass", ExactSpelling = true)]
         public static extern void end_pass();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_commit", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_commit", ExactSpelling = true)]
         public static extern void commit();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_desc", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_desc", ExactSpelling = true)]
         public static extern sg_desc query_desc();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_backend", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_backend", ExactSpelling = true)]
         public static extern sg_backend query_backend();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_features", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_features", ExactSpelling = true)]
         public static extern sg_features query_features();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_limits", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_limits", ExactSpelling = true)]
         public static extern sg_limits query_limits();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_pixelformat", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_pixelformat", ExactSpelling = true)]
         public static extern sg_pixelformat_info query_pixelformat(sg_pixel_format fmt);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_buffer_state", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_buffer_state", ExactSpelling = true)]
         public static extern sg_resource_state query_buffer_state(sg_buffer buf);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_image_state", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_image_state", ExactSpelling = true)]
         public static extern sg_resource_state query_image_state(sg_image img);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_sampler_state", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_sampler_state", ExactSpelling = true)]
         public static extern sg_resource_state query_sampler_state(sg_sampler smp);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_shader_state", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_shader_state", ExactSpelling = true)]
         public static extern sg_resource_state query_shader_state(sg_shader shd);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_pipeline_state", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_pipeline_state", ExactSpelling = true)]
         public static extern sg_resource_state query_pipeline_state(sg_pipeline pip);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_pass_state", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_pass_state", ExactSpelling = true)]
         public static extern sg_resource_state query_pass_state(sg_pass pass);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_buffer_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_buffer_info", ExactSpelling = true)]
         public static extern sg_buffer_info query_buffer_info(sg_buffer buf);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_image_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_image_info", ExactSpelling = true)]
         public static extern sg_image_info query_image_info(sg_image img);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_sampler_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_sampler_info", ExactSpelling = true)]
         public static extern sg_sampler_info query_sampler_info(sg_sampler smp);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_shader_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_shader_info", ExactSpelling = true)]
         public static extern sg_shader_info query_shader_info(sg_shader shd);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_pipeline_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_pipeline_info", ExactSpelling = true)]
         public static extern sg_pipeline_info query_pipeline_info(sg_pipeline pip);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_pass_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_pass_info", ExactSpelling = true)]
         public static extern sg_pass_info query_pass_info(sg_pass pass);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_buffer_desc", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_buffer_desc", ExactSpelling = true)]
         public static extern sg_buffer_desc query_buffer_desc(sg_buffer buf);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_image_desc", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_image_desc", ExactSpelling = true)]
         public static extern sg_image_desc query_image_desc(sg_image img);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_sampler_desc", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_sampler_desc", ExactSpelling = true)]
         public static extern sg_sampler_desc query_sampler_desc(sg_sampler smp);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_shader_desc", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_shader_desc", ExactSpelling = true)]
         public static extern sg_shader_desc query_shader_desc(sg_shader shd);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_pipeline_desc", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_pipeline_desc", ExactSpelling = true)]
         public static extern sg_pipeline_desc query_pipeline_desc(sg_pipeline pip);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_pass_desc", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_pass_desc", ExactSpelling = true)]
         public static extern sg_pass_desc query_pass_desc(sg_pass pass);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_buffer_defaults", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_buffer_defaults", ExactSpelling = true)]
         public static extern sg_buffer_desc query_buffer_defaults([NativeTypeName("const sg_buffer_desc *")] sg_buffer_desc* desc);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_image_defaults", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_image_defaults", ExactSpelling = true)]
         public static extern sg_image_desc query_image_defaults([NativeTypeName("const sg_image_desc *")] sg_image_desc* desc);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_sampler_defaults", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_sampler_defaults", ExactSpelling = true)]
         public static extern sg_sampler_desc query_sampler_defaults([NativeTypeName("const sg_sampler_desc *")] sg_sampler_desc* desc);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_shader_defaults", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_shader_defaults", ExactSpelling = true)]
         public static extern sg_shader_desc query_shader_defaults([NativeTypeName("const sg_shader_desc *")] sg_shader_desc* desc);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_pipeline_defaults", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_pipeline_defaults", ExactSpelling = true)]
         public static extern sg_pipeline_desc query_pipeline_defaults([NativeTypeName("const sg_pipeline_desc *")] sg_pipeline_desc* desc);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_pass_defaults", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_pass_defaults", ExactSpelling = true)]
         public static extern sg_pass_desc query_pass_defaults([NativeTypeName("const sg_pass_desc *")] sg_pass_desc* desc);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_alloc_buffer", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_alloc_buffer", ExactSpelling = true)]
         public static extern sg_buffer alloc_buffer();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_alloc_image", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_alloc_image", ExactSpelling = true)]
         public static extern sg_image alloc_image();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_alloc_sampler", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_alloc_sampler", ExactSpelling = true)]
         public static extern sg_sampler alloc_sampler();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_alloc_shader", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_alloc_shader", ExactSpelling = true)]
         public static extern sg_shader alloc_shader();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_alloc_pipeline", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_alloc_pipeline", ExactSpelling = true)]
         public static extern sg_pipeline alloc_pipeline();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_alloc_pass", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_alloc_pass", ExactSpelling = true)]
         public static extern sg_pass alloc_pass();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_dealloc_buffer", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_dealloc_buffer", ExactSpelling = true)]
         public static extern void dealloc_buffer(sg_buffer buf);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_dealloc_image", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_dealloc_image", ExactSpelling = true)]
         public static extern void dealloc_image(sg_image img);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_dealloc_sampler", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_dealloc_sampler", ExactSpelling = true)]
         public static extern void dealloc_sampler(sg_sampler smp);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_dealloc_shader", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_dealloc_shader", ExactSpelling = true)]
         public static extern void dealloc_shader(sg_shader shd);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_dealloc_pipeline", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_dealloc_pipeline", ExactSpelling = true)]
         public static extern void dealloc_pipeline(sg_pipeline pip);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_dealloc_pass", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_dealloc_pass", ExactSpelling = true)]
         public static extern void dealloc_pass(sg_pass pass);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_init_buffer", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_init_buffer", ExactSpelling = true)]
         public static extern void init_buffer(sg_buffer buf, [NativeTypeName("const sg_buffer_desc *")] sg_buffer_desc* desc);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_init_image", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_init_image", ExactSpelling = true)]
         public static extern void init_image(sg_image img, [NativeTypeName("const sg_image_desc *")] sg_image_desc* desc);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_init_sampler", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_init_sampler", ExactSpelling = true)]
         public static extern void init_sampler(sg_sampler smg, [NativeTypeName("const sg_sampler_desc *")] sg_sampler_desc* desc);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_init_shader", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_init_shader", ExactSpelling = true)]
         public static extern void init_shader(sg_shader shd, [NativeTypeName("const sg_shader_desc *")] sg_shader_desc* desc);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_init_pipeline", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_init_pipeline", ExactSpelling = true)]
         public static extern void init_pipeline(sg_pipeline pip, [NativeTypeName("const sg_pipeline_desc *")] sg_pipeline_desc* desc);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_init_pass", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_init_pass", ExactSpelling = true)]
         public static extern void init_pass(sg_pass pass, [NativeTypeName("const sg_pass_desc *")] sg_pass_desc* desc);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_uninit_buffer", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_uninit_buffer", ExactSpelling = true)]
         public static extern void uninit_buffer(sg_buffer buf);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_uninit_image", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_uninit_image", ExactSpelling = true)]
         public static extern void uninit_image(sg_image img);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_uninit_sampler", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_uninit_sampler", ExactSpelling = true)]
         public static extern void uninit_sampler(sg_sampler smp);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_uninit_shader", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_uninit_shader", ExactSpelling = true)]
         public static extern void uninit_shader(sg_shader shd);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_uninit_pipeline", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_uninit_pipeline", ExactSpelling = true)]
         public static extern void uninit_pipeline(sg_pipeline pip);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_uninit_pass", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_uninit_pass", ExactSpelling = true)]
         public static extern void uninit_pass(sg_pass pass);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_fail_buffer", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_fail_buffer", ExactSpelling = true)]
         public static extern void fail_buffer(sg_buffer buf);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_fail_image", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_fail_image", ExactSpelling = true)]
         public static extern void fail_image(sg_image img);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_fail_sampler", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_fail_sampler", ExactSpelling = true)]
         public static extern void fail_sampler(sg_sampler smp);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_fail_shader", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_fail_shader", ExactSpelling = true)]
         public static extern void fail_shader(sg_shader shd);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_fail_pipeline", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_fail_pipeline", ExactSpelling = true)]
         public static extern void fail_pipeline(sg_pipeline pip);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_fail_pass", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_fail_pass", ExactSpelling = true)]
         public static extern void fail_pass(sg_pass pass);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_enable_frame_stats", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_enable_frame_stats", ExactSpelling = true)]
         public static extern void enable_frame_stats();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_disable_frame_stats", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_disable_frame_stats", ExactSpelling = true)]
         public static extern void disable_frame_stats();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_frame_stats_enabled", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_frame_stats_enabled", ExactSpelling = true)]
         [return: NativeTypeName("bool")]
         public static extern byte frame_stats_enabled();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_frame_stats", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_query_frame_stats", ExactSpelling = true)]
         public static extern sg_frame_stats query_frame_stats();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_setup_context", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_setup_context", ExactSpelling = true)]
         public static extern sg_context setup_context();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_activate_context", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_activate_context", ExactSpelling = true)]
         public static extern void activate_context(sg_context ctx_id);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_discard_context", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_discard_context", ExactSpelling = true)]
         public static extern void discard_context(sg_context ctx_id);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_d3d11_device", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_d3d11_device", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* d3d11_device();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_d3d11_device_context", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_d3d11_device_context", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* d3d11_device_context();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_d3d11_query_buffer_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_d3d11_query_buffer_info", ExactSpelling = true)]
         public static extern sg_d3d11_buffer_info d3d11_query_buffer_info(sg_buffer buf);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_d3d11_query_image_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_d3d11_query_image_info", ExactSpelling = true)]
         public static extern sg_d3d11_image_info d3d11_query_image_info(sg_image img);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_d3d11_query_sampler_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_d3d11_query_sampler_info", ExactSpelling = true)]
         public static extern sg_d3d11_sampler_info d3d11_query_sampler_info(sg_sampler smp);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_d3d11_query_shader_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_d3d11_query_shader_info", ExactSpelling = true)]
         public static extern sg_d3d11_shader_info d3d11_query_shader_info(sg_shader shd);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_d3d11_query_pipeline_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_d3d11_query_pipeline_info", ExactSpelling = true)]
         public static extern sg_d3d11_pipeline_info d3d11_query_pipeline_info(sg_pipeline pip);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_d3d11_query_pass_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_d3d11_query_pass_info", ExactSpelling = true)]
         public static extern sg_d3d11_pass_info d3d11_query_pass_info(sg_pass pass);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_mtl_device", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_mtl_device", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* mtl_device();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_mtl_render_command_encoder", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_mtl_render_command_encoder", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* mtl_render_command_encoder();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_mtl_query_buffer_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_mtl_query_buffer_info", ExactSpelling = true)]
         public static extern sg_mtl_buffer_info mtl_query_buffer_info(sg_buffer buf);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_mtl_query_image_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_mtl_query_image_info", ExactSpelling = true)]
         public static extern sg_mtl_image_info mtl_query_image_info(sg_image img);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_mtl_query_sampler_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_mtl_query_sampler_info", ExactSpelling = true)]
         public static extern sg_mtl_sampler_info mtl_query_sampler_info(sg_sampler smp);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_mtl_query_shader_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_mtl_query_shader_info", ExactSpelling = true)]
         public static extern sg_mtl_shader_info mtl_query_shader_info(sg_shader shd);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_mtl_query_pipeline_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_mtl_query_pipeline_info", ExactSpelling = true)]
         public static extern sg_mtl_pipeline_info mtl_query_pipeline_info(sg_pipeline pip);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_device", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_device", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* wgpu_device();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_queue", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_queue", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* wgpu_queue();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_command_encoder", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_command_encoder", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* wgpu_command_encoder();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_render_pass_encoder", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_render_pass_encoder", ExactSpelling = true)]
         [return: NativeTypeName("const void *")]
         public static extern void* wgpu_render_pass_encoder();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_query_buffer_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_query_buffer_info", ExactSpelling = true)]
         public static extern sg_wgpu_buffer_info wgpu_query_buffer_info(sg_buffer buf);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_query_image_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_query_image_info", ExactSpelling = true)]
         public static extern sg_wgpu_image_info wgpu_query_image_info(sg_image img);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_query_sampler_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_query_sampler_info", ExactSpelling = true)]
         public static extern sg_wgpu_sampler_info wgpu_query_sampler_info(sg_sampler smp);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_query_shader_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_query_shader_info", ExactSpelling = true)]
         public static extern sg_wgpu_shader_info wgpu_query_shader_info(sg_shader shd);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_query_pipeline_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_query_pipeline_info", ExactSpelling = true)]
         public static extern sg_wgpu_pipeline_info wgpu_query_pipeline_info(sg_pipeline pip);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_query_pass_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_wgpu_query_pass_info", ExactSpelling = true)]
         public static extern sg_wgpu_pass_info wgpu_query_pass_info(sg_pass pass);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_gl_query_buffer_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_gl_query_buffer_info", ExactSpelling = true)]
         public static extern sg_gl_buffer_info gl_query_buffer_info(sg_buffer buf);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_gl_query_image_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_gl_query_image_info", ExactSpelling = true)]
         public static extern sg_gl_image_info gl_query_image_info(sg_image img);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_gl_query_sampler_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_gl_query_sampler_info", ExactSpelling = true)]
         public static extern sg_gl_sampler_info gl_query_sampler_info(sg_sampler smp);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_gl_query_shader_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_gl_query_shader_info", ExactSpelling = true)]
         public static extern sg_gl_shader_info gl_query_shader_info(sg_shader shd);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_gl_query_pass_info", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "sg_gl_query_pass_info", ExactSpelling = true)]
         public static extern sg_gl_pass_info gl_query_pass_info(sg_pass pass);
     }

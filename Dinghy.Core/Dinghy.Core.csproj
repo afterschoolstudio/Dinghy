@@ -25,7 +25,7 @@
 
 
     <ItemGroup>
-        <Content Include="libs\**\*">
+        <Content Include="lib\**\*">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
@@ -39,10 +39,6 @@
 
     <ItemGroup>
         <None Include="..\Dinghy.Magic\Dinghy.Magic\bin\$(Configuration)\netstandard2.0\Dinghy.Magic.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="libs\win-x64\native\" />
     </ItemGroup>
 
 </Project>

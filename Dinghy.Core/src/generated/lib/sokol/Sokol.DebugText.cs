@@ -1,11 +1,10 @@
-using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Dinghy.Internal.Sokol;
 
-public enum sdtx_log_item_t
+[NativeTypeName("unsigned int")]
+public enum sdtx_log_item_t : uint
 {
     SDTX_LOGITEM_OK,
     SDTX_LOGITEM_MALLOC_FAILED,
@@ -71,10 +70,10 @@ public enum sdtx_log_item_t
     public unsafe partial struct sdtx_allocator_t
     {
         [NativeTypeName("void *(*)(size_t, void *)")]
-        public delegate* unmanaged[Cdecl]<nuint, void*, void*> alloc;
+        public delegate* unmanaged[Cdecl]<nuint, void*, void*> alloc_fn;
 
         [NativeTypeName("void (*)(void *, void *)")]
-        public delegate* unmanaged[Cdecl]<void*, void*, void> free;
+        public delegate* unmanaged[Cdecl]<void*, void*, void> free_fn;
 
         public void* user_data;
     }
@@ -94,30 +93,10 @@ public enum sdtx_log_item_t
 
         public sdtx_logger_t logger;
 
+        [InlineArray(8)]
         public partial struct _fonts_e__FixedBuffer
         {
             public sdtx_font_desc_t e0;
-            public sdtx_font_desc_t e1;
-            public sdtx_font_desc_t e2;
-            public sdtx_font_desc_t e3;
-            public sdtx_font_desc_t e4;
-            public sdtx_font_desc_t e5;
-            public sdtx_font_desc_t e6;
-            public sdtx_font_desc_t e7;
-
-            [UnscopedRef]
-            public ref sdtx_font_desc_t this[int index]
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get
-                {
-                    return ref AsSpan()[index];
-                }
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            [UnscopedRef]
-            public Span<sdtx_font_desc_t> AsSpan() => MemoryMarshal.CreateSpan(ref e0, 8);
         }
     }
 

@@ -93,7 +93,7 @@ var sokol = new lib("sokol", [
         "./libs/sokol/bindgen/sokol_glue_bindgen_helper.h",
         "sg_",
         "Glue",
-        "../Dinghy.Core/src/generated/lib/sokol/Sokol.Graphics.Glue.cs",
+        "../Dinghy.Core/src/generated/lib/sokol/Sokol.Glue.cs",
         [
             new("traverse","./libs/sokol/src/sokol/sokol_glue.h")
         ],
@@ -251,6 +251,8 @@ foreach (var l in buildLibs)
     Target($"{l.libName}:bindgen", DependsOn(reqRsps.ToArray()));
     Target($"{l.libName}", DependsOn($"{l.libName}:build", $"{l.libName}:bindgen"));
 }
+
+Target("default", DependsOn(buildLibs.Select(x => x.libName).ToArray()));
 
 //
 // Target("npm:install", () => Run("npm","install"));

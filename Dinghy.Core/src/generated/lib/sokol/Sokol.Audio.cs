@@ -89,38 +89,38 @@ public enum saudio_log_item : uint
 
     public static unsafe partial class Audio
     {
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "saudio_setup", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "saudio_setup", ExactSpelling = true)]
         public static extern void setup([NativeTypeName("const saudio_desc *")] saudio_desc* desc);
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "saudio_shutdown", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "saudio_shutdown", ExactSpelling = true)]
         public static extern void shutdown();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "saudio_isvalid", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "saudio_isvalid", ExactSpelling = true)]
         [return: NativeTypeName("bool")]
         public static extern byte isvalid();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "saudio_userdata", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "saudio_userdata", ExactSpelling = true)]
         public static extern void* userdata();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "saudio_query_desc", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "saudio_query_desc", ExactSpelling = true)]
         public static extern saudio_desc query_desc();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "saudio_sample_rate", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "saudio_sample_rate", ExactSpelling = true)]
         public static extern int sample_rate();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "saudio_buffer_frames", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "saudio_buffer_frames", ExactSpelling = true)]
         public static extern int buffer_frames();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "saudio_channels", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "saudio_channels", ExactSpelling = true)]
         public static extern int channels();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "saudio_suspended", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "saudio_suspended", ExactSpelling = true)]
         [return: NativeTypeName("bool")]
         public static extern byte suspended();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "saudio_expect", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "saudio_expect", ExactSpelling = true)]
         public static extern int expect();
 
-        [DllImport("libs/sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "saudio_push", ExactSpelling = true)]
+        [DllImport("sokol", CallingConvention = CallingConvention.Cdecl, EntryPoint = "saudio_push", ExactSpelling = true)]
         public static extern int push([NativeTypeName("const float *")] float* frames, int num_frames);
     }
