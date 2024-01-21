@@ -18,6 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <AdditionalFiles Include="res\**\*"/>
         <Content Include="res\**\*">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
@@ -28,8 +29,16 @@
       <ProjectReference Include="..\Dinghy.Magic\Dinghy.Magic\Dinghy.Magic.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <AdditionalFiles Include="res\**\*"/>
-    </ItemGroup>
+<!--    <ItemGroup>-->
+<!--&lt;!&ndash;        <_NativeLibrary Include="..\Dinghy.Core\runtimes\**\native\*.*" RuntimeIdentifier="$([System.String]::Copy('%(RecursiveDir)').Split('/\')[0].Trim('/\'))" />&ndash;&gt;-->
+<!--        <_NativeLibrary Include="..\Dinghy.Core\runtimes\**\native\*.*" RuntimeIdentifier="osx-x64" />-->
+<!--        <RuntimeTargetsCopyLocalItems Include="@(_NativeLibrary)"-->
+<!--                                      CopyLocal="true"-->
+<!--                                      AssetType="native"-->
+<!--                                      DestinationSubDirectory="runtimes/%(RuntimeIdentifier)/"-->
+<!--                                      DestinationSubPath="%(Filename)%(Extension)"-->
+<!--                                      RuntimeIdentifier="%(RuntimeIdentifier)"-->
+<!--                                      NuGetPackageId="Arch" />-->
+<!--    </ItemGroup>-->
 
 </Project>

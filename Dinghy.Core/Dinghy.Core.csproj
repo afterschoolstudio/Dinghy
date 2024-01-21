@@ -25,8 +25,9 @@
 
 
     <ItemGroup>
-        <Content Include="lib\**\*">
+        <Content Include="runtimes\**\*">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <PackagePath>runtimes</PackagePath>
         </Content>
     </ItemGroup>
 

@@ -1,7 +1,11 @@
-﻿using Dinghy;
+﻿using System.Runtime.InteropServices;
+using Dinghy;
 using Dinghy.Core.ImGUI;
+using Dinghy.Sandbox;
 using Dinghy.Sandbox.Demos;
 using static Dinghy.Quick;
+
+NativeLibResolver.kick();
 
 InputSystem.Events.Key.Down += (key,_) =>  {
 	if (key == Key.C)
@@ -12,6 +16,7 @@ InputSystem.Events.Key.Down += (key,_) =>  {
 
 List<DemoSceneInfo> demoTypes = new();  
 List<DemoSceneInfo> genuaryDemoTypes = new();
+// Console.WriteLine(AppContext.GetData("NATIVE_DLL_SEARCH_DIRECTORIES"));
 Engine.Run(new Engine.RunOptions(800,600,"dinghy", 
 	() =>
 	{

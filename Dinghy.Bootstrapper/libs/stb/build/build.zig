@@ -30,15 +30,15 @@ pub fn build(b: *std.Build) void {
     
     if (lib.target.isDarwin()) {
         // b.lib_dir = "../../../../Dinghy.Core/libs/osx-x64/native";
-        b.lib_dir = "../Dinghy.Core/lib/osx-x64/native";
+        b.lib_dir = "../Dinghy.Core/runtimes/osx-x64/native";
     } else {
         if (lib.target.isLinux()) {
             // b.lib_dir = "../../../../Dinghy.Core/libs/linux-x64/native";
-            b.lib_dir = "../Dinghy.Core/lib/linux-x64/native";
+            b.lib_dir = "../Dinghy.Core/runtimes/linux-x64/native";
         }
         else if (lib.target.isWindows()) {
             // b.lib_dir = "../../../../Dinghy.Core/libs/win-x64/native";
-            b.lib_dir = "../Dinghy.Core/lib/win-x64/native";
+            b.lib_dir = "../Dinghy.Core/runtimes/win-x64/native";
         }
     }
     b.installArtifact(lib);

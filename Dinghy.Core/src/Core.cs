@@ -1,4 +1,5 @@
 using System.Numerics;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Dinghy.Internal.STB;
@@ -17,7 +18,7 @@ public static partial class Engine
     public static Action Setup;
     static InputSystem InputSystem = new InputSystem();
     public static string DebugTextStr = "";
-    static Color ClearColor = new Color(Palettes.ONE_BIT_MONITOR_GLOW[0]);
+    static Color ClearColor;
 
     private static HashSet<DSystem> DefaultSystems = new HashSet<DSystem>()
     {
@@ -111,9 +112,18 @@ public static partial class Engine
         }
         Boot(opts == null ? defaultOpts : opts);
     }
-    
+
+
     static internal void Boot(RunOptions opts)
     {
+        // NativeLibResolver.kick(); //inits the static lib resolver 
+
+        // TryManuallyLoad("sokol");
+        // TryManuallyLoad("stb");
+        // TryManuallyLoad("cute");
+        
+        // Console.WriteLine("booting");
+        
         unsafe
         {
             var window_title = System.Text.Encoding.UTF8.GetBytes(opts.appName);
@@ -132,6 +142,26 @@ public static partial class Engine
                 desc.logger.func = &Sokol_Logger;
                 App.run(&desc);
             }
+        }
+    }
+    
+    static void TryManuallyLoad(string libraryName)
+    {
+        // NOTE: For the native libraries we load here, 
+        //       we do not care about closing the library 
+        //       handle since they live as long as the process.
+        var loaded = NativeLibrary.TryLoad(libraryName, 
+            Assembly.GetExecutingAssembly(),
+            DllImportSearchPath.SafeDirectories | 
+            DllImportSearchPath.UserDirectories,
+            out var handle);
+        if (!loaded)
+        {
+            Console.WriteLine($"Failed loading {libraryName}");
+        }
+        else
+        {
+            Console.WriteLine($"Loaded {libraryName}");
         }
     }
 
@@ -235,6 +265,8 @@ public static partial class Engine
         debug_text_desc.fonts[5] = DebugText.font_oric();
         debug_text_desc.logger.func = &Sokol_Logger;
         DebugText.setup(&debug_text_desc);
+            
+        ClearColor = new Color(Palettes.ONE_BIT_MONITOR_GLOW[0]);
         
         
         // a checkerboard texture

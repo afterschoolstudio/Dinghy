@@ -275,4 +275,3 @@ public partial struct c2v
         [DllImport("cute", CallingConvention = CallingConvention.Cdecl, EntryPoint = "__Z9c2CastRay5c2RayPKvPK3c2x7C2_TYPEP9c2Raycast", ExactSpelling = true)]
         public static extern int c2CastRay(c2Ray A, [NativeTypeName("const void *")] void* B, [NativeTypeName("const c2x *")] c2x* bx, C2_TYPE typeB, c2Raycast* @out);
     }
-}

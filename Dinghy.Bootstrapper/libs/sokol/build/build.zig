@@ -76,7 +76,7 @@ pub fn build(b: *std.Build) void {
 
     if (dll.target.isDarwin()) {
         // b.lib_dir = "../../../../Dinghy.Core/libs/osx-x64/native";
-        b.lib_dir = "../Dinghy.Core/lib/osx-x64/native";
+        b.lib_dir = "../Dinghy.Core/runtimes/osx-x64/native";
         
         
         inline for (c_sources) |csrc| {
@@ -121,7 +121,7 @@ pub fn build(b: *std.Build) void {
 
         if (dll.target.isLinux()) {
             // b.lib_dir = "../../../../Dinghy.Core/libs/linux-x64/native";
-            b.lib_dir = "../Dinghy.Core/lib/linux-x64/native";
+            b.lib_dir = "../Dinghy.Core/runtimes/linux-x64/native";
         
             var link_egl = config.force_egl or config.enable_wayland;
             var egl_ensured = (config.force_egl and config.enable_x11) or config.enable_wayland;
@@ -157,7 +157,7 @@ pub fn build(b: *std.Build) void {
             //if running zig build in same folder
             // b.lib_dir = "../../../../Dinghy.Core/libs/win-x64/native";
             //if running zig build from parent project folder
-            b.lib_dir = "../Dinghy.Core/lib/win-x64/native";
+            b.lib_dir = "../Dinghy.Core/runtimes/win-x64/native";
         
             dll.linkSystemLibraryName("kernel32");
             dll.linkSystemLibraryName("user32");
