@@ -1,5 +1,5 @@
 #if defined(_WIN32)
-#define CUTE_C2_API extern "C" __declspec(dllexport)
+#define CUTE_C2_API __declspec(dllexport)
 #else
 #define CUTE_C2_API extern
 #endif

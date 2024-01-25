@@ -46,7 +46,7 @@ public static class AssetRouter
     {
         //var text = additionalFile.GetText();
         
-        cw.AddLine($"public static TextureAsset {Path.GetFileNameWithoutExtension(t.Path)} = new(\"{t.Path}\");");
+        cw.AddLine($"public static TextureAsset {Path.GetFileNameWithoutExtension(t.Path)} = new(@\"{t.Path}\");");
         
         //need to handle actual content
         switch (ext)

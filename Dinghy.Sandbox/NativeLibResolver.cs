@@ -11,18 +11,18 @@ internal static class NativeLibResolver
         public const string sokol = "sokol";
         public const string sokol_osx = "runtimes/osx-x64/native/libsokol.dylib";
         public const string sokol_linux = "libsokol.dylib";
-        public const string sokol_win = "sokol.dll";
+        public const string sokol_win = "runtimes/win-x64/native/sokol.dll";
         
         
         public const string cute = "cute";
         public const string cute_osx = "runtimes/osx-x64/native/libcute.dylib";
         public const string cute_linux = "libcute.dylib";
-        public const string cute_win = "cute.dll";
+        public const string cute_win = "runtimes/win-x64/native/cute.dll";
         
         public const string stb = "stb";
         public const string stb_osx = "runtimes/osx-x64/native/libstb.dylib";
         public const string stb_linux = "libstb.dylib";
-        public const string stb_win = "stb.dll";
+        public const string stb_win = "runtimes/win-x64/native/stb.dll";
     }
     
     static NativeLibResolver()
@@ -66,11 +66,7 @@ internal static class NativeLibResolver
         var loaded = NativeLibrary.TryLoad(platformDependentName, assembly, searchPath, out handle);
         if (!loaded)
         {
-            Console.WriteLine($"Failed loading {libraryName}");
-        }
-        else
-        {
-            Console.WriteLine($"Loaded {libraryName}");
+            Console.WriteLine($"NativeLibResolver Failed loading {libraryName} - do you update the platform paths for where the DLL is?");
         }
         return handle;
     }

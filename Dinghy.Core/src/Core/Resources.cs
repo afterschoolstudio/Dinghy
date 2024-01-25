@@ -1,4 +1,5 @@
 ﻿using Dinghy.Internal.Sokol;
+using System.IO;
 using Dinghy.Internal.STB;
 
 namespace Dinghy;
@@ -8,7 +9,16 @@ public static class Resources
     // Resources are types that are loadable
     public record Texture
     {
-        public string Path { get; init; }
+        private string path;
+
+        public string Path
+        {
+            get => path;
+            init
+            {
+                path = System.IO.Path.GetFullPath(value);
+            }
+        }
         public int Width { get; private set; } = -1;
         public int Height { get; private set; } = -1;
         public sg_image Data { get; private set; }
