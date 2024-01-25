@@ -16,8 +16,8 @@ public class Jan01_Particles : Scene
         new ParticleEmitterComponent.EmitterConfig(10000, 100, new ParticleEmitterComponent.ParticleConfig());
     public override void Create()
     {
-        gp = new Grid.GridCreationParams((Engine.Width / 2f, Engine.Height / 2f),
-            (0.5f, 0.5f), 30, 30, (0.5f, 0.5f), 10, 10);
+        gp = new Grid.GridCreationParams(new(Engine.Width / 2f, Engine.Height / 2f),
+            new(0.5f, 0.5f), 30, 30, new(0.5f, 0.5f), 10, 10);
         g = new Grid(gp);
         foreach (var p in g.Points)
         {

@@ -54,7 +54,7 @@ public static class Collision
         return c > 0;
     }
     
-    public static (Point a, Point b) GetClosestPoints(Entity e1, Entity e2)
+    public static (Vector2? a, Vector2? b) GetClosestPoints(Entity e1, Entity e2)
     {
         if (e1.ECSEntity.Has<Collider>() && e2.ECSEntity.Has<Collider>())
         {
@@ -65,7 +65,7 @@ public static class Collision
         return (null,null);
     }
     
-    public static (Point a, Point b) GetClosestPoints(Collider a, Position app, Collider b, Position bpp)
+    public static (Vector2 a, Vector2 b) GetClosestPoints(Collider a, Position app, Collider b, Position bpp)
     {
         var ap = Utils.GetColliderBounds(a,app);
         var bp = Utils.GetColliderBounds(b,bpp);
@@ -78,7 +78,7 @@ public static class Collision
                 C2.c2GJK(a_ptr, C2_TYPE.C2_TYPE_POLY, null, b_ptr, C2_TYPE.C2_TYPE_POLY, null, &outA, &outB, 0, null, null);
             }
         }
-        return (outA,outB);
+        return (outA.ToVector2(),outB.ToVector2());
     }
     
     public static CollisionInfo GetCollisionInfo(Entity e1, Entity e2)
@@ -109,15 +109,15 @@ public static class Collision
     public record CollisionInfo
     {
         public int Count { get; init; }
-        public System.Numerics.Vector2 RayFromAToB { get; init; }
-        public Point PointA { get; init; }
-        public Point PointB { get; init; }
+        public Vector2 RayFromAToB { get; init; }
+        public Vector2 PointA { get; init; }
+        public Vector2 PointB { get; init; }
         public CollisionInfo(c2Manifold m)
         {
             Count = m.count;
-            RayFromAToB = new System.Numerics.Vector2(m.n.x,m.n.y);
-            PointA = m.contact_points[0];
-            PointB = m.contact_points[1];
+            RayFromAToB = new(m.n.x,m.n.y);
+            PointA = m.contact_points[0].ToVector2();
+            PointB = m.contact_points[1].ToVector2();
         }
     }
 }
@@ -129,38 +129,32 @@ public static class Utils
         return new Polygon(4,GetBounds(c,entityPosition));
     }
     
-    public static Point[] GetBounds(Collider c, Position entityPosition)
+    public static Vector2[] GetBounds(Collider c, Position entityPosition)
     {
         var xpos = entityPosition.x + c.x;
         var ypos = entityPosition.y + c.y;
+        Vector2 basePos = new(entityPosition.x + c.x, entityPosition.y + c.y);
+        Vector2 size = new(c.width, c.height);
         //note this is the implicit entity pivot — may eventually want to change to be passed in
-        var pivot = new Vector2(entityPosition.x - entityPosition.pivotX, entityPosition.y - entityPosition.pivotY);
-        Point[] pts = [
-            TransformEntityPoint((xpos, ypos),entityPosition,pivot),
-            TransformEntityPoint((xpos + c.width, ypos),entityPosition,pivot),
-            TransformEntityPoint((xpos + c.width, ypos + c.height),entityPosition,pivot),
-            TransformEntityPoint((xpos, ypos + c.height),entityPosition,pivot)
+        var pivot = new System.Numerics.Vector2(entityPosition.x - entityPosition.pivotX, entityPosition.y - entityPosition.pivotY);
+        Vector2[] pts = [
+            
+            basePos.Transform(entityPosition.rotation, entityPosition.scaleX, entityPosition.scaleY,pivot),
+            basePos.Translate(new Vector2(c.width,0)).Transform(entityPosition.rotation, entityPosition.scaleX, entityPosition.scaleY,pivot),
+            basePos.Translate(new Vector2(c.width,c.height)).Transform(entityPosition.rotation, entityPosition.scaleX, entityPosition.scaleY,pivot),
+            basePos.Translate(new Vector2(0,c.height)).Transform(entityPosition.rotation, entityPosition.scaleX, entityPosition.scaleY,pivot)
+            
+            // TransformEntityPoint((xpos, ypos),entityPosition,pivot),
+            // TransformEntityPoint((xpos + c.width, ypos),entityPosition,pivot),
+            // TransformEntityPoint((xpos + c.width, ypos + c.height),entityPosition,pivot),
+            // TransformEntityPoint((xpos, ypos + c.height),entityPosition,pivot)
         ];
         return pts;
-
-        Point TransformEntityPoint(Point p, Position e, Vector2 pivot)
-        {
-            return TransformPoint(p,e.rotation, e.scaleX, e.scaleY,pivot);
-        }
-
-        Vector2 TransformPoint(
-            Vector2 point, 
-            float rotation, 
-            float scaleX, 
-            float scaleY, 
-            Vector2 pivot)
-        {
-            Matrix3x2 transformation =
-                Matrix3x2.CreateTranslation(point) *
-                Matrix3x2.CreateRotation(rotation, pivot) *
-                Matrix3x2.CreateScale(scaleX, scaleY, pivot);
-            return Vector2.Transform(Vector2.Zero, transformation);
-        }
+        //
+        // Vector2 TransformEntityPoint(Vector2 p, Position e, System.Numerics.Vector2 pivot)
+        // {
+        //     return TransformPoint(p,e.rotation, e.scaleX, e.scaleY,pivot);
+        // }
     }
 }
 
@@ -224,13 +218,13 @@ public class Ray(float px, float py, float dx, float dy, float t)
 public class Polygon
 {
     public c2Poly poly;
-    public Polygon(int count, Point[] points)
+    public Polygon(int count, Vector2[] points)
     {
         poly = default;
         poly.count = count;
         for (int i = 0; i < count; i++)
         {
-            poly.verts[i] = points[i];
+            poly.verts[i] = points[i].ToC2V();
         }
 
         unsafe

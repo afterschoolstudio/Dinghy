@@ -1,4 +1,5 @@
 ﻿using Dinghy.Core;
+using System.Numerics;
 using static Dinghy.Resources;
 
 namespace Dinghy;
@@ -97,7 +98,7 @@ public record ParticleEmitterComponent
             // TriangleStrip looks like shit
         }
         public float Lifespan;
-        public Point EmissionPoint;
+        public Vector2 EmissionPoint;
         public ParticlePrimitiveType ParticleType;
         public Transition<float> DX;
         public Transition<float> DY;
@@ -106,7 +107,7 @@ public record ParticleEmitterComponent
         public Transition<float> Rotation;
         public Transition<Color> Color;
 
-        public ParticleConfig(Point emissionPoint, ParticlePrimitiveType type, float lifespan, Transition<float> dx, Transition<float> dy, Transition<float> width,
+        public ParticleConfig(Vector2 emissionPoint, ParticlePrimitiveType type, float lifespan, Transition<float> dx, Transition<float> dy, Transition<float> width,
             Transition<float> height, Transition<Color> color, Transition<float> rotation)
         {
             ParticleType = type;
@@ -135,7 +136,7 @@ public record ParticleEmitterComponent
 
         public ParticleConfig()
         {
-            EmissionPoint = (0, 0);
+            EmissionPoint = Vector2.Zero;
             ParticleType = DefaultParticleConfig.ParticleType;
             Lifespan = DefaultParticleConfig.Lifespan;
             DX = DefaultParticleConfig.DX;
@@ -167,7 +168,7 @@ public record ParticleEmitterComponent
         }
     }
 
-    public static readonly ParticleConfig DefaultParticleConfig = new ParticleConfig((0,0),
+    public static readonly ParticleConfig DefaultParticleConfig = new ParticleConfig(Vector2.Zero, 
         ParticleEmitterComponent.ParticleConfig.ParticlePrimitiveType.Rectangle,
         1.5f,
         new (4,0.1f,Easing.Option.EaseInOutExpo),

@@ -1,3 +1,4 @@
+using System.Numerics;
 using Dinghy.Core;
 
 namespace Dinghy.Sandbox.Demos;
@@ -15,10 +16,10 @@ public class SimpleUpdate : Scene
     }
 
     Sprite e;
-    Point startPos = (0,0);
+    Vector2 startPos = Vector2.Zero;
     public override void Create()
     {
-        startPos = ((Engine.Width / 2f) - 32, (Engine.Height / 2f) - 32);
+        startPos = new((Engine.Width / 2f) - 32, (Engine.Height / 2f) - 32);
         e = new Sprite(conscriptFrame0)
         {
             X = (int)startPos.X,

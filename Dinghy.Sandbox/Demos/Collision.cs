@@ -1,3 +1,5 @@
+using System.Numerics;
+
 namespace Dinghy.Sandbox.Demos;
 
 [DemoScene("12 Collision")]
@@ -94,20 +96,20 @@ public class Collision : Scene
         var ptsA = Dinghy.Collision.GetClosestPoints(pointer, static_colliderA);
         ptA = new Shape(pt,5,5)
         {
-            X = ptsA.b.X,
-            Y = ptsA.b.Y
+            X = ptsA.b.Value.X,
+            Y = ptsA.b.Value.Y
         };
         var ptsB = Dinghy.Collision.GetClosestPoints(pointer, static_colliderB);
         ptB = new Shape(pt,5,5)
         {
-            X = ptsB.b.X,
-            Y = ptsB.b.Y
+            X = ptsB.b.Value.X,
+            Y = ptsB.b.Value.Y
         };
         var ptsC = Dinghy.Collision.GetClosestPoints(pointer, static_colliderC);
         ptC = new Shape(pt,5,5)
         {
-            X = ptsC.b.X,
-            Y = ptsC.b.Y
+            X = ptsC.b.Value.X,
+            Y = ptsC.b.Value.Y
         };
         
         

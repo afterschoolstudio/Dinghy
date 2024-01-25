@@ -1,4 +1,5 @@
 using Dinghy.Internal.Sokol;
+using System.Numerics;
 
 namespace Dinghy.Core.ImGUI;
 
@@ -15,7 +16,7 @@ public static class ImGUIHelper
             }
         }
         public static void EndMenu() => Internal.Sokol.ImGUI.igEndMenu();
-        public static void SetNextWindowPosition(Point p)
+        public static void SetNextWindowPosition(Vector2 p)
         {
             SetNextWindowPosition(p.X,p.Y,Internal.Sokol.ImGuiCond_.ImGuiCond_Always,0,0);
         }
@@ -32,15 +33,15 @@ public static class ImGUIHelper
         {
             Internal.Sokol.ImGUI.igSetNextWindowBgAlpha(alpha);
         }
-        public static unsafe void DrawQuad(Point a, Point b, Point c, Point d)
+        public static unsafe void DrawQuad(Vector2 a, Vector2 b, Vector2 c, Vector2 d)
         {
             var p = Internal.Sokol.ImGUI.igGetWindowDrawList();
-            Internal.Sokol.ImGUI.ImDrawList_AddQuadFilled(Internal.Sokol.ImGUI.igGetWindowDrawList(),a,b,c,d,Palettes.ONE_BIT_MONITOR_GLOW[1]);
+            Internal.Sokol.ImGUI.ImDrawList_AddQuadFilled(Internal.Sokol.ImGUI.igGetWindowDrawList(),a.ToImVec2(),b.ToImVec2(),c.ToImVec2(),d.ToImVec2(),Palettes.ONE_BIT_MONITOR_GLOW[1]);
         }
-        public static unsafe void DrawQuad(Point[] points)
+        public static unsafe void DrawQuad(Vector2[] points)
         {
             var p = Internal.Sokol.ImGUI.igGetWindowDrawList();
-            Internal.Sokol.ImGUI.ImDrawList_AddQuadFilled(Internal.Sokol.ImGUI.igGetWindowDrawList(),points[0],points[1],points[2],points[3],Palettes.ONE_BIT_MONITOR_GLOW[1]);
+            Internal.Sokol.ImGUI.ImDrawList_AddQuadFilled(Internal.Sokol.ImGUI.igGetWindowDrawList(),points[0].ToImVec2(),points[1].ToImVec2(),points[2].ToImVec2(),points[3].ToImVec2(),Palettes.ONE_BIT_MONITOR_GLOW[1]);
         }
         
         public static unsafe bool MenuItem(string name, string shortcut = "", bool selected = false, bool enabled = true)

@@ -1,9 +1,10 @@
+using System.Numerics;
 namespace Dinghy.Core;
 
 public class Grid
 {
-    private Point pivot;
-    public Point Pivot
+    private Vector2 pivot;
+    public Vector2 Pivot
     {
         get => pivot;
         set
@@ -15,8 +16,8 @@ public class Grid
             }
         }
     }
-    public List<Point> Points { get; }
-    List<Point> OriginalPoints;
+    public List<Vector2> Points { get; }
+    List<Vector2> OriginalPoints;
     private float rotation = 0f;
     public float Rotation
     {
@@ -72,18 +73,18 @@ public class Grid
 
     public class GridCreationParams
     {
-        public Point Pivot;
-        public Point NormalizedPivotPos;
-        public Point NormalizedCellOffset;
+        public Vector2 Pivot;
+        public Vector2 NormalizedPivotPos;
+        public Vector2 NormalizedCellOffset;
         public int CellWidth;
         public int CellHeight;
         public int Xcount;
         public int Ycount;
-        public GridCreationParams(Point pivot,
-            Point normalizedPivotPos,
+        public GridCreationParams(Vector2 pivot,
+            Vector2 normalizedPivotPos,
             int cellWidth,
             int cellHeight,
-            Point normalizedCellOffset,
+            Vector2 normalizedCellOffset,
             int xcount,
             int ycount)
         {
@@ -100,12 +101,12 @@ public class Grid
     //start is world space point, pivot is what start is meant to be interpreted as in normal space relative to to whole grid
     public Grid(GridCreationParams p)
     {
-        Points = new List<Point>();
+        Points = new List<Vector2>();
         var x_max = p.Xcount * p.CellWidth;
         var y_max = p.Ycount * p.CellHeight;
 
-        Point cellOffset = (p.NormalizedCellOffset.X * p.CellWidth, p.NormalizedCellOffset.Y * p.CellHeight);
-        Point gridStart = p.Pivot - (
+        Vector2 cellOffset = new(p.NormalizedCellOffset.X * p.CellWidth, p.NormalizedCellOffset.Y * p.CellHeight);
+        Vector2 gridStart = p.Pivot - new Vector2(
             x_max * p.NormalizedPivotPos.X,
             y_max * p.NormalizedPivotPos.Y
         ) + cellOffset;
@@ -114,14 +115,14 @@ public class Grid
         {
             for (int x = 0; x < p.Xcount; x++)
             {
-                Points.Add((
+                Points.Add(new Vector2(
                         gridStart.X + (x * p.CellWidth),
                         gridStart.Y + (y * p.CellHeight)
                 ) + cellOffset);
             }
         }
 
-        OriginalPoints = new List<Point>(Points);
+        OriginalPoints = new List<Vector2>(Points);
     }
     
     

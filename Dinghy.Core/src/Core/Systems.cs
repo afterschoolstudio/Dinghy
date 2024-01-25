@@ -145,7 +145,7 @@ public class ParticleRenderSystem : RenderSystem
                         //otherwise remake this particle
                         emitter.Particles[i].Reset();
                         emitter.Particles[i].Config = new ParticleEmitterComponent.ParticleConfig(emitter.Config.ParticleConfig);
-                        emitter.Particles[i].Config.EmissionPoint = (p.x, p.y);
+                        emitter.Particles[i].Config.EmissionPoint = new(p.x, p.y);
                         emitter.Particles[i].Resolve();
                 
                         activeIndices.Add(i);
@@ -168,7 +168,7 @@ public class ParticleRenderSystem : RenderSystem
                     emitter.Particles[i].Reset();
                     emitter.Particles[i].Active = true;
                     emitter.Particles[i].Config = new ParticleEmitterComponent.ParticleConfig(emitter.Config.ParticleConfig);
-                    emitter.Particles[i].Config.EmissionPoint = (p.x, p.y);
+                    emitter.Particles[i].Config.EmissionPoint = new(p.x, p.y);
                     emitter.Particles[i].Resolve();
                 
                     activeIndices.Add(i);
@@ -416,7 +416,7 @@ public class DebugOverlaySystem : DSystem, IUpdateSystem
             (Arch.Core.Entity e, ref Position p, ref Collider c, ref HasManagedOwner o) =>
             {
                 ImGUIHelper.Wrappers.SetNextWindowSize(100, 100);
-                ImGUIHelper.Wrappers.SetNextWindowPosition((p.x, p.y));
+                ImGUIHelper.Wrappers.SetNextWindowPosition(new(p.x, p.y));
                 ImGUIHelper.Wrappers.SetNextWindowBGAlpha(0f);
                 ImGUIHelper.Wrappers.Begin($"e{e.Id}", 
                     ImGuiWindowFlags_.ImGuiWindowFlags_NoTitleBar | 
