@@ -21,7 +21,7 @@ public static class Util
     public static IEnumerable<DemoSceneInfo> GetDemoSceneTypes()
     {
         return Assembly.GetExecutingAssembly().GetTypes()
-            .Where(type => type.Namespace == "Dinghy.Sandbox.Demos")
+            .Where(type => type.Namespace == "Dinghy.Sandbox.Demos" || type.Namespace == "Dinghy.Sandbox.Demos.dungeon" )
             .Select(type => new
             {
                 Type = type,

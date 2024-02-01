@@ -389,7 +389,6 @@ public class CollisionSystem : DSystem, IUpdateSystem
     {
         colliders.Clear();
         //currently have no broadphase
-        List<(Entity self,Entity other)> collisions = new();
         Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref Position p, ref Collider c, ref HasManagedOwner o) =>
         {
             if(!c.active){return;}

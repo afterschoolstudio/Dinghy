@@ -3,7 +3,9 @@ using Dinghy;
 using Dinghy.Core.ImGUI;
 using Dinghy.Sandbox;
 using Dinghy.Sandbox.Demos;
+using Dinghy.Sandbox.Demos.dungeon;
 using static Dinghy.Quick;
+using Collision = Dinghy.Sandbox.Demos.Collision;
 
 NativeLibResolver.kick();
 
@@ -22,6 +24,10 @@ Engine.Run(new Engine.RunOptions(800,600,"dinghy",
 	{
 		demoTypes = Util.GetDemoSceneTypes().ToList();
 		genuaryDemoTypes = Util.GetGenuarySceneTypes().ToList();
+
+		var scene = new Dungeon();
+		scene.Mount(0);
+		scene.Load(() => scene.Start());
 	}, 
 	() =>
 	{
