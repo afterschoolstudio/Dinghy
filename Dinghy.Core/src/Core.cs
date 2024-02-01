@@ -17,6 +17,7 @@ public static partial class Engine
     public static Action Update;
     public static Action Setup;
     static InputSystem InputSystem = new InputSystem();
+    static DestructionSystem DestructionSystem = new DestructionSystem();
     public static string DebugTextStr = "";
     static Color ClearColor;
 
@@ -27,7 +28,7 @@ public static partial class Engine
         new ShapeRenderSystem(),
         new FrameAnimationSystem(),
         new ManagedComponentSystem(),
-        new DestructionSystem(),
+        DestructionSystem,
         new ParticleRenderSystem(),
         new CollisionSystem(),
         new DebugOverlaySystem(),
@@ -489,6 +490,8 @@ public static partial class Engine
                 cs.Cleanup();
             }
         }
+        
+        DestructionSystem.DestroyObjects();
 
         if (hasScenesStagedForUnmounting)
         {

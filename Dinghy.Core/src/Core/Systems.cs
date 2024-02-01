@@ -364,11 +364,11 @@ public class FrameAnimationSystem : AnimationSystem
     }
 }
 
-public class DestructionSystem : DSystem, ICleanupSystem
+public class DestructionSystem : DSystem
 {
     QueryDescription query = new QueryDescription().WithAll<Destroy>();
     QueryDescription managedCleanupQuery = new QueryDescription().WithAll<Destroy,HasManagedOwner>();
-    public void Cleanup()
+    public void DestroyObjects()
     {
         Engine.ECSWorld.Query(in managedCleanupQuery, (Arch.Core.Entity e, ref HasManagedOwner owner) =>
         {
