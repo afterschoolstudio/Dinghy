@@ -415,8 +415,21 @@ public class DebugOverlaySystem : DSystem, IUpdateSystem
         Engine.ECSWorld.Query(in colliderDebug,
             (Arch.Core.Entity e, ref Position p, ref Collider c, ref HasManagedOwner o) =>
             {
-                ImGUIHelper.Wrappers.SetNextWindowSize(100, 100);
-                ImGUIHelper.Wrappers.SetNextWindowPosition(new(p.x, p.y));
+                var bounds = Utils.GetBounds(c, p);
+                float minX = Single.MaxValue, minY = Single.MaxValue, maxX = 0, maxY = 0;
+                foreach (var b in bounds)
+                {
+                    minX = b.X < minX ? b.X : minX;
+                    minY = b.Y < minY ? b.Y : minY;
+                    
+                    maxX = b.X > maxX ? b.X : maxX;
+                    maxY = b.Y > maxY ? b.Y : maxY;
+                }
+                //cute scaling but kind of bad without state
+                // ImGUIHelper.Wrappers.SetNextWindowPosition(new(minX, minY));
+                // ImGUIHelper.Wrappers.SetNextWindowSize(maxX-minX, maxY-minY);
+                ImGUIHelper.Wrappers.SetNextWindowPosition(new Vector2(p.x - p.pivotX,p.y - p.pivotY));
+                ImGUIHelper.Wrappers.SetNextWindowSize(100,100);
                 ImGUIHelper.Wrappers.SetNextWindowBGAlpha(0f);
                 ImGUIHelper.Wrappers.Begin($"e{e.Id}", 
                     ImGuiWindowFlags_.ImGuiWindowFlags_NoTitleBar | 
@@ -425,7 +438,7 @@ public class DebugOverlaySystem : DSystem, IUpdateSystem
                     ImGuiWindowFlags_.ImGuiWindowFlags_NoResize |
                     ImGuiWindowFlags_.ImGuiWindowFlags_NoBringToFrontOnFocus);
                 ImGUIHelper.Wrappers.Text(e.Id.ToString());
-                ImGUIHelper.Wrappers.DrawQuad(Utils.GetBounds(c, p));
+                ImGUIHelper.Wrappers.DrawQuad(bounds);
                 ImGUIHelper.Wrappers.End();
             });
         

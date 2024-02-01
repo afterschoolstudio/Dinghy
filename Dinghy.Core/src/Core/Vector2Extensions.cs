@@ -10,19 +10,38 @@ public static class VectorExtensions
     public static c2v ToC2V (this Vector2 v) => new(){x = v.X,y = v.Y};
     public static Vector2 ToVector2(this c2v v) => new(v.x, v.y);
     public static ImVec2 ToImVec2(this Vector2 v) => new ImVec2() { x = v.X, y = v.Y };
+    
     public static Vector2 Transform(
         this Vector2 v,
         float rotation, 
         float scaleX, 
         float scaleY, 
+        Vector2? translation = null,
+        //NOTE: PIVOT IN WORLD SPACE
         Vector2? pivot = null)
     {
-        Vector2 pivotPoint = pivot ?? Vector2.Zero;
-        Matrix3x2 transformation =
-            Matrix3x2.CreateTranslation(v) *
-            Matrix3x2.CreateRotation(rotation, pivotPoint) *
-            Matrix3x2.CreateScale(scaleX, scaleY, pivotPoint);
-        return Vector2.Transform(Vector2.Zero, transformation);
+        Vector2 translate = translation ?? Vector2.Zero;
+        Matrix3x2 transformation;
+        if (pivot != null)
+        {
+            // Move the pivot to the origin, apply scale and rotation, then move back
+            transformation =
+                Matrix3x2.CreateTranslation(-pivot.Value) * // Move pivot to origin
+                Matrix3x2.CreateScale(scaleX, scaleY) * // Scale around pivot
+                Matrix3x2.CreateRotation(rotation) * // Rotate around pivot
+                Matrix3x2.CreateTranslation(pivot.Value); // Move back
+                Matrix3x2.CreateTranslation(translate);
+        }
+        else
+        {
+            Console.WriteLine("non pivot route");
+            // When there's no pivot, simply apply scaling, rotation, and then translation
+            transformation =
+                Matrix3x2.CreateScale(scaleX, scaleY) *
+                Matrix3x2.CreateRotation(rotation) *
+                Matrix3x2.CreateTranslation(translate);
+        }
+        return Vector2.Transform(v, transformation);
     }
     
     public static Vector2 Translate(
@@ -30,9 +49,8 @@ public static class VectorExtensions
         Vector2 translation)
     {
         Matrix3x2 transformation =
-            Matrix3x2.CreateTranslation(v) *
             Matrix3x2.CreateTranslation(translation);
-        return Vector2.Transform(Vector2.Zero, transformation);
+        return Vector2.Transform(v, transformation);
     }
 }
 

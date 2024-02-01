@@ -131,31 +131,31 @@ public static class Utils
     
     public static Vector2[] GetBounds(Collider c, Position entityPosition)
     {
-        var xpos = entityPosition.x + c.x;
-        var ypos = entityPosition.y + c.y;
-        Vector2 basePos = new(entityPosition.x + c.x, entityPosition.y + c.y);
-        Vector2 size = new(c.width, c.height);
-        //note this is the implicit entity pivot — may eventually want to change to be passed in
-        var pivot = new System.Numerics.Vector2(entityPosition.x - entityPosition.pivotX, entityPosition.y - entityPosition.pivotY);
-        Vector2[] pts = [
-            
-            basePos.Transform(entityPosition.rotation, entityPosition.scaleX, entityPosition.scaleY,pivot),
-            basePos.Translate(new Vector2(c.width,0)).Transform(entityPosition.rotation, entityPosition.scaleX, entityPosition.scaleY,pivot),
-            basePos.Translate(new Vector2(c.width,c.height)).Transform(entityPosition.rotation, entityPosition.scaleX, entityPosition.scaleY,pivot),
-            basePos.Translate(new Vector2(0,c.height)).Transform(entityPosition.rotation, entityPosition.scaleX, entityPosition.scaleY,pivot)
-            
-            // TransformEntityPoint((xpos, ypos),entityPosition,pivot),
-            // TransformEntityPoint((xpos + c.width, ypos),entityPosition,pivot),
-            // TransformEntityPoint((xpos + c.width, ypos + c.height),entityPosition,pivot),
-            // TransformEntityPoint((xpos, ypos + c.height),entityPosition,pivot)
-        ];
+        //the position of the entity IS the world space pivot
+        var pos = new Vector2(entityPosition.x, entityPosition.y);
+        
+        //get collider points
+        var colliderRoot = new Vector2(c.x - entityPosition.pivotX, c.y - entityPosition.pivotY);
+        var topLeft = pos.Translate(colliderRoot);
+        var topRight = pos.Translate(new Vector2(colliderRoot.X + c.width, colliderRoot.Y));
+        var bottomLeft = pos.Translate(new Vector2(colliderRoot.X + c.width, colliderRoot.Y + c.height));
+        var bottomRight = pos.Translate(new Vector2(colliderRoot.X, colliderRoot.Y + c.height));
+        Vector2[] pts = new Vector2[]
+        {
+            //working
+            topLeft.Transform(entityPosition.rotation, entityPosition.scaleX, entityPosition.scaleY,pivot:pos),
+            topRight.Transform(entityPosition.rotation, entityPosition.scaleX, entityPosition.scaleY,pivot:pos),
+            bottomLeft.Transform(entityPosition.rotation, entityPosition.scaleX, entityPosition.scaleY,pivot:pos),
+            bottomRight.Transform(entityPosition.rotation, entityPosition.scaleX, entityPosition.scaleY,pivot:pos),
+        };
+
+        // Assuming Transform method correctly applies the pivot and translation.
         return pts;
-        //
-        // Vector2 TransformEntityPoint(Vector2 p, Position e, System.Numerics.Vector2 pivot)
-        // {
-        //     return TransformPoint(p,e.rotation, e.scaleX, e.scaleY,pivot);
-        // }
     }
+
+
+
+
 }
 
 public class Circle(float x, float y, float radius)

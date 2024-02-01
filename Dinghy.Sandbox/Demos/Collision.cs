@@ -26,7 +26,8 @@ public class Collision : Scene
             Name = "static_colliderA",
             X = Engine.Width/2f,
             Y = Engine.Height/2f,
-            ColliderActive = true
+            ColliderActive = true,
+            // Enabled = false
         };
         
         static_colliderB = new Shape(no_collide)
@@ -34,7 +35,9 @@ public class Collision : Scene
             Name = "static_colliderB",
             X = Engine.Width/2f - 200f,
             Y = Engine.Height/2f - 200f,
-            ColliderActive = true
+            ColliderActive = true,
+            PivotX = 16,
+            PivotY = 16,
         };
         
         static_colliderC = new Shape(no_collide)
@@ -42,7 +45,10 @@ public class Collision : Scene
             Name = "static_colliderB",
             X = Engine.Width/2f + 200f,
             Y = Engine.Height/2f - 200f,
-            ColliderActive = true
+            ColliderActive = true,
+            PivotX = 16,
+            PivotY = 16,
+            // Enabled = false
         };
     }
 
@@ -77,9 +83,9 @@ public class Collision : Scene
         static_colliderA.ScaleX = MathF.Sin((float)Engine.Time) + 2;
         static_colliderA.ScaleY = MathF.Sin((float)Engine.Time) + 2;
         static_colliderA.X = Engine.Width/2f + MathF.Cos((float)Engine.Time) * 50;
-        static_colliderB.Rotation = (float)Engine.Time;
-        static_colliderB.ScaleX = MathF.Sin((float)Engine.Time) + 2;
-        static_colliderB.ScaleY = MathF.Sin((float)Engine.Time) + 2;
+        // static_colliderB.Rotation = (float)Engine.Time;
+        // static_colliderB.ScaleX = MathF.Sin((float)Engine.Time) + 2;
+        // static_colliderB.ScaleY = MathF.Sin((float)Engine.Time) + 2;
         static_colliderC.Rotation = (float)Engine.Time;
         static_colliderC.ScaleX = MathF.Sin((float)Engine.Time) + 2;
         static_colliderC.ScaleY = MathF.Sin((float)Engine.Time) + 2;
