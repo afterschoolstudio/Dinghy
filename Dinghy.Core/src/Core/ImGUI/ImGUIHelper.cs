@@ -154,6 +154,17 @@ public static class ImGUIHelper
             }
         }
 
+        public static unsafe bool Button(string label, Vector2 size) => Button(label, size.ToImVec2());
+        public static unsafe bool Button(string label, ImVec2 size)
+        {
+            var b = System.Text.Encoding.UTF8.GetBytes(label);
+            fixed (byte* ptr = b)
+            {
+                var r = Internal.Sokol.ImGUI.igButton((sbyte*)ptr,size);
+                return r != 0;
+            }
+        }
+
         public static unsafe bool Combo(string label, IEnumerable<string> items, ref int value)
         {
             var b = System.Text.Encoding.UTF8.GetBytes(label);
