@@ -137,4 +137,14 @@ public class Grid
             }
         }
     }
+
+    public void ApplyPositionToEntity<T>(int i, T entity) where T : Entity
+    {
+        if (i >= Points.Count)
+        {
+            Console.WriteLine("grid index out of bounds");
+            return;
+        }
+        entity.SetPosition((int)Points[i].X,(int)Points[i].Y,entity.Rotation,entity.ScaleX,entity.ScaleY,entity.PivotX,entity.PivotY);
+    }
 }
