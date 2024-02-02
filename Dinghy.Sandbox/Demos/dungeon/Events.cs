@@ -11,7 +11,14 @@ public static class Events
     public abstract record ActionEvent() : Event;
     public record ButtonClicked() : ActionEvent;
 
-    public record struct CollisionMeta(int hash, bool starting = true, bool continuing = false, bool ending = false, bool startDirty = false);
+    public enum CollisionState
+    {
+        Starting,
+        Continuing,
+        Ending
+    }
+
+    public record struct CollisionMeta(int hash, CollisionState state = CollisionState.Starting);
 
     public record CollisionEvent : Event;
 

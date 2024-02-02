@@ -69,26 +69,18 @@ public class Systems
                 (Arch.Core.Entity e, ref Events.CollisionMeta cm, ref Events.EventMeta em) =>
                 {
                     em.dirty = false; //keep the event alive
-                    //allow collision start event to pump through all systems once
-                    if (cm.starting == true && !cm.startDirty)
+                    if (bufferedCollisionEvents.ContainsKey(cm.hash)) //if we have buffered a collision that already exists
                     {
-                        cm.startDirty = true;
+                        cm.state = Events.CollisionState.Continuing;
+                        bufferedCollisionEvents.Remove(cm.hash);
                     }
                     else
                     {
-                        cm.starting = false;
-                        if (bufferedCollisionEvents.ContainsKey(cm.hash))
-                        {
-                            //this means we have an existing collision event that is still happening
-                            cm.continuing = true;
-                            bufferedCollisionEvents.Remove(cm.hash);
-                        }
-                        else
-                        {
-                            cm.ending = true;
-                            em.dirty = true;
-                        }
+                        cm.state = Events.CollisionState.Ending;
+                        em.dirty = true;
                     }
+
+                    
                 });
 
             foreach (var e in bufferedCollisionEvents)
@@ -101,10 +93,8 @@ public class Systems
                     default:
                         throw new InvalidOperationException("Unhandled event type");
                 }
-                
                 //this doesnt work and instead assumes the base type - maybe a Arch bug?
                 // Events.Raise(e.Value,e.Key);
-                // Events.Raise<Events.MouseEnemyCollision>(e.Value as Events.MouseEnemyCollision,e.Key);
             }
         }
     }
@@ -117,19 +107,17 @@ public class Systems
             Engine.ECSWorld.Query(in eq,
                 (Arch.Core.Entity e, ref Events.CollisionMeta cm, ref Events.MouseEnemyCollision c) =>
                 {
-                    if (cm.starting)
+                    // Console.WriteLine($"{e.Id}:enemy {c.e.name}: collision {cm.state}");
+                    switch (cm.state)
                     {
-                        Console.WriteLine($"{e.Id}:enemy {c.e.name}: collision start");
-                    }
-
-                    if (cm.continuing)
-                    {
-                        Console.WriteLine($"{e.Id}:enemy {c.e.name}: collision continuing");
-                    }
-
-                    if (cm.ending)
-                    {
-                        Console.WriteLine($"{e.Id}:enemy {c.e.name}: collision ending");
+                        case Events.CollisionState.Starting:
+                            break;
+                        case Events.CollisionState.Continuing:
+                            break;
+                        case Events.CollisionState.Ending:
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
                     }
                 });
         }
