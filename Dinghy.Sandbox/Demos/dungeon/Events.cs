@@ -4,6 +4,7 @@ namespace Dinghy.Sandbox.Demos.dungeon;
 
 public static class Events
 {
+    // public static Action<CollisionState> HandleEnemyCollision;
     public record struct EventMeta(string eventType, int index, bool dirty = false);
 
     public abstract record Event();

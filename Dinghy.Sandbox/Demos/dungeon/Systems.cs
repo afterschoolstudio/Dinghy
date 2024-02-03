@@ -107,14 +107,17 @@ public class Systems
             Engine.ECSWorld.Query(in eq,
                 (Arch.Core.Entity e, ref Events.CollisionMeta cm, ref Events.MouseEnemyCollision c) =>
                 {
-                    // Console.WriteLine($"{e.Id}:enemy {c.e.name}: collision {cm.state}");
+                    
                     switch (cm.state)
                     {
                         case Events.CollisionState.Starting:
+                            c.e.enemy.MouseCollisionStart();
                             break;
                         case Events.CollisionState.Continuing:
+                            c.e.enemy.MouseCollistionContinue();
                             break;
                         case Events.CollisionState.Ending:
+                            c.e.enemy.MouseCollisionStop();
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
