@@ -1,3 +1,6 @@
+using Arch.Core.Extensions;
+using Dinghy.Core;
+
 namespace Dinghy.Sandbox.Demos;
 
 [DemoScene("15 Asteroids")]
@@ -20,8 +23,8 @@ public class AsteroidsGame : Scene
     }
 
     double bulletCooldown = 0;
-    private List<Bullet> bullets = new List<Bullet>();
-    private List<Asteroid> asteroids = new List<Asteroid>();
+    private List<Sprite> bullets = new ();
+    private List<Sprite> asteroids = new ();
     private void OnKeyDown(Key key, List<Modifiers> arg2)
     {
 	    // (float dx, float dy) v = key switch {
@@ -36,23 +39,27 @@ public class AsteroidsGame : Scene
 	    if (key == Key.SPACE)
 	    {
 		    //spawn bullets
-		    var bullet =new Bullet(fullConscript) {
+		    var bullet = new Sprite(fullConscript,
+			    collisionStart: (self,other) =>
+			    {
+				    if (other.Entity.Has<Asteroid>())
+				    {
+					    Console.WriteLine("asteroid with entity id = " + other.Entity.Id);
+					    asteroids.RemoveAt(asteroids.FindIndex(ast => ast.ECSEntity.Id == other.Entity.Id));
+					    other.Destroy();
+					    Console.WriteLine("bullet with entity id = " + ECSEntity.Id);
+					    bullets.RemoveAt(bullets.FindIndex(bullet => bullet.ECSEntity.Id == self.Entity.Id));
+					    Destroy();
+				    }
+			    }) 
+		    {
 			    Name = "bullet",
 			    X = player.X, 
 			    Y = player.Y,
 			    DX = 1.5f,
 			    ColliderActive = true,
-			    OnCollision = (bullet,e) =>
-			    {
-				    if (e is Asteroid a)
-				    {
-					    asteroids.Remove(a);
-					    a.Destroy();
-						bullets.Remove(bullet as Bullet);
-					    bullet.Destroy();
-				    }
-			    }
 		    };
+		    bullet.ECSEntity.Add(new Bullet());
 		    bullets.Add(bullet);
 		    bulletCooldown = 0f;
 	    }
@@ -67,13 +74,14 @@ public class AsteroidsGame : Scene
 	    bulletCooldown += Engine.DeltaTime;
 	    if (timer > 1)
 	    {
-	    	var a = new Asteroid(fullConscript) {
+	    	var a = new Sprite(fullConscript) {
 			    Name = "Asteroid",
 	    		X = Engine.Width, 
 	    		Y = (int)((Engine.Height / 2f) + MathF.Sin(Quick.RandFloat() * 2 - 1) * Engine.Height / 2.5f),
 			    DX = -1.5f,
 			    ColliderActive = true
 	    	};
+		    a.ECSEntity.Add(new Asteroid());
 		    asteroids.Add(a);
 	    	timer = 0;
 	    }
@@ -103,15 +111,8 @@ public class AsteroidsGame : Scene
     {
 	    InputSystem.Events.Key.Down -= OnKeyDown;
     }
-
-    public class Bullet(SpriteData spriteData) : Sprite(spriteData);
-    public class Asteroid(SpriteData spriteData) : Sprite(spriteData);
-    
-    //could also do it an ecs way
-    //public readonly record struct Bullet();
-    //public readonly record struct Asteroid();
-    //bullet.ECSEntity.Add<Bullet>();
-    //then in the collision check if the ECSEntity.Has<Bullet>()
+    public readonly record struct Bullet();
+    public readonly record struct Asteroid();
 }
 
 /*

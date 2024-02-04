@@ -339,7 +339,7 @@ public class Scene : Entity
     public virtual void Cleanup(){}
 }
 
-public class Shape : Entity, ICollideable
+public class Shape : Entity
 {
     private Color c;
     private float height = 0;
@@ -354,7 +354,7 @@ public class Shape : Entity, ICollideable
         }
     }
     public Shape(Color color, int width = 32, int height = 32, Scene? scene = null, bool startEnabled = true, 
-        Action<EntityReference> collisionStart = null, Action<EntityReference> collisionStop = null, Action<EntityReference> collisionContinue = null) : base(startEnabled,scene)
+        Action<EntityReference,EntityReference> collisionStart = null, Action<EntityReference,EntityReference> collisionStop = null, Action<EntityReference,EntityReference> collisionContinue = null) : base(startEnabled,scene)
     {
         c = color;
         var rend = new ShapeRenderer(color, width, height);
@@ -375,19 +375,18 @@ public class Shape : Entity, ICollideable
             colliderActive = value;
         }
     }
-
-    public Action<Entity,Entity>  OnCollision { get; set; }
-
     // [BindECSComponentValue<Collider>("active")]
     // private bool colliderActives;
 }
 
 public record SpriteData(Resources.Texture Texture, Rect Rect);
-public class Sprite : Entity, ICollideable
+
+
+public class Sprite : Entity
 {
     public SpriteData Data { get; init; }
     public Sprite(SpriteData spriteData, Scene? scene = null, bool startEnabled = true, 
-        Action<EntityReference> collisionStart = null, Action<EntityReference> collisionStop = null, Action<EntityReference> collisionContinue = null) : base(startEnabled,scene)
+        Action<EntityReference,EntityReference> collisionStart = null, Action<EntityReference,EntityReference> collisionStop = null, Action<EntityReference,EntityReference> collisionContinue = null) : base(startEnabled,scene)
     {
         Data = spriteData;
         var rend = new SpriteRenderer(Data.Texture, Data.Rect);
@@ -407,22 +406,21 @@ public class Sprite : Entity, ICollideable
             colliderActive = value;
         }
     }
-    
-    public Action<Entity,Entity>  OnCollision { get; set; }
 }
 
 public record AnimatedSpriteData(Resources.Texture Texture, HashSet<Animation> Animations);
-public class AnimatedSprite : Entity, ICollideable
+public class AnimatedSprite : Entity
 {
     public AnimatedSpriteData Data { get; init; }
-    public AnimatedSprite(AnimatedSpriteData animatedSpriteData, Scene? scene = null, bool startEnabled = true) : base(startEnabled,scene)
+    public AnimatedSprite(AnimatedSpriteData animatedSpriteData, Scene? scene = null, bool startEnabled = true, 
+        Action<EntityReference,EntityReference> collisionStart = null, Action<EntityReference,EntityReference> collisionStop = null, Action<EntityReference,EntityReference> collisionContinue = null) : base(startEnabled,scene)
     {
         Data = animatedSpriteData;
         var rend = new SpriteRenderer(Data.Texture, Data.Animations.First().Frames[0]);
         ECSEntity.Add(
             rend,
             new SpriteAnimator(Data.Animations),
-            new Collider(0,0,Data.Animations.First().Frames[0].width,Data.Animations.First().Frames[0].height));
+            new Collider(0,0,Data.Animations.First().Frames[0].width,Data.Animations.First().Frames[0].height,collisionStart,collisionStop,collisionContinue));
     }
     
     private bool colliderActive;
@@ -436,8 +434,6 @@ public class AnimatedSprite : Entity, ICollideable
             colliderActive = value;
         }
     }
-    
-    public Action<Entity,Entity>  OnCollision { get; set; }
 }
 
 public class ParticleEmitter : Entity

@@ -223,7 +223,7 @@ public record SceneComponent
 }
 
 public record struct Collider(float x, float y, float width, float height, 
-    Action<EntityReference> OnStart = null, Action<EntityReference> OnContinue = null, Action<EntityReference> OnEnd = null, bool active = false);
+    Action<EntityReference,EntityReference> OnStart = null, Action<EntityReference,EntityReference> OnContinue = null, Action<EntityReference,EntityReference> OnEnd = null, bool active = false);
 public record struct EventMeta(string eventType, bool dirty = false);
 public abstract record Event();
 public abstract record ActionEvent() : Event;

@@ -40,7 +40,7 @@ public class DataTypes
             Attack = attack;
             Aggro = aggro;
             XPValue = xp;
-            Entity = new Shape(0xFFFF0000, 32, 32,collisionStart:CollisionStart,collisionContinue:CollisionContinue,collisionStop:CollisionStop)
+            Entity = new Shape(0xFFFF0000, 32, 32,collisionStart:CollisionStart,collisionStop:CollisionStop)
             {
                 PivotX = 16,
                 PivotY = 16
@@ -54,19 +54,16 @@ public class DataTypes
             InputSystem.Events.Mouse.Up -= MouseClick;
         }
 
-        void CollisionStart(EntityReference eid)
+        private bool colliding = false;
+        void CollisionStart(EntityReference self, EntityReference other)
         {
-            Console.WriteLine($"{Name} collision with {eid.Entity.Id} START");
+            Entity.Color = 0xFF00FF00;
+            colliding = true;
         }
-        void CollisionContinue(EntityReference eid)
+        void CollisionStop(EntityReference self, EntityReference other)
         {
-            Console.WriteLine($"{Name} collision with {eid.Entity.Id} Continue");
-            
-        }
-        void CollisionStop(EntityReference eid)
-        {
-            Console.WriteLine($"{Name} collision with {eid.Entity.Id} STOP");
-            
+            Entity.Color = 0xFFFF0000;
+            colliding = false;
         }
 
         private void MouseClick(List<Modifiers> mods)
@@ -81,23 +78,6 @@ public class DataTypes
         }
 
 
-        private bool colliding = false;
-        public void MouseCollisionStart()
-        {
-            Entity.Color = 0xFF00FF00;
-            colliding = true;
-        }
-
-        public void MouseCollisionStop()
-        {
-            Entity.Color = 0xFFFF0000;
-            colliding = false;
-        }
-
-        public void MouseCollistionContinue()
-        {
-            
-        }
 
         public override string ToString()
         {

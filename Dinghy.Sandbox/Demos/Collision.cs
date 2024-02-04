@@ -1,4 +1,5 @@
 using System.Numerics;
+using Arch.Core.Extensions;
 
 namespace Dinghy.Sandbox.Demos;
 
@@ -19,8 +20,19 @@ public class Collision : Scene
     private Shape ptC;
     public override void Create()
     {
-        pointer = new Shape(pointer_col,1,1){Name = "pointer",ColliderActive = true};
-        pointer.OnCollision += CollisionCallbackTest;
+        pointer = new Shape(pointer_col,1,1,
+            collisionStart: (self,other) =>
+            {
+                other.Entity.Get<ShapeRenderer>().Color = collide;
+            },
+            collisionStop: (self,other) => {
+                other.Entity.Get<ShapeRenderer>().Color = no_collide;
+            },
+            collisionContinue: (self,other) => {
+                
+            })
+        {Name = "pointer",ColliderActive = true};
+        
         static_colliderA = new Shape(no_collide)
         {
             Name = "static_colliderA",
@@ -52,27 +64,6 @@ public class Collision : Scene
         };
     }
 
-    private bool collidedThisFrameA = false;
-    private bool collidedThisFrameB = false;
-    private bool collidedThisFrameC = false;
-    public void CollisionCallbackTest(Entity pointer, Entity other)
-    {
-        if (other == static_colliderA)
-        {
-            collidedThisFrameA = true;
-        }
-        if (other == static_colliderB)
-        {
-            collidedThisFrameB = true;
-        }
-        if (other == static_colliderC)
-        {
-            collidedThisFrameC = true;
-        }
-        // way to get other collision meta
-        // Console.WriteLine(CollisionChecks.GetCollisionInfo(pointer,static_collider));
-    }
-
     public override void Update(double dt)
     {
         if(ptA != null){ptA.DestroyImmediate();}
@@ -95,10 +86,6 @@ public class Collision : Scene
         // static_collider.Color = CollisionChecks.CheckCollision(pointer, static_collider)
         //     ? collide
         //     : no_collide;
-        static_colliderA.Color = collidedThisFrameA ? collide : no_collide;
-        static_colliderB.Color = collidedThisFrameB ? collide : no_collide;
-        static_colliderC.Color = collidedThisFrameC ? collide : no_collide;
-        
         var ptsA = Dinghy.Collision.GetClosestPoints(pointer, static_colliderA);
         ptA = new Shape(pt,5,5)
         {
@@ -117,15 +104,5 @@ public class Collision : Scene
             X = ptsC.b.Value.X,
             Y = ptsC.b.Value.Y
         };
-        
-        
-        collidedThisFrameA = false;
-        collidedThisFrameB = false;
-        collidedThisFrameC = false;
-    }
-
-    public override void Cleanup()
-    {
-        pointer.OnCollision -= CollisionCallbackTest;
     }
 }

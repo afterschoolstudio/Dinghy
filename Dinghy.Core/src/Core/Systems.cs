@@ -383,29 +383,26 @@ public class DestructionSystem : DSystem
 
 public class CollisionCallbackSystem : DSystem, IUpdateSystem
 {
-    QueryDescription query = new QueryDescription().WithAll<Active,CollisionEvent,CollisionMeta>();
+    QueryDescription query = new QueryDescription().WithAll<CollisionEvent,CollisionMeta>();
     public void Update(double dt)
     {
         Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref CollisionEvent ce, ref CollisionMeta cm) =>
-        {
-                    Console.WriteLine("found collision event");
-            //NEED TO FIN A WAY TO GET THE ACTUAL COLLIDER BACK FROM THE COLLISION EVENT
+        {  
             var e1c = ce.e1.Entity.Get<Collider>();
             var e2c = ce.e2.Entity.Get<Collider>();
             switch (cm.state)
             {
                 case CollisionState.Starting:
-                    Console.WriteLine("collision start");
-                    e1c.OnStart?.Invoke(ce.e2);
-                    e2c.OnStart?.Invoke(ce.e1);
+                    e1c.OnStart?.Invoke(ce.e1,ce.e2);
+                    e2c.OnStart?.Invoke(ce.e2,ce.e1);
                     break;
                 case CollisionState.Continuing:
-                    e1c.OnContinue?.Invoke(ce.e2);
-                    e2c.OnContinue?.Invoke(ce.e1);
+                    e1c.OnContinue?.Invoke(ce.e1,ce.e2);
+                    e2c.OnContinue?.Invoke(ce.e2,ce.e1);
                     break;
                 case CollisionState.Ending:
-                    e1c.OnEnd?.Invoke(ce.e2);
-                    e2c.OnEnd?.Invoke(ce.e1);
+                    e1c.OnEnd?.Invoke(ce.e1,ce.e2);
+                    e2c.OnEnd?.Invoke(ce.e2,ce.e1);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -445,9 +442,6 @@ public class CollisionCallbackSystem : DSystem, IUpdateSystem
                     var hash = HashCode.Combine(e.Id, colliders[i].e.Id);
                     if (!bufferedCollisionEvents.ContainsKey(hash))
                     {
-                        //do we want this more specific or should systems know how to handle it?
-                        //maybe a seperate system that turns these events into geneic callback handlers if the entity
-                        //has a managed component
                         bufferedCollisionEvents.Add(
                             hash, new CollisionEvent(Engine.ECSWorld.Reference(e),Engine.ECSWorld.Reference(colliders[i].e)));
                     }
@@ -474,13 +468,10 @@ public class CollisionCallbackSystem : DSystem, IUpdateSystem
 
         foreach (var e in bufferedCollisionEvents)
         {
-            Console.WriteLine("creatignn colling event");
             Engine.ECSWorld.Create(
                 new EventMeta(e.Value.GetType().ToString()),
                 new CollisionMeta(e.Key),
-                e);
-            //this doesnt work and instead assumes the base type - maybe a Arch bug?
-            // Events.Raise(e.Value,e.Key);
+                e.Value);
         }
     }
 }
