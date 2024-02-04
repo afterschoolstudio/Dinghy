@@ -1,3 +1,4 @@
+using Arch.Core;
 using Arch.Core.Extensions;
 
 namespace Dinghy.Sandbox.Demos.dungeon;
@@ -39,7 +40,7 @@ public class DataTypes
             Attack = attack;
             Aggro = aggro;
             XPValue = xp;
-            Entity = new Shape(0xFFFF0000, 32, 32)
+            Entity = new Shape(0xFFFF0000, 32, 32,collisionStart:CollisionStart,collisionContinue:CollisionContinue,collisionStop:CollisionStop)
             {
                 PivotX = 16,
                 PivotY = 16
@@ -51,6 +52,21 @@ public class DataTypes
         public void Destroy()
         {
             InputSystem.Events.Mouse.Up -= MouseClick;
+        }
+
+        void CollisionStart(EntityReference eid)
+        {
+            Console.WriteLine($"{Name} collision with {eid.Entity.Id} START");
+        }
+        void CollisionContinue(EntityReference eid)
+        {
+            Console.WriteLine($"{Name} collision with {eid.Entity.Id} Continue");
+            
+        }
+        void CollisionStop(EntityReference eid)
+        {
+            Console.WriteLine($"{Name} collision with {eid.Entity.Id} STOP");
+            
         }
 
         private void MouseClick(List<Modifiers> mods)

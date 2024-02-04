@@ -1,5 +1,6 @@
 ﻿using Dinghy.Core;
 using System.Numerics;
+using Arch.Core;
 using static Dinghy.Resources;
 
 namespace Dinghy;
@@ -221,4 +222,18 @@ public record SceneComponent
     }
 }
 
-public record struct Collider(float x, float y, float width, float height, bool active = false);
+public record struct Collider(float x, float y, float width, float height, 
+    Action<EntityReference> OnStart = null, Action<EntityReference> OnContinue = null, Action<EntityReference> OnEnd = null, bool active = false);
+public record struct EventMeta(string eventType, bool dirty = false);
+public abstract record Event();
+public abstract record ActionEvent() : Event;
+public enum CollisionState
+{
+    Starting,
+    Continuing,
+    Ending
+}
+
+public record struct CollisionMeta(int hash, CollisionState state = CollisionState.Starting);
+public record CollisionEvent(EntityReference e1, EntityReference e2) : Event;
+

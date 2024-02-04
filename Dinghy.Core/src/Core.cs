@@ -33,6 +33,8 @@ public static partial class Engine
         new CollisionSystem(),
         new DebugOverlaySystem(),
         InputSystem,
+        new EventCleaningSystem(),
+        new CollisionCallbackSystem(),
         new SceneSystem()
     };
     static HashSet<DSystem> ActiveSystems = new();

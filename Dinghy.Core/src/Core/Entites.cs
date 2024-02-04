@@ -353,13 +353,14 @@ public class Shape : Entity, ICollideable
             c = value;
         }
     }
-    public Shape(Color color, int width = 32, int height = 32, Scene? scene = null, bool startEnabled = true) : base(startEnabled,scene)
+    public Shape(Color color, int width = 32, int height = 32, Scene? scene = null, bool startEnabled = true, 
+        Action<EntityReference> collisionStart = null, Action<EntityReference> collisionStop = null, Action<EntityReference> collisionContinue = null) : base(startEnabled,scene)
     {
         c = color;
         var rend = new ShapeRenderer(color, width, height);
         ECSEntity.Add(
             rend,
-            new Collider(0,0,width,height));
+            new Collider(0,0,width,height,collisionStart,collisionContinue,collisionStop));
     }
 
 
@@ -385,13 +386,14 @@ public record SpriteData(Resources.Texture Texture, Rect Rect);
 public class Sprite : Entity, ICollideable
 {
     public SpriteData Data { get; init; }
-    public Sprite(SpriteData spriteData, Scene? scene = null, bool startEnabled = true) : base(startEnabled,scene)
+    public Sprite(SpriteData spriteData, Scene? scene = null, bool startEnabled = true, 
+        Action<EntityReference> collisionStart = null, Action<EntityReference> collisionStop = null, Action<EntityReference> collisionContinue = null) : base(startEnabled,scene)
     {
         Data = spriteData;
         var rend = new SpriteRenderer(Data.Texture, Data.Rect);
         ECSEntity.Add(
             rend,
-            new Collider(0,0,Data.Rect.width,Data.Rect.height));
+            new Collider(0,0,Data.Rect.width,Data.Rect.height,collisionStart,collisionContinue,collisionStop));
     }
     
     private bool colliderActive;

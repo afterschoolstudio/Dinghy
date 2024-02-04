@@ -381,28 +381,127 @@ public class DestructionSystem : DSystem
     }
 }
 
-public class CollisionSystem : DSystem, IUpdateSystem
+public class CollisionCallbackSystem : DSystem, IUpdateSystem
 {
-    QueryDescription query = new QueryDescription().WithAll<Active,Collider,Position,HasManagedOwner>();
+    QueryDescription query = new QueryDescription().WithAll<Active,CollisionEvent,CollisionMeta>();
+    public void Update(double dt)
+    {
+        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref CollisionEvent ce, ref CollisionMeta cm) =>
+        {
+                    Console.WriteLine("found collision event");
+            //NEED TO FIN A WAY TO GET THE ACTUAL COLLIDER BACK FROM THE COLLISION EVENT
+            var e1c = ce.e1.Entity.Get<Collider>();
+            var e2c = ce.e2.Entity.Get<Collider>();
+            switch (cm.state)
+            {
+                case CollisionState.Starting:
+                    Console.WriteLine("collision start");
+                    e1c.OnStart?.Invoke(ce.e2);
+                    e2c.OnStart?.Invoke(ce.e1);
+                    break;
+                case CollisionState.Continuing:
+                    e1c.OnContinue?.Invoke(ce.e2);
+                    e2c.OnContinue?.Invoke(ce.e1);
+                    break;
+                case CollisionState.Ending:
+                    e1c.OnEnd?.Invoke(ce.e2);
+                    e2c.OnEnd?.Invoke(ce.e1);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            
+            // for (int i = 0; i < colliders.Count; i++)
+            // {
+            //     if (Collision.CheckCollision(c,p, colliders[i].c,colliders[i].p))
+            //     {
+            //         //note we cal the collision event for both participants in the collision
+            //         ((ICollideable)o.e).Collide(o.e,colliders[i].e.Get<HasManagedOwner>().e);
+            //         ((ICollideable)colliders[i].e.Get<HasManagedOwner>().e).Collide(colliders[i].e.Get<HasManagedOwner>().e,o.e);
+            //     }
+            // }
+            // colliders.Add((e,c,p));
+        });
+    }
+}
+
+ public class CollisionSystem : DSystem, IUpdateSystem
+{
+    QueryDescription query = new QueryDescription().WithAll<Active,Collider,Position>();
+    QueryDescription colQuery = new QueryDescription().WithAll<EventMeta,CollisionMeta>();
     private List<(Arch.Core.Entity e,Collider c,Position p)> colliders = new();
+    
+    private Dictionary<int, CollisionEvent> bufferedCollisionEvents = new();
     public void Update(double dt)
     {
         colliders.Clear();
-        //currently have no broadphase
-        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref Position p, ref Collider c, ref HasManagedOwner o) =>
+        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref Position p, ref Collider c) =>
         {
             if(!c.active){return;}
             for (int i = 0; i < colliders.Count; i++)
             {
-                if (Collision.CheckCollision(c,p, colliders[i].c,colliders[i].p))
+                if (e.Id != colliders[i].e.Id && Dinghy.Collision.CheckCollision(c,p, colliders[i].c,colliders[i].p))
                 {
-                    //note we cal the collision event for both participants in the collision
-                    ((ICollideable)o.e).Collide(o.e,colliders[i].e.Get<HasManagedOwner>().e);
-                    ((ICollideable)colliders[i].e.Get<HasManagedOwner>().e).Collide(colliders[i].e.Get<HasManagedOwner>().e,o.e);
+                    var hash = HashCode.Combine(e.Id, colliders[i].e.Id);
+                    if (!bufferedCollisionEvents.ContainsKey(hash))
+                    {
+                        //do we want this more specific or should systems know how to handle it?
+                        //maybe a seperate system that turns these events into geneic callback handlers if the entity
+                        //has a managed component
+                        bufferedCollisionEvents.Add(
+                            hash, new CollisionEvent(Engine.ECSWorld.Reference(e),Engine.ECSWorld.Reference(colliders[i].e)));
+                    }
                 }
             }
             colliders.Add((e,c,p));
         });
+
+        Engine.ECSWorld.Query(in colQuery,
+            (Arch.Core.Entity e, ref CollisionMeta cm, ref EventMeta em) =>
+            {
+                em.dirty = false; //keep the event alive
+                if (bufferedCollisionEvents.ContainsKey(cm.hash)) //if we have buffered a collision that already exists
+                {
+                    cm.state = CollisionState.Continuing;
+                    bufferedCollisionEvents.Remove(cm.hash);
+                }
+                else
+                {
+                    cm.state = CollisionState.Ending;
+                    em.dirty = true;
+                }
+            });
+
+        foreach (var e in bufferedCollisionEvents)
+        {
+            Console.WriteLine("creatignn colling event");
+            Engine.ECSWorld.Create(
+                new EventMeta(e.Value.GetType().ToString()),
+                new CollisionMeta(e.Key),
+                e);
+            //this doesnt work and instead assumes the base type - maybe a Arch bug?
+            // Events.Raise(e.Value,e.Key);
+        }
+    }
+}
+
+public class EventCleaningSystem : DSystem, ICleanupSystem
+{
+    private QueryDescription events = new QueryDescription().WithAll<EventMeta>();
+    public void Cleanup()
+    {
+        Engine.ECSWorld.Query(in events,
+            (Arch.Core.Entity e, ref EventMeta m) =>
+            {
+                if (m.dirty)
+                {
+                    e.Add(new Destroy());
+                }
+                else
+                {
+                    m.dirty = true;
+                }
+            });
     }
 }
 
@@ -440,22 +539,6 @@ public class DebugOverlaySystem : DSystem, IUpdateSystem
                 ImGUIHelper.Wrappers.DrawQuad(bounds);
                 ImGUIHelper.Wrappers.End();
             });
-        
-        // Vector2 TransformPoint(
-        //     Vector2 point, 
-        //     float scaleX, 
-        //     float scaleY, 
-        //     Vector2? pivot = null)
-        // {
-        //     Vector2 pivotPoint = pivot ?? Vector2.Zero;
-        //     Matrix3x2 transformation =
-        //         Matrix3x2.CreateTranslation(point) *
-        //         Matrix3x2.CreateScale(scaleX, scaleY, pivotPoint);
-        //
-        //         
-        //
-        //     return Vector2.Transform(Vector2.Zero, transformation);
-        // }
     }
 }
 

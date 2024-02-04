@@ -36,7 +36,7 @@ public class Systems
     
     public class CollisionSystem : DSystem, IUpdateSystem
     {
-        QueryDescription query = new QueryDescription().WithAll<Active,Collider,Position,HasManagedOwner>();
+        QueryDescription query = new QueryDescription().WithAll<Active,Collider,Position>();
         QueryDescription colQuery = new QueryDescription().WithAll<Events.EventMeta,Events.CollisionMeta>();
         private List<(Arch.Core.Entity e,Collider c,Position p)> colliders = new();
         
@@ -44,7 +44,7 @@ public class Systems
         public void Update(double dt)
         {
             colliders.Clear();
-            Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref Position p, ref Collider c, ref HasManagedOwner o) =>
+            Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref Position p, ref Collider c) =>
             {
                 if(!c.active){return;}
                 for (int i = 0; i < colliders.Count; i++)
