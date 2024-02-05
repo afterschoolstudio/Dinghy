@@ -19,12 +19,14 @@ public class AsteroidsGame : Scene
     public override void Create()
     {
         player = new Sprite(fullConscript){Name = "player",X = Engine.Width/2f,Y = Engine.Height/2f,PivotX = 32,PivotY = 32};
+        player.ECSEntity.Add(new Player());
         InputSystem.Events.Key.Down += OnKeyDown;
     }
 
     double bulletCooldown = 0;
     private List<Sprite> bullets = new ();
     private List<Sprite> asteroids = new ();
+    private int bulletCount = 0;
     private void OnKeyDown(Key key, List<Modifiers> arg2)
     {
 	    // (float dx, float dy) v = key switch {
@@ -42,6 +44,7 @@ public class AsteroidsGame : Scene
 		    var bullet = new Sprite(fullConscript,
 			    collisionStart: (self,other) =>
 			    {
+				    Console.WriteLine("bullet collision starting");
 				    if (other.Entity.Has<Asteroid>())
 				    {
 					    asteroids.RemoveAt(asteroids.FindIndex(ast => ast.ECSEntity.Id == other.Entity.Id));
@@ -51,7 +54,7 @@ public class AsteroidsGame : Scene
 				    }
 			    }) 
 		    {
-			    Name = "bullet",
+			    Name = "bullet" + bulletCount,
 			    X = player.X, 
 			    Y = player.Y,
 			    DX = 1.5f,
@@ -60,6 +63,7 @@ public class AsteroidsGame : Scene
 		    bullet.ECSEntity.Add(new Bullet());
 		    bullets.Add(bullet);
 		    bulletCooldown = 0f;
+		    bulletCount++;
 	    }
     }
 
@@ -70,7 +74,7 @@ public class AsteroidsGame : Scene
 	    //spawn asteroids
 	    timer += Engine.DeltaTime;
 	    bulletCooldown += Engine.DeltaTime;
-	    if (timer > 1)
+	    if (timer > 5)
 	    {
 	    	var a = new Sprite(fullConscript) {
 			    Name = "Asteroid",
@@ -88,6 +92,7 @@ public class AsteroidsGame : Scene
 	    {
 		    if (b.X > Engine.Width)
 		    {
+			    Console.WriteLine("well destory " + b.Name);
 			    b.Destroy();
 			    return true;
 		    }
@@ -111,6 +116,7 @@ public class AsteroidsGame : Scene
     }
     public readonly record struct Bullet();
     public readonly record struct Asteroid();
+    public readonly record struct Player();
 }
 
 /*

@@ -229,9 +229,10 @@ public abstract record Event();
 public abstract record ActionEvent() : Event;
 public enum CollisionState
 {
-    Starting,
-    Continuing,
-    Ending
+    Starting, //collision just started
+    Continuing, //collision is still happening
+    Ending, //collision just ended
+    Invalid //collision no longer valid (one of the entities was destroyed as part of callbacks)
 }
 
 public record struct CollisionMeta(int hash, CollisionState state = CollisionState.Starting);

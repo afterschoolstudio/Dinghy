@@ -384,70 +384,79 @@ public class DestructionSystem : DSystem
 
 public class CollisionCallbackSystem : DSystem, IUpdateSystem
 {
-    QueryDescription query = new QueryDescription().WithAll<CollisionEvent,CollisionMeta>();
+    QueryDescription query = new QueryDescription().WithAll<CollisionEvent,CollisionMeta,EventMeta>();
     public void Update(double dt)
     {
-        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref CollisionEvent ce, ref CollisionMeta cm) =>
+        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref CollisionEvent ce, ref CollisionMeta cm, ref EventMeta em) =>
         {
-            if (ce.e1.IsAlive() && ce.e2.IsAlive() && !ce.e1.Entity.Has<Destroy>() && !ce.e2.Entity.Has<Destroy>())
+            // Console.WriteLine("HANDLING COLLISION EVENT BETWEEN " + ce.e1.Entity.Get<HasManagedOwner>().e.Name + " and " + ce.e2.Entity.Get<HasManagedOwner>().e.Name + " WITH HASH " + cm.hash);
+            if (CollisionEventValid(ref ce))
             { 
-                Console.WriteLine("pass alive checks");
                 switch (cm.state)
                 {
                     case CollisionState.Starting:
-                        Console.WriteLine("collision start");
+                        Console.WriteLine("handling collision event start");
                         ce.e1.Entity.Get<Collider>().OnStart?.Invoke(ce.e1,ce.e2);
-                        Console.WriteLine("e1 on start ");
-                        if (ce.e2.IsAlive() && ce.e1.IsAlive() )
-                        {
-                            Console.WriteLine("start alive checks");
+                        if (CollisionEventValid(ref ce)) {
                             ce.e2.Entity.Get<Collider>().OnStart?.Invoke(ce.e2,ce.e1);
-                            Console.WriteLine("post e1 on start");
+                            if (!CollisionEventValid(ref ce)) {
+                                em.dirty = true;
+                                cm.state = CollisionState.Invalid;
+                            }
+                        } 
+                        else {
+                            em.dirty = true;
+                            cm.state = CollisionState.Invalid;
                         }
                         break;
                     case CollisionState.Continuing:
-                        Console.WriteLine("collision continue");
                         ce.e1.Entity.Get<Collider>().OnContinue?.Invoke(ce.e1,ce.e2);
-                        if (ce.e2.IsAlive() && ce.e1.IsAlive())
-                        {
+                        if (CollisionEventValid(ref ce)) {
                             ce.e2.Entity.Get<Collider>().OnContinue?.Invoke(ce.e2, ce.e1);
+                            if (!CollisionEventValid(ref ce)) {
+                                em.dirty = true;
+                                cm.state = CollisionState.Invalid;
+                            }
+                        }
+                        else  {
+                            em.dirty = true;
+                            cm.state = CollisionState.Invalid;
                         }
     
                         break;
                     case CollisionState.Ending:
-                        Console.WriteLine("collision end");
+                        Console.WriteLine("handling collision event end");
                         ce.e1.Entity.Get<Collider>().OnEnd?.Invoke(ce.e1,ce.e2);
-                        Console.WriteLine("e1 on end");
-                        if (ce.e2.IsAlive() && ce.e1.IsAlive())
-                        {
-                            Console.WriteLine("colend post alive checks");
+                        if (CollisionEventValid(ref ce)) {
                             ce.e2.Entity.Get<Collider>().OnEnd?.Invoke(ce.e2,ce.e1);
-                            Console.WriteLine("colend post e2 on end");
+                            if (!CollisionEventValid(ref ce)) {
+                                em.dirty = true;
+                                cm.state = CollisionState.Invalid;
+                            }
+                        }
+                        else {
+                            em.dirty = true;
+                            cm.state = CollisionState.Invalid;
                         }
                         break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
+                    case CollisionState.Invalid:
+                        em.dirty = true;
+                        break;
                 }
             }
-            
-            // for (int i = 0; i < colliders.Count; i++)
-            // {
-            //     if (Collision.CheckCollision(c,p, colliders[i].c,colliders[i].p))
-            //     {
-            //         //note we cal the collision event for both participants in the collision
-            //         ((ICollideable)o.e).Collide(o.e,colliders[i].e.Get<HasManagedOwner>().e);
-            //         ((ICollideable)colliders[i].e.Get<HasManagedOwner>().e).Collide(colliders[i].e.Get<HasManagedOwner>().e,o.e);
-            //     }
-            // }
-            // colliders.Add((e,c,p));
         });
+
+        bool CollisionEventValid(ref CollisionEvent ce)
+        {
+            return ce.e1.IsAlive() && ce.e2.IsAlive() && !ce.e1.Entity.Has<Destroy>() && !ce.e2.Entity.Has<Destroy>();
+        }
     }
 }
 
  public class CollisionSystem : DSystem, IUpdateSystem
 {
-    QueryDescription query = new QueryDescription().WithAll<Active,Collider,Position>();
-    QueryDescription colQuery = new QueryDescription().WithAll<EventMeta,CollisionMeta>();
+    QueryDescription query = new QueryDescription().WithAll<Active,Collider,Position>().WithNone<Destroy>();
+    QueryDescription colQuery = new QueryDescription().WithAll<EventMeta,CollisionMeta,CollisionEvent>();
     private List<(Arch.Core.Entity e,Collider c,Position p)> colliders = new();
     
     private Dictionary<int, CollisionEvent> bufferedCollisionEvents = new();
@@ -461,40 +470,66 @@ public class CollisionCallbackSystem : DSystem, IUpdateSystem
             {
                 if (e.Id != colliders[i].e.Id && Dinghy.Collision.CheckCollision(c,p, colliders[i].c,colliders[i].p))
                 {
-                    var hash = HashCode.Combine(e.Id, colliders[i].e.Id);
-                    if (!bufferedCollisionEvents.ContainsKey(hash))
+                    // var hash = HashCode.Combine(e.Id, colliders[i].e.Id);
+                    var order = new List<int> { e.Id, colliders[i].e.Id }.OrderDescending();
+                    var hash = HashCode.Combine(order.First(), order.Last());
+                    var ce = new CollisionEvent(Engine.ECSWorld.Reference(e),
+                        Engine.ECSWorld.Reference(colliders[i].e));
+                    if (!bufferedCollisionEvents.ContainsKey(hash) && CollisionEventValid(ref ce))
                     {
                         bufferedCollisionEvents.Add(
-                            hash, new CollisionEvent(Engine.ECSWorld.Reference(e),Engine.ECSWorld.Reference(colliders[i].e)));
+                            hash, ce);
                     }
                 }
             }
             colliders.Add((e,c,p));
         });
-THE ISSUE IS THAT END EVENTS STILL HAPPEN FOR THE COLLISION WITH THE REFERENCES THAT ARE DESTRYOED IN START/CONTINUING
-    INSTEAD IF THE ENETITIES ARE DESTROYED WE SHOULD DIRTY THE EVENT AND MAKE SURE NO CALLBACKS
+        
         Engine.ECSWorld.Query(in colQuery,
-            (Arch.Core.Entity e, ref CollisionMeta cm, ref EventMeta em) =>
+            (Arch.Core.Entity e, ref CollisionMeta cm, ref EventMeta em, ref CollisionEvent ce) =>
             {
-                em.dirty = false; //keep the event alive
-                if (bufferedCollisionEvents.ContainsKey(cm.hash)) //if we have buffered a collision that already exists
+                if (CollisionEventValid(ref ce) && cm.state != CollisionState.Invalid)
                 {
-                    cm.state = CollisionState.Continuing;
-                    bufferedCollisionEvents.Remove(cm.hash);
+                    em.dirty = false; //keep the event alive
+                    if (bufferedCollisionEvents
+                        .ContainsKey(cm.hash)) //if we have buffered a collision that already exists
+                    {
+                        cm.state = CollisionState.Continuing;
+                        bufferedCollisionEvents.Remove(cm.hash);
+                    }
+                    else
+                    {
+                        cm.state = CollisionState.Ending;
+                        em.dirty = true;
+                    }
                 }
                 else
                 {
-                    cm.state = CollisionState.Ending;
+                    //invalid collisions happen if one of the entites is destroyed as part of a callback
+                    //in which case we just mark this dirty and dont touch the state
                     em.dirty = true;
+                    if (bufferedCollisionEvents
+                        .ContainsKey(cm.hash)) //if we have buffered a collision that already exists
+                    {
+                        bufferedCollisionEvents.Remove(cm.hash);
+                    }
                 }
             });
+        
+        
 
         foreach (var e in bufferedCollisionEvents)
         {
+            // Console.WriteLine("SPAWNING NEW COLLISION EVENT BETWEEN " + e.Value.e1.Entity.Get<HasManagedOwner>().e.Name + " and " + e.Value.e2.Entity.Get<HasManagedOwner>().e.Name + " WITH HASH " + e.Key);
             Engine.ECSWorld.Create(
                 new EventMeta(e.Value.GetType().ToString()),
                 new CollisionMeta(e.Key),
                 e.Value);
+        }
+        
+        bool CollisionEventValid(ref CollisionEvent ce)
+        {
+            return ce.e1.IsAlive() && ce.e2.IsAlive() && !ce.e1.Entity.Has<Destroy>() && !ce.e2.Entity.Has<Destroy>();
         }
     }
 }

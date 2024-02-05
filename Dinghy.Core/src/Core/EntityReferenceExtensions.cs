@@ -5,7 +5,7 @@ namespace Dinghy.Core;
 
 public static class EntityReferenceExtensions
 {
-    public static void Destroy(this EntityReference e)
+    public static void Destroy(this ref EntityReference e)
     {
         e.Entity.Add(new Destroy());
     }
