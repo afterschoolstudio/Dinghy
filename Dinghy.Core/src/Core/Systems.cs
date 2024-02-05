@@ -372,6 +372,7 @@ public class DestructionSystem : DSystem
     {
         Engine.ECSWorld.Query(in managedCleanupQuery, (Arch.Core.Entity e, ref HasManagedOwner owner) =>
         {
+            Console.WriteLine("destroying " + owner.e.Name);
             if (owner.e.Scene != null)
             {
                 Engine.SceneEntityMap[owner.e.Scene].Remove(owner.e);
@@ -387,25 +388,46 @@ public class CollisionCallbackSystem : DSystem, IUpdateSystem
     public void Update(double dt)
     {
         Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref CollisionEvent ce, ref CollisionMeta cm) =>
-        {  
-            var e1c = ce.e1.Entity.Get<Collider>();
-            var e2c = ce.e2.Entity.Get<Collider>();
-            switch (cm.state)
-            {
-                case CollisionState.Starting:
-                    e1c.OnStart?.Invoke(ce.e1,ce.e2);
-                    e2c.OnStart?.Invoke(ce.e2,ce.e1);
-                    break;
-                case CollisionState.Continuing:
-                    e1c.OnContinue?.Invoke(ce.e1,ce.e2);
-                    e2c.OnContinue?.Invoke(ce.e2,ce.e1);
-                    break;
-                case CollisionState.Ending:
-                    e1c.OnEnd?.Invoke(ce.e1,ce.e2);
-                    e2c.OnEnd?.Invoke(ce.e2,ce.e1);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+        {
+            if (ce.e1.IsAlive() && ce.e2.IsAlive() && !ce.e1.Entity.Has<Destroy>() && !ce.e2.Entity.Has<Destroy>())
+            { 
+                Console.WriteLine("pass alive checks");
+                switch (cm.state)
+                {
+                    case CollisionState.Starting:
+                        Console.WriteLine("collision start");
+                        ce.e1.Entity.Get<Collider>().OnStart?.Invoke(ce.e1,ce.e2);
+                        Console.WriteLine("e1 on start ");
+                        if (ce.e2.IsAlive() && ce.e1.IsAlive() )
+                        {
+                            Console.WriteLine("start alive checks");
+                            ce.e2.Entity.Get<Collider>().OnStart?.Invoke(ce.e2,ce.e1);
+                            Console.WriteLine("post e1 on start");
+                        }
+                        break;
+                    case CollisionState.Continuing:
+                        Console.WriteLine("collision continue");
+                        ce.e1.Entity.Get<Collider>().OnContinue?.Invoke(ce.e1,ce.e2);
+                        if (ce.e2.IsAlive() && ce.e1.IsAlive())
+                        {
+                            ce.e2.Entity.Get<Collider>().OnContinue?.Invoke(ce.e2, ce.e1);
+                        }
+    
+                        break;
+                    case CollisionState.Ending:
+                        Console.WriteLine("collision end");
+                        ce.e1.Entity.Get<Collider>().OnEnd?.Invoke(ce.e1,ce.e2);
+                        Console.WriteLine("e1 on end");
+                        if (ce.e2.IsAlive() && ce.e1.IsAlive())
+                        {
+                            Console.WriteLine("colend post alive checks");
+                            ce.e2.Entity.Get<Collider>().OnEnd?.Invoke(ce.e2,ce.e1);
+                            Console.WriteLine("colend post e2 on end");
+                        }
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
             
             // for (int i = 0; i < colliders.Count; i++)
@@ -449,7 +471,8 @@ public class CollisionCallbackSystem : DSystem, IUpdateSystem
             }
             colliders.Add((e,c,p));
         });
-
+THE ISSUE IS THAT END EVENTS STILL HAPPEN FOR THE COLLISION WITH THE REFERENCES THAT ARE DESTRYOED IN START/CONTINUING
+    INSTEAD IF THE ENETITIES ARE DESTROYED WE SHOULD DIRTY THE EVENT AND MAKE SURE NO CALLBACKS
         Engine.ECSWorld.Query(in colQuery,
             (Arch.Core.Entity e, ref CollisionMeta cm, ref EventMeta em) =>
             {

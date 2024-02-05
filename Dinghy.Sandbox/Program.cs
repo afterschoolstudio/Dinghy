@@ -25,9 +25,9 @@ Engine.Run(new Engine.RunOptions(800,600,"dinghy",
 		demoTypes = Util.GetDemoSceneTypes().ToList();
 		genuaryDemoTypes = Util.GetGenuarySceneTypes().ToList();
 
-		var scene = new Dungeon();
-		scene.Mount(0);
-		scene.Load(() => scene.Start());
+		// var scene = new Dungeon();
+		// scene.Mount(0);
+		// scene.Load(() => scene.Start());
 	}, 
 	() =>
 	{

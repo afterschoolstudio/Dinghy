@@ -62,14 +62,14 @@ public class Collision : Scene
             PivotY = 16,
             // Enabled = false
         };
+
+        ptA = new Shape(pt, 5, 5){Name ="ptA"};
+        ptB = new Shape(pt, 5, 5){Name ="ptB"};;
+        ptC = new Shape(pt, 5, 5){Name ="ptC"};;
     }
 
     public override void Update(double dt)
     {
-        if(ptA != null){ptA.DestroyImmediate();}
-        if(ptB != null){ptB.DestroyImmediate();}
-        if(ptC != null){ptC.DestroyImmediate();}
-        
         static_colliderA.Rotation = (float)Engine.Time;
         static_colliderA.ScaleX = MathF.Sin((float)Engine.Time) + 2;
         static_colliderA.ScaleY = MathF.Sin((float)Engine.Time) + 2;
@@ -87,22 +87,13 @@ public class Collision : Scene
         //     ? collide
         //     : no_collide;
         var ptsA = Dinghy.Collision.GetClosestPoints(pointer, static_colliderA);
-        ptA = new Shape(pt,5,5)
-        {
-            X = ptsA.b.Value.X,
-            Y = ptsA.b.Value.Y
-        };
+        ptA.X = ptsA.b.Value.X;
+        ptA.Y = ptsA.b.Value.Y;
         var ptsB = Dinghy.Collision.GetClosestPoints(pointer, static_colliderB);
-        ptB = new Shape(pt,5,5)
-        {
-            X = ptsB.b.Value.X,
-            Y = ptsB.b.Value.Y
-        };
+        ptB.X = ptsB.b.Value.X;
+        ptB.Y = ptsB.b.Value.Y;
         var ptsC = Dinghy.Collision.GetClosestPoints(pointer, static_colliderC);
-        ptC = new Shape(pt,5,5)
-        {
-            X = ptsC.b.Value.X,
-            Y = ptsC.b.Value.Y
-        };
+        ptC.X = ptsC.b.Value.X;
+        ptC.Y = ptsC.b.Value.Y;
     }
 }

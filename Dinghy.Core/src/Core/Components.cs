@@ -237,3 +237,5 @@ public enum CollisionState
 public record struct CollisionMeta(int hash, CollisionState state = CollisionState.Starting);
 public record CollisionEvent(EntityReference e1, EntityReference e2) : Event;
 
+public record struct DebugInfo(string name);
+

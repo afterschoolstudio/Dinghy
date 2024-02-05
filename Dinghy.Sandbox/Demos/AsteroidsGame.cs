@@ -44,12 +44,10 @@ public class AsteroidsGame : Scene
 			    {
 				    if (other.Entity.Has<Asteroid>())
 				    {
-					    Console.WriteLine("asteroid with entity id = " + other.Entity.Id);
 					    asteroids.RemoveAt(asteroids.FindIndex(ast => ast.ECSEntity.Id == other.Entity.Id));
 					    other.Destroy();
-					    Console.WriteLine("bullet with entity id = " + ECSEntity.Id);
 					    bullets.RemoveAt(bullets.FindIndex(bullet => bullet.ECSEntity.Id == self.Entity.Id));
-					    Destroy();
+					    self.Destroy();
 				    }
 			    }) 
 		    {
