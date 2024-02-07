@@ -1,10 +1,22 @@
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.IO;
+using Microsoft.CodeAnalysis;
 
 namespace Depot.SourceGenerator
 {
     public static class Utils
     {
+        static IEnumerable<(bool, AdditionalText)> GetLoadOptions(GeneratorExecutionContext context)
+        {
+            foreach (AdditionalText file in context.AdditionalFiles)
+            {
+                context.AnalyzerConfigOptions.GetOptions(file).TryGetValue("build_metadata.AdditionalFiles.GenerateDepotSource", out string generateDepotSourceString);
+                bool.TryParse(generateDepotSourceString, out bool generateDepotSource);
+                yield return (generateDepotSource,file);
+            }
+        }
+        
         public static Depot.SourceGenerator.SheetData GetSheetDataFromGUID(ColumnData d, string guid)
         {
             return d.ParentFile.Sheets.Find(x => x.GUID == guid);

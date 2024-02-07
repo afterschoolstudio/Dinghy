@@ -50,8 +50,6 @@ namespace Depot.SourceGenerator
             }
 // #endif
             var depotFileDatas = new List<DepotFileData>();
-            var dir = Environment.CurrentDirectory;
-
             foreach (var depotFile in files)
             {
                 var depotFileName = depotFile.Key;
@@ -334,16 +332,6 @@ namespace Depot.SourceGenerator
             //     Debugger.Launch();
             // }
             // No initialization required for this one
-        }
-
-        static IEnumerable<(bool, AdditionalText)> GetLoadOptions(GeneratorExecutionContext context)
-        {
-            foreach (AdditionalText file in context.AdditionalFiles)
-            {
-                context.AnalyzerConfigOptions.GetOptions(file).TryGetValue("build_metadata.AdditionalFiles.GenerateDepotSource", out string generateDepotSourceString);
-                bool.TryParse(generateDepotSourceString, out bool generateDepotSource);
-                yield return (generateDepotSource,file);
-            }
         }
     }
 }
