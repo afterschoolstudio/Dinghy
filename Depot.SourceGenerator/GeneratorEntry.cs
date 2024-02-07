@@ -19,9 +19,7 @@ public class GeneratorEntry : ISourceGenerator
             out string? projectDirectoryPath);
         var resPath = new DirectoryInfo(Path.Combine(projectDirectoryPath, "res"));
     
-        // If you would like to put some data to non-compilable file (e.g. a .txt file), mark it as an Additional File.
-        // Go through all files marked as an Additional File in file properties.
-        List<(AdditionalText,string)> resFiles = new ();
+        List<(AdditionalText additionalText,string extension)> resFiles = new ();
         foreach (var additionalFile in context.AdditionalFiles)
         {
             if (additionalFile == null)
@@ -39,7 +37,21 @@ public class GeneratorEntry : ISourceGenerator
             //could check for other dirs with a .zinc in them or something?
         }
         
-        NEED TO TIE THIS TO THE ACTUAL DEPOT GENERATOR
-        AssetRouter.HandleResFiles(context,resFiles);
+        foreach (var f in resFiles)
+        {
+            if (f.extension == ".depot" || f.extension == ".dpo")
+            {
+                // could use AdditionalText stuff to filter on if we want to generate source, other options, etc.
+                // IEnumerable<(bool generateDepotSource, AdditionalText additionalText)> options = AdditionalFileUtils.GetLoadOptions(context);
+                // var depotFiles = options.Where(x => x.generateDepotSource);
+                // foreach (var file in depotFiles)
+                // {
+                //     files.Add(Path.GetFileNameWithoutExtension(file.additionalText.Path),file.additionalText.GetText().ToString());
+                // }
+                DepotSourceGenerator.GenerateSource(f.additionalText, context);
+            }
+        }
+        
+        context.AddSource("Logs.g.cs","//log test");
     }
 }

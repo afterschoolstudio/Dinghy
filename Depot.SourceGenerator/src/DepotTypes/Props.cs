@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 namespace Depot.SourceGenerator
 {
-    [DepotTypeBinding("props")]
     public class Props : ColumnData
     {
         public override string CSharpType => handlePropsReference();
@@ -30,7 +29,7 @@ namespace Depot.SourceGenerator
             foreach (var e in data.RootElement.EnumerateObject().OrderBy(x=>x.Name))
             {
                 if(e.NameEquals("guid")){values.Add(string.Format(@"""{0}""",e.Value));continue;}
-                var typeColumn = sheet.Columns.Find(x => x.GetRawName() == e.Name);
+                var typeColumn = sheet.Columns.Find(x => x.RawName == e.Name);
                 if(typeColumn == null)
                 {
                     //no line has been selected, return null
@@ -64,7 +63,7 @@ namespace Depot.SourceGenerator
                     //however this means if you used item.ParentSheet, all projects would point to the path of BuildableInteractables.ProjectInfo
                     //this is _technically_ correct, but isnt useful as a log statement, as it accidentally obscures the path you actually care about
                     //so instead we pass in the parent column here and use that as a way to get where this is actually happening
-                    DepotSourceGenerator.Logs.Add($"ERROR: {configuringLine.ID} at {parentColumn.ParentSheet.DataPath}.{item.ParentSheet.RawName} did not have a value for {item.GetRawName()}, ctor will be broken");
+                    DepotSourceGenerator.Logs.Add($"ERROR: {configuringLine.ID} at {parentColumn.ParentSheet.DataPath}.{item.ParentSheet.RawName} did not have a value for {item.RawName}, ctor will be broken");
                 }
             }
             return $"new {path}({string.Join(",",values)})";

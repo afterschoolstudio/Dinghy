@@ -6,7 +6,6 @@ using CodeWriter = Afterschool.Common.Utils.CodeWriter;
 
 namespace Depot.SourceGenerator
 {
-    [DepotTypeBinding("enum")]
     public class Enum : ColumnData, IRequiresIntermediateType
     {
         public override string CSharpType => $"{Name}_ENUM";

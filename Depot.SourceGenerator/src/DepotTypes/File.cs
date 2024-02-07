@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 namespace Depot.SourceGenerator
 {
-    [DepotTypeBinding("file")]
     public class FileColumn : ColumnData
     {
         public override string CSharpType => "FileInfo";

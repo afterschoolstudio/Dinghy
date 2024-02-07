@@ -9,7 +9,7 @@ namespace Depot.SourceGenerator
     public class SheetData
     {
         public string RawName {get;}
-        public string WriteSafeName {get;}
+        public string Name {get;}
         public string Description {get;}
         public string GUID {get;}
         public bool Hidden {get;}
@@ -24,7 +24,7 @@ namespace Depot.SourceGenerator
             JsonElement = e;
             ParentDepotFile = parentDepotFile;
             RawName = e.GetProperty("name").GetString();
-            WriteSafeName = File.SanitizeFilename(RawName);
+            Name = File.SanitizeFilename(RawName);
             Description = e.GetProperty("description").GetString();
             GUID = e.GetProperty("guid").GetString();
             Hidden = e.GetProperty("hidden").GetBoolean();

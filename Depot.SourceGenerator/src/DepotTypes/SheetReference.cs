@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 namespace Depot.SourceGenerator
 {
-    [DepotTypeBinding("sheetReference")]
     public class SheetReference : ColumnData
     {
         public override string CSharpType => "DepotSheet";

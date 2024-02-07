@@ -35,9 +35,5 @@
       <ProjectReference Include="..\Afterschool.Common\Afterschool.Common.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="src\Builders\" />
-    </ItemGroup>
-
 
 </Project>

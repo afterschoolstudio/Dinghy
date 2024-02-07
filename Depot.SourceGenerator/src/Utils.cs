@@ -7,23 +7,14 @@ namespace Depot.SourceGenerator
 {
     public static class Utils
     {
-        static IEnumerable<(bool, AdditionalText)> GetLoadOptions(GeneratorExecutionContext context)
-        {
-            foreach (AdditionalText file in context.AdditionalFiles)
-            {
-                context.AnalyzerConfigOptions.GetOptions(file).TryGetValue("build_metadata.AdditionalFiles.GenerateDepotSource", out string generateDepotSourceString);
-                bool.TryParse(generateDepotSourceString, out bool generateDepotSource);
-                yield return (generateDepotSource,file);
-            }
-        }
-        
+       
         public static Depot.SourceGenerator.SheetData GetSheetDataFromGUID(ColumnData d, string guid)
         {
             return d.ParentFile.Sheets.Find(x => x.GUID == guid);
         }
         public static string GetSheetTypeNameFromGUID(ColumnData d, string guid)
         {
-            return GetSheetDataFromGUID(d,guid).WriteSafeName;
+            return GetSheetDataFromGUID(d,guid).Name;
         }
         public static string GetSheetDataPathFromGuid(LineData configuringLine, ColumnData d, string guid)
         {
@@ -45,7 +36,7 @@ namespace Depot.SourceGenerator
             if(string.IsNullOrEmpty(lineguid))
             {
                 //no line has been selected, return null
-                DepotSourceGenerator.Logs.Add($"no line ref selection for {d.GetRawName()} in {GetSheetTypeNameFromGUID(d,sheetguid)} for line with id {configuringLine.ID}");
+                DepotSourceGenerator.Logs.Add($"no line ref selection for {d.RawName} in {GetSheetTypeNameFromGUID(d,sheetguid)} for line with id {configuringLine.ID}");
                 return "null";
             }
             return $"Depot.Generated.{d.ParentFile.WriteSafeName}.{GetSheetTypeNameFromGUID(d,sheetguid)}.{GetLineNameFromGUID(d,lineguid)}";

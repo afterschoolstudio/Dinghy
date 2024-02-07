@@ -7,7 +7,6 @@ using CodeWriter = Afterschool.Common.Utils.CodeWriter;
 
 namespace Depot.SourceGenerator
 {
-    [DepotTypeBinding("grid")]
     public class Grid : ColumnData, IRequiresIntermediateType
     {
         public override string CSharpType => $"{Name}_GRID";

@@ -45,5 +45,9 @@
     <ItemGroup>
         <None Include="..\Depot.SourceGenerator\bin\$(Configuration)\netstandard2.0\Depot.SourceGenerator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\Afterschool.Common\Afterschool.Common.csproj" Pack="true"/>
+    </ItemGroup>
 
 </Project>

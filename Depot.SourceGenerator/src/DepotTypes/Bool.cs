@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 namespace Depot.SourceGenerator
 {
-    [DepotTypeBinding("bool")]
     public class Bool : ColumnData
     {
         public override string CSharpType => "bool";

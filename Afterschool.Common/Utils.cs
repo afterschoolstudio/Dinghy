@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace Afterschool.Common
 {
@@ -23,6 +24,15 @@ namespace Afterschool.Common
             {
                 CurrentIndent -= 1;
                 sb.Append(new string('\t', CurrentIndent)).AppendLine("}"+additionalLineText);
+            }
+
+            public void AddLines(string literalLines)
+            {
+                var lines = literalLines.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+                foreach (var l in lines)
+                {
+                    AddLine(l);
+                }
             }
         }
     }
