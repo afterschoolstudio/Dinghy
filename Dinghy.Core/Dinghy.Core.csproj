@@ -41,5 +41,9 @@
     <ItemGroup>
         <None Include="..\Dinghy.Magic\Dinghy.Magic\bin\$(Configuration)\netstandard2.0\Dinghy.Magic.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>
+    
+    <ItemGroup>
+        <None Include="..\Depot.SourceGenerator\bin\$(Configuration)\netstandard2.0\Depot.SourceGenerator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    </ItemGroup>
 
 </Project>

@@ -9,10 +9,11 @@
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <IsRoslynComponent>true</IsRoslynComponent>
 
-        <RootNamespace>Dinghy.Magic</RootNamespace>
-        <PackageId>Dinghy.Magic</PackageId>
+        <RootNamespace>Depot.SourceGenerator</RootNamespace>
+        <PackageId>Depot.SourceGenerator</PackageId>
         <!-- https://github.com/dotnet/roslyn/blob/main/docs/features/source-generators.cookbook.md#package-a-generator-as-a-nuget-package -->
         <IncludeBuildOutput>false</IncludeBuildOutput>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
     <ItemGroup>
@@ -22,6 +23,7 @@
         </PackageReference>
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.0"/>
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.3.0"/>
+        <PackageReference Include="System.Text.Json" Version="8.0.1" />
     </ItemGroup>
 
     <ItemGroup>
@@ -30,14 +32,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="src\aseprite\" />
-      <Folder Include="src\cue\" />
-      <Folder Include="src\ldtk\" />
-      <Folder Include="src\tiled\" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\..\Afterschool.Common\Afterschool.Common.csproj" />
+      <ProjectReference Include="..\Afterschool.Common\Afterschool.Common.csproj" />
     </ItemGroup>
 
 

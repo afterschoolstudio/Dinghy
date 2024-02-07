@@ -7,4 +7,5 @@
   &lt;Assembly Path="C:\Users\kyle\Workspace\Dinghy\Dinghy.Core\bin\Debug\net7.0\Dinghy.dll" /&gt;
   &lt;PhysicalFolder Path="/Users/kyle/Workspace/Dinghy/Dinghy.Sandbox/bin/Release/net8.0" Loaded="True" /&gt;
   &lt;Assembly Path="/Users/kyle/.nuget/packages/arch/1.2.7/lib/net7.0/Arch.dll" /&gt;
-&lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>
+&lt;/AssemblyExplorer&gt;</s:String>
+	</wpf:ResourceDictionary>

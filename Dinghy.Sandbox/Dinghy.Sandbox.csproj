@@ -25,6 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Depot.SourceGenerator\Depot.SourceGenerator.csproj" />
       <ProjectReference Include="..\Dinghy.Core\Dinghy.Core.csproj" />
       <ProjectReference Include="..\Dinghy.Magic\Dinghy.Magic\Dinghy.Magic.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
     </ItemGroup>
