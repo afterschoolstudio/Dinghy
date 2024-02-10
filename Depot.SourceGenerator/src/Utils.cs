@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Depot.SourceGenerator
 {
-    public static class Utils
+    public static partial class Utils
     {
        
         public static Depot.SourceGenerator.SheetData GetSheetDataFromGUID(ColumnData d, string guid)

@@ -2,7 +2,6 @@ using System;
 using System.Text.Json;
 using System.Linq;
 using System.Collections.Generic;
-using CodeWriter = Afterschool.Common.Utils.CodeWriter;
 
 
 namespace Depot.SourceGenerator
@@ -16,7 +15,7 @@ namespace Depot.SourceGenerator
             return (!string.IsNullOrEmpty(value) && ((JsonElement)o).EnumerateArray().Count() > 0 && !string.IsNullOrEmpty(((JsonElement)o).EnumerateArray().First().ToString())) ? string.Join("|",((JsonElement)o).EnumerateArray().Select(x => $"{ParentSheet.DataPath}.{CSharpType}.{x}")) : $"{ParentSheet.DataPath}.{CSharpType}.None";
         }
         public Multiple(JsonElement e, SheetData parentSheet) : base(e,parentSheet){}
-        public void BuildType(CodeWriter cw, SheetData d)
+        public void BuildType(Utils.CodeWriter cw, SheetData d)
         {
             var index = 0;
             var enumValues = JsonElement.GetProperty("options").GetString().Split(',').ToList();

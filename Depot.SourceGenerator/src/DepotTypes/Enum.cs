@@ -1,8 +1,6 @@
 using System.Text.Json;
 using System.Linq;
 using System.Collections.Generic;
-using CodeWriter = Afterschool.Common.Utils.CodeWriter;
-
 
 namespace Depot.SourceGenerator
 {
@@ -15,7 +13,7 @@ namespace Depot.SourceGenerator
             return $"{ParentSheet.DataPath}.{CSharpType}.{value}";
         }
         public Enum(JsonElement e, SheetData parentSheet) : base(e,parentSheet){}
-        public void BuildType(CodeWriter cw, SheetData d)
+        public void BuildType(Utils.CodeWriter cw, SheetData d)
         {
             var enumValues = new List<string>();
             enumValues.AddRange(JsonElement.GetProperty("options").GetString().Split(',').ToList());

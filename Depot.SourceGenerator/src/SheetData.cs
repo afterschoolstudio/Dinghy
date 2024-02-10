@@ -2,7 +2,6 @@ using System;
 using System.Text.Json;
 using System.Linq;
 using System.Collections.Generic;
-using Afterschool.Common;
 
 namespace Depot.SourceGenerator
 {

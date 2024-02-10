@@ -11,8 +11,6 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using System.Text.Json;
-using Afterschool.Common;
-using CodeWriter = Afterschool.Common.Utils.CodeWriter;
 
 
 namespace Depot.SourceGenerator
@@ -41,6 +39,7 @@ namespace Depot.SourceGenerator
 
         public static void GenerateSource(AdditionalText a, GeneratorExecutionContext context)
         {
+            context.AddSource($"Depot.Core.cs", ConstantSourceFiles.Core);
             var depotFileName = Path.GetFileNameWithoutExtension(a.Path);
             var depotFileText = a.GetText().ToString();
             using (JsonDocument document = JsonDocument.Parse(depotFileText))
@@ -48,7 +47,7 @@ namespace Depot.SourceGenerator
                 var DepotFileData = new DepotFileData(depotFileName,depotFileText,document.RootElement);
                 foreach (var sheet in DepotFileData.Sheets.Where(x => !(x is SubsheetData)))
                 {
-                    var cw = new CodeWriter();
+                    var cw = new Utils.CodeWriter();
                     cw.AddLine("using System.IO;");
                     cw.AddLine("using Depot.Core;");
                     cw.OpenScope($"namespace Depot.Generated.{DepotFileData.WriteSafeName}");
@@ -59,7 +58,7 @@ namespace Depot.SourceGenerator
             }
         }
         
-        static void BuildSheet(CodeWriter cw, SheetData sheet)
+        static void BuildSheet(Utils.CodeWriter cw, SheetData sheet)
         {
             if(sheet.IsProps)
             {
@@ -134,7 +133,7 @@ namespace Depot.SourceGenerator
             cw.CloseScope();
         }
 
-        static void BuildIntermediaryTypes(CodeWriter cw, SheetData sheet)
+        static void BuildIntermediaryTypes(Utils.CodeWriter cw, SheetData sheet)
         {
             foreach (IRequiresIntermediateType column in sheet.Columns.Where(x => x is IRequiresIntermediateType))
             {
@@ -142,7 +141,7 @@ namespace Depot.SourceGenerator
             }
         }
 
-        static void BuildSheetLineClass(CodeWriter cw, SheetData sheet)
+        static void BuildSheetLineClass(Utils.CodeWriter cw, SheetData sheet)
         {
             var lineclassname = "";
             if(sheet is SubsheetData)
@@ -190,7 +189,7 @@ namespace Depot.SourceGenerator
             cw.CloseScope();
         }
 
-        static void BuildSheetLineReferenceClass(CodeWriter cw, SheetData sheet)
+        static void BuildSheetLineReferenceClass(Utils.CodeWriter cw, SheetData sheet)
         {
             var source = $@"
 public class {sheet.Name}LineReference
@@ -247,7 +246,7 @@ public class {sheet.Name}LineReference
             // cw.CloseScope();
         }
 
-        static void BuildSheetLines(CodeWriter cw, SheetData sheet) //NOTE: only top line sheets have this
+        static void BuildSheetLines(Utils.CodeWriter cw, SheetData sheet) //NOTE: only top line sheets have this
             {
                 var lineItems = new List<string>();
                 foreach (var line in sheet.Lines)

@@ -36,9 +36,4 @@
       <Folder Include="src\tiled\" />
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\Afterschool.Common\Afterschool.Common.csproj" />
-    </ItemGroup>
-
-
 </Project>

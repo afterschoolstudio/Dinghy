@@ -31,9 +31,5 @@
         <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\Afterschool.Common\Afterschool.Common.csproj" />
-    </ItemGroup>
-
 
 </Project>

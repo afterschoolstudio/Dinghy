@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Afterschool.Common;
 
 namespace Depot.SourceGenerator
 {

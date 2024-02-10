@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using Afterschool.Common.Extensions;
 using Microsoft.CodeAnalysis;
 
 namespace Depot.SourceGenerator;
@@ -52,6 +51,6 @@ public class GeneratorEntry : ISourceGenerator
             }
         }
         
-        context.AddSource("Logs.g.cs","//log test");
+        // context.AddSource("Logs.g.cs","//log test");
     }
 }

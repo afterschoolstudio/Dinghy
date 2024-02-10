@@ -2,8 +2,6 @@ using System;
 using System.Text.Json;
 using System.Linq;
 using System.Collections.Generic;
-using Afterschool.Common;
-using CodeWriter = Afterschool.Common.Utils.CodeWriter;
 
 namespace Depot.SourceGenerator
 {
@@ -39,7 +37,7 @@ namespace Depot.SourceGenerator
 
     public interface IRequiresIntermediateType
     {
-        void BuildType(CodeWriter cw, SheetData d);
+        void BuildType(Utils.CodeWriter cw, SheetData d);
     }
 }
 

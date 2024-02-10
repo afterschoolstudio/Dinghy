@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Afterschool.Common.Extensions;
 using Microsoft.CodeAnalysis;
 
 namespace Dinghy.Magic;
@@ -39,6 +38,6 @@ public class GeneratorEntry : ISourceGenerator
         }
         AssetRouter.HandleResFiles(context,resFiles);
         
-        context.AddSource("Logs.g.cs","//logs");
+        // context.AddSource("Logs.g.cs","//logs");
     }
 }
