@@ -52,6 +52,8 @@ namespace Res;
         {
             case "png":
             case "jpeg":
+            case ".jpeg":
+            case ".png":
                 cw.AddLine($"public static TextureAsset {Path.GetFileNameWithoutExtension(t.Path)} = new(@\"{t.Path}\");");
                 break;
             case "aseprite":
