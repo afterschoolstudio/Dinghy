@@ -48,13 +48,12 @@ namespace Res;
     }
     public static void RouteAsset(GeneratorExecutionContext context, Utils.CodeWriter cw, AdditionalText t, string ext)
     {
-        //var text = additionalFile.GetText();
-        
-        cw.AddLine($"public static TextureAsset {Path.GetFileNameWithoutExtension(t.Path)} = new(@\"{t.Path}\");");
-        
-        //need to handle actual content
         switch (ext)
         {
+            case "png":
+            case "jpeg":
+                cw.AddLine($"public static TextureAsset {Path.GetFileNameWithoutExtension(t.Path)} = new(@\"{t.Path}\");");
+                break;
             case "aseprite":
             case "tmx":
             case "ldtx":
