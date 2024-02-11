@@ -76,7 +76,7 @@ pub fn build(b: *std.Build) void {
 
     if (dll.target.isDarwin()) {
         // b.lib_dir = "../../../../Dinghy.Core/libs/osx-x64/native";
-        b.lib_dir = "../Dinghy.Core/runtimes/osx-x64/native";
+        b.lib_dir = "../Dinghy.Core/runtimes/osx-arm64/native";
         
         
         inline for (c_sources) |csrc| {
