@@ -38,16 +38,6 @@ public class Dungeon : Scene
         foreach (var e in Enemies.Where(x => x.Aggro && !x.Dead))
         {
             Text(e.ToString());
-            if (Button($"Attack{e.Name}",buttonSize))
-            {
-                e.Health--;
-                acted = true;
-                if (e.Health <= 0)
-                {
-                    player.GrantXP(e.XPValue);
-                }
-                Events.Raise(new Events.ButtonClicked());
-            }
         }
         Text($"Player HP:{player.Health} XP:{player.XP}");
         if (Button($"Move Player",buttonSize))
