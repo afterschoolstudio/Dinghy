@@ -353,14 +353,23 @@ public class Shape : Entity
             c = value;
         }
     }
+    
     public Shape(Color color, int width = 32, int height = 32, Scene? scene = null, bool startEnabled = true, 
-        Action<EntityReference,EntityReference> collisionStart = null, Action<EntityReference,EntityReference> collisionStop = null, Action<EntityReference,EntityReference> collisionContinue = null) : base(startEnabled,scene)
+        Action<EntityReference,EntityReference> collisionStart = null, 
+        Action<EntityReference,EntityReference> collisionStop = null, 
+        Action<EntityReference,EntityReference> collisionContinue = null,
+        Action<List<Modifiers>> OnMouseUp = null,
+        Action<List<Modifiers>> OnMousePressed = null,
+        Action<List<Modifiers>> OnMouseDown = null,
+        Action<List<Modifiers>,float,float> OnMouseScroll = null
+        
+        ) : base(startEnabled,scene)
     {
         c = color;
         var rend = new ShapeRenderer(color, width, height);
         ECSEntity.Add(
             rend,
-            new Collider(0,0,width,height,collisionStart,collisionContinue,collisionStop));
+            new Collider(0,0,width,height,false,collisionStart,collisionContinue,collisionStop,OnMouseUp, OnMousePressed, OnMouseDown, OnMouseScroll));
     }
 
 
@@ -379,6 +388,15 @@ public class Shape : Entity
     // private bool colliderActives;
 }
 
+public class Pointer : Entity
+{
+    public Pointer(bool startEnabled = true) : base(startEnabled,null,false)
+    {
+        ECSEntity.Add(new Collider(0,0,1,1,active:true));
+    }
+}
+
+
 public record SpriteData(Resources.Texture Texture, Rect Rect);
 
 
@@ -386,13 +404,22 @@ public class Sprite : Entity
 {
     public SpriteData Data { get; init; }
     public Sprite(SpriteData spriteData, Scene? scene = null, bool startEnabled = true, 
-        Action<EntityReference,EntityReference> collisionStart = null, Action<EntityReference,EntityReference> collisionStop = null, Action<EntityReference,EntityReference> collisionContinue = null) : base(startEnabled,scene)
+        Action<EntityReference,EntityReference> collisionStart = null, 
+        Action<EntityReference,EntityReference> collisionStop = null, 
+        Action<EntityReference,EntityReference> collisionContinue = null,
+        Action<List<Modifiers>> OnMouseUp = null,
+        Action<List<Modifiers>> OnMousePressed = null,
+        Action<List<Modifiers>> OnMouseDown = null,
+        Action<List<Modifiers>,float,float> OnMouseScroll = null
+        
+        
+        ) : base(startEnabled,scene)
     {
         Data = spriteData;
         var rend = new SpriteRenderer(Data.Texture, Data.Rect);
         ECSEntity.Add(
             rend,
-            new Collider(0,0,Data.Rect.width,Data.Rect.height,collisionStart,collisionContinue,collisionStop));
+            new Collider(0,0,Data.Rect.width,Data.Rect.height,false,collisionStart,collisionContinue,collisionStop,OnMouseUp, OnMousePressed, OnMouseDown, OnMouseScroll));
     }
     
     private bool colliderActive;
@@ -413,14 +440,23 @@ public class AnimatedSprite : Entity
 {
     public AnimatedSpriteData Data { get; init; }
     public AnimatedSprite(AnimatedSpriteData animatedSpriteData, Scene? scene = null, bool startEnabled = true, 
-        Action<EntityReference,EntityReference> collisionStart = null, Action<EntityReference,EntityReference> collisionStop = null, Action<EntityReference,EntityReference> collisionContinue = null) : base(startEnabled,scene)
+        Action<EntityReference,EntityReference> collisionStart = null, 
+        Action<EntityReference,EntityReference> collisionStop = null, 
+        Action<EntityReference,EntityReference> collisionContinue = null,
+        Action<List<Modifiers>> OnMouseUp = null,
+        Action<List<Modifiers>> OnMousePressed = null,
+        Action<List<Modifiers>> OnMouseDown = null,
+        Action<List<Modifiers>,float,float> OnMouseScroll = null
+        
+        
+        ) : base(startEnabled,scene)
     {
         Data = animatedSpriteData;
         var rend = new SpriteRenderer(Data.Texture, Data.Animations.First().Frames[0]);
         ECSEntity.Add(
             rend,
             new SpriteAnimator(Data.Animations),
-            new Collider(0,0,Data.Animations.First().Frames[0].width,Data.Animations.First().Frames[0].height,collisionStart,collisionStop,collisionContinue));
+            new Collider(0,0,Data.Animations.First().Frames[0].width,Data.Animations.First().Frames[0].height,false,collisionStart,collisionContinue,collisionStop,OnMouseUp,OnMousePressed, OnMouseDown, OnMouseScroll));
     }
     
     private bool colliderActive;

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Numerics;
 using Arch.Core;
 using Arch.Core.Extensions;
@@ -200,6 +201,18 @@ public class ParticleRenderSystem : RenderSystem
 
 public class InputSystem : DSystem, IUpdateSystem
 {
+    QueryDescription
+        frameEvents = new QueryDescription().WithAll<EventMeta, FrameEvent>(); // Should have all specified components
+
+
+
+    public enum MouseState
+    {
+        Up,
+        Pressed,
+        Scroll,
+        Down
+    }
     public static float MouseX;
     public static float MouseY;
     public static class Events
@@ -215,6 +228,7 @@ public class InputSystem : DSystem, IUpdateSystem
         public static class Mouse
         {
             public static Action<List<Modifiers>> Down;
+            public static Action<List<Modifiers>> Pressed;
             public static Action<List<Modifiers>> Up;
             public static Action<float,float,float,float,List<Modifiers>> Move;
             public static Action<float,float,List<Modifiers>> Scroll;
@@ -232,85 +246,156 @@ public class InputSystem : DSystem, IUpdateSystem
             public static Action RequestedQuit;
         }
     }
-    public HashSet<sapp_event> FrameEvents = new HashSet<sapp_event>();
+
+    private bool lmb_up = true;
+    private bool rmb_up = true;
+    private bool mmb_up = true;
+
     public void Update(double dt)
     {
-        foreach (var e in FrameEvents)
+        Engine.ECSWorld.Query(in frameEvents, (Arch.Core.Entity entity, ref EventMeta em, ref FrameEvent frameEvent) =>
         {
-            switch (e.type)
+            if(!em.dirty)
             {
-                case sapp_event_type.SAPP_EVENTTYPE_INVALID:
-                    break;
-                case sapp_event_type.SAPP_EVENTTYPE_KEY_DOWN:
-                    if (e.key_repeat > 0)
-                    {
-                        Events.Key.Pressed?.Invoke((Key)e.key_code,GetModifier(e.modifiers));
-                    }
-                    Events.Key.Down?.Invoke((Key)e.key_code,GetModifier(e.modifiers));
-                    break;
-                case sapp_event_type.SAPP_EVENTTYPE_KEY_UP:
-                    Events.Key.Up?.Invoke((Key)e.key_code,GetModifier(e.modifiers));
-                    break;
-                case sapp_event_type.SAPP_EVENTTYPE_CHAR:
-                    Events.Key.Char?.Invoke(e.char_code);
-                    break;
-                case sapp_event_type.SAPP_EVENTTYPE_MOUSE_DOWN:
-                    Events.Mouse.Down?.Invoke(GetModifier(e.modifiers));
-                    break;
-                case sapp_event_type.SAPP_EVENTTYPE_MOUSE_UP:
-                    Events.Mouse.Up?.Invoke(GetModifier(e.modifiers));
-                    break;
-                case sapp_event_type.SAPP_EVENTTYPE_MOUSE_SCROLL:
-                    Events.Mouse.Scroll?.Invoke(e.scroll_x,e.scroll_y,GetModifier(e.modifiers));
-                    break;
-                case sapp_event_type.SAPP_EVENTTYPE_MOUSE_MOVE:
-                    MouseX = e.mouse_x;
-                    MouseY = e.mouse_y;
-                    Events.Mouse.Move?.Invoke(e.mouse_x,e.mouse_y,e.mouse_dx,e.mouse_dy,GetModifier(e.modifiers));
-                    break;
-                case sapp_event_type.SAPP_EVENTTYPE_MOUSE_ENTER:
-                    Events.Window.MouseEnter?.Invoke(GetModifier(e.modifiers));
-                    break;
-                case sapp_event_type.SAPP_EVENTTYPE_MOUSE_LEAVE:
-                    Events.Window.MouseLeave?.Invoke(GetModifier(e.modifiers));
-                    break;
-                case sapp_event_type.SAPP_EVENTTYPE_TOUCHES_BEGAN:
-                    break;
-                case sapp_event_type.SAPP_EVENTTYPE_TOUCHES_MOVED:
-                    break;
-                case sapp_event_type.SAPP_EVENTTYPE_TOUCHES_ENDED:
-                    break;
-                case sapp_event_type.SAPP_EVENTTYPE_TOUCHES_CANCELLED:
-                    break;
-                case sapp_event_type.SAPP_EVENTTYPE_RESIZED:
-                    Events.Window.Resized?.Invoke();
-                    break;
-                case sapp_event_type.SAPP_EVENTTYPE_ICONIFIED:
-                    break;
-                case sapp_event_type.SAPP_EVENTTYPE_RESTORED:
-                    break;
-                case sapp_event_type.SAPP_EVENTTYPE_FOCUSED:
-                    Events.Window.Focused?.Invoke();
-                    break;
-                case sapp_event_type.SAPP_EVENTTYPE_UNFOCUSED:
-                    Events.Window.Unfocused?.Invoke();
-                    break;
-                case sapp_event_type.SAPP_EVENTTYPE_SUSPENDED:
-                    Events.Window.Suspended?.Invoke();
-                    break;
-                case sapp_event_type.SAPP_EVENTTYPE_RESUMED:
-                    Events.Window.Resumed?.Invoke();
-                    break;
-                case sapp_event_type.SAPP_EVENTTYPE_QUIT_REQUESTED:
-                    Events.Window.RequestedQuit?.Invoke();
-                    break;
-                case sapp_event_type.SAPP_EVENTTYPE_CLIPBOARD_PASTED:
-                    break;
-                case sapp_event_type.SAPP_EVENTTYPE_FILES_DROPPED:
-                    break;
+                var mods = GetModifier(frameEvent.e.modifiers);
+                switch (frameEvent.e.type)
+                {
+                    case sapp_event_type.SAPP_EVENTTYPE_INVALID:
+                        break;
+                    case sapp_event_type.SAPP_EVENTTYPE_KEY_DOWN:
+                        if (frameEvent.e.key_repeat > 0)
+                        {
+                            Events.Key.Pressed?.Invoke((Key)frameEvent.e.key_code,mods);
+                        }
+                        Events.Key.Down?.Invoke((Key)frameEvent.e.key_code,mods);
+                        break;
+                    case sapp_event_type.SAPP_EVENTTYPE_KEY_UP:
+                        Events.Key.Up?.Invoke((Key)frameEvent.e.key_code,mods);
+                        break;
+                    case sapp_event_type.SAPP_EVENTTYPE_CHAR:
+                        Events.Key.Char?.Invoke(frameEvent.e.char_code);
+                        break;
+                    case sapp_event_type.SAPP_EVENTTYPE_MOUSE_DOWN:
+
+                        MouseButton downButton = frameEvent.e.mouse_button switch
+                        {
+                            sapp_mousebutton.SAPP_MOUSEBUTTON_LEFT => downButton = MouseButton.LEFT,
+                            sapp_mousebutton.SAPP_MOUSEBUTTON_RIGHT => downButton = MouseButton.RIGHT,
+                            sapp_mousebutton.SAPP_MOUSEBUTTON_MIDDLE => downButton = MouseButton.MIDDLE,
+                            _ => MouseButton.INVALID,
+                        };
+
+                        bool createPressedEvent = false;
+                        switch (downButton)
+                        {
+                            case MouseButton.MIDDLE when mmb_up:
+                                createPressedEvent = true;
+                                mmb_up = false;
+                                break;
+                            case MouseButton.LEFT when lmb_up:
+                                createPressedEvent = true;
+                                lmb_up = false;
+                                break;
+                            case MouseButton.RIGHT when rmb_up:
+                                createPressedEvent = true;
+                                rmb_up = false;
+                                break;
+                        }
+
+                        if (createPressedEvent)
+                        {
+                            Events.Mouse.Pressed?.Invoke(mods);
+                            Engine.ECSWorld.Create(
+                                new EventMeta("MOUSE_PRESSED"),
+                                new MouseEvent(MouseState.Pressed,downButton,mods));
+                        }
+                        Events.Mouse.Down?.Invoke(mods);
+                        Engine.ECSWorld.Create(
+                            new EventMeta("MOUSE_DOWN"),
+                            new MouseEvent(MouseState.Down,downButton,mods));
+                        break;
+                    case sapp_event_type.SAPP_EVENTTYPE_MOUSE_UP:
+                        
+                        MouseButton upButton = frameEvent.e.mouse_button switch
+                        {
+                            sapp_mousebutton.SAPP_MOUSEBUTTON_LEFT => downButton = MouseButton.LEFT,
+                            sapp_mousebutton.SAPP_MOUSEBUTTON_RIGHT => downButton = MouseButton.RIGHT,
+                            sapp_mousebutton.SAPP_MOUSEBUTTON_MIDDLE => downButton = MouseButton.MIDDLE,
+                            _ => MouseButton.INVALID,
+                        };
+
+                        switch (upButton)
+                        {
+                            case MouseButton.MIDDLE:
+                                mmb_up = true;
+                                break;
+                            case MouseButton.LEFT:
+                                lmb_up = true;
+                                break;
+                            case MouseButton.RIGHT:
+                                rmb_up = true;
+                                break;
+                        }
+                        Events.Mouse.Up?.Invoke(mods);
+                        Engine.ECSWorld.Create(
+                            new EventMeta("MOUSE_UP"),
+                            new MouseEvent(MouseState.Up,upButton,mods));
+                        break;
+                    case sapp_event_type.SAPP_EVENTTYPE_MOUSE_SCROLL:
+                        Events.Mouse.Scroll?.Invoke(frameEvent.e.scroll_x,frameEvent.e.scroll_y,mods);
+                        Engine.ECSWorld.Create(
+                            new EventMeta("MOUSE_SCROLL"),
+                            new MouseEvent(MouseState.Scroll, MouseButton.INVALID, mods, frameEvent.e.scroll_x, frameEvent.e.scroll_y));
+                        break;
+                    case sapp_event_type.SAPP_EVENTTYPE_MOUSE_MOVE:
+                        MouseX = frameEvent.e.mouse_x;
+                        MouseY = frameEvent.e.mouse_y;
+                        Events.Mouse.Move?.Invoke(frameEvent.e.mouse_x,frameEvent.e.mouse_y,frameEvent.e.mouse_dx,frameEvent.e.mouse_dy,mods);
+                        break;
+                    case sapp_event_type.SAPP_EVENTTYPE_MOUSE_ENTER:
+                        Events.Window.MouseEnter?.Invoke(mods);
+                        break;
+                    case sapp_event_type.SAPP_EVENTTYPE_MOUSE_LEAVE:
+                        Events.Window.MouseLeave?.Invoke(mods);
+                        break;
+                    case sapp_event_type.SAPP_EVENTTYPE_TOUCHES_BEGAN:
+                        break;
+                    case sapp_event_type.SAPP_EVENTTYPE_TOUCHES_MOVED:
+                        break;
+                    case sapp_event_type.SAPP_EVENTTYPE_TOUCHES_ENDED:
+                        break;
+                    case sapp_event_type.SAPP_EVENTTYPE_TOUCHES_CANCELLED:
+                        break;
+                    case sapp_event_type.SAPP_EVENTTYPE_RESIZED:
+                        Events.Window.Resized?.Invoke();
+                        break;
+                    case sapp_event_type.SAPP_EVENTTYPE_ICONIFIED:
+                        break;
+                    case sapp_event_type.SAPP_EVENTTYPE_RESTORED:
+                        break;
+                    case sapp_event_type.SAPP_EVENTTYPE_FOCUSED:
+                        Events.Window.Focused?.Invoke();
+                        break;
+                    case sapp_event_type.SAPP_EVENTTYPE_UNFOCUSED:
+                        Events.Window.Unfocused?.Invoke();
+                        break;
+                    case sapp_event_type.SAPP_EVENTTYPE_SUSPENDED:
+                        Events.Window.Suspended?.Invoke();
+                        break;
+                    case sapp_event_type.SAPP_EVENTTYPE_RESUMED:
+                        Events.Window.Resumed?.Invoke();
+                        break;
+                    case sapp_event_type.SAPP_EVENTTYPE_QUIT_REQUESTED:
+                        Events.Window.RequestedQuit?.Invoke();
+                        break;
+                    case sapp_event_type.SAPP_EVENTTYPE_CLIPBOARD_PASTED:
+                        break;
+                    case sapp_event_type.SAPP_EVENTTYPE_FILES_DROPPED:
+                        break;
+                }
+            em.dirty = true;
             }
-        }
-        FrameEvents.Clear();
+        });
     }
     
     List<Modifiers> GetModifier(uint v)
@@ -385,23 +470,42 @@ public class DestructionSystem : DSystem
 public class CollisionCallbackSystem : DSystem, IUpdateSystem
 {
     QueryDescription query = new QueryDescription().WithAll<CollisionEvent,CollisionMeta,EventMeta>();
+    QueryDescription mouseQuery = new QueryDescription().WithAll<MouseEvent,EventMeta>();
     public void Update(double dt)
     {
+        List<MouseEvent> mouseEvents = new List<MouseEvent>();
+        Engine.ECSWorld.Query(in mouseQuery, (Arch.Core.Entity e, ref MouseEvent m, ref EventMeta em) =>
+        {
+            if (!em.dirty)
+            {
+                // mouseEvents.Add(new MouseEvent(m.mouseState,m.mods,m.scrollX,m.scrollY));
+                mouseEvents.Add(m);
+            }
+        });
+
         Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref CollisionEvent ce, ref CollisionMeta cm, ref EventMeta em) =>
         {
             // Console.WriteLine("HANDLING COLLISION EVENT BETWEEN " + ce.e1.Entity.Get<HasManagedOwner>().e.Name + " and " + ce.e2.Entity.Get<HasManagedOwner>().e.Name + " WITH HASH " + cm.hash);
             if (CollisionEventValid(ref ce))
-            { 
+            {
+                bool e1IsCursor = Engine.Cursor.ECSEntityReference.Entity.Id == ce.e1.Entity.Id;
+                bool e2IsCursor = Engine.Cursor.ECSEntityReference.Entity.Id == ce.e2.Entity.Id;
+                
                 switch (cm.state)
                 {
+                    //NOTE: COULD MAYBE ADD AN ADDITIONAL EVENT THAT IS SPECIFICALLY ABOUT POINTER HANDLING
+                    //RIGHT NOW ITS JUST GENERIC COLLISION
                     case CollisionState.Starting:
-                        Console.WriteLine("handling collision event start");
                         ce.e1.Entity.Get<Collider>().OnStart?.Invoke(ce.e1,ce.e2);
                         if (CollisionEventValid(ref ce)) {
                             ce.e2.Entity.Get<Collider>().OnStart?.Invoke(ce.e2,ce.e1);
                             if (!CollisionEventValid(ref ce)) {
                                 em.dirty = true;
                                 cm.state = CollisionState.Invalid;
+                            }
+                            else
+                            {
+                                PropogateMouseEvents(ce.e1.Entity,ce.e2.Entity,e1IsCursor,e2IsCursor);
                             }
                         } 
                         else {
@@ -417,6 +521,10 @@ public class CollisionCallbackSystem : DSystem, IUpdateSystem
                                 em.dirty = true;
                                 cm.state = CollisionState.Invalid;
                             }
+                            else
+                            {
+                                PropogateMouseEvents(ce.e1.Entity,ce.e2.Entity,e1IsCursor,e2IsCursor);
+                            }
                         }
                         else  {
                             em.dirty = true;
@@ -425,13 +533,16 @@ public class CollisionCallbackSystem : DSystem, IUpdateSystem
     
                         break;
                     case CollisionState.Ending:
-                        Console.WriteLine("handling collision event end");
                         ce.e1.Entity.Get<Collider>().OnEnd?.Invoke(ce.e1,ce.e2);
                         if (CollisionEventValid(ref ce)) {
                             ce.e2.Entity.Get<Collider>().OnEnd?.Invoke(ce.e2,ce.e1);
                             if (!CollisionEventValid(ref ce)) {
                                 em.dirty = true;
                                 cm.state = CollisionState.Invalid;
+                            }
+                            else
+                            {
+                                PropogateMouseEvents(ce.e1.Entity,ce.e2.Entity,e1IsCursor,e2IsCursor);
                             }
                         }
                         else {
@@ -449,6 +560,53 @@ public class CollisionCallbackSystem : DSystem, IUpdateSystem
         bool CollisionEventValid(ref CollisionEvent ce)
         {
             return ce.e1.IsAlive() && ce.e2.IsAlive() && !ce.e1.Entity.Has<Destroy>() && !ce.e2.Entity.Has<Destroy>();
+        }
+
+        void PropogateMouseEvents(Arch.Core.Entity e1, Arch.Core.Entity e2, bool e1IsCursor, bool e2IsCursor)
+        {
+            if (e1IsCursor || e2IsCursor)
+            {
+                foreach (var me in mouseEvents)
+                {
+                    if (e1IsCursor)
+                    {
+                        switch (me.mouseState)
+                        {
+                            case InputSystem.MouseState.Up:
+                                e2.Get<Collider>().OnMouseUp?.Invoke(me.mods);
+                                break;
+                            case InputSystem.MouseState.Pressed:
+                                e2.Get<Collider>().OnMousePressed?.Invoke(me.mods);
+                                break;
+                            case InputSystem.MouseState.Down:
+                                e2.Get<Collider>().OnMouseDown?.Invoke(me.mods);
+                                break;
+                            case InputSystem.MouseState.Scroll:
+                                e2.Get<Collider>().OnMouseScroll?.Invoke(me.mods,me.scrollX,me.scrollY);
+                                break;
+                        }
+                    }
+                    else //e2IsCursor
+                    {
+                        switch (me.mouseState)
+                        {
+                            case InputSystem.MouseState.Up:
+                                e1.Get<Collider>().OnMouseUp?.Invoke(me.mods);
+                                break;
+                            case InputSystem.MouseState.Pressed:
+                                e1.Get<Collider>().OnMousePressed?.Invoke(me.mods);
+                                break;
+                            case InputSystem.MouseState.Down:
+                                e1.Get<Collider>().OnMouseDown?.Invoke(me.mods);
+                                break;
+                            case InputSystem.MouseState.Scroll:
+                                e1.Get<Collider>().OnMouseScroll?.Invoke(me.mods,me.scrollX,me.scrollY);
+                                break;
+                        }
+                    }
+                }
+                
+            }
         }
     }
 }

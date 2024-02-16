@@ -40,44 +40,29 @@ public class DataTypes
             Attack = attack;
             Aggro = aggro;
             XPValue = xp;
-            Entity = new Shape(0xFFFF0000, 32, 32,collisionStart:CollisionStart,collisionStop:CollisionStop)
+            Entity = new Shape(0xFFFF0000, 32, 32,collisionStart:CollisionStart,collisionStop:CollisionStop,OnMousePressed:MousePressed)
             {
                 PivotX = 16,
                 PivotY = 16
             };
             Entity.ECSEntity.Add(new EnemyComponent(this));
-            InputSystem.Events.Mouse.Up += MouseClick;
         }
 
-        public void Destroy()
+        void MousePressed(List<Modifiers> m)
         {
-            InputSystem.Events.Mouse.Up -= MouseClick;
+            Console.WriteLine(Name + " mouse down");
+            Console.WriteLine($"{Name} took damage");
+            Health--;
         }
 
-        private bool colliding = false;
         void CollisionStart(EntityReference self, EntityReference other)
         {
             Entity.Color = 0xFF00FF00;
-            colliding = true;
         }
         void CollisionStop(EntityReference self, EntityReference other)
         {
             Entity.Color = 0xFFFF0000;
-            colliding = false;
         }
-
-        private void MouseClick(List<Modifiers> mods)
-        {
-            // it seems like it would be so much better to make dinghy itself pump collision events and input events
-            //then there is no state tracking and you can basically do all of this in a single system
-            if (colliding)
-            {
-                Console.WriteLine($"{Name} took damage");
-                Health--;
-            }
-        }
-
-
 
         public override string ToString()
         {
