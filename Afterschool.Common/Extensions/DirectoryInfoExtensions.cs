@@ -1,3 +1,6 @@
+using System;
+using System.IO;
+
 namespace Afterschool.Common.Extensions
 {
     public static class DirectoryInfoExtensions

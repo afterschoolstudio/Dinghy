@@ -10,5 +10,10 @@ public class Texture : Scene
         tex.Y = Engine.Height / 2f;
         tex.PivotX = 256;
         tex.PivotY = 256;
+        
+        foreach (var line in Depot.Generated.depot.testSheet.Lines)
+        {
+            Console.WriteLine(line.ID);
+        }
     }
 }

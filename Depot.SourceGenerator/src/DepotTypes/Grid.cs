@@ -2,12 +2,10 @@ using System;
 using System.Text.Json;
 using System.Linq;
 using System.Collections.Generic;
-using CodeWriter = Afterschool.Common.Utils.CodeWriter;
 
 
 namespace Depot.SourceGenerator
 {
-    [DepotTypeBinding("grid")]
     public class Grid : ColumnData, IRequiresIntermediateType
     {
         public override string CSharpType => $"{Name}_GRID";
@@ -43,7 +41,7 @@ namespace Depot.SourceGenerator
             }
             return $"new {ParentSheet.DataPath}.{CSharpType}({string.Join(",",values)})";
         }
-        public void BuildType(CodeWriter cw, SheetData d)
+        public void BuildType(Utils.CodeWriter cw, SheetData d)
         {
             cw.OpenScope($"public class {CSharpType}");
             var schema = JsonElement.GetProperty("schema").EnumerateArray();

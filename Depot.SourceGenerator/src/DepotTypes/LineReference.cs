@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 namespace Depot.SourceGenerator
 {
-    [DepotTypeBinding("lineReference")]
     public class LineReference : ColumnData
     {
         public override string CSharpType => handleLineReference();
@@ -13,16 +12,16 @@ namespace Depot.SourceGenerator
         public override string GetValue(LineData configuringLine, object o)
         {
             var lineguid = o.ToString();
-            return $"new {ReferencedLineParentSheet.WriteSafeName}.{ReferencedLineParentSheet.WriteSafeName}LineReference({string.Format(@"""{0}""",lineguid)})";
+            return $"new {ReferencedLineParentSheet.Name}.{ReferencedLineParentSheet.Name}LineReference({string.Format(@"""{0}""",lineguid)})";
         }
         string handleLineReference()
         {
-            return $"{ReferencedLineParentSheet.WriteSafeName}.{ReferencedLineParentSheet.WriteSafeName}LineReference";
+            return $"{ReferencedLineParentSheet.Name}.{ReferencedLineParentSheet.Name}LineReference";
         }
         string getReferencedLineType()
         {
             var path = ParentFile.GetPathToSheet(ReferencedLineParentSheet);
-            return $"{path}.{ReferencedLineParentSheet.WriteSafeName}Line";
+            return $"{path}.{ReferencedLineParentSheet.Name}Line";
         }
         public LineReference(JsonElement e, SheetData parentSheet) : base(e,parentSheet){}
     }

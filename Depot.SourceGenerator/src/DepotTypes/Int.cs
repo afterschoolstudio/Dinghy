@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 namespace Depot.SourceGenerator
 {
-    [DepotTypeBinding("int")]
     public class Int : ColumnData
     {
         public override string CSharpType => "int";

@@ -1,7 +1,6 @@
 using System.Linq;
 using System.Text.Json;
 using System.Collections.Generic;
-using Afterschool.Common;
 
 namespace Depot.SourceGenerator
 {
@@ -69,11 +68,11 @@ namespace Depot.SourceGenerator
 
         public string GetPathToSheet(SheetData s)
         {
-            if(!(s is SubsheetData)){return s.WriteSafeName;}
+            if(!(s is SubsheetData)){return s.Name;}
             var b = "";
             var parent = Sheets.Find(x => x.GUID == s.JsonElement.GetProperty("parentSheetGUID").ToString());
             b += $"{GetPathToSheet(parent)}.";
-            b += s.IsProps ? $"{s.WriteSafeName}Props" : $"{s.WriteSafeName}List"; //only subsheets are props and lists
+            b += s.IsProps ? $"{s.Name}Props" : $"{s.Name}List"; //only subsheets are props and lists
             return b;
         }
     }

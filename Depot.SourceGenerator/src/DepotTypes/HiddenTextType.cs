@@ -31,13 +31,11 @@ namespace Depot.SourceGenerator
         }
     }
 
-    [DepotTypeBinding("skip")]
     public class Guid : HiddenDataType
     {
         public Guid(SheetData parentSheet) : base("guid",parentSheet){}
     }
 
-    [DepotTypeBinding("skip")]
     public class Id : HiddenDataType
     {
         public Id(SheetData parentSheet) : base("id",parentSheet){}

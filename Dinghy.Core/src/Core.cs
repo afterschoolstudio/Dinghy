@@ -56,9 +56,10 @@ public static partial class Engine
     }
 
     public static uint idCounter;
-    public static VoltWorld PhysicsWorld = new ();
-    public static World ECSWorld = World.Create();
-    public static Scene GlobalScene = new(){Name = "Global Scene"};
+    public static VoltWorld PhysicsWorld;
+    public static World ECSWorld;
+    public static Scene GlobalScene;
+    public static Pointer Cursor;
     public static Scene TargetScene { get; private set; } = GlobalScene;
     public static void SetTargetScene(Scene s)
     {
@@ -148,27 +149,6 @@ public static partial class Engine
         }
     }
     
-    static void TryManuallyLoad(string libraryName)
-    {
-        // NOTE: For the native libraries we load here, 
-        //       we do not care about closing the library 
-        //       handle since they live as long as the process.
-        var loaded = NativeLibrary.TryLoad(libraryName, 
-            Assembly.GetExecutingAssembly(),
-            DllImportSearchPath.SafeDirectories | 
-            DllImportSearchPath.UserDirectories,
-            out var handle);
-        if (!loaded)
-        {
-            Console.WriteLine($"Failed loading {libraryName}");
-        }
-        else
-        {
-            Console.WriteLine($"Loaded {libraryName}");
-        }
-    }
-
-    
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
     private static unsafe void Event(sapp_event* e)
     {
@@ -196,7 +176,9 @@ public static partial class Engine
          }
          else
          {
-             InputSystem.FrameEvents.Add(ev);
+             ECSWorld.Create(
+                 new EventMeta("FRAME_EVENT"),
+                 new FrameEvent(ev));
          }
         // InputSystem.FrameEvents.Add(ev);
 
@@ -315,6 +297,11 @@ public static partial class Engine
 
         ActiveSystems = new HashSet<DSystem>(DefaultSystems);
         
+        PhysicsWorld = new ();
+        ECSWorld = World.Create();
+        GlobalScene = new(){Name = "Global Scene"};
+        Cursor = new() { Name = "Cursor" };
+        
         GlobalScene.Mount(-1);
         GlobalScene.Load(() => {GlobalScene.Start();});
         Events.SceneUnmounted += OnSceneUnmounted;
@@ -430,6 +417,9 @@ public static partial class Engine
             GP.clear();
             GP.reset_color();
         }
+        
+        Cursor.X = InputSystem.MouseX;
+        Cursor.Y = InputSystem.MouseY;
 
         foreach (var s in ActiveSystems)
         {

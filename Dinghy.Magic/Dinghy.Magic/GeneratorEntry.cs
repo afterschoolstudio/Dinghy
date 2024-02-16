@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Afterschool.Common.Extensions;
 using Microsoft.CodeAnalysis;
 
 namespace Dinghy.Magic;
@@ -20,8 +19,6 @@ public class GeneratorEntry : ISourceGenerator
             out string? projectDirectoryPath);
         var resPath = new DirectoryInfo(Path.Combine(projectDirectoryPath, "res"));
         
-        // If you would like to put some data to non-compilable file (e.g. a .txt file), mark it as an Additional File.
-        // Go through all files marked as an Additional File in file properties.
         List<(AdditionalText,string)> resFiles = new ();
         foreach (var additionalFile in context.AdditionalFiles)
         {
@@ -40,5 +37,7 @@ public class GeneratorEntry : ISourceGenerator
             //could check for other dirs with a .zinc in them or something?
         }
         AssetRouter.HandleResFiles(context,resFiles);
+        
+        // context.AddSource("Logs.g.cs","//logs");
     }
 }

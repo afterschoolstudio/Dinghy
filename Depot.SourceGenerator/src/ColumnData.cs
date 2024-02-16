@@ -2,15 +2,13 @@ using System;
 using System.Text.Json;
 using System.Linq;
 using System.Collections.Generic;
-using Afterschool.Common;
-using CodeWriter = Afterschool.Common.Utils.CodeWriter;
 
 namespace Depot.SourceGenerator
 {
     public abstract class ColumnData
     {
         public string Name {get;}
-        // public string RawName {get;}
+        public string RawName {get;}
         public string GUID {get;}
         public JsonElement JsonElement { get;}
         public SheetData ParentSheet {get;}
@@ -19,12 +17,9 @@ namespace Depot.SourceGenerator
         {
             JsonElement = e;
             ParentSheet = parentSheet;
-            Name = File.SanitizeFilename(e.GetProperty("name").GetString());
+            RawName = e.GetProperty("name").GetString();
+            Name = File.SanitizeFilename(RawName);
             GUID = e.GetProperty("guid").GetString();
-        }
-        public string GetRawName()
-        {
-            return JsonElement.GetProperty("name").GetString();
         }
         /// <summary>
         /// This type is used to build the constructors for a type
@@ -42,17 +37,7 @@ namespace Depot.SourceGenerator
 
     public interface IRequiresIntermediateType
     {
-        void BuildType(CodeWriter cw, SheetData d);
-    }
-
-    [System.AttributeUsage(System.AttributeTargets.Class)]  
-    public class DepotTypeBinding : Attribute
-    {
-        public string BindingTypeStr {get; protected set;}
-        public DepotTypeBinding(string typeStr)
-        {
-            BindingTypeStr = typeStr;
-        }
+        void BuildType(Utils.CodeWriter cw, SheetData d);
     }
 }
 

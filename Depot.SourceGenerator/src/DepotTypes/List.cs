@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 namespace Depot.SourceGenerator
 {
-    [DepotTypeBinding("list")]
     public class List : ColumnData
     {
         public override string CSharpType => handleListReference();
@@ -26,7 +25,7 @@ namespace Depot.SourceGenerator
             var lineCtors = new List<string>();
             var sheet = Utils.GetSheetDataFromGUID(this,listSheetGuid);
             var path = ParentSheet.ParentDepotFile.GetPathToSheet(sheet);
-            var listItemTypePath = $"{path}.{sheet.WriteSafeName}ListLine";
+            var listItemTypePath = $"{path}.{sheet.Name}ListLine";
             var data = JsonDocument.Parse(v);
             if(data.RootElement.EnumerateArray().Count() == 0){return "null";}
             foreach (var e in data.RootElement.EnumerateArray()) //this is the array of lines at this element
@@ -37,7 +36,7 @@ namespace Depot.SourceGenerator
                 //depot kvp value placement is indeterminat,so we just alphabetize here
                 foreach (var l in e.EnumerateObject().OrderBy(x => x.Name)) //these are the actual values in the array
                 {
-                    var typeColumn = sheet.Columns.Find(x => x.GetRawName() == l.Name);
+                    var typeColumn = sheet.Columns.Find(x => x.RawName == l.Name);
                     if(typeColumn == null)
                     {
                         //no line has been selected, return null
@@ -71,7 +70,7 @@ namespace Depot.SourceGenerator
                         //however this means if you used item.ParentSheet, all projects would point to the path of BuildableInteractables.ProjectInfo
                         //this is _technically_ correct, but isnt useful as a log statement, as it accidentally obscures the path you actually care about
                         //so instead we pass in the parent column here and use that as a way to get where this is actually happening
-                        DepotSourceGenerator.Logs.Add($"ERROR: {configuringLine.ID} at {parentColumn.ParentSheet.DataPath}.{item.ParentSheet.RawName} did not have a value for {item.GetRawName()}, ctor will be broken");
+                        DepotSourceGenerator.Logs.Add($"ERROR: {configuringLine.ID} at {parentColumn.ParentSheet.DataPath}.{item.ParentSheet.RawName} did not have a value for {item.RawName}, ctor will be broken");
                     }
                 }
                 lineCtors.Add($"new {listItemTypePath}({string.Join(",",listValues)})");

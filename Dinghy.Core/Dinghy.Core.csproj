@@ -16,6 +16,10 @@
 
     <ItemGroup>
       <PackageReference Include="Arch" Version="1.2.7" />
+      <PackageReference Include="Teronis.MSBuild.Packaging.ProjectBuildInPackage" Version="1.0.0">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
     </ItemGroup>
     
 
@@ -44,6 +48,10 @@
     
     <ItemGroup>
         <None Include="..\Depot.SourceGenerator\bin\$(Configuration)\netstandard2.0\Depot.SourceGenerator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\Afterschool.Common\Afterschool.Common.csproj" Pack="true" PrivateAssets="all"/>
     </ItemGroup>
 
 </Project>

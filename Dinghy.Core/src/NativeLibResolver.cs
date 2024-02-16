@@ -9,18 +9,18 @@ internal static class NativeLibResolver
     // static class Constants
     // {
     //     public const string sokol = "sokol";
-    //     public const string sokol_osx = "runtimes/osx-x64/native/libsokol.dylib";
+    //     public const string sokol_osx = "runtimes/osx-arm64/native/libsokol.dylib";
     //     public const string sokol_linux = "libsokol.dylib";
     //     public const string sokol_win = "sokol.dll";
     //     
     //     
     //     public const string cute = "cute";
-    //     public const string cute_osx = "runtimes/osx-x64/native/libcute.dylib";
+    //     public const string cute_osx = "runtimes/osx-arm64/native/libcute.dylib";
     //     public const string cute_linux = "libcute.dylib";
     //     public const string cute_win = "cute.dll";
     //     
     //     public const string stb = "stb";
-    //     public const string stb_osx = "runtimes/osx-x64/native/libstb.dylib";
+    //     public const string stb_osx = "runtimes/osx-arm64/native/libstb.dylib";
     //     public const string stb_linux = "libstb.dylib";
     //     public const string stb_win = "stb.dll";
     // }

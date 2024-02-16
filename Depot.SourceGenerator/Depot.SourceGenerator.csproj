@@ -5,6 +5,7 @@
         <IsPackable>true</IsPackable>
         <Nullable>enable</Nullable>
         <LangVersion>latest</LangVersion>
+<!--        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>-->
 
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <IsRoslynComponent>true</IsRoslynComponent>
@@ -23,21 +24,33 @@
         </PackageReference>
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.0"/>
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.3.0"/>
-        <PackageReference Include="System.Text.Json" Version="8.0.1" />
+        <PackageReference Include="System.Text.Json" Version="8.0.0" PrivateAssets="all" GeneratePathProperty="true" />
     </ItemGroup>
 
+<!--    default-->
     <ItemGroup>
         <!-- Package the generator in the analyzer directory of the nuget package -->
         <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Afterschool.Common\Afterschool.Common.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="src\Builders\" />
-    </ItemGroup>
+    
+<!--    dep insanity-->
+<!--    <PropertyGroup>-->
+<!--        <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>-->
+<!--    </PropertyGroup>-->
+<!--        -->
+<!--    <Target Name="GetDependencyTargetPaths" AfterTargets="ResolvePackageDependenciesForBuild">-->
+<!--        <ItemGroup>-->
+<!--            &lt;!&ndash; Package the generator in the analyzer directory of the nuget package &ndash;&gt;-->
+<!--            <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />-->
+<!--            -->
+<!--            &lt;!&ndash;  fix project reference targeting "automatic" - also is ALL deps&ndash;&gt;-->
+<!--            <TargetPathWithTargetPlatformMoniker Include="@(ResolvedCompileFileDefinitions)" IncludeRuntimeDependency="false"/>-->
+<!--            <None Include="@(ResolvedCompileFileDefinitions)" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />-->
+<!--            -->
+<!--            &lt;!&ndash; Package System.Text.Json exclisively&ndash;&gt;-->
+<!--&lt;!&ndash;            <None Include="$(PkgSystem_Text_Json)\lib\netstandard2.0\System.Text.Json.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" IncludeRuntimeDependency="false"/>&ndash;&gt;-->
+<!--        </ItemGroup>-->
+<!--    </Target>-->
 
 
 </Project>

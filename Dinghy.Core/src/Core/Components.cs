@@ -1,6 +1,7 @@
 ﻿using Dinghy.Core;
 using System.Numerics;
 using Arch.Core;
+using Dinghy.Internal.Sokol;
 using static Dinghy.Resources;
 
 namespace Dinghy;
@@ -223,10 +224,19 @@ public record SceneComponent
 }
 
 public record struct Collider(float x, float y, float width, float height, 
-    Action<EntityReference,EntityReference> OnStart = null, Action<EntityReference,EntityReference> OnContinue = null, Action<EntityReference,EntityReference> OnEnd = null, bool active = false);
+    bool active = false,
+    Action<EntityReference,EntityReference> OnStart = null, 
+    Action<EntityReference,EntityReference> OnContinue = null, 
+    Action<EntityReference,EntityReference> OnEnd = null,
+    Action<List<Modifiers>> OnMouseUp = null,
+    Action<List<Modifiers>> OnMousePressed = null,
+    Action<List<Modifiers>> OnMouseDown = null,
+    Action<List<Modifiers>,float,float> OnMouseScroll = null
+    );
+
+
+
 public record struct EventMeta(string eventType, bool dirty = false);
-public abstract record Event();
-public abstract record ActionEvent() : Event;
 public enum CollisionState
 {
     Starting, //collision just started
@@ -236,7 +246,8 @@ public enum CollisionState
 }
 
 public record struct CollisionMeta(int hash, CollisionState state = CollisionState.Starting);
-public record CollisionEvent(EntityReference e1, EntityReference e2) : Event;
-
+public record CollisionEvent(EntityReference e1, EntityReference e2);
+public readonly record struct FrameEvent(sapp_event e);
+public record MouseEvent(InputSystem.MouseState mouseState, MouseButton button,List<Modifiers> mods, float scrollX = 0, float scrollY = 0);
 public record struct DebugInfo(string name);
 
