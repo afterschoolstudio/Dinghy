@@ -154,14 +154,17 @@ public static class ImGUIHelper
             }
         }
 
-        public static unsafe bool Button(string label, Vector2 size) => Button(label, size.ToImVec2());
-        public static unsafe bool Button(string label, ImVec2 size)
+        public static void Button(string label, Vector2 size, Action OnClick) => Button(label, size.ToImVec2(),OnClick);
+        public static unsafe void Button(string label, ImVec2 size, Action OnClick)
         {
             var b = System.Text.Encoding.UTF8.GetBytes(label);
             fixed (byte* ptr = b)
             {
                 var r = Internal.Sokol.ImGUI.igButton((sbyte*)ptr,size);
-                return r != 0;
+                if (r != 0)
+                {
+                    OnClick?.Invoke();
+                }
             }
         }
 
@@ -209,6 +212,12 @@ public static class ImGUIHelper
         public static void BeginMainMenuBar() => Internal.Sokol.ImGUI.igBeginMainMenuBar();
         public static void EndMainMenuBar() => Internal.Sokol.ImGUI.igEndMainMenuBar();
 
+        public static void ImGUIWindow(string name, ImGuiWindowFlags_ flags, Action drawWindow)
+        {
+            Begin(name,flags);
+            drawWindow?.Invoke();
+            End();
+        }
         public static unsafe void Begin(string name, ImGuiWindowFlags_ flags)
         {
             var n = System.Text.Encoding.UTF8.GetBytes(name);

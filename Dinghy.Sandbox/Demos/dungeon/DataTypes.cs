@@ -1,5 +1,6 @@
 using Arch.Core;
 using Arch.Core.Extensions;
+using Depot.Generated.dungeon;
 
 namespace Dinghy.Sandbox.Demos.dungeon;
 
@@ -21,38 +22,78 @@ public class DataTypes
         }
     }
 
-    public readonly record struct EnemyComponent(Enemy enemy);
-    public class Enemy
+    public readonly record struct EnemyComponent(DeckCard DeckCard);
+    public class DeckCard
     {
-        public string Name { get; set; }
-        public int Health { get; set; }
-        public int Distance { get; set; }
-        public int Attack { get; set; }
+        public string Name { get; protected set; }
+        public int MaxHealth => Data.health;
+        public int Attack => Data.damage;
+        public bool Damageable => Data.damageable;
+        public int Health { get; protected set; }
+        public cards.cardsLine Data { get; private set; }
+        public int? Distance { get; set; } = null;
         public int XPValue { get; set; }
-        public bool Aggro { get; set; }
-        public bool Dead => Health <= 0;
+        public int? TrackPosition { get; protected set; }
+        public int? DeckPosition { get; protected set; }
         public Shape Entity;
-        public Enemy(string name, int health, int distance, int attack, bool aggro, int xp)
+        public DeckCard(string id, cards.cardsLine Data, int xp)
         {
-            Name = name;
-            Health = health;
-            Distance = distance;
-            Attack = attack;
-            Aggro = aggro;
+            Name = id;
+            this.Data = Data;
+            Health = MaxHealth;
             XPValue = xp;
-            Entity = new Shape(0xFFFF0000, 32, 32,collisionStart:CollisionStart,collisionStop:CollisionStop,OnMousePressed:MousePressed)
+            Entity = new Shape(0xFFFF0000, 32, 32,collisionStart:CollisionStart,collisionStop:CollisionStop,OnMousePressed:MousePressed, OnMouseUp:MouseUp)
             {
                 PivotX = 16,
-                PivotY = 16
+                PivotY = 16,
+                ColliderActive = true
+                //TODO: MAKE ACTIVE COMPONENT ALWAYS ON THIS AND YOU CAN CHANGE AN ACTIVE FLAG ON IT
             };
             Entity.ECSEntity.Add(new EnemyComponent(this));
+            InputSystem.Events.Mouse.Move += OnMouseMove;
         }
 
+        public void SetDeckPosition(int? pos) => DeckPosition = pos;
+
+        public void SetTrackPosition(int? pos)
+        {
+            TrackPosition = pos;
+            if (TrackPosition.HasValue)
+            {
+                //TODO: SET VALUE UPDATE HERE
+            }
+        }
+
+        private void MouseUp(List<Modifiers> obj)
+        {
+            mouseDown = false;
+        }
+
+        public void Destroy()
+        {
+            InputSystem.Events.Mouse.Move -= OnMouseMove;
+            Entity.Destroy();
+        }
+
+        private void OnMouseMove(float arg1, float arg2, float arg3, float arg4, List<Modifiers> arg5)
+        {
+            if (mouseDown)
+            {
+                Quick.MoveToMouse(Entity);
+            }
+        }
+
+        private bool mouseDown = false;
         void MousePressed(List<Modifiers> m)
         {
             Console.WriteLine(Name + " mouse down");
             Console.WriteLine($"{Name} took damage");
             Health--;
+            if (Health <= 0)
+            {
+                Destroy();
+            }
+            mouseDown = true;
         }
 
         void CollisionStart(EntityReference self, EntityReference other)
@@ -71,5 +112,5 @@ public class DataTypes
     }
 
     public class Track(List<Slot> slots);
-    public class Slot(Enemy e);
+    public class Slot(DeckCard e);
 }

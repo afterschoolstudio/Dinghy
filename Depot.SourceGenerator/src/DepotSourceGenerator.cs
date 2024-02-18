@@ -39,7 +39,6 @@ namespace Depot.SourceGenerator
 
         public static void GenerateSource(AdditionalText a, GeneratorExecutionContext context)
         {
-            context.AddSource($"Depot.Core.cs", ConstantSourceFiles.Core);
             var depotFileName = Path.GetFileNameWithoutExtension(a.Path);
             var depotFileText = a.GetText().ToString();
             using (JsonDocument document = JsonDocument.Parse(depotFileText))

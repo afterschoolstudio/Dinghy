@@ -35,11 +35,17 @@ public class GeneratorEntry : ISourceGenerator
             }
             //could check for other dirs with a .zinc in them or something?
         }
-        
+
+        bool generatedConst = false;
         foreach (var f in resFiles)
         {
             if (f.extension == ".depot" || f.extension == ".dpo")
             {
+                if (!generatedConst)
+                {
+                    context.AddSource($"Depot.Core.cs", ConstantSourceFiles.Core);
+                    generatedConst = true;
+                }
                 // could use AdditionalText stuff to filter on if we want to generate source, other options, etc.
                 // IEnumerable<(bool generateDepotSource, AdditionalText additionalText)> options = AdditionalFileUtils.GetLoadOptions(context);
                 // var depotFiles = options.Where(x => x.generateDepotSource);

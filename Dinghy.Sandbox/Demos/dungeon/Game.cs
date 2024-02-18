@@ -1,4 +1,5 @@
 using System.Linq;
+using Depot.Generated.dungeon;
 using Dinghy.Core;
 using Dinghy.Internal.Sokol;
 using static Dinghy.Sandbox.Demos.dungeon.DataTypes;
@@ -10,64 +11,106 @@ namespace Dinghy.Sandbox.Demos.dungeon;
 public class Dungeon : Scene
 {
     Player player = new ();
-    private List<Enemy> Enemies = new ();
     Grid g = new (new (new(Engine.Width / 2f, Engine.Height / 2f), new(0.5f, 0.5f), 50, 50, new(0.5f, 0.5f), 10, 10));
-    private Shape pointer;
+
+    private List<DeckCard> Deck = new ();
     public override void Create()
     {
-        Systems.Init();
-        pointer = new Shape(0x000000,1,1){Name = "pointer",ColliderActive = true};
-        for (int i = 0; i < 10; i++)
+        foreach (var i in Depot.Generated.dungeon.cards.Lines)
         {
-            var health = (int)(Quick.RandFloat() * 5) + 1;
-            var atk = (int)(Quick.RandFloat() * 3) + 1;
-            var xp = (int)(health * atk / 2f) + 1;
-            var enemy = new Enemy(i.ToString(), health, i % 4, atk, i < 3, xp);
-            enemy.Entity.ColliderActive = true;
-            g.ApplyPositionToEntity(i*2,enemy.Entity);
-            Enemies.Add(enemy);
+            int iterations = 0;
+            if (i.ID == "enemy")
+            {
+                iterations = 6;
+            }
+            
+            if(i.ID == "big enemy")
+            {
+                iterations = 2;
+            }
+
+            if (i.ID == "floor")
+            {
+                iterations = 15;
+            }
+
+            for (int j = 0; j < iterations; j++)
+            {
+                Deck.Add(new DeckCard(i.ID+$"{j}",i,4));
+                // g.ApplyPositionToEntity(i*2,enemy.Entity);
+            }
         }
+
+        Deck.OrderBy(x => Quick.RandFloat());
+        for (int i = 0; i < Deck.Count; i++)
+        {
+           Deck[i].SetDeckPosition(i);
+           Deck[i].SetTrackPosition(null);
+        }
+        
+        //grab the first four off the top
+        for (int i = 0; i < 4; i++)
+        {
+            var draw = Deck[0];
+            draw.SetTrackPosition(i);
+            draw.SetDeckPosition(null);
+            Deck.RemoveAt(0);
+        }
+        Systems.Init();
     }
 
     private ImVec2 buttonSize = new () { x = 100, y = 20 };
     public override void Update(double dt)
     {
-        Quick.MoveToMouse(pointer);
-        Begin("game",ImGuiWindowFlags_.ImGuiWindowFlags_NoTitleBar);
-        bool acted = false;
-        foreach (var e in Enemies.Where(x => x.Aggro && !x.Dead))
+        ImGUIWindow("game",ImGuiWindowFlags_.ImGuiWindowFlags_NoTitleBar, () =>
         {
-            Text(e.ToString());
-        }
-        Text($"Player HP:{player.Health} XP:{player.XP}");
-        if (Button($"Move Player",buttonSize))
-        {
-            acted = true;
-        }
-        
-        Text("Non Aggro: " + Enemies.Where(x => !x.Aggro).Count());
-        End();
-
-        if (acted)
-        {
-            foreach (var e in Enemies.Where(x => x.Aggro && !x.Dead && x.Distance == 0))
+            bool acted = false;
+            Text($"Player HP:{player.Health} XP:{player.XP}");
+            
+            Button($"Move", buttonSize, () =>
             {
-                player.Health -= e.Attack;
+                acted = true;
+            });
+            Button($"Wait", buttonSize, () =>
+            {
+                acted = true;
+            });
+            
+            
+            Text("track cards");
+            foreach (var e in Deck.Where(x => x.TrackPosition.HasValue).OrderBy(x => x.TrackPosition.Value))
+            {
+                Text($"{e.TrackPosition}:{e.Name}");
+            }
+            Text("deck cards");
+            foreach (var e in Deck.Where(x => x.DeckPosition.HasValue).OrderBy(x => x.DeckPosition.Value))
+            {
+                Text($"{e.DeckPosition}:{e.Name}");
             }
             
-            foreach (var e in Enemies.Where(x => x.Aggro && !x.Dead && x.Distance > 0))
-            { 
-                e.Distance--;
-            }
+            
+        });
 
-            if (Quick.RandFloat() > 0.7f)
-            {
-                var candidate = Enemies.Where(x => !x.Aggro && !x.Dead).FirstOrDefault();
-                if (candidate != null)
-                {
-                    candidate.Aggro = true;
-                }
-            }
-        }
+        // if (acted)
+        // {
+        //     foreach (var e in Enemies.Where(x => x.Aggro && !x.Dead && x.Distance == 0))
+        //     {
+        //         player.Health -= e.Attack;
+        //     }
+        //     
+        //     foreach (var e in Enemies.Where(x => x.Aggro && !x.Dead && x.Distance > 0))
+        //     { 
+        //         e.Distance--;
+        //     }
+        //
+        //     if (Quick.RandFloat() > 0.7f)
+        //     {
+        //         var candidate = Enemies.Where(x => !x.Aggro && !x.Dead).FirstOrDefault();
+        //         if (candidate != null)
+        //         {
+        //             candidate.Aggro = true;
+        //         }
+        //     }
+        // }
     }
 }

@@ -1,0 +1,97 @@
+{
+    "sheets": [
+        {
+            "name": "cards",
+            "description": "description of what the sheet is",
+            "displayColumn": "id",
+            "guid": "26410e70-1719-447a-ad54-9535289342fa",
+            "columns": [
+                {
+                    "typeStr": "int",
+                    "guid": "6d038f65-3663-420b-8bb7-ded72986c18a",
+                    "description": "int field",
+                    "name": "damage",
+                    "min": -10000,
+                    "max": 100000,
+                    "defaultValue": 0,
+                    "iconName": "newInt",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "min": "int",
+                        "max": "int",
+                        "defaultValue": "int"
+                    }
+                },
+                {
+                    "typeStr": "bool",
+                    "guid": "e61094c4-b664-4901-bfae-7fb8bcc288ce",
+                    "description": "bool field",
+                    "name": "damageable",
+                    "defaultValue": true,
+                    "iconName": "newBool",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "defaultValue": "bool"
+                    }
+                },
+                {
+                    "typeStr": "int",
+                    "guid": "399cd86b-744e-4fec-a543-1101585fa7c4",
+                    "description": "int field",
+                    "name": "health",
+                    "min": -10000,
+                    "max": 100000,
+                    "defaultValue": 0,
+                    "iconName": "newInt",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "min": "int",
+                        "max": "int",
+                        "defaultValue": "int"
+                    }
+                }
+            ],
+            "lines": [
+                {
+                    "guid": "ecc9de45-f757-459b-ade5-1380e3cc4344",
+                    "id": "floor",
+                    "damage": 0,
+                    "damageable": false,
+                    "health": 10
+                },
+                {
+                    "guid": "9ddb05ba-7a13-40e2-81d2-d587c55874f4",
+                    "id": "enemy",
+                    "damage": 1,
+                    "damageable": true,
+                    "health": 2
+                },
+                {
+                    "guid": "953f603d-96ae-4e1c-b85e-a7bc0fb5ce87",
+                    "id": "big enemy",
+                    "damage": 2,
+                    "damageable": true,
+                    "health": 5
+                }
+            ],
+            "hidden": false,
+            "isProps": false,
+            "configurable": {
+                "name": "text",
+                "description": "text",
+                "displayColumn": "columnSelect@name",
+                "columnSelect@name@displayColumn": {
+                    "allowedTypes": [
+                        "int",
+                        "float",
+                        "text",
+                        "longtext"
+                    ]
+                }
+            }
+        }
+    ]
+}
