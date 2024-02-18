@@ -31,43 +31,49 @@ public class ManagedComponentSystem : DSystem, IPreUpdateSystem, IPostUpdateSyst
     QueryDescription query = new QueryDescription().WithAll<Active,ManagedComponent>();      // Should have all specified components
     public void PreUpdate(double dt)
     {
-        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref ManagedComponent c) => {
+        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref Active a, ref ManagedComponent c) =>
+        {
+            if (!a.active) { return;}
             c.managedComponent.PreUpdate();
         });
     }
     public void Update(double dt)
     {
-        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref ManagedComponent c) => {
+        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e,ref Active a,  ref ManagedComponent c) => {
+            if (!a.active) { return;}
             c.managedComponent.Update();
         });
     }
     public void PostUpdate(double dt)
     {
-        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref ManagedComponent c) => {
+        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e,ref Active a,  ref ManagedComponent c) => {
+            if (!a.active) { return;}
             c.managedComponent.PostUpdate();
         });
     }
 }
+
 public class VelocitySystem : DSystem, IUpdateSystem
 {
-    QueryDescription query = new QueryDescription().WithAll<Active,HasManagedOwner,Position, Velocity>();
+    QueryDescription query = new QueryDescription().WithAll<Active,HasManagedOwner,Position, Velocity>();      // Should have all specified components
     public void Update(double dt)
     {
-        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref HasManagedOwner owner, ref Position pos, ref Velocity vel) => {
+        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref Active a, ref HasManagedOwner owner, ref Position pos, ref Velocity vel) => {
+            if(!a.active){return;}
             pos.x += vel.x;
             pos.y += vel.y;
-            //could maybe grab stuff like this at the top of the frame so an entity
-            //has the most recent pos stuff at the start instead of changing it mid frame?
             owner.e.SetPositionRaw(pos.x,pos.y,pos.rotation,pos.scaleX,pos.scaleY,pos.pivotX,pos.pivotY);
         });
     }
 }
+
 public class SceneSystem : DSystem, IUpdateSystem
 {
     QueryDescription query = new QueryDescription().WithAll<Active,SceneComponent>();      // Should have all specified components
     public void Update(double dt)
     {
-        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref SceneComponent scene) => {
+        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref Active a, ref SceneComponent scene) => {
+            if(!a.active){return;}
             if (Engine.MountedScenes.ContainsValue(scene.ManagedScene) && scene.ManagedScene.Status == Scene.SceneStatus.Running)
             {
                 scene.Update(dt);
@@ -90,8 +96,9 @@ public class SpriteRenderSystem : RenderSystem
     QueryDescription query = new QueryDescription().WithAll<Active,Position,SpriteRenderer>();      // Should have all specified components
     protected override void Render(double dt)
     {
-        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref SpriteRenderer r, ref Position p) =>
+        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref Active a, ref SpriteRenderer r, ref Position p) =>
         {
+            if(!a.active){return;}
             if (!r.Texture.DataLoaded)
             {
                 r.Texture.Load();
@@ -106,8 +113,9 @@ public class ShapeRenderSystem : RenderSystem
     QueryDescription query = new QueryDescription().WithAll<Active,Position,ShapeRenderer>();      // Should have all specified components
     protected override void Render(double dt)
     {
-        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref ShapeRenderer r, ref Position p) =>
+        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e,ref Active a,  ref ShapeRenderer r, ref Position p) =>
         {
+            if(!a.active){return;}
             Engine.DrawShape(p, r);
         });
     }
@@ -118,8 +126,9 @@ public class ParticleRenderSystem : RenderSystem
     QueryDescription query = new QueryDescription().WithAll<Active,Position,ParticleEmitterComponent>();      // Should have all specified components
     protected override void Render(double dt)
     {
-        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref Position p, ref ParticleEmitterComponent emitter) =>
+        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref Position p,ref Active a,  ref ParticleEmitterComponent emitter) =>
         {
+            if(!a.active){return;}
             // Update the particles
             List<int> activeIndices = new List<int>();
             // List<int> newIndicies = new List<int>();
@@ -427,8 +436,9 @@ public class FrameAnimationSystem : AnimationSystem
     QueryDescription query = new QueryDescription().WithAll<Active,SpriteRenderer,SpriteAnimator>();
     protected override void Animate(double dt)
     {
-        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref SpriteRenderer r, ref SpriteAnimator a) =>
+        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref Active act, ref SpriteRenderer r, ref SpriteAnimator a) =>
         {
+            if(!act.active){return;}
             if (a.AnimationStarted == false)
             {
                 //we do this to pump the first animation frame to the renderer so we dont render the whole texture first
@@ -621,9 +631,9 @@ public class CollisionCallbackSystem : DSystem, IUpdateSystem
     public void Update(double dt)
     {
         colliders.Clear();
-        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref Position p, ref Collider c) =>
+        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref Active a, ref Position p, ref Collider c) =>
         {
-            if(!c.active){return;}
+            if(!c.active || !a.active){return;}
             for (int i = 0; i < colliders.Count; i++)
             {
                 if (e.Id != colliders[i].e.Id && Dinghy.Collision.CheckCollision(c,p, colliders[i].c,colliders[i].p))
@@ -718,8 +728,9 @@ public class DebugOverlaySystem : DSystem, IUpdateSystem
     public void Update(double dt)
     {
         Engine.ECSWorld.Query(in colliderDebug,
-            (Arch.Core.Entity e, ref Position p, ref Collider c, ref HasManagedOwner o) =>
+            (Arch.Core.Entity e, ref Position p, ref Active a, ref Collider c, ref HasManagedOwner o) =>
             {
+                if(!a.active){return;}
                 var bounds = Utils.GetBounds(c, p);
                 float minX = Single.MaxValue, minY = Single.MaxValue, maxX = 0, maxY = 0;
                 foreach (var b in bounds)
@@ -743,7 +754,11 @@ public class DebugOverlaySystem : DSystem, IUpdateSystem
                     ImGuiWindowFlags_.ImGuiWindowFlags_NoResize |
                     ImGuiWindowFlags_.ImGuiWindowFlags_NoBringToFrontOnFocus);
                 ImGUIHelper.Wrappers.Text(e.Id.ToString());
-                ImGUIHelper.Wrappers.DrawQuad(bounds);
+                ImGUIHelper.Wrappers.Text(o.e.DebugText);
+                if (Engine.drawDebugColliders)
+                {
+                    ImGUIHelper.Wrappers.DrawQuad(bounds);
+                }
                 ImGUIHelper.Wrappers.End();
             });
     }

@@ -14,6 +14,8 @@ public class Dungeon : Scene
     Grid g = new (new (new(Engine.Width / 2f, Engine.Height / 2f), new(0.5f, 0.5f), 50, 50, new(0.5f, 0.5f), 10, 10));
 
     private List<DeckCard> Deck = new ();
+    private List<DeckCard> GameCards = new ();
+    private List<DeckCard> TrackCards = new ();
     public override void Create()
     {
         foreach (var i in Depot.Generated.dungeon.cards.Lines)
@@ -36,8 +38,10 @@ public class Dungeon : Scene
 
             for (int j = 0; j < iterations; j++)
             {
-                Deck.Add(new DeckCard(i.ID+$"{j}",i,4));
-                // g.ApplyPositionToEntity(i*2,enemy.Entity);
+                var card = new DeckCard(i.ID + $"{j}", i, 4);
+                card.OnDestroy += OnDestroyCard;
+                Deck.Add(card);
+                GameCards.Add(card);
             }
         }
 
@@ -54,9 +58,50 @@ public class Dungeon : Scene
             var draw = Deck[0];
             draw.SetTrackPosition(i);
             draw.SetDeckPosition(null);
+            TrackCards.Add(draw);
             Deck.RemoveAt(0);
         }
+
+        UpdateGameCardState();
         Systems.Init();
+    }
+
+    void DrawNewTrackCard(int? trackPosOverride = null)
+    {
+        var draw = Deck[0];
+        draw.SetTrackPosition(trackPosOverride ?? 3);
+        draw.SetDeckPosition(null);
+        TrackCards.Add(draw);
+        Deck.RemoveAt(0);
+    }
+
+    void OnDestroyCard(DeckCard d)
+    {
+        Deck.Remove(d);
+        GameCards.Remove(d);
+        TrackCards.Remove(d);
+        if (d.TrackPosition.HasValue)
+        {
+            //move everyone left
+            foreach (var tc in TrackCards)
+            {
+                if (tc.TrackPosition > d.TrackPosition)
+                {
+                    tc.SetTrackPosition(tc.TrackPosition-1);
+                }
+            }
+            DrawNewTrackCard();
+        }
+        UpdateGameCardState();
+    }
+
+    void UpdateGameCardState()
+    {
+        foreach (var trackCard in GameCards.Where(x => x.TrackPosition.HasValue))
+        {
+            g.ApplyPositionToEntity(trackCard.TrackPosition.Value,trackCard.Entity);
+        }
+
     }
 
     private ImVec2 buttonSize = new () { x = 100, y = 20 };

@@ -12,29 +12,8 @@ namespace Dinghy;
 public class Entity
 {
     public string Name { get; set; } = "entity";
-    private bool enabled = true;
+    public string DebugText { get; set; } = "";
     // public bool DestoryOnLoad = true;
-    public bool Enabled
-    {
-        get => enabled;
-        set
-        {
-            if (value == enabled)
-            {
-                //do nothing if same
-                return;
-            }
-            if (value)
-            {
-                ECSEntityReference.Entity.Add<Active>();
-            }
-            else
-            {
-                ECSEntityReference.Entity.Remove<Active>();
-            }
-            enabled = value;
-        }
-    }
     private float x = 0;
     public float X
     {
@@ -44,6 +23,18 @@ public class Entity
             ref var pos = ref ECSEntity.Get<Position>();
             pos.x = value;
             x = value;
+        }
+    }
+    
+    private bool active = true;
+    public bool Active
+    {
+        get => active;
+        set
+        {
+            ref var a = ref ECSEntity.Get<Active>();
+            a.active = value;
+            active = value;
         }
     }
 
@@ -174,24 +165,12 @@ public class Entity
     public Scene? Scene;
     public Entity(bool startEnabled, Scene scene, bool addToSceneHeirarchy = true)
     {
-        Arch.Core.Entity e;
-        if (startEnabled)
-        {
-            e = Engine.ECSWorld.Create(
-                new Active(),
-                new HasManagedOwner(this),
-                new Position(X,Y), 
-                new Velocity(0,0)
-            );
-        }
-        else
-        {
-            e = Engine.ECSWorld.Create(
-                new HasManagedOwner(this),
-                new Position(X,Y), 
-                new Velocity(0,0)
-            );
-        }
+        Arch.Core.Entity e = Engine.ECSWorld.Create(
+            new Active(startEnabled),
+            new HasManagedOwner(this),
+            new Position(X,Y), 
+            new Velocity(0,0)
+        );
         ECSEntityReference = Engine.ECSWorld.Reference(e);
         Engine.ECSWorld.Add<Entity>(ECSEntity);
         Scene = scene != null ? scene : Engine.TargetScene;

@@ -322,6 +322,7 @@ public static partial class Engine
     public static bool showStats = true;
     public static bool showIMGUIDemo = false;
     public static bool drawDebugOverlay = false;
+    public static bool drawDebugColliders = false;
 
     [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
     private static unsafe void Frame()
@@ -349,6 +350,7 @@ public static partial class Engine
             ImGUIHelper.Wrappers.Checkbox("Show Stats", ref showStats);
             ImGUIHelper.Wrappers.Checkbox("Show IMGUI Demo", ref showIMGUIDemo);
             ImGUIHelper.Wrappers.Checkbox("Draw Debug Overlay", ref drawDebugOverlay);
+            ImGUIHelper.Wrappers.Checkbox("Draw Debug Colliders", ref drawDebugColliders);
             foreach (var i in MountedScenes)
             {
                 ImGUIHelper.Wrappers.Text($"{i.Value.Name} {i.Value.Status}");

@@ -63,7 +63,7 @@ public record struct Position(float x = 0, float y = 0, float scaleX = 1, float 
 public record struct Velocity (float x, float y);
 public record ManagedComponent(Component managedComponent);
 public readonly record struct Destroy();
-public readonly record struct Active();
+public record struct Active(bool active = true);
 public readonly record struct HasManagedOwner(Dinghy.Entity e);
 public record ParticleEmitterComponent
 {

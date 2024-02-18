@@ -1,3 +1,4 @@
+using System.Text;
 using Arch.Core;
 using Arch.Core.Extensions;
 using Depot.Generated.dungeon;
@@ -36,6 +37,7 @@ public class DataTypes
         public int? TrackPosition { get; protected set; }
         public int? DeckPosition { get; protected set; }
         public Shape Entity;
+        public Action<DeckCard> OnDestroy;
         public DeckCard(string id, cards.cardsLine Data, int xp)
         {
             Name = id;
@@ -46,11 +48,20 @@ public class DataTypes
             {
                 PivotX = 16,
                 PivotY = 16,
-                ColliderActive = true
-                //TODO: MAKE ACTIVE COMPONENT ALWAYS ON THIS AND YOU CAN CHANGE AN ACTIVE FLAG ON IT
+                ColliderActive = true,
+                Active = false
             };
+            UpdateDebugText();
             Entity.ECSEntity.Add(new EnemyComponent(this));
             InputSystem.Events.Mouse.Move += OnMouseMove;
+        }
+
+        void UpdateDebugText()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine(Name);
+            sb.AppendLine($"TrackPos: {TrackPosition}");
+            Entity.DebugText = sb.ToString();
         }
 
         public void SetDeckPosition(int? pos) => DeckPosition = pos;
@@ -58,10 +69,7 @@ public class DataTypes
         public void SetTrackPosition(int? pos)
         {
             TrackPosition = pos;
-            if (TrackPosition.HasValue)
-            {
-                //TODO: SET VALUE UPDATE HERE
-            }
+            UpdateDebugText();
         }
 
         private void MouseUp(List<Modifiers> obj)
@@ -71,6 +79,7 @@ public class DataTypes
 
         public void Destroy()
         {
+            OnDestroy?.Invoke(this);
             InputSystem.Events.Mouse.Move -= OnMouseMove;
             Entity.Destroy();
         }
