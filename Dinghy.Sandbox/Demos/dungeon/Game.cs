@@ -123,7 +123,7 @@ public class Dungeon : Scene
             
             
             Text("track cards");
-            foreach (var e in Deck.Where(x => x.TrackPosition.HasValue).OrderBy(x => x.TrackPosition.Value))
+            foreach (var e in TrackCards.OrderBy(x => x.TrackPosition.Value))
             {
                 Text($"{e.TrackPosition}:{e.Name}");
             }
