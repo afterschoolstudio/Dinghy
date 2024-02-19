@@ -85,7 +85,9 @@ public class DataTypes
         {
             OnDestroy?.Invoke(this);
             InputSystem.Events.Mouse.Move -= OnMouseMove;
+            Console.WriteLine("marking entity for destroy");
             Entity.Destroy();
+            Console.WriteLine("post marking entity for destroy");
         }
 
         private void OnMouseMove(float arg1, float arg2, float arg3, float arg4, List<Modifiers> arg5)

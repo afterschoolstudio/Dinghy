@@ -462,6 +462,7 @@ public class FrameAnimationSystem : AnimationSystem
 public class DestructionSystem : DSystem
 {
     QueryDescription query = new QueryDescription().WithAll<Destroy>();
+    QueryDescription eventQuery = new QueryDescription().WithAll<CollisionEvent>();
     QueryDescription managedCleanupQuery = new QueryDescription().WithAll<Destroy,HasManagedOwner>();
     public void DestroyObjects()
     {
@@ -471,6 +472,14 @@ public class DestructionSystem : DSystem
             if (owner.e.Scene != null)
             {
                 Engine.SceneEntityMap[owner.e.Scene].Remove(owner.e);
+            }
+        });
+        
+        Engine.ECSWorld.Query(in eventQuery, (Arch.Core.Entity e, ref CollisionEvent ce) =>
+        {
+            if (!ce.e1.IsAlive() || !ce.e2.IsAlive() || ce.e1.Entity.Has<Destroy>() || ce.e2.Entity.Has<Destroy>())
+            {
+                e.Add(new Destroy());
             }
         });
         Engine.ECSWorld.Destroy(in query);
@@ -500,11 +509,9 @@ public class CollisionCallbackSystem : DSystem, IUpdateSystem
             {
                 bool e1IsCursor = Engine.Cursor.ECSEntityReference.Entity.Id == ce.e1.Entity.Id;
                 bool e2IsCursor = Engine.Cursor.ECSEntityReference.Entity.Id == ce.e2.Entity.Id;
-                
+                bool finalCollisionValid = false;
                 switch (cm.state)
                 {
-                    //NOTE: COULD MAYBE ADD AN ADDITIONAL EVENT THAT IS SPECIFICALLY ABOUT POINTER HANDLING
-                    //RIGHT NOW ITS JUST GENERIC COLLISION
                     case CollisionState.Starting:
                         ce.e1.Entity.Get<Collider>().OnStart?.Invoke(ce.e1,ce.e2);
                         if (CollisionEventValid(ref ce)) {
@@ -515,7 +522,7 @@ public class CollisionCallbackSystem : DSystem, IUpdateSystem
                             }
                             else
                             {
-                                PropogateMouseEvents(ce.e1.Entity,ce.e2.Entity,e1IsCursor,e2IsCursor);
+                                finalCollisionValid = true;
                             }
                         } 
                         else {
@@ -533,7 +540,7 @@ public class CollisionCallbackSystem : DSystem, IUpdateSystem
                             }
                             else
                             {
-                                PropogateMouseEvents(ce.e1.Entity,ce.e2.Entity,e1IsCursor,e2IsCursor);
+                                finalCollisionValid = true;
                             }
                         }
                         else  {
@@ -552,7 +559,7 @@ public class CollisionCallbackSystem : DSystem, IUpdateSystem
                             }
                             else
                             {
-                                PropogateMouseEvents(ce.e1.Entity,ce.e2.Entity,e1IsCursor,e2IsCursor);
+                                finalCollisionValid = true;
                             }
                         }
                         else {
@@ -564,55 +571,51 @@ public class CollisionCallbackSystem : DSystem, IUpdateSystem
                         em.dirty = true;
                         break;
                 }
+
+                if (finalCollisionValid)
+                {
+                    PropogateMouseEvents(ce.e1.Entity,ce.e2.Entity,e1IsCursor,e2IsCursor);
+                }
             }
         });
 
         bool CollisionEventValid(ref CollisionEvent ce)
         {
-            return ce.e1.IsAlive() && ce.e2.IsAlive() && !ce.e1.Entity.Has<Destroy>() && !ce.e2.Entity.Has<Destroy>();
+            return ce.e1.IsAlive() && ce.e2.IsAlive() && !ce.e1.Entity.Has<Destroy>() && !ce.e2.Entity.Has<Destroy>() &&
+                   //this is a hack that gets around a thing i think is happening in arch
+                   //where if i destroy an entity as part of collider iteration, something about the collision event itself
+                   //updates in memory to point to a different entity, so you get weird things where something is "colliding"
+                   //with an event
+                   //https://github.com/genaray/Arch/wiki/Utility-Features#command-buffers
+                   //"Entity creation, deletion, and structural changes can potentially happen during a query or entity iteration.
+                   //However, one must be careful about this, changes to entities during a query can easily lead to unexpected behavior.
+                   //A destruction or structural change leads to a copy to another archetype and the current slot is
+                   //replaced by another entity. This must always be expected. Depending on when and how you perform these
+                   //operations in a query, this can lead to problems or not be noticed at all.
+                   ce.e1.Entity.Has<Collider>() && ce.e2.Entity.Has<Collider>();
         }
 
         void PropogateMouseEvents(Arch.Core.Entity e1, Arch.Core.Entity e2, bool e1IsCursor, bool e2IsCursor)
         {
             if (e1IsCursor || e2IsCursor)
             {
+                var target = e1IsCursor ? e2 : e1;
                 foreach (var me in mouseEvents)
                 {
-                    if (e1IsCursor)
+                    switch (me.mouseState)
                     {
-                        switch (me.mouseState)
-                        {
-                            case InputSystem.MouseState.Up:
-                                e2.Get<Collider>().OnMouseUp?.Invoke(me.mods);
-                                break;
-                            case InputSystem.MouseState.Pressed:
-                                e2.Get<Collider>().OnMousePressed?.Invoke(me.mods);
-                                break;
-                            case InputSystem.MouseState.Down:
-                                e2.Get<Collider>().OnMouseDown?.Invoke(me.mods);
-                                break;
-                            case InputSystem.MouseState.Scroll:
-                                e2.Get<Collider>().OnMouseScroll?.Invoke(me.mods,me.scrollX,me.scrollY);
-                                break;
-                        }
-                    }
-                    else //e2IsCursor
-                    {
-                        switch (me.mouseState)
-                        {
-                            case InputSystem.MouseState.Up:
-                                e1.Get<Collider>().OnMouseUp?.Invoke(me.mods);
-                                break;
-                            case InputSystem.MouseState.Pressed:
-                                e1.Get<Collider>().OnMousePressed?.Invoke(me.mods);
-                                break;
-                            case InputSystem.MouseState.Down:
-                                e1.Get<Collider>().OnMouseDown?.Invoke(me.mods);
-                                break;
-                            case InputSystem.MouseState.Scroll:
-                                e1.Get<Collider>().OnMouseScroll?.Invoke(me.mods,me.scrollX,me.scrollY);
-                                break;
-                        }
+                        case InputSystem.MouseState.Up:
+                            target.Get<Collider>().OnMouseUp?.Invoke(me.mods);
+                            break;
+                        case InputSystem.MouseState.Pressed:
+                            target.Get<Collider>().OnMousePressed?.Invoke(me.mods);
+                            break;
+                        case InputSystem.MouseState.Down:
+                            target.Get<Collider>().OnMouseDown?.Invoke(me.mods);
+                            break;
+                        case InputSystem.MouseState.Scroll:
+                            target.Get<Collider>().OnMouseScroll?.Invoke(me.mods,me.scrollX,me.scrollY);
+                            break;
                     }
                 }
                 
