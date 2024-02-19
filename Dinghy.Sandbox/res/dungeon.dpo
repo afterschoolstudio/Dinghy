@@ -65,6 +65,19 @@
                         "description": "text",
                         "defaultValue": "bool"
                     }
+                },
+                {
+                    "typeStr": "bool",
+                    "guid": "e0375680-4fde-44d4-99b9-3c29c9d07312",
+                    "description": "bool field",
+                    "name": "obstacle",
+                    "defaultValue": true,
+                    "iconName": "newBool",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "defaultValue": "bool"
+                    }
                 }
             ],
             "lines": [
@@ -74,7 +87,8 @@
                     "damage": 0,
                     "damageable": false,
                     "health": 10,
-                    "canCycleOffBoard": true
+                    "canCycleOffBoard": true,
+                    "obstacle": false
                 },
                 {
                     "guid": "9ddb05ba-7a13-40e2-81d2-d587c55874f4",
@@ -82,7 +96,8 @@
                     "damage": 1,
                     "damageable": true,
                     "health": 2,
-                    "canCycleOffBoard": false
+                    "canCycleOffBoard": false,
+                    "obstacle": true
                 },
                 {
                     "guid": "953f603d-96ae-4e1c-b85e-a7bc0fb5ce87",
@@ -90,7 +105,17 @@
                     "damage": 2,
                     "damageable": true,
                     "health": 5,
-                    "canCycleOffBoard": false
+                    "canCycleOffBoard": false,
+                    "obstacle": true
+                },
+                {
+                    "guid": "ae613822-1ab2-4fa1-b9e7-0fdcd4ba70dd",
+                    "id": "rock",
+                    "damage": 0,
+                    "damageable": true,
+                    "health": 1,
+                    "canCycleOffBoard": true,
+                    "obstacle": true
                 }
             ],
             "hidden": false,

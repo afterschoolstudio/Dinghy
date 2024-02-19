@@ -59,10 +59,10 @@ public class DataTypes
             this.Data = Data;
             Health = MaxHealth;
             XPValue = xp;
-            Entity = new Shape(0xFFFF0000, 32, 32,collisionStart:CollisionStart,collisionStop:CollisionStop,OnMousePressed:MousePressed, OnMouseUp:MouseUp)
+            Entity = new Shape(0xFFFF0000, 50, 150,collisionStart:CollisionStart,collisionStop:CollisionStop,OnMousePressed:MousePressed, OnMouseUp:MouseUp)
             {
-                PivotX = 16,
-                PivotY = 16,
+                PivotX = 25,
+                PivotY = 75,
                 ColliderActive = true,
                 Active = false
             };
@@ -90,7 +90,7 @@ public class DataTypes
 
         private void MouseUp(List<Modifiers> obj)
         {
-            mouseDown = false;
+            // mouseDown = false;
         }
 
         public void Destroy()
@@ -102,13 +102,13 @@ public class DataTypes
 
         private void OnMouseMove(float arg1, float arg2, float arg3, float arg4, List<Modifiers> arg5)
         {
-            if (mouseDown)
-            {
-                Quick.MoveToMouse(Entity);
-            }
+            // if (mouseDown)
+            // {
+            //     Quick.MoveToMouse(Entity);
+            // }
         }
 
-        private bool mouseDown = false;
+        // private bool mouseDown = false;
         void MousePressed(List<Modifiers> m)
         {
             Console.WriteLine(Name + " mouse down");
@@ -118,7 +118,7 @@ public class DataTypes
             {
                 Destroy();
             }
-            mouseDown = true;
+            // mouseDown = true;
         }
 
         void CollisionStart(EntityReference self, EntityReference other)

@@ -11,7 +11,13 @@ namespace Dinghy.Sandbox.Demos.dungeon;
 public class Dungeon : Scene
 {
     Player player = new ();
-    Grid g = new (new (new(Engine.Width / 2f, Engine.Height / 2f), new(0.5f, 0.5f), 50, 50, new(0.5f, 0.5f), 10, 10));
+    Grid g = new (new (
+        new(Engine.Width / 2f, Engine.Height / 2f), 
+        new(0.5f, 0.5f), 
+        50, 150, 
+        new(0.5f, 0.5f), 
+        10,
+        1));
 
     private List<DeckCard> Deck = new ();
     private List<DeckCard> GameCards = new ();
@@ -21,28 +27,28 @@ public class Dungeon : Scene
     {
         foreach (var i in Depot.Generated.dungeon.cards.Lines)
         {
-            int iterations = 0;
-            if (i.ID == "enemy")
+            int iterations = i.ID switch
             {
-                iterations = 6;
-            }
-            
-            if(i.ID == "big enemy")
-            {
-                iterations = 2;
-            }
-
-            if (i.ID == "floor")
-            {
-                iterations = 15;
-            }
-
+                "enemy" => 6,
+                "big enemy" => 2,
+                "rock" => 8,
+                "floor" => 15,
+                _ => 0
+            };
             for (int j = 0; j < iterations; j++)
             {
                 var card = new DeckCard(i.ID + $"{j}", i, 4);
                 card.OnDestroy += OnDestroyCard;
                 Deck.Add(card);
                 GameCards.Add(card);
+            }
+        }
+
+        {
+            //grid debug
+            for (int i = 0; i < g.Points.Count; i++)
+            {
+                g.ApplyPositionToEntity(i,new Shape(Palettes.ONE_BIT_MONITOR_GLOW[1],1,1));
             }
         }
 
@@ -148,12 +154,29 @@ public class Dungeon : Scene
             
             Button($"Move", buttonSize, () =>
             {
+                //shouldnt be able to move if all track cards are obstacles
+                //moving heals
+                //moving increases hunger
+                //moving gets an attack of opportuninty if "trapped"
+                //move cycles a card from track (if possible)
+                //move draws if able
                 player.MovePlayer();
             });
             Button($"Wait", buttonSize, () =>
             {
+                //waiting increases hunger
+                //enemies move close
+                //enemies that can attack attack
+                //cooldowns,buffs,debuffs progress, etc.
                 player.MovePlayer();
             });
+            
+            //attacking attacks targeted things (if targetable)
+            //attack can change based on weapons (weapons have durability)
+            //attacked things will drop stuff
+            
+            //dropped things may go into inventory or can be picked up immediately
+            //picking up counts as an action
             
             
             Text("track cards");
