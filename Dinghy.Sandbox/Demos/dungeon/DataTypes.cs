@@ -84,10 +84,7 @@ public class DataTypes
         public void SetTrackPosition(int? pos)
         {
             TrackPosition = pos;
-            if (TrackPosition.HasValue)
-            {
-                Entity.Active = true;
-            }
+            Entity.Active = TrackPosition.HasValue;
             UpdateDebugText();
         }
 

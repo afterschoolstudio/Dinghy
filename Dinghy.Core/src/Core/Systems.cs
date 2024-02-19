@@ -581,18 +581,23 @@ public class CollisionCallbackSystem : DSystem, IUpdateSystem
 
         bool CollisionEventValid(ref CollisionEvent ce)
         {
-            return ce.e1.IsAlive() && ce.e2.IsAlive() && !ce.e1.Entity.Has<Destroy>() && !ce.e2.Entity.Has<Destroy>() &&
-                   //this is a hack that gets around a thing i think is happening in arch
-                   //where if i destroy an entity as part of collider iteration, something about the collision event itself
-                   //updates in memory to point to a different entity, so you get weird things where something is "colliding"
-                   //with an event
-                   //https://github.com/genaray/Arch/wiki/Utility-Features#command-buffers
-                   //"Entity creation, deletion, and structural changes can potentially happen during a query or entity iteration.
-                   //However, one must be careful about this, changes to entities during a query can easily lead to unexpected behavior.
-                   //A destruction or structural change leads to a copy to another archetype and the current slot is
-                   //replaced by another entity. This must always be expected. Depending on when and how you perform these
-                   //operations in a query, this can lead to problems or not be noticed at all.
-                   ce.e1.Entity.Has<Collider>() && ce.e2.Entity.Has<Collider>();
+            return entityCheck(ce.e1) && entityCheck(ce.e2);
+
+            bool entityCheck(Arch.Core.EntityReference e)
+            { 
+                return e.Entity.IsAlive() && !e.Entity.Has<Destroy>() && /*(e.Entity.Has<Active>() ? e.Entity.Get<Active>().active : true) &&*/
+                     //this is a hack that gets around a thing i think is happening in arch
+                     //where if i destroy an entity as part of collider iteration, something about the collision event itself
+                     //updates in memory to point to a different entity, so you get weird things where something is "colliding"
+                     //with an event
+                     //https://github.com/genaray/Arch/wiki/Utility-Features#command-buffers
+                     //"Entity creation, deletion, and structural changes can potentially happen during a query or entity iteration.
+                     //However, one must be careful about this, changes to entities during a query can easily lead to unexpected behavior.
+                     //A destruction or structural change leads to a copy to another archetype and the current slot is
+                     //replaced by another entity. This must always be expected. Depending on when and how you perform these
+                     //operations in a query, this can lead to problems or not be noticed at all.
+                     e.Entity.Has<Collider>();
+            }
         }
 
         void PropogateMouseEvents(Arch.Core.Entity e1, Arch.Core.Entity e2, bool e1IsCursor, bool e2IsCursor)
