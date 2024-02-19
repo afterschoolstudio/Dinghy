@@ -12,7 +12,7 @@ namespace Dinghy;
 public class Entity
 {
     public string Name { get; set; } = "entity";
-    public string DebugText { get; set; } = "";
+    public string DebugText = "";
     // public bool DestoryOnLoad = true;
     private float x = 0;
     public float X

@@ -734,6 +734,7 @@ public class DebugOverlaySystem : DSystem, IUpdateSystem
             (Arch.Core.Entity e, ref Position p, ref Active a, ref Collider c, ref HasManagedOwner o) =>
             {
                 if(!a.active){return;}
+                if(e.Id == Engine.Cursor.ECSEntity.Id){return;}
                 var bounds = Utils.GetBounds(c, p);
                 float minX = Single.MaxValue, minY = Single.MaxValue, maxX = 0, maxY = 0;
                 foreach (var b in bounds)
@@ -756,8 +757,7 @@ public class DebugOverlaySystem : DSystem, IUpdateSystem
                     ImGuiWindowFlags_.ImGuiWindowFlags_NoMove |
                     ImGuiWindowFlags_.ImGuiWindowFlags_NoResize |
                     ImGuiWindowFlags_.ImGuiWindowFlags_NoBringToFrontOnFocus);
-                ImGUIHelper.Wrappers.Text(e.Id.ToString());
-                ImGUIHelper.Wrappers.Text(o.e.DebugText);
+                ImGUIHelper.Wrappers.Text($"{e.Id}\n{o.e.DebugText}");
                 if (Engine.drawDebugColliders)
                 {
                     ImGUIHelper.Wrappers.DrawQuad(bounds);

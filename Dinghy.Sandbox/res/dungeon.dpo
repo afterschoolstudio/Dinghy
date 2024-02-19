@@ -52,6 +52,19 @@
                         "max": "int",
                         "defaultValue": "int"
                     }
+                },
+                {
+                    "typeStr": "bool",
+                    "guid": "cc906392-56ac-4c19-8185-df11f9106cc8",
+                    "description": "bool field",
+                    "name": "canCycleOffBoard",
+                    "defaultValue": true,
+                    "iconName": "newBool",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "defaultValue": "bool"
+                    }
                 }
             ],
             "lines": [
@@ -60,21 +73,24 @@
                     "id": "floor",
                     "damage": 0,
                     "damageable": false,
-                    "health": 10
+                    "health": 10,
+                    "canCycleOffBoard": true
                 },
                 {
                     "guid": "9ddb05ba-7a13-40e2-81d2-d587c55874f4",
                     "id": "enemy",
                     "damage": 1,
                     "damageable": true,
-                    "health": 2
+                    "health": 2,
+                    "canCycleOffBoard": false
                 },
                 {
                     "guid": "953f603d-96ae-4e1c-b85e-a7bc0fb5ce87",
                     "id": "big enemy",
                     "damage": 2,
                     "damageable": true,
-                    "health": 5
+                    "health": 5,
+                    "canCycleOffBoard": false
                 }
             ],
             "hidden": false,

@@ -21,6 +21,21 @@ public class DataTypes
                 Health = MaxHealth;
             }
         }
+
+        public Action<PlayerAction> PlayerTookAction;
+        public void MovePlayer()
+        {
+            PlayerTookAction?.Invoke(new Move());
+        }
+
+        public void WaitPlayer()
+        {
+            PlayerTookAction?.Invoke(new Wait());
+        }
+
+        public record PlayerAction(string ActionType);
+        public record Move() : PlayerAction("Move");
+        public record Wait() : PlayerAction("Wait");
     }
 
     public readonly record struct EnemyComponent(DeckCard DeckCard);
@@ -60,7 +75,7 @@ public class DataTypes
         {
             var sb = new StringBuilder();
             sb.AppendLine(Name);
-            sb.AppendLine($"TrackPos: {TrackPosition}");
+            sb.AppendLine($"p:{TrackPosition}");
             Entity.DebugText = sb.ToString();
         }
 
@@ -85,9 +100,7 @@ public class DataTypes
         {
             OnDestroy?.Invoke(this);
             InputSystem.Events.Mouse.Move -= OnMouseMove;
-            Console.WriteLine("marking entity for destroy");
             Entity.Destroy();
-            Console.WriteLine("post marking entity for destroy");
         }
 
         private void OnMouseMove(float arg1, float arg2, float arg3, float arg4, List<Modifiers> arg5)
@@ -125,7 +138,4 @@ public class DataTypes
             return $"{Name} HP:{Health} DIST:{Distance} ATK:{Attack} XP:{XPValue}";
         }
     }
-
-    public class Track(List<Slot> slots);
-    public class Slot(DeckCard e);
 }

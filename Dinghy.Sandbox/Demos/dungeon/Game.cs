@@ -16,6 +16,7 @@ public class Dungeon : Scene
     private List<DeckCard> Deck = new ();
     private List<DeckCard> GameCards = new ();
     private List<DeckCard> TrackCards = new ();
+    private List<DeckCard> OffTrackCards = new ();
     public override void Create()
     {
         foreach (var i in Depot.Generated.dungeon.cards.Lines)
@@ -45,7 +46,7 @@ public class Dungeon : Scene
             }
         }
 
-        Deck.OrderBy(x => Quick.RandFloat());
+        Deck = Deck.OrderBy(x => Quick.RandFloat()).ToList();
         for (int i = 0; i < Deck.Count; i++)
         {
            Deck[i].SetDeckPosition(i);
@@ -63,16 +64,49 @@ public class Dungeon : Scene
         }
 
         UpdateGameCardState();
+        player.PlayerTookAction += OnPlayerAction;
         Systems.Init();
     }
 
     void DrawNewTrackCard(int? trackPosOverride = null)
     {
-        var draw = Deck[0];
-        draw.SetTrackPosition(trackPosOverride ?? 3);
-        draw.SetDeckPosition(null);
-        TrackCards.Add(draw);
-        Deck.RemoveAt(0);
+        if (Deck.Any())
+        {
+            var draw = Deck[0];
+            draw.SetTrackPosition(trackPosOverride ?? 3);
+            draw.SetDeckPosition(null);
+            TrackCards.Add(draw);
+            Deck.RemoveAt(0);
+        }
+        
+        UpdateGameCardState();
+    }
+
+    void PopCardOffTrack(bool drawNew = true)
+    {
+        var tc = TrackCards.FirstOrDefault(x => x.TrackPosition == 0);
+        if (tc != null && tc.Data.canCycleOffBoard)
+        {
+            TrackCards.Remove(tc);
+            tc.SetTrackPosition(null);
+            OffTrackCards.Add(tc);
+            
+            //move everyone left
+            foreach (var dc in TrackCards)
+            {
+                if (dc.TrackPosition > 0)
+                {
+                    dc.SetTrackPosition(dc.TrackPosition-1);
+                }
+            }
+            
+            if (drawNew)
+            {
+                DrawNewTrackCard();
+            }
+        }
+
+        UpdateGameCardState();
     }
 
     void OnDestroyCard(DeckCard d)
@@ -114,11 +148,11 @@ public class Dungeon : Scene
             
             Button($"Move", buttonSize, () =>
             {
-                acted = true;
+                player.MovePlayer();
             });
             Button($"Wait", buttonSize, () =>
             {
-                acted = true;
+                player.MovePlayer();
             });
             
             
@@ -126,6 +160,11 @@ public class Dungeon : Scene
             foreach (var e in TrackCards.OrderBy(x => x.TrackPosition.Value))
             {
                 Text($"{e.TrackPosition}:{e.Name}");
+            }
+            Text("off track cards");
+            foreach (var e in OffTrackCards)
+            {
+                Text($"{e.Name}");
             }
             Text("deck cards");
             foreach (var e in Deck.Where(x => x.DeckPosition.HasValue).OrderBy(x => x.DeckPosition.Value))
@@ -157,5 +196,24 @@ public class Dungeon : Scene
         //         }
         //     }
         // }
+    }
+
+    void OnPlayerAction(Player.PlayerAction a)
+    {
+        switch (a)
+        {
+            case Player.Move move:
+                PopCardOffTrack();
+                break;
+            case Player.Wait wait:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(a));
+        }
+    }
+
+    public override void Cleanup()
+    {
+        player.PlayerTookAction -= OnPlayerAction;
     }
 }
