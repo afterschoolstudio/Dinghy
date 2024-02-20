@@ -3,67 +3,6 @@ namespace Dinghy.Core;
 
 public class Grid
 {
-    private Vector2 pivot;
-    public Vector2 Pivot
-    {
-        get => pivot;
-        set
-        {
-            pivot = value;
-            pushPointUpdates();
-        }
-    }
-    public List<Vector2> Points { get; }
-    List<Vector2> OriginalPoints;
-    private float rotation = 0f;
-    public float Rotation
-    {
-        get => rotation;
-        set
-        {
-            rotation = value;
-            pushPointUpdates();
-        }
-    }
-    
-    private float scaleX = 1f;
-    public float ScaleX
-    {
-        get => scaleX;
-        set
-        {
-            scaleX = value;
-            pushPointUpdates();
-        }
-    }
-    
-    private float scaleY = 1f;
-    public float ScaleY
-    {
-        get => scaleY;
-        set
-        {
-            scaleY = value;
-            pushPointUpdates();
-        }
-    }
-
-    public void SetAndApplyGridTransforms(float rotation, float scaleX, float scaleY)
-    {
-        this.rotation = rotation;
-        this.scaleX = scaleX;
-        this.scaleY = scaleY;
-        pushPointUpdates();
-    }
-
-    void pushPointUpdates()
-    {
-        for (int i = 0; i < Points.Count; i++)
-        {
-            Points[i] = OriginalPoints[i].Transform(rotation, scaleX, scaleY, pivot);
-        }
-    }
-
     public class GridCreationParams
     {
         public Vector2 Pivot;
@@ -91,37 +30,60 @@ public class Grid
         }
     }
     
-    //start is world space point, pivot is what start is meant to be interpreted as in normal space relative to to whole grid
-    public Grid(GridCreationParams p)
+    public Vector2 Pivot { get; private set; }
+    private Vector2 normalizedPivot;
+    private float cellWidth, cellHeight;
+    private int xCount, yCount;
+    private Vector2 normalizedCellOffset;
+    private List<Vector2> originalPoints; // To store the original points
+    public List<Vector2> Points { get; private set; }
+
+    public Grid(GridCreationParams p) : this(p.Pivot, p.NormalizedPivotPos, p.CellWidth, p.CellHeight,
+        p.NormalizedCellOffset, p.Xcount, p.Ycount){}
+    public Grid(Vector2 pivot, Vector2 normalizedPivot, float cellWidth, float cellHeight, Vector2 normalizedCellOffset, int xCount, int yCount)
     {
+        this.Pivot = pivot;
+        this.normalizedPivot = normalizedPivot;
+        this.cellWidth = cellWidth;
+        this.cellHeight = cellHeight;
+        this.normalizedCellOffset = normalizedCellOffset;
+        this.xCount = xCount;
+        this.yCount = yCount;
+
         Points = new List<Vector2>();
-        OriginalPoints = new List<Vector2>();
-        var x_max = p.Xcount * (p.CellWidth * p.NormalizedCellOffset.X);
-        var y_max = p.Ycount * (p.CellHeight * p.NormalizedCellOffset.Y);
+        originalPoints = new List<Vector2>(); // Initialize the original points list
+        GeneratePoints();
+    }
 
-        Vector2 cellOffset = new(p.NormalizedCellOffset.X * p.CellWidth, p.NormalizedCellOffset.Y * p.CellHeight);
+    private void GeneratePoints()
+    {
+        Points.Clear(); // Clear current points
+        originalPoints.Clear(); // Clear original points
+        var startX = Pivot.X - (xCount * cellWidth * normalizedPivot.X);
+        var startY = Pivot.Y - (yCount * cellHeight * normalizedPivot.Y);
 
-        pivot = p.Pivot;
-        Vector2 gridStart = pivot - new Vector2(
-            x_max * p.NormalizedPivotPos.X,
-            y_max * p.NormalizedPivotPos.Y
-        );
-        for (int y = 0; y < p.Ycount; y++)
+        for (int y = 0; y < yCount; y++)
         {
-            for (int x = 0; x < p.Xcount; x++)
+            for (int x = 0; x < xCount; x++)
             {
-                OriginalPoints.Add(new Vector2(
-                        gridStart.X + (x * p.CellWidth),
-                        gridStart.Y + (y * p.CellHeight)
-                ) - cellOffset);
+                var point = new Vector2(
+                    startX + x * cellWidth + cellWidth * normalizedCellOffset.X,
+                    startY + y * cellHeight + cellHeight * normalizedCellOffset.Y);
+
+                Points.Add(point);
+                originalPoints.Add(point); // Also add to original points
             }
         }
+    }
 
-        Points = new List<Vector2>(OriginalPoints);
+    public void TransformGrid(float rotation, float scaleX, float scaleY, Vector2? translation = null)
+    {
+        for (int i = 0; i < originalPoints.Count; i++)
+        {
+            Points[i] = originalPoints[i].Transform(rotation, scaleX, scaleY, translation, Pivot);
+        }
     }
     
-    
-
     public void ApplyPositionsToEntites<T>(List<T> entities) where T : Entity
     {
         for (int i = 0; i < entities.Count; i++)

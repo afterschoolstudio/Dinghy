@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Numerics;
 using Depot.Generated.dungeon;
 using Dinghy.Core;
 using Dinghy.Internal.Sokol;

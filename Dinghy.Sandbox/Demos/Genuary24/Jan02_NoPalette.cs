@@ -39,7 +39,7 @@ public class Jan02_NoPalette : Scene
         ImGUIHelper.Wrappers.SliderFloat("scale", ref scaleMod, -5f, 5f, "", ImGuiSliderFlags_.ImGuiSliderFlags_Logarithmic);
         ImGUIHelper.Wrappers.End();
         g = new Grid(gp);
-        g.Rotation = (float)Engine.Time/gridRot;
+        g.TransformGrid((float)Engine.Time/gridRot,1f,1f);
         g.ApplyPositionsToEntites(shapes);
         foreach (var s in shapes)
         {

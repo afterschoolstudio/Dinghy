@@ -21,9 +21,9 @@ public class GridDemo : Scene
 
     public override void Update(double dt)
     {
-        g.SetAndApplyGridTransforms((float)Engine.Time,1f,1f);
+        g.TransformGrid((float)Engine.Time,1f,1f);
         g.ApplyPositionsToEntites(shapes1);
-        g.SetAndApplyGridTransforms(-(float)Engine.Time,MathF.Sin((float)Engine.Time) + 2,MathF.Sin((float)Engine.Time) + 2);
+        g.TransformGrid(-(float)Engine.Time,MathF.Sin((float)Engine.Time) + 2,MathF.Sin((float)Engine.Time) + 2);
         g.ApplyPositionsToEntites(shapes2);
     }
 }
