@@ -7,33 +7,26 @@ namespace Dinghy.Sandbox.Demos;
 public class Collision : Scene
 {
     Color pt = Palettes.ENDESGA[1];
-    Color pointer_col = Palettes.ENDESGA[9];
     Color no_collide = Palettes.ENDESGA[7];
     Color collide = Palettes.ENDESGA[3];
 
     private Shape static_colliderA;
     private Shape static_colliderB;
     private Shape static_colliderC;
-    private Shape pointer;
     private Shape ptA;
     private Shape ptB;
     private Shape ptC;
     public override void Create()
     {
-        pointer = new Shape(pointer_col,1,1,
-            collisionStart: (self,other) =>
+        static_colliderA = new Shape(no_collide,
+            collisionStart: (self, other) =>
             {
-                other.Entity.Get<ShapeRenderer>().Color = collide;
+                self.Entity.Get<ShapeRenderer>().Color = collide;
             },
-            collisionStop: (self,other) => {
-                other.Entity.Get<ShapeRenderer>().Color = no_collide;
-            },
-            collisionContinue: (self,other) => {
-                
+            collisionStop: (self, other) =>
+            {
+                self.Entity.Get<ShapeRenderer>().Color = no_collide;
             })
-        {Name = "pointer",ColliderActive = true};
-        
-        static_colliderA = new Shape(no_collide)
         {
             Name = "static_colliderA",
             X = Engine.Width/2f,
@@ -42,7 +35,16 @@ public class Collision : Scene
             // Enabled = false
         };
         
-        static_colliderB = new Shape(no_collide)
+        static_colliderB = new Shape(
+            no_collide,
+            collisionStart: (self, other) =>
+            {
+                self.Entity.Get<ShapeRenderer>().Color = collide;
+            },
+            collisionStop: (self, other) =>
+            {
+                self.Entity.Get<ShapeRenderer>().Color = no_collide;
+            })
         {
             Name = "static_colliderB",
             X = Engine.Width/2f - 200f,
@@ -52,7 +54,15 @@ public class Collision : Scene
             PivotY = 16,
         };
         
-        static_colliderC = new Shape(no_collide)
+        static_colliderC = new Shape(no_collide,
+            collisionStart: (self, other) =>
+            {
+                self.Entity.Get<ShapeRenderer>().Color = collide;
+            },
+            collisionStop: (self, other) =>
+            {
+                self.Entity.Get<ShapeRenderer>().Color = no_collide;
+            })
         {
             Name = "static_colliderB",
             X = Engine.Width/2f + 200f,
@@ -81,18 +91,17 @@ public class Collision : Scene
         static_colliderC.ScaleX = MathF.Sin((float)Engine.Time) + 2;
         static_colliderC.ScaleY = MathF.Sin((float)Engine.Time) + 2;
         
-        Quick.MoveToMouse(pointer);
         // raw way to get collision data instead of relying on the system callbacks
         // static_collider.Color = CollisionChecks.CheckCollision(pointer, static_collider)
         //     ? collide
         //     : no_collide;
-        var ptsA = Dinghy.Collision.GetClosestPoints(pointer, static_colliderA);
+        var ptsA = Dinghy.Collision.GetClosestPoints(Engine.Cursor, static_colliderA);
         ptA.X = ptsA.b.Value.X;
         ptA.Y = ptsA.b.Value.Y;
-        var ptsB = Dinghy.Collision.GetClosestPoints(pointer, static_colliderB);
+        var ptsB = Dinghy.Collision.GetClosestPoints(Engine.Cursor, static_colliderB);
         ptB.X = ptsB.b.Value.X;
         ptB.Y = ptsB.b.Value.Y;
-        var ptsC = Dinghy.Collision.GetClosestPoints(pointer, static_colliderC);
+        var ptsC = Dinghy.Collision.GetClosestPoints(Engine.Cursor, static_colliderC);
         ptC.X = ptsC.b.Value.X;
         ptC.Y = ptsC.b.Value.Y;
     }

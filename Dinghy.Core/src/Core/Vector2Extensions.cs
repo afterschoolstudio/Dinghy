@@ -34,7 +34,6 @@ public static class VectorExtensions
         }
         else
         {
-            Console.WriteLine("non pivot route");
             // When there's no pivot, simply apply scaling, rotation, and then translation
             transformation =
                 Matrix3x2.CreateScale(scaleX, scaleY) *

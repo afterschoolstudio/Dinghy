@@ -55,7 +55,7 @@ public class Grid
             scaleY = value;
             for (int i = 0; i < Points.Count; i++)
             {
-                Points[i] = OriginalPoints[i].Transform(rotation, scaleY, scaleY, Pivot);
+                Points[i] = OriginalPoints[i].Transform(rotation, scaleX, scaleY, Pivot);
             }
         }
     }
@@ -67,7 +67,7 @@ public class Grid
         this.scaleY = scaleY;
         for (int i = 0; i < Points.Count; i++)
         {
-            Points[i] = OriginalPoints[i].Transform(this.rotation, this.scaleY, this.scaleY, Pivot);
+            Points[i] = OriginalPoints[i].Transform(this.rotation, this.scaleX, this.scaleY, Pivot);
         }
     }
 
@@ -102,15 +102,16 @@ public class Grid
     public Grid(GridCreationParams p)
     {
         Points = new List<Vector2>();
-        var x_max = p.Xcount * p.CellWidth;
-        var y_max = p.Ycount * p.CellHeight;
+        var x_max = p.Xcount * (p.CellWidth * p.NormalizedCellOffset.X);
+        var y_max = p.Ycount * (p.CellHeight * p.NormalizedCellOffset.Y);
 
         Vector2 cellOffset = new(p.NormalizedCellOffset.X * p.CellWidth, p.NormalizedCellOffset.Y * p.CellHeight);
-        Vector2 gridStart = p.Pivot - new Vector2(
+
+        pivot = p.Pivot;
+        Vector2 gridStart = pivot - new Vector2(
             x_max * p.NormalizedPivotPos.X,
             y_max * p.NormalizedPivotPos.Y
-        ) + cellOffset;
-        this.pivot = p.Pivot + cellOffset;
+        );
         for (int y = 0; y < p.Ycount; y++)
         {
             for (int x = 0; x < p.Xcount; x++)
@@ -118,7 +119,7 @@ public class Grid
                 Points.Add(new Vector2(
                         gridStart.X + (x * p.CellWidth),
                         gridStart.Y + (y * p.CellHeight)
-                ) + cellOffset);
+                )+cellOffset);
             }
         }
 
