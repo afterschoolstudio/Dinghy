@@ -10,10 +10,7 @@ public class Grid
         set
         {
             pivot = value;
-            for (int i = 0; i < Points.Count; i++)
-            {
-                Points[i] = OriginalPoints[i].Transform(rotation, scaleX, scaleY, Pivot);
-            }
+            pushPointUpdates();
         }
     }
     public List<Vector2> Points { get; }
@@ -25,10 +22,7 @@ public class Grid
         set
         {
             rotation = value;
-            for (int i = 0; i < Points.Count; i++)
-            {
-                Points[i] = OriginalPoints[i].Transform(rotation, scaleX, scaleY, Pivot);
-            }
+            pushPointUpdates();
         }
     }
     
@@ -39,10 +33,7 @@ public class Grid
         set
         {
             scaleX = value;
-            for (int i = 0; i < Points.Count; i++)
-            {
-                Points[i] = OriginalPoints[i].Transform(rotation, scaleX, scaleY, Pivot);
-            }
+            pushPointUpdates();
         }
     }
     
@@ -53,10 +44,7 @@ public class Grid
         set
         {
             scaleY = value;
-            for (int i = 0; i < Points.Count; i++)
-            {
-                Points[i] = OriginalPoints[i].Transform(rotation, scaleX, scaleY, Pivot);
-            }
+            pushPointUpdates();
         }
     }
 
@@ -65,9 +53,14 @@ public class Grid
         this.rotation = rotation;
         this.scaleX = scaleX;
         this.scaleY = scaleY;
+        pushPointUpdates();
+    }
+
+    void pushPointUpdates()
+    {
         for (int i = 0; i < Points.Count; i++)
         {
-            Points[i] = OriginalPoints[i].Transform(this.rotation, this.scaleX, this.scaleY, Pivot);
+            Points[i] = OriginalPoints[i].Transform(rotation, scaleX, scaleY, pivot);
         }
     }
 
@@ -102,6 +95,7 @@ public class Grid
     public Grid(GridCreationParams p)
     {
         Points = new List<Vector2>();
+        OriginalPoints = new List<Vector2>();
         var x_max = p.Xcount * (p.CellWidth * p.NormalizedCellOffset.X);
         var y_max = p.Ycount * (p.CellHeight * p.NormalizedCellOffset.Y);
 
@@ -116,14 +110,14 @@ public class Grid
         {
             for (int x = 0; x < p.Xcount; x++)
             {
-                Points.Add(new Vector2(
+                OriginalPoints.Add(new Vector2(
                         gridStart.X + (x * p.CellWidth),
                         gridStart.Y + (y * p.CellHeight)
-                )+cellOffset);
+                ) - cellOffset);
             }
         }
 
-        OriginalPoints = new List<Vector2>(Points);
+        Points = new List<Vector2>(OriginalPoints);
     }
     
     
