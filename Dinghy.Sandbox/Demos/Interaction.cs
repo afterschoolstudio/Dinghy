@@ -16,10 +16,16 @@ public class Interaction : Scene
                 0.4f) });
     }
 
+    private float DX;
+    private float DY;
     private AnimatedSprite e;
     public override void Create()
     {
-        e = new AnimatedSprite(animatedConscript){X = Engine.Width/2f,Y = Engine.Height/2f, PivotX = 32,PivotY = 32};
+        e = new AnimatedSprite(animatedConscript,update: (self,dt) =>
+        {
+	        self.X += DX;
+	        self.Y += DY;
+        }){X = Engine.Width/2f,Y = Engine.Height/2f, PivotX = 32,PivotY = 32};
         Console.WriteLine("subbing");
         InputSystem.Events.Key.Down += KeyDownListener;
     }
@@ -32,9 +38,9 @@ public class Interaction : Scene
             Key.UP => (0, -1f),
             Key.DOWN => (0, 1f),
             _ => (0, 0)
-        };
-        e.DX += v.dx;
-        e.DY += v.dy;
+        }; 
+        DX += v.dx;
+        DY += v.dy;
     }
 
     public override void Cleanup()

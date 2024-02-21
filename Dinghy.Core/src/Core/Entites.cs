@@ -135,41 +135,17 @@ public class Entity
         SetPositionRaw(x,y,rotation,scaleX,scaleY,pivotX,pivotY);
     }
     
-    private float dx = 0;
-    public float DX
-    {
-        get => dx;
-        set
-        {
-            ref var vel = ref ECSEntity.Get<Velocity>();
-            vel.x = value;
-            dx = value;
-        }
-    }
-
-    private float dy = 0;
-    public float DY
-    {
-        get => dy;
-        set
-        {
-            ref var vel = ref ECSEntity.Get<Velocity>();
-            vel.y = value;
-            dy = value;
-        }
-    }
-    
     public List<Component> Components = new List<Component>();
     public Arch.Core.EntityReference ECSEntityReference;
     public Arch.Core.Entity ECSEntity => ECSEntityReference.Entity;
     public Scene? Scene;
-    public Entity(bool startEnabled, Scene scene, bool addToSceneHeirarchy = true)
+    public Entity(bool startEnabled, Scene scene, bool addToSceneHeirarchy = true, Action<Entity,double> update = null)
     {
         Arch.Core.Entity e = Engine.ECSWorld.Create(
             new Active(startEnabled),
             new HasManagedOwner(this),
             new Position(X,Y), 
-            new Velocity(0,0)
+            new UpdateListener(this,update)
         );
         ECSEntityReference = Engine.ECSWorld.Reference(e);
         Engine.ECSWorld.Add<Entity>(ECSEntity);
@@ -180,15 +156,6 @@ public class Entity
         }
     }
     
-    public void SetVelocity(float x, float y)
-    {
-        dx = x;
-        dy = y;
-        ref var vel = ref ECSEntity.Get<Velocity>();
-        vel.x = dx;
-        vel.y = dy;
-    }
-
     public void Destroy()
     {
         if (!ECSEntity.Has<Destroy>())
@@ -334,21 +301,25 @@ public class Shape : Entity
     }
     
     public Shape(Color color, int width = 32, int height = 32, Scene? scene = null, bool startEnabled = true, 
+        Action<Entity,double> update = null,
         Action<EntityReference,EntityReference> collisionStart = null, 
         Action<EntityReference,EntityReference> collisionStop = null, 
         Action<EntityReference,EntityReference> collisionContinue = null,
         Action<List<Modifiers>> OnMouseUp = null,
         Action<List<Modifiers>> OnMousePressed = null,
         Action<List<Modifiers>> OnMouseDown = null,
+        Action<List<Modifiers>> OnMouseEnter = null,
+        Action<List<Modifiers>> OnMouseLeave = null,
+        Action<List<Modifiers>> OnMouseOver = null,
         Action<List<Modifiers>,float,float> OnMouseScroll = null
         
-        ) : base(startEnabled,scene)
+        ) : base(startEnabled,scene,update:update)
     {
         c = color;
         var rend = new ShapeRenderer(color, width, height);
         ECSEntity.Add(
             rend,
-            new Collider(0,0,width,height,false,collisionStart,collisionContinue,collisionStop,OnMouseUp, OnMousePressed, OnMouseDown, OnMouseScroll));
+            new Collider(0,0,width,height,false,collisionStart,collisionContinue,collisionStop,OnMouseUp, OnMousePressed, OnMouseDown, OnMouseScroll,OnMouseEnter,OnMouseLeave,OnMouseOver));
     }
 
 
@@ -383,22 +354,26 @@ public class Sprite : Entity
 {
     public SpriteData Data { get; init; }
     public Sprite(SpriteData spriteData, Scene? scene = null, bool startEnabled = true, 
+        Action<Entity,double> update = null,
         Action<EntityReference,EntityReference> collisionStart = null, 
         Action<EntityReference,EntityReference> collisionStop = null, 
         Action<EntityReference,EntityReference> collisionContinue = null,
         Action<List<Modifiers>> OnMouseUp = null,
         Action<List<Modifiers>> OnMousePressed = null,
         Action<List<Modifiers>> OnMouseDown = null,
+        Action<List<Modifiers>> OnMouseEnter = null,
+        Action<List<Modifiers>> OnMouseLeave = null,
+        Action<List<Modifiers>> OnMouseOver = null,
         Action<List<Modifiers>,float,float> OnMouseScroll = null
         
         
-        ) : base(startEnabled,scene)
+        ) : base(startEnabled,scene,update:update)
     {
         Data = spriteData;
         var rend = new SpriteRenderer(Data.Texture, Data.Rect);
         ECSEntity.Add(
             rend,
-            new Collider(0,0,Data.Rect.width,Data.Rect.height,false,collisionStart,collisionContinue,collisionStop,OnMouseUp, OnMousePressed, OnMouseDown, OnMouseScroll));
+            new Collider(0,0,Data.Rect.width,Data.Rect.height,false,collisionStart,collisionContinue,collisionStop,OnMouseUp, OnMousePressed, OnMouseDown, OnMouseScroll,OnMouseEnter,OnMouseLeave,OnMouseOver));
     }
     
     private bool colliderActive;
@@ -419,23 +394,27 @@ public class AnimatedSprite : Entity
 {
     public AnimatedSpriteData Data { get; init; }
     public AnimatedSprite(AnimatedSpriteData animatedSpriteData, Scene? scene = null, bool startEnabled = true, 
+        Action<Entity,double> update = null,
         Action<EntityReference,EntityReference> collisionStart = null, 
         Action<EntityReference,EntityReference> collisionStop = null, 
         Action<EntityReference,EntityReference> collisionContinue = null,
         Action<List<Modifiers>> OnMouseUp = null,
         Action<List<Modifiers>> OnMousePressed = null,
         Action<List<Modifiers>> OnMouseDown = null,
+        Action<List<Modifiers>> OnMouseEnter = null,
+        Action<List<Modifiers>> OnMouseLeave = null,
+        Action<List<Modifiers>> OnMouseOver = null,
         Action<List<Modifiers>,float,float> OnMouseScroll = null
         
         
-        ) : base(startEnabled,scene)
+        ) : base(startEnabled,scene,update:update)
     {
         Data = animatedSpriteData;
         var rend = new SpriteRenderer(Data.Texture, Data.Animations.First().Frames[0]);
         ECSEntity.Add(
             rend,
             new SpriteAnimator(Data.Animations),
-            new Collider(0,0,Data.Animations.First().Frames[0].width,Data.Animations.First().Frames[0].height,false,collisionStart,collisionContinue,collisionStop,OnMouseUp,OnMousePressed, OnMouseDown, OnMouseScroll));
+            new Collider(0,0,Data.Animations.First().Frames[0].width,Data.Animations.First().Frames[0].height,false,collisionStart,collisionContinue,collisionStop,OnMouseUp,OnMousePressed, OnMouseDown, OnMouseScroll,OnMouseEnter,OnMouseLeave,OnMouseOver));
     }
     
     private bool colliderActive;

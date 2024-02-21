@@ -53,16 +53,14 @@ public class ManagedComponentSystem : DSystem, IPreUpdateSystem, IPostUpdateSyst
     }
 }
 
-public class VelocitySystem : DSystem, IUpdateSystem
+public class EntityUpdateSystem : DSystem, IUpdateSystem
 {
-    QueryDescription query = new QueryDescription().WithAll<Active,HasManagedOwner,Position, Velocity>();      // Should have all specified components
+    QueryDescription query = new QueryDescription().WithAll<Active,UpdateListener>();
     public void Update(double dt)
     {
-        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref Active a, ref HasManagedOwner owner, ref Position pos, ref Velocity vel) => {
+        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref Active a, ref UpdateListener u) => {
             if(!a.active){return;}
-            pos.x += vel.x;
-            pos.y += vel.y;
-            owner.e.SetPositionRaw(pos.x,pos.y,pos.rotation,pos.scaleX,pos.scaleY,pos.pivotX,pos.pivotY);
+            u.update?.Invoke(u.e,dt);
         });
     }
 }
@@ -259,14 +257,14 @@ public class InputSystem : DSystem, IUpdateSystem
     private bool lmb_up = true;
     private bool rmb_up = true;
     private bool mmb_up = true;
-
+    public List<Modifiers> FrameModifiers;
     public void Update(double dt)
     {
         Engine.ECSWorld.Query(in frameEvents, (Arch.Core.Entity entity, ref EventMeta em, ref FrameEvent frameEvent) =>
         {
             if(!em.dirty)
             {
-                var mods = GetModifier(frameEvent.e.modifiers);
+                FrameModifiers = GetModifier(frameEvent.e.modifiers);
                 switch (frameEvent.e.type)
                 {
                     case sapp_event_type.SAPP_EVENTTYPE_INVALID:
@@ -274,12 +272,12 @@ public class InputSystem : DSystem, IUpdateSystem
                     case sapp_event_type.SAPP_EVENTTYPE_KEY_DOWN:
                         if (frameEvent.e.key_repeat > 0)
                         {
-                            Events.Key.Pressed?.Invoke((Key)frameEvent.e.key_code,mods);
+                            Events.Key.Pressed?.Invoke((Key)frameEvent.e.key_code,FrameModifiers);
                         }
-                        Events.Key.Down?.Invoke((Key)frameEvent.e.key_code,mods);
+                        Events.Key.Down?.Invoke((Key)frameEvent.e.key_code,FrameModifiers);
                         break;
                     case sapp_event_type.SAPP_EVENTTYPE_KEY_UP:
-                        Events.Key.Up?.Invoke((Key)frameEvent.e.key_code,mods);
+                        Events.Key.Up?.Invoke((Key)frameEvent.e.key_code,FrameModifiers);
                         break;
                     case sapp_event_type.SAPP_EVENTTYPE_CHAR:
                         Events.Key.Char?.Invoke(frameEvent.e.char_code);
@@ -313,15 +311,15 @@ public class InputSystem : DSystem, IUpdateSystem
 
                         if (createPressedEvent)
                         {
-                            Events.Mouse.Pressed?.Invoke(mods);
+                            Events.Mouse.Pressed?.Invoke(FrameModifiers);
                             Engine.ECSWorld.Create(
                                 new EventMeta("MOUSE_PRESSED"),
-                                new MouseEvent(MouseState.Pressed,downButton,mods));
+                                new MouseEvent(MouseState.Pressed,downButton,FrameModifiers));
                         }
-                        Events.Mouse.Down?.Invoke(mods);
+                        Events.Mouse.Down?.Invoke(FrameModifiers);
                         Engine.ECSWorld.Create(
                             new EventMeta("MOUSE_DOWN"),
-                            new MouseEvent(MouseState.Down,downButton,mods));
+                            new MouseEvent(MouseState.Down,downButton,FrameModifiers));
                         break;
                     case sapp_event_type.SAPP_EVENTTYPE_MOUSE_UP:
                         
@@ -345,27 +343,27 @@ public class InputSystem : DSystem, IUpdateSystem
                                 rmb_up = true;
                                 break;
                         }
-                        Events.Mouse.Up?.Invoke(mods);
+                        Events.Mouse.Up?.Invoke(FrameModifiers);
                         Engine.ECSWorld.Create(
                             new EventMeta("MOUSE_UP"),
-                            new MouseEvent(MouseState.Up,upButton,mods));
+                            new MouseEvent(MouseState.Up,upButton,FrameModifiers));
                         break;
                     case sapp_event_type.SAPP_EVENTTYPE_MOUSE_SCROLL:
-                        Events.Mouse.Scroll?.Invoke(frameEvent.e.scroll_x,frameEvent.e.scroll_y,mods);
+                        Events.Mouse.Scroll?.Invoke(frameEvent.e.scroll_x,frameEvent.e.scroll_y,FrameModifiers);
                         Engine.ECSWorld.Create(
                             new EventMeta("MOUSE_SCROLL"),
-                            new MouseEvent(MouseState.Scroll, MouseButton.INVALID, mods, frameEvent.e.scroll_x, frameEvent.e.scroll_y));
+                            new MouseEvent(MouseState.Scroll, MouseButton.INVALID, FrameModifiers, frameEvent.e.scroll_x, frameEvent.e.scroll_y));
                         break;
                     case sapp_event_type.SAPP_EVENTTYPE_MOUSE_MOVE:
                         MouseX = frameEvent.e.mouse_x;
                         MouseY = frameEvent.e.mouse_y;
-                        Events.Mouse.Move?.Invoke(frameEvent.e.mouse_x,frameEvent.e.mouse_y,frameEvent.e.mouse_dx,frameEvent.e.mouse_dy,mods);
+                        Events.Mouse.Move?.Invoke(frameEvent.e.mouse_x,frameEvent.e.mouse_y,frameEvent.e.mouse_dx,frameEvent.e.mouse_dy,FrameModifiers);
                         break;
                     case sapp_event_type.SAPP_EVENTTYPE_MOUSE_ENTER:
-                        Events.Window.MouseEnter?.Invoke(mods);
+                        Events.Window.MouseEnter?.Invoke(FrameModifiers);
                         break;
                     case sapp_event_type.SAPP_EVENTTYPE_MOUSE_LEAVE:
-                        Events.Window.MouseLeave?.Invoke(mods);
+                        Events.Window.MouseLeave?.Invoke(FrameModifiers);
                         break;
                     case sapp_event_type.SAPP_EVENTTYPE_TOUCHES_BEGAN:
                         break;
@@ -574,7 +572,7 @@ public class CollisionCallbackSystem : DSystem, IUpdateSystem
 
                 if (finalCollisionValid)
                 {
-                    PropogateMouseEvents(ce.e1.Entity,ce.e2.Entity,e1IsCursor,e2IsCursor);
+                    PropogateMouseEvents(ce.e1.Entity,ce.e2.Entity,e1IsCursor,e2IsCursor,cm.state);
                 }
             }
         });
@@ -600,7 +598,7 @@ public class CollisionCallbackSystem : DSystem, IUpdateSystem
             }
         }
 
-        void PropogateMouseEvents(Arch.Core.Entity e1, Arch.Core.Entity e2, bool e1IsCursor, bool e2IsCursor)
+        void PropogateMouseEvents(Arch.Core.Entity e1, Arch.Core.Entity e2, bool e1IsCursor, bool e2IsCursor, CollisionState collisionState)
         {
             if (e1IsCursor || e2IsCursor)
             {
@@ -622,6 +620,23 @@ public class CollisionCallbackSystem : DSystem, IUpdateSystem
                             target.Get<Collider>().OnMouseScroll?.Invoke(me.mods,me.scrollX,me.scrollY);
                             break;
                     }
+                }
+
+                switch (collisionState)
+                {
+                    case CollisionState.Starting:
+                        target.Get<Collider>().OnMouseEnter?.Invoke(Engine.InputSystem.FrameModifiers);
+                        break;
+                    case CollisionState.Continuing:
+                        target.Get<Collider>().OnMouseOver?.Invoke(Engine.InputSystem.FrameModifiers);
+                        break;
+                    case CollisionState.Ending:
+                        target.Get<Collider>().OnMouseExit?.Invoke(Engine.InputSystem.FrameModifiers);
+                        break;
+                    case CollisionState.Invalid:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(collisionState), collisionState, null);
                 }
                 
             }

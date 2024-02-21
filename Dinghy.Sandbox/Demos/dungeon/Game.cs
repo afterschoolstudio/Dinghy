@@ -15,7 +15,7 @@ public class Dungeon : Scene
     Grid g = new (new (
         new(Engine.Width / 2f, Engine.Height / 2f), 
         new(0.5f, 0.5f), 
-        50, 150, 
+        70, 150, 
         new(0.5f, 0.5f), 
         10,
         1));
@@ -82,6 +82,7 @@ public class Dungeon : Scene
             var draw = Deck[0];
             draw.SetTrackPosition(trackPosOverride ?? 3);
             draw.SetDeckPosition(null);
+            draw.SetDistance(3);
             TrackCards.Add(draw);
             Deck.RemoveAt(0);
         }
@@ -92,7 +93,7 @@ public class Dungeon : Scene
     void PopCardOffTrack(bool drawNew = true)
     {
         var tc = TrackCards.FirstOrDefault(x => x.TrackPosition == 0);
-        if (tc != null && tc.Data.canCycleOffBoard)
+        if (tc != null && tc.CanCycleOffBOard)
         {
             TrackCards.Remove(tc);
             tc.SetTrackPosition(null);
@@ -134,6 +135,8 @@ public class Dungeon : Scene
             DrawNewTrackCard();
         }
         UpdateGameCardState();
+        
+        player.GrantXP(d.XPValue);
     }
 
     void UpdateGameCardState()
@@ -146,30 +149,44 @@ public class Dungeon : Scene
     }
 
     private ImVec2 buttonSize = new () { x = 100, y = 20 };
+    private bool death = false;
     public override void Update(double dt)
     {
         ImGUIWindow("game",ImGuiWindowFlags_.ImGuiWindowFlags_NoTitleBar, () =>
         {
-            bool acted = false;
-            Text($"Player HP:{player.Health} XP:{player.XP}");
-            
-            Button($"Move", buttonSize, () =>
+            if (death)
             {
-                //shouldnt be able to move if all track cards are obstacles
-                //moving heals
-                //moving increases hunger
-                //moving gets an attack of opportuninty if "trapped"
-                //move cycles a card from track (if possible)
-                //move draws if able
-                player.MovePlayer();
-            });
+                Text($"player died");
+                return;
+            }
+            bool acted = false;
+            Text($"Hunger:{player.Hunger}");
+
+            if (!TrackCards.All(x => x.IsObstacle))
+            {
+                Button($"Move", buttonSize, () =>
+                {
+                    //DONE shouldnt be able to move if all track cards are obstacles
+                    //DONE moving heals
+                    //DONE moving increases hunger
+                    //moving gets an attack of opportuninty if "trapped"
+                    //DONE move cycles a card from track (if possible)
+                    //DONE move draws if able
+                    player.Move();
+                });
+            }
+            else
+            {
+                Text($"cant move, all are obstacles");
+            }
+                
             Button($"Wait", buttonSize, () =>
             {
-                //waiting increases hunger
-                //enemies move close
-                //enemies that can attack attack
+                //DONE waiting increases hunger
+                player.Wait();
+                //DONE enemies move close
+                //DONE enemies that can attack attack
                 //cooldowns,buffs,debuffs progress, etc.
-                player.MovePlayer();
             });
             
             //attacking attacks targeted things (if targetable)
@@ -198,41 +215,40 @@ public class Dungeon : Scene
             
             
         });
-
-        // if (acted)
-        // {
-        //     foreach (var e in Enemies.Where(x => x.Aggro && !x.Dead && x.Distance == 0))
-        //     {
-        //         player.Health -= e.Attack;
-        //     }
-        //     
-        //     foreach (var e in Enemies.Where(x => x.Aggro && !x.Dead && x.Distance > 0))
-        //     { 
-        //         e.Distance--;
-        //     }
-        //
-        //     if (Quick.RandFloat() > 0.7f)
-        //     {
-        //         var candidate = Enemies.Where(x => !x.Aggro && !x.Dead).FirstOrDefault();
-        //         if (candidate != null)
-        //         {
-        //             candidate.Aggro = true;
-        //         }
-        //     }
-        // }
     }
 
     void OnPlayerAction(Player.PlayerAction a)
     {
-        switch (a)
+        switch (a.ActionType)
         {
-            case Player.Move move:
+            case "Move":
+                TrackCardsAct();
                 PopCardOffTrack();
                 break;
-            case Player.Wait wait:
+            case "Wait":
+                TrackCardsAct(moveCloser:true);
+                break;
+            case "Death":
+                death = true; 
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(a));
+        }
+    }
+
+    void TrackCardsAct(bool moveCloser = false)
+    {
+        foreach (var tc in TrackCards)
+        {
+            //try to attack if in range
+            if (tc.Distance <= 1)
+            {
+                player.AttackPlayer(tc.Attack);
+            }
+            else
+            {
+                tc.Distance -= 1;
+            }
         }
     }
 

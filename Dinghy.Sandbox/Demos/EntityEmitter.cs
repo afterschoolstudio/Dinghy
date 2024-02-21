@@ -19,14 +19,19 @@ public class EntityEmitter : Scene
         if (timer > 0.00001)
         {
             var startPos = new Vector2(InputSystem.MouseX, InputSystem.MouseY);
-            var rand = RandUnitCircle();
             for (int i = 0; i < emissionRate; i++)
             {
-                new Shape(new Color(Palettes.ENDESGA[Quick.Random.Next(Palettes.ENDESGA.Count)])) {
+                var rand = RandUnitCircle();
+                var dx = rand.x * 4;
+                var dy = rand.y * 4;
+                new Shape(new Color(Palettes.ENDESGA[Quick.Random.Next(Palettes.ENDESGA.Count)]),update:(self, dt) =>
+                {
+                    self.X += dx;
+                    self.Y += dy;
+                }) 
+                {
                     X = startPos.X,
                     Y = startPos.Y,
-                    DX = rand.x * 4,
-                    DY = rand.y * 4,
                     ColliderActive = false
                 };
             }

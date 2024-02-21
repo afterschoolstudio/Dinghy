@@ -16,14 +16,20 @@ public static partial class Engine
 {
     public static Action Update;
     public static Action Setup;
-    static InputSystem InputSystem = new InputSystem();
+    public static InputSystem InputSystem = new InputSystem();
     static DestructionSystem DestructionSystem = new DestructionSystem();
+    static EntityUpdateSystem EntityUpdate = new ();
     public static string DebugTextStr = "";
     static Color ClearColor;
 
+    public static void SetClearColor(Color c)
+    {
+        ClearColor = c;
+    }
+
     private static HashSet<DSystem> DefaultSystems = new HashSet<DSystem>()
     {
-        new VelocitySystem(),
+        EntityUpdate,
         new SpriteRenderSystem(),
         new ShapeRenderSystem(),
         new FrameAnimationSystem(),
@@ -433,11 +439,13 @@ public static partial class Engine
         }
         PhysicsWorld.Update();
         Update?.Invoke();
+        EntityUpdate.Update(DeltaTime);
         foreach (var s in ActiveSystems)
         {
             //TODO: need to sort systems by priority
             if (s is IUpdateSystem us)
             {
+                if(s is EntityUpdateSystem) {continue;} //we handle this above
                 if (s is DebugOverlaySystem)
                 {
                     if (drawDebugOverlay)

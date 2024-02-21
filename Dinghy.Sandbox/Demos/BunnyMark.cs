@@ -58,7 +58,6 @@ public class TestBunny : Entity
     public TestBunny(SpriteData spriteData, float velx, float vely, Scene? scene = null, bool startEnabled = true) : base(startEnabled,scene)
     {
         Data = spriteData;
-        ECSEntity.Remove<Velocity>();
         ECSEntity.Add(
             new SpriteRenderer(Data.Texture, Data.Rect),
             new BunnyMarkComponent(velx,vely));

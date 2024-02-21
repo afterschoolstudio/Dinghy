@@ -12,6 +12,7 @@ public class DataTypes
     {
         public int MaxHealth { get; set; } = 10;
         public int Health { get; set; } = 10;
+        public int Hunger { get; set; } = 0;
         public int XP { get; private set; } = 0;
         public void GrantXP(int xp)
         {
@@ -23,19 +24,50 @@ public class DataTypes
         }
 
         public Action<PlayerAction> PlayerTookAction;
-        public void MovePlayer()
+        public void Act(PlayerAction p)
         {
-            PlayerTookAction?.Invoke(new Move());
-        }
-
-        public void WaitPlayer()
-        {
-            PlayerTookAction?.Invoke(new Wait());
+            PlayerTookAction?.Invoke(p);
         }
 
         public record PlayerAction(string ActionType);
-        public record Move() : PlayerAction("Move");
-        public record Wait() : PlayerAction("Wait");
+
+        public void Move()
+        {
+            Health = Health + 1 < MaxHealth ? Health + 1 : Health;
+            Hunger++;
+            if (Hunger > 10)
+            {
+                PlayerTookAction?.Invoke(DiedAction);
+            }
+            else
+            {
+                PlayerTookAction?.Invoke(MoveAction);
+            }
+        }
+
+        public void Wait()
+        {
+            if (Hunger > 10)
+            {
+                PlayerTookAction?.Invoke(DiedAction);
+            }
+            else
+            {
+                PlayerTookAction?.Invoke(WaitAction);
+            }
+        }
+
+        public void AttackPlayer(int dmg)
+        {
+            Health -= dmg;
+            if (Health <= 0)
+            {
+                PlayerTookAction?.Invoke(DiedAction);
+            }
+        }
+        public PlayerAction MoveAction => new ("Move");
+        public PlayerAction WaitAction => new ("Wait");
+        public PlayerAction DiedAction => new ("Death");
     }
 
     public readonly record struct EnemyComponent(DeckCard DeckCard);
@@ -45,21 +77,28 @@ public class DataTypes
         public int MaxHealth => Data.health;
         public int Attack => Data.damage;
         public bool Damageable => Data.damageable;
+        public bool IsObstacle => Data.obstacle;
+        public bool CanCycleOffBOard => Data.canCycleOffBoard;
+        
+        
         public int Health { get; protected set; }
         public cards.cardsLine Data { get; private set; }
-        public int? Distance { get; set; } = null;
+        public int Distance { get; set; }
         public int XPValue { get; set; }
         public int? TrackPosition { get; protected set; }
         public int? DeckPosition { get; protected set; }
         public Shape Entity;
         public Action<DeckCard> OnDestroy;
+
+        public Color HoveredColor = new Color(1.0f, 0.1f, 0.1f, 0.1f);
+        public Color BaseColor = new Color(1.0f, 0.01f, 0.01f, 0.01f);
         public DeckCard(string id, cards.cardsLine Data, int xp)
         {
             Name = id;
             this.Data = Data;
             Health = MaxHealth;
             XPValue = xp;
-            Entity = new Shape(0xFFFF0000, 50, 150,collisionStart:CollisionStart,collisionStop:CollisionStop,OnMousePressed:MousePressed, OnMouseUp:MouseUp)
+            Entity = new Shape(BaseColor, 50, 150,OnMouseOver:MouseOver,OnMouseLeave:MouseLeave,OnMousePressed:MousePressed, OnMouseUp:MouseUp)
             {
                 PivotX = 25,
                 PivotY = 75,
@@ -76,6 +115,8 @@ public class DataTypes
             var sb = new StringBuilder();
             sb.AppendLine(Name);
             sb.AppendLine($"p:{TrackPosition}");
+            sb.AppendLine($"d:{Distance}");
+            sb.AppendLine($"obs:{IsObstacle}");
             Entity.DebugText = sb.ToString();
         }
 
@@ -85,6 +126,12 @@ public class DataTypes
         {
             TrackPosition = pos;
             Entity.Active = TrackPosition.HasValue;
+            UpdateDebugText();
+        }
+
+        public void SetDistance(int distance)
+        {
+            Distance = 0;
             UpdateDebugText();
         }
 
@@ -121,13 +168,13 @@ public class DataTypes
             // mouseDown = true;
         }
 
-        void CollisionStart(EntityReference self, EntityReference other)
+        void MouseOver(List<Modifiers> mods)
         {
-            Entity.Color = 0xFF00FF00;
+            Entity.Color = HoveredColor;
         }
-        void CollisionStop(EntityReference self, EntityReference other)
+        void MouseLeave(List<Modifiers> mods)
         {
-            Entity.Color = 0xFFFF0000;
+            Entity.Color = BaseColor;
         }
 
         public override string ToString()

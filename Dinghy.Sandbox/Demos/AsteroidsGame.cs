@@ -44,7 +44,6 @@ public class AsteroidsGame : Scene
 		    var bullet = new Sprite(fullConscript,
 			    collisionStart: (self,other) =>
 			    {
-				    Console.WriteLine("bullet collision starting");
 				    if (other.Entity.Has<Asteroid>())
 				    {
 					    asteroids.RemoveAt(asteroids.FindIndex(ast => ast.ECSEntity.Id == other.Entity.Id));
@@ -52,12 +51,15 @@ public class AsteroidsGame : Scene
 					    bullets.RemoveAt(bullets.FindIndex(bullet => bullet.ECSEntity.Id == self.Entity.Id));
 					    self.Destroy();
 				    }
-			    }) 
+			    },
+			    update: (self,dt) =>
+			    {
+				    self.X += 1.5f;
+			    })
 		    {
 			    Name = "bullet" + bulletCount,
 			    X = player.X, 
 			    Y = player.Y,
-			    DX = 1.5f,
 			    ColliderActive = true,
 		    };
 		    bullet.ECSEntity.Add(new Bullet());
@@ -76,11 +78,15 @@ public class AsteroidsGame : Scene
 	    bulletCooldown += Engine.DeltaTime;
 	    if (timer > 5)
 	    {
-	    	var a = new Sprite(fullConscript) {
+	    	var a = new Sprite(fullConscript,
+			    update: (self,dt) =>
+			    {
+				    Console.WriteLine("asteroid update");
+				    self.X -= 1.5f;
+			    }) {
 			    Name = "Asteroid",
 	    		X = Engine.Width, 
 	    		Y = (int)((Engine.Height / 2f) + MathF.Sin(Quick.RandFloat() * 2 - 1) * Engine.Height / 2.5f),
-			    DX = -1.5f,
 			    ColliderActive = true
 	    	};
 		    a.ECSEntity.Add(new Asteroid());
