@@ -98,10 +98,10 @@ public class DataTypes
             this.Data = Data;
             Health = MaxHealth;
             XPValue = xp;
-            Entity = new Shape(BaseColor, 50, 150,OnMouseOver:MouseOver,OnMouseLeave:MouseLeave,OnMousePressed:MousePressed, OnMouseUp:MouseUp)
+            Entity = new Shape(BaseColor, 150, 450,OnMouseOver:MouseOver,OnMouseLeave:MouseLeave,OnMousePressed:MousePressed, OnMouseUp:MouseUp)
             {
-                PivotX = 25,
-                PivotY = 75,
+                PivotX = 74,
+                PivotY = 225,
                 ColliderActive = true,
                 Active = false
             };
@@ -114,9 +114,13 @@ public class DataTypes
         {
             var sb = new StringBuilder();
             sb.AppendLine(Name);
+            sb.AppendLine($"{Health}/{MaxHealth}");
             sb.AppendLine($"p:{TrackPosition}");
             sb.AppendLine($"d:{Distance}");
-            sb.AppendLine($"obs:{IsObstacle}");
+            if (IsObstacle)
+            {
+                sb.AppendLine("obstacle");
+            }
             Entity.DebugText = sb.ToString();
         }
 
@@ -155,17 +159,17 @@ public class DataTypes
             // }
         }
 
-        // private bool mouseDown = false;
         void MousePressed(List<Modifiers> m)
         {
-            Console.WriteLine(Name + " mouse down");
-            Console.WriteLine($"{Name} took damage");
             Health--;
             if (Health <= 0)
             {
                 Destroy();
             }
-            // mouseDown = true;
+            else
+            {
+                UpdateDebugText();
+            }
         }
 
         void MouseOver(List<Modifiers> mods)

@@ -19,7 +19,7 @@ InputSystem.Events.Key.Down += (key,_) =>  {
 List<DemoSceneInfo> demoTypes = new();  
 List<DemoSceneInfo> genuaryDemoTypes = new();
 // Console.WriteLine(AppContext.GetData("NATIVE_DLL_SEARCH_DIRECTORIES"));
-Engine.Run(new Engine.RunOptions(800,600,"dinghy", 
+Engine.Run(new Engine.RunOptions(1920,1080,"dinghy", 
 	() =>
 	{
 		demoTypes = Util.GetDemoSceneTypes().ToList();

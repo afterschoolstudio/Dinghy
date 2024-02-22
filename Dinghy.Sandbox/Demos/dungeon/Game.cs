@@ -15,9 +15,9 @@ public class Dungeon : Scene
     Grid g = new (new (
         new(Engine.Width / 2f, Engine.Height / 2f), 
         new(0.5f, 0.5f), 
-        70, 150, 
+        200, 450, 
         new(0.5f, 0.5f), 
-        10,
+        4,
         1));
 
     private List<DeckCard> Deck = new ();
@@ -159,7 +159,7 @@ public class Dungeon : Scene
                 Text($"player died");
                 return;
             }
-            bool acted = false;
+            Text($"{player.Health}/{player.MaxHealth}");
             Text($"Hunger:{player.Hunger}");
 
             if (!TrackCards.All(x => x.IsObstacle))
