@@ -7,6 +7,14 @@ public static class ImGUIHelper
 {
     public static class Wrappers
     {
+        public static void Menu(string name, Action drawMenu, bool enabled = true)
+        {
+            if (BeginMenu(name, enabled))
+            {
+                drawMenu?.Invoke();
+                EndMenu();
+            }
+        }
         public static unsafe bool BeginMenu(string name, bool enabled = true)
         {
             var b = System.Text.Encoding.UTF8.GetBytes(name);
@@ -212,7 +220,14 @@ public static class ImGUIHelper
         public static void BeginMainMenuBar() => Internal.Sokol.ImGUI.igBeginMainMenuBar();
         public static void EndMainMenuBar() => Internal.Sokol.ImGUI.igEndMainMenuBar();
 
-        public static void ImGUIWindow(string name, ImGuiWindowFlags_ flags, Action drawWindow)
+        public static void MainMenu(Action drawMenu)
+        {
+            BeginMainMenuBar();
+            drawMenu?.Invoke();
+            EndMainMenuBar();;
+        }
+
+        public static void Window(string name, ImGuiWindowFlags_ flags, Action drawWindow)
         {
             Begin(name,flags);
             drawWindow?.Invoke();
