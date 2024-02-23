@@ -7,7 +7,6 @@ namespace Dinghy.Sandbox.Demos.dungeon;
 
 public class DataTypes
 {
-    // public record struct Player(int MaxHealth = 10, int Health = 10, int XP = 0);
     public class Player
     {
         public int MaxHealth { get; set; } = 10;
@@ -23,51 +22,55 @@ public class DataTypes
             }
         }
 
-        public Action<PlayerAction> PlayerTookAction;
-        public void Act(PlayerAction p)
+        public void Kill()
         {
-            PlayerTookAction?.Invoke(p);
+            Dungeon.Death = true;
         }
-
-        public record PlayerAction(string ActionType);
 
         public void Move()
         {
+            int moveDist = 1; //saturate this with status/buffs/etc
             Health = Health + 1 < MaxHealth ? Health + 1 : Health;
             Hunger++;
             if (Hunger > 10)
             {
-                PlayerTookAction?.Invoke(DiedAction);
+                Dungeon.Player.Kill();
             }
             else
             {
-                PlayerTookAction?.Invoke(MoveAction);
+                Dungeon.Track.Discard();
             }
         }
 
         public void Wait()
         {
+            Hunger++;
             if (Hunger > 10)
             {
-                PlayerTookAction?.Invoke(DiedAction);
-            }
-            else
-            {
-                PlayerTookAction?.Invoke(WaitAction);
+                Dungeon.Player.Kill();
             }
         }
 
-        public void AttackPlayer(int dmg)
+        public void Attack(List<int> trackIndicies)
+        {
+            var attacks = Dungeon.Track.Cards
+                .Where(x => trackIndicies.Contains(x.TrackPosition.Value))
+                .Where(x => x.Damageable)
+                .OrderBy(x => x.TrackPosition);
+            foreach (var c in attacks)
+            {
+                c.Damage(1);
+            }
+        }
+
+        public void Damage(int dmg)
         {
             Health -= dmg;
             if (Health <= 0)
             {
-                PlayerTookAction?.Invoke(DiedAction);
+                Dungeon.Player.Kill();
             }
         }
-        public PlayerAction MoveAction => new ("Move");
-        public PlayerAction WaitAction => new ("Wait");
-        public PlayerAction DiedAction => new ("Death");
     }
 
     public readonly record struct EnemyComponent(DeckCard DeckCard);
@@ -98,7 +101,7 @@ public class DataTypes
             this.Data = Data;
             Health = MaxHealth;
             XPValue = xp;
-            Entity = new Shape(BaseColor, 150, 450,OnMouseOver:MouseOver,OnMouseLeave:MouseLeave,OnMousePressed:MousePressed, OnMouseUp:MouseUp)
+            Entity = new Shape(BaseColor, 150, 450,OnMouseOver:MouseOver,OnMouseLeave:MouseLeave,OnMousePressed:MousePressed)
             {
                 PivotX = 74,
                 PivotY = 225,
@@ -139,9 +142,18 @@ public class DataTypes
             UpdateDebugText();
         }
 
-        private void MouseUp(List<Modifiers> obj)
+        public void Damage(int amt)
         {
-            // mouseDown = false;
+            Health--;
+            UpdateDebugText();
+        }
+
+        public void CheckForDestruction()
+        {
+            if (Health <= 0)
+            {
+                Destroy();
+            }
         }
 
         public void Destroy()
@@ -149,6 +161,10 @@ public class DataTypes
             OnDestroy?.Invoke(this);
             InputSystem.Events.Mouse.Move -= OnMouseMove;
             Entity.Destroy();
+            
+            Dungeon.Deck.Cards.Remove(this);
+            Dungeon.Track.RemoveCard(this);
+            Dungeon.Player.GrantXP(XPValue);
         }
 
         private void OnMouseMove(float arg1, float arg2, float arg3, float arg4, List<Modifiers> arg5)
@@ -161,14 +177,9 @@ public class DataTypes
 
         void MousePressed(List<Modifiers> m)
         {
-            Health--;
-            if (Health <= 0)
+            if (Damageable)
             {
-                Destroy();
-            }
-            else
-            {
-                UpdateDebugText();
+                Events.Commands.Execute?.Invoke(new PlayerAttackTrackCards([TrackPosition.Value]));
             }
         }
 
@@ -179,6 +190,20 @@ public class DataTypes
         void MouseLeave(List<Modifiers> mods)
         {
             Entity.Color = BaseColor;
+        }
+
+        public void Act()
+        {
+            //try to attack if in range
+            if (Distance <= 1)
+            {
+                Dungeon.Player.Damage(Attack);
+            }
+            else
+            {
+                Distance -= 1;
+            }
+            UpdateDebugText();
         }
 
         public override string ToString()
