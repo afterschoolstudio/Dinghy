@@ -39,7 +39,7 @@ public record GameCommand
 public abstract record PlayerCommand : GameCommand{}
 
 [GameCommandSerializationInfo("PlayerMove")]
-public record PlayerMove : PlayerCommand, IMakesTrackAct, IUpdatesCardDisplayState
+public record PlayerMove : PlayerCommand, IMakesTrackAct
 {
     public int NumberRemoved { get; protected set; }
     protected override void ExecuteCommand()

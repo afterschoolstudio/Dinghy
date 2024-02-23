@@ -25,9 +25,9 @@ Engine.Run(new Engine.RunOptions(1920,1080,"dinghy",
 		demoTypes = Util.GetDemoSceneTypes().ToList();
 		genuaryDemoTypes = Util.GetGenuarySceneTypes().ToList();
 
-		// var scene = new Dungeon();
-		// scene.Mount(0);
-		// scene.Load(() => scene.Start());
+		var scene = new Dungeon();
+		scene.Mount(0);
+		scene.Load(() => scene.Start());
 	}, 
 	() =>
 	{
@@ -37,50 +37,46 @@ Engine.Run(new Engine.RunOptions(1920,1080,"dinghy",
 
 void drawDemoOptions()
 {
-	ImGUIHelper.Wrappers.BeginMainMenuBar();
-	if (ImGUIHelper.Wrappers.BeginMenu("Dinghy"))
+	ImGUIHelper.Wrappers.MainMenu(() =>
 	{
-		if (ImGUIHelper.Wrappers.BeginMenu("Demos"))
+		ImGUIHelper.Wrappers.Menu("Dinghy", () =>
 		{
-			Scene? scene = null;
-
-			if (ImGUIHelper.Wrappers.BeginMenu("Examples"))
+			ImGUIHelper.Wrappers.Menu("Demos", () =>
 			{
-				foreach (var type in demoTypes)
+				Scene? scene = null;
+				ImGUIHelper.Wrappers.Menu("Examples", () =>
 				{
-					if (ImGUIHelper.Wrappers.MenuItem(type.Name))
+					foreach (var type in demoTypes)
 					{
-						scene = Util.CreateInstance(type.Type) as Scene;
-						scene.Name = type.Name;
+						if (ImGUIHelper.Wrappers.MenuItem(type.Name))
+						{
+							scene = Util.CreateInstance(type.Type) as Scene;
+							scene.Name = type.Name;
+						}
 					}
-				}
-				ImGUIHelper.Wrappers.EndMenu();
-			}
-			
-			if (ImGUIHelper.Wrappers.BeginMenu("Genuary"))
-			{
-				foreach (var type in genuaryDemoTypes)
-				{
-					if (ImGUIHelper.Wrappers.MenuItem(type.Name))
-					{
-						scene = Util.CreateInstance(type.Type) as Scene;
-						scene.Name = type.Name;
-					}
-				}
-				ImGUIHelper.Wrappers.EndMenu();
-			}
-
-			if (scene != null)
-			{
-				Engine.TargetScene.Unmount(() =>
-				{
-					scene.Mount(0);
-					scene.Load(() => scene.Start());
 				});
-			}
-			ImGUIHelper.Wrappers.EndMenu();
-		}
-		ImGUIHelper.Wrappers.EndMenu();
-	}
-	ImGUIHelper.Wrappers.EndMainMenuBar();
+
+				ImGUIHelper.Wrappers.Menu("Genuary", () =>
+				{
+					foreach (var type in genuaryDemoTypes)
+					{
+						if (ImGUIHelper.Wrappers.MenuItem(type.Name))
+						{
+							scene = Util.CreateInstance(type.Type) as Scene;
+							scene.Name = type.Name;
+						}
+					}
+				});
+
+				if (scene != null)
+				{
+					Engine.TargetScene.Unmount(() =>
+					{
+						scene.Mount(0);
+						scene.Load(() => scene.Start());
+					});
+				}
+			});
+		});
+	});
 }

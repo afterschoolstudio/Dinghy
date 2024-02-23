@@ -3,7 +3,6 @@ using System.Numerics;
 using Depot.Generated.dungeon;
 using Dinghy.Core;
 using Dinghy.Internal.Sokol;
-using static Dinghy.Sandbox.Demos.dungeon.DataTypes;
 using static Dinghy.Core.ImGUI.ImGUIHelper.Wrappers;
 
 namespace Dinghy.Sandbox.Demos.dungeon;
@@ -11,6 +10,7 @@ namespace Dinghy.Sandbox.Demos.dungeon;
 [DemoScene("dungeon")]
 public class Dungeon : Scene
 {
+    public static DA_STACK DA_STACK = new();
     public static EventBus EventBus = new();
     public static Player Player = new ();
     public static Grid g = new (new (
@@ -23,10 +23,23 @@ public class Dungeon : Scene
 
     public static List<DeckCard> DiscardStack = new ();
     public static Deck Deck = new ();
-    public static Track Track = new (4);
+    public static Track Track = new ();
     public override void Create()
     {
+        Init();
+        Systems.Init();
+    }
+
+    public void Init()
+    {
+        foreach (var c in DiscardStack)
+        {
+            c.Destroy();
+        }
+        DiscardStack.Clear();
+        
         Deck.Init();
+        Track.Init(4);
         // //grid debug
         // for (int i = 0; i < g.Points.Count; i++)
         // {
@@ -35,19 +48,35 @@ public class Dungeon : Scene
 
         //ASSUME 4 TRACK SLOTS
         Deck.Draw(4);
-        Track.UpdategGameCardState();
-        Systems.Init();
     }
 
     private ImVec2 buttonSize = new () { x = 100, y = 20 };
     public static bool Death = false;
+
+    public static DebugOptions ActiveDebugOptions = new();
     public override void Update(double dt)
     {
-        ImGUIWindow("game",ImGuiWindowFlags_.ImGuiWindowFlags_NoTitleBar, () =>
+        MainMenu(() => {
+            Menu("Dungeon", () => {
+                Checkbox("Don't Damage Enemies", ref ActiveDebugOptions.DontDamageEnemies);
+            });
+        });
+
+        Window("game",ImGuiWindowFlags_.ImGuiWindowFlags_NoTitleBar, () =>
         {
             if (Death)
             {
                 Text($"player died");
+                Button($"Reset", buttonSize, () =>
+                {
+                    Events.Commands.Execute?.Invoke(new PlayerMove());
+                    //DONE shouldnt be able to move if all track cards are obstacles
+                    //DONE moving heals
+                    //DONE moving increases hunger
+                    //moving gets an attack of opportuninty if "trapped"
+                    //DONE move cycles a card from track (if possible)
+                    //DONE move draws if able
+                });
                 return;
             }
             Text($"HP: {Player.Health}/{Player.MaxHealth}");
@@ -99,12 +128,27 @@ public class Dungeon : Scene
                 Text($"{e.Name}");
             }
             Text("deck cards");
-            foreach (var e in Deck.Cards.Where(x => x.DeckPosition.HasValue).OrderBy(x => x.DeckPosition.Value))
+            foreach (var e in Deck.Cards.OrderBy(x => x.DeckPosition.Value))
             {
                 Text($"{e.DeckPosition}:{e.Name}");
             }
-            
-            
         });
+        
+        Quick.DrawEditGUIForObject("shake params",ref Shake);
+    }
+
+    public static ShakeParams Shake = new();
+    public class ShakeParams
+    {
+        public float Multiplier = 1f;
+        public float BaseShake = 1f;
+        public float Tick = 0.001f;
+        public float Decay = 0.1f;
+        public float DeathTime = 1f;
+    }
+
+    public class DebugOptions
+    {
+        public bool DontDamageEnemies;
     }
 }

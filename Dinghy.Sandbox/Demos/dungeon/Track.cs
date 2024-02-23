@@ -5,35 +5,21 @@ public class Track
     public int MaxTrackCards { get; protected set; }
     public bool CanAddNewCards => Cards.Count < MaxTrackCards;
     public List<int> PositionList = new();
-    public List<DataTypes.DeckCard> Cards = new();
-    public Track(int max)
+    public List<DeckCard> Cards = new();
+
+    public void Init(int max)
     {
+        foreach (var card in Cards)
+        {
+            card.Destroy();
+        }
+        Cards.Clear();
+        
         MaxTrackCards = max;
         for (int i = 0; i < MaxTrackCards; i++)
         {
             PositionList.Add(i); 
         }
-        Events.Commands.ExecutedCommandsUpdated += OnExecutedCommandsUpdated;
-    }
-
-    void OnExecutedCommandsUpdated(GameCommand c)
-    {
-        switch (c)
-        {
-            case IMakesTrackAct:
-                foreach (var dc in Cards)
-                {
-                    dc.Act();
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
-    public void AddTrackCard(DataTypes.DeckCard c)
-    {
-        Cards.Add(c);
     }
 
     public void UpdategGameCardState()
@@ -44,46 +30,62 @@ public class Track
         }
     }
 
-    public bool Discard()
+    public void Cycle()
     {
         var tc = Cards.FirstOrDefault(x => x.TrackPosition == 0);
         if (tc != null && tc.CanCycleOffBOard)
         {
+            Discard(tc);
+            Dungeon.Deck.Draw(1);
+        }
+    }
+
+    public void Discard(DeckCard tc, bool addToDiscard = true)
+    {
+        if (Cards.Contains(tc))
+        {
+            var removedPos = tc.TrackPosition;
             Cards.Remove(tc);
             tc.SetTrackPosition(null);
-            Dungeon.DiscardStack.Add(tc);
+            if (addToDiscard)
+            {
+                Dungeon.DiscardStack.Add(tc);
+            }
             
             //move everyone left
             foreach (var dc in Cards)
             {
-                if (dc.TrackPosition > 0)
+                if (dc.TrackPosition > removedPos)
                 {
                     dc.SetTrackPosition(dc.TrackPosition-1);
                 }
             }
+            Dungeon.Deck.Draw(1);
+        }
+    }
+
+    public bool TryAddNewTrackCard(DeckCard dc)
+    {
+        if (Cards.Count < MaxTrackCards)
+        {
+            int targetPos = 0;
+            if (Cards.Any())
+            {
+                targetPos = PositionList.Except(Cards.Select(x => x.TrackPosition.Value)).Min();
+            }
+            Cards.Add(dc);
+            dc.SetTrackPosition(targetPos);
+            dc.SetDistance(3);
             return true;
         }
         return false;
     }
 
-    public void RemoveCard(DataTypes.DeckCard dc)
+    public void IncreaseCardDistances(int dist)
     {
-        var ct = Cards.Count;
-        Cards.Remove(dc);
-        if (ct > Cards.Count)
+        foreach (var c in Cards)
         {
-            //something was removed
-            //move everyone left
-            foreach (var tc in Cards)
-            {
-                if (tc.TrackPosition > dc.TrackPosition)
-                {
-                    tc.SetTrackPosition(tc.TrackPosition-1);
-                }
-            }
-            Dungeon.Track.UpdategGameCardState();
-            Dungeon.Deck.Draw(1);
-            Dungeon.Track.UpdategGameCardState();
+            c.Distance += dist;
         }
     }
 
@@ -104,14 +106,6 @@ public class Track
         foreach (var c in Cards)
         {   
             c.Act();
-        }
-    }
-
-    public void CheckForDestroyedCards()
-    {
-        foreach (var c in Cards)
-        {
-            c.CheckForDestruction();
         }
     }
 }

@@ -1,15 +1,18 @@
+using System.Runtime.InteropServices.JavaScript;
+
 namespace Dinghy.Sandbox.Demos.dungeon;
 
 public class Deck
 {
-    public List<DataTypes.DeckCard> Cards = new();
-    public Deck()
-    {
-        Events.Commands.ExecutedCommandsUpdated += OnExecutedCommandsUpdated;
-    }
-
+    public List<DeckCard> Cards = new();
     public void Init()
     {
+        foreach (var card in Cards)
+        {
+            card.Destroy();
+        }
+        Cards.Clear();
+        
         foreach (var i in Depot.Generated.dungeon.cards.Lines)
         {
             int iterations = i.ID switch
@@ -22,7 +25,7 @@ public class Deck
             };
             for (int j = 0; j < iterations; j++)
             {
-                var card = new DataTypes.DeckCard(i.ID + $"{j}", i, 4);
+                var card = new DeckCard(i.ID + $"{j}", i, 4);
                 Cards.Add(card);
             }
         }
@@ -39,20 +42,13 @@ public class Deck
     {
         for (int i = 0; i < amount; i++)
         {
-            if (Dungeon.Track.HasValidTrackPosition(out var pos))
+            var nextDraw = Cards[0];
+            if (Dungeon.Track.TryAddNewTrackCard(nextDraw))
             {
-                var draw = Cards[0];
-                draw.SetTrackPosition(pos);
-                draw.SetDeckPosition(null);
-                draw.SetDistance(3);
-                Dungeon.Track.AddTrackCard(draw);
+                nextDraw.SetDeckPosition(null);
                 Cards.RemoveAt(0);
             }
         }
-    }
-
-    void OnExecutedCommandsUpdated(GameCommand c)
-    {
-        
+        Dungeon.Track.UpdategGameCardState();
     }
 }
