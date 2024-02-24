@@ -29,19 +29,21 @@ public static partial class Engine
 
     private static HashSet<DSystem> DefaultSystems = new HashSet<DSystem>()
     {
-        EntityUpdate,
+        //update
+        InputSystem,
+        new SceneSystem(),
+        new ManagedComponentSystem(),
+        new CollisionSystem(),
+        new CollisionCallbackSystem(),
+        //render
+        new ParticleRenderSystem(),
         new SpriteRenderSystem(),
         new ShapeRenderSystem(),
         new FrameAnimationSystem(),
-        new ManagedComponentSystem(),
-        DestructionSystem,
-        new ParticleRenderSystem(),
-        new CollisionSystem(),
-        new DebugOverlaySystem(),
-        InputSystem,
+        //cleanup
         new EventCleaningSystem(),
-        new CollisionCallbackSystem(),
-        new SceneSystem()
+        //debug
+        new DebugOverlaySystem(),
     };
     static HashSet<DSystem> ActiveSystems = new();
     public static void RegisterSystem(DSystem system)
