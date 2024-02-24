@@ -305,13 +305,13 @@ public class Shape : Entity
         Action<EntityReference,EntityReference> collisionStart = null, 
         Action<EntityReference,EntityReference> collisionStop = null, 
         Action<EntityReference,EntityReference> collisionContinue = null,
-        Action<List<Modifiers>> OnMouseUp = null,
-        Action<List<Modifiers>> OnMousePressed = null,
-        Action<List<Modifiers>> OnMouseDown = null,
-        Action<List<Modifiers>> OnMouseEnter = null,
-        Action<List<Modifiers>> OnMouseLeave = null,
-        Action<List<Modifiers>> OnMouseOver = null,
-        Action<List<Modifiers>,float,float> OnMouseScroll = null
+        Action<Arch.Core.Entity,List<Modifiers>> OnMouseUp = null,
+        Action<Arch.Core.Entity,List<Modifiers>> OnMousePressed = null,
+        Action<Arch.Core.Entity,List<Modifiers>> OnMouseDown = null,
+        Action<Arch.Core.Entity,List<Modifiers>> OnMouseEnter = null,
+        Action<Arch.Core.Entity,List<Modifiers>> OnMouseLeave = null,
+        Action<Arch.Core.Entity,List<Modifiers>> OnMouseOver = null,
+        Action<Arch.Core.Entity,List<Modifiers>,float,float> OnMouseScroll = null
         
         ) : base(startEnabled,scene,update:update)
     {
@@ -358,13 +358,13 @@ public class Sprite : Entity
         Action<EntityReference,EntityReference> collisionStart = null, 
         Action<EntityReference,EntityReference> collisionStop = null, 
         Action<EntityReference,EntityReference> collisionContinue = null,
-        Action<List<Modifiers>> OnMouseUp = null,
-        Action<List<Modifiers>> OnMousePressed = null,
-        Action<List<Modifiers>> OnMouseDown = null,
-        Action<List<Modifiers>> OnMouseEnter = null,
-        Action<List<Modifiers>> OnMouseLeave = null,
-        Action<List<Modifiers>> OnMouseOver = null,
-        Action<List<Modifiers>,float,float> OnMouseScroll = null
+        Action<Arch.Core.Entity,List<Modifiers>> OnMouseUp = null,
+        Action<Arch.Core.Entity,List<Modifiers>> OnMousePressed = null,
+        Action<Arch.Core.Entity,List<Modifiers>> OnMouseDown = null,
+        Action<Arch.Core.Entity,List<Modifiers>> OnMouseEnter = null,
+        Action<Arch.Core.Entity,List<Modifiers>> OnMouseLeave = null,
+        Action<Arch.Core.Entity,List<Modifiers>> OnMouseOver = null,
+        Action<Arch.Core.Entity,List<Modifiers>,float,float> OnMouseScroll = null
         
         
         ) : base(startEnabled,scene,update:update)
@@ -398,13 +398,13 @@ public class AnimatedSprite : Entity
         Action<EntityReference,EntityReference> collisionStart = null, 
         Action<EntityReference,EntityReference> collisionStop = null, 
         Action<EntityReference,EntityReference> collisionContinue = null,
-        Action<List<Modifiers>> OnMouseUp = null,
-        Action<List<Modifiers>> OnMousePressed = null,
-        Action<List<Modifiers>> OnMouseDown = null,
-        Action<List<Modifiers>> OnMouseEnter = null,
-        Action<List<Modifiers>> OnMouseLeave = null,
-        Action<List<Modifiers>> OnMouseOver = null,
-        Action<List<Modifiers>,float,float> OnMouseScroll = null
+        Action<Arch.Core.Entity,List<Modifiers>> OnMouseUp = null,
+        Action<Arch.Core.Entity,List<Modifiers>> OnMousePressed = null,
+        Action<Arch.Core.Entity,List<Modifiers>> OnMouseDown = null,
+        Action<Arch.Core.Entity,List<Modifiers>> OnMouseEnter = null,
+        Action<Arch.Core.Entity,List<Modifiers>> OnMouseLeave = null,
+        Action<Arch.Core.Entity,List<Modifiers>> OnMouseOver = null,
+        Action<Arch.Core.Entity,List<Modifiers>,float,float> OnMouseScroll = null
         
         
         ) : base(startEnabled,scene,update:update)

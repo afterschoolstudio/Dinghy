@@ -1,3 +1,5 @@
+using Dinghy.Core;
+
 namespace Dinghy.Sandbox.Demos.dungeon;
 
 public class Track
@@ -6,6 +8,14 @@ public class Track
     public bool CanAddNewCards => Cards.Count < MaxTrackCards;
     public List<int> PositionList = new();
     public List<DeckCard> Cards = new();
+    
+    public Grid Grid = new (new (
+        new(Engine.Width / 2f, Engine.Height / 2f), 
+        new(0.5f, 0.5f), 
+        200, 450, 
+        new(0.5f, 0.5f), 
+        4,
+        1));
 
     public void Init(int max)
     {
@@ -26,7 +36,7 @@ public class Track
     {
         foreach (var trackCard in Cards)
         {
-            Dungeon.g.ApplyPositionToEntity(trackCard.TrackPosition.Value,trackCard.Entity);
+            Grid.ApplyPositionToEntity(trackCard.TrackPosition.Value,trackCard.Entity);
         }
     }
 

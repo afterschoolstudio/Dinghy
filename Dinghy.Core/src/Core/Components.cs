@@ -230,13 +230,13 @@ public record struct Collider(float x, float y, float width, float height,
     Action<EntityReference,EntityReference> OnStart = null, 
     Action<EntityReference,EntityReference> OnContinue = null, 
     Action<EntityReference,EntityReference> OnEnd = null,
-    Action<List<Modifiers>> OnMouseUp = null,
-    Action<List<Modifiers>> OnMousePressed = null,
-    Action<List<Modifiers>> OnMouseDown = null,
-    Action<List<Modifiers>,float,float> OnMouseScroll = null,
-    Action<List<Modifiers>> OnMouseEnter = null,
-    Action<List<Modifiers>> OnMouseExit = null,
-    Action<List<Modifiers>> OnMouseOver = null
+    Action<Arch.Core.Entity,List<Modifiers>> OnMouseUp = null,
+    Action<Arch.Core.Entity,List<Modifiers>> OnMousePressed = null,
+    Action<Arch.Core.Entity,List<Modifiers>> OnMouseDown = null,
+    Action<Arch.Core.Entity,List<Modifiers>,float,float> OnMouseScroll = null,
+    Action<Arch.Core.Entity,List<Modifiers>> OnMouseEnter = null,
+    Action<Arch.Core.Entity,List<Modifiers>> OnMouseExit = null,
+    Action<Arch.Core.Entity,List<Modifiers>> OnMouseOver = null
     );
 
 

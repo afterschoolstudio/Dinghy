@@ -20,10 +20,10 @@ public class Systems
     public struct Shake
     {
         public float Multiplier = 1f;
-        public float BaseShake = 1f;
-        public float Tick = 0.1f;
-        public float Decay = 0.1f;
-        public float DeathTime = 1f;
+        public float BaseShake = 12f;
+        public float Tick = 0.001f;
+        public float Decay = 190f;
+        public float DeathTime = 0.2f;
         public TimeSince ShakeTimer = 0;
         public TimeSince Runtime = 0f;
         public Shake(){}

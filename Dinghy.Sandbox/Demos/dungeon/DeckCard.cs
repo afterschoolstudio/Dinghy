@@ -77,14 +77,16 @@ public class DeckCard
         {
             Health--;
         }
-        Entity.ECSEntity.Add(new Systems.Shake
-        {
-            Multiplier = Dungeon.Shake.Multiplier,
-            BaseShake = Dungeon.Shake.BaseShake,
-            Tick = Dungeon.Shake.Tick,
-            Decay = Dungeon.Shake.Decay,
-            DeathTime = Dungeon.Shake.DeathTime
-        });
+        // Entity.ECSEntity.Add(new Systems.Shake
+        // {
+        //     Multiplier = Dungeon.Shake.Multiplier,
+        //     BaseShake = Dungeon.Shake.BaseShake,
+        //     Tick = Dungeon.Shake.Tick,
+        //     Decay = Dungeon.Shake.Decay,
+        //     DeathTime = Dungeon.Shake.DeathTime
+        // });
+
+        Entity.ECSEntity.Add(new Systems.Shake());
         if (Health <= 0)
         {
             Destroy();
@@ -111,7 +113,7 @@ public class DeckCard
         // }
     }
 
-    void MousePressed(List<Modifiers> m)
+    void MousePressed(Arch.Core.Entity e, List<Modifiers> m)
     {
         if (Damageable)
         {
@@ -119,11 +121,11 @@ public class DeckCard
         }
     }
 
-    void MouseOver(List<Modifiers> mods)
+    void MouseOver(Arch.Core.Entity e, List<Modifiers> mods)
     {
         Entity.Color = HoveredColor;
     }
-    void MouseLeave(List<Modifiers> mods)
+    void MouseLeave(Arch.Core.Entity e, List<Modifiers> mods)
     {
         Entity.Color = BaseColor;
     }

@@ -29,7 +29,7 @@ public static class VectorExtensions
                 Matrix3x2.CreateTranslation(-pivot.Value) * // Move pivot to origin
                 Matrix3x2.CreateScale(scaleX, scaleY) * // Scale around pivot
                 Matrix3x2.CreateRotation(rotation) * // Rotate around pivot
-                Matrix3x2.CreateTranslation(pivot.Value); // Move back
+                Matrix3x2.CreateTranslation(pivot.Value) * // Move back
                 Matrix3x2.CreateTranslation(translate);
         }
         else

@@ -61,6 +61,7 @@ public class Player
 
     public void Damage(int dmg)
     {
+        if(Dungeon.ActiveDebugOptions.Invincible){return;}
         Health -= dmg;
         if (Health <= 0)
         {

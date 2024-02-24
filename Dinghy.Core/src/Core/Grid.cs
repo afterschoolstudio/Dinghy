@@ -78,10 +78,12 @@ public class Grid
 
     public void TransformGrid(float rotation, float scaleX, float scaleY, Vector2? translation = null)
     {
+        Console.WriteLine($"{Points[0].X},{Points[0].Y}");
         for (int i = 0; i < originalPoints.Count; i++)
         {
             Points[i] = originalPoints[i].Transform(rotation, scaleX, scaleY, translation, Pivot);
         }
+        Console.WriteLine($"{Points[0].X},{Points[0].Y}");
     }
     
     public void ApplyPositionsToEntites<T>(List<T> entities) where T : Entity

@@ -13,17 +13,12 @@ public class Dungeon : Scene
     public static DA_STACK DA_STACK = new();
     public static EventBus EventBus = new();
     public static Player Player = new ();
-    public static Grid g = new (new (
-        new(Engine.Width / 2f, Engine.Height / 2f), 
-        new(0.5f, 0.5f), 
-        200, 450, 
-        new(0.5f, 0.5f), 
-        4,
-        1));
+    
 
     public static List<DeckCard> DiscardStack = new ();
     public static Deck Deck = new ();
     public static Track Track = new ();
+    public static Inventory Inventory = new ();
     public override void Create()
     {
         Init();
@@ -40,6 +35,7 @@ public class Dungeon : Scene
         
         Deck.Init();
         Track.Init(4);
+        Inventory.Init();
         // //grid debug
         // for (int i = 0; i < g.Points.Count; i++)
         // {
@@ -59,6 +55,8 @@ public class Dungeon : Scene
         MainMenu(() => {
             Menu("Dungeon", () => {
                 Checkbox("Don't Damage Enemies", ref ActiveDebugOptions.DontDamageEnemies);
+                Checkbox("Player Invincible", ref ActiveDebugOptions.Invincible);
+                Button($"Reset", buttonSize, Init);
             });
         });
 
@@ -67,16 +65,7 @@ public class Dungeon : Scene
             if (Death)
             {
                 Text($"player died");
-                Button($"Reset", buttonSize, () =>
-                {
-                    Events.Commands.Execute?.Invoke(new PlayerMove());
-                    //DONE shouldnt be able to move if all track cards are obstacles
-                    //DONE moving heals
-                    //DONE moving increases hunger
-                    //moving gets an attack of opportuninty if "trapped"
-                    //DONE move cycles a card from track (if possible)
-                    //DONE move draws if able
-                });
+                Button($"Reset", buttonSize, Init);
                 return;
             }
             Text($"HP: {Player.Health}/{Player.MaxHealth}");
@@ -133,22 +122,22 @@ public class Dungeon : Scene
                 Text($"{e.DeckPosition}:{e.Name}");
             }
         });
-        
-        Quick.DrawEditGUIForObject("shake params",ref Shake);
+        // Quick.DrawEditGUIForObject("shake params",ref Shake);
     }
 
-    public static ShakeParams Shake = new();
-    public class ShakeParams
-    {
-        public float Multiplier = 1f;
-        public float BaseShake = 1f;
-        public float Tick = 0.001f;
-        public float Decay = 0.1f;
-        public float DeathTime = 1f;
-    }
+    // public static ShakeParams Shake = new();
+    // public class ShakeParams
+    // {
+    //     public float Multiplier = 1f;
+    //     public float BaseShake = 1f;
+    //     public float Tick = 0.001f;
+    //     public float Decay = 0.1f;
+    //     public float DeathTime = 1f;
+    // }
 
     public class DebugOptions
     {
         public bool DontDamageEnemies;
+        public bool Invincible;
     }
 }
