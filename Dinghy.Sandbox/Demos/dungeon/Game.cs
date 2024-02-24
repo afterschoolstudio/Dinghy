@@ -16,9 +16,19 @@ public class Dungeon : Scene
     
 
     public static List<DeckCard> DiscardStack = new ();
+    public static List<DeckCard> Graveyard = new ();
     public static Deck Deck = new ();
     public static Track Track = new ();
     public static Inventory Inventory = new ();
+    public List<DeckCard> GetAllCards()
+    {
+        var l = new List<DeckCard>();
+        l.AddRange(DiscardStack);
+        l.AddRange(Graveyard);
+        l.AddRange(Deck.Cards);
+        l.AddRange(Track.Cards);
+        return l;
+    }
     public override void Create()
     {
         Init();
@@ -27,27 +37,22 @@ public class Dungeon : Scene
 
     public void Init()
     {
-        foreach (var c in DiscardStack)
+        Player.Init();
+        
+        foreach (var c in GetAllCards())
         {
-            c.Destroy();
+            c.DestroyCardEntity();
         }
         DiscardStack.Clear();
+        Graveyard.Clear();
         
         Deck.Init();
         Track.Init(4);
         Inventory.Init();
-        // //grid debug
-        // for (int i = 0; i < g.Points.Count; i++)
-        // {
-        //     g.ApplyPositionToEntity(i,new Shape(Palettes.ONE_BIT_MONITOR_GLOW[1],1,1));
-        // }
-
-        //ASSUME 4 TRACK SLOTS
         Deck.Draw(4);
     }
 
     private ImVec2 buttonSize = new () { x = 100, y = 20 };
-    public static bool Death = false;
 
     public static DebugOptions ActiveDebugOptions = new();
     public override void Update(double dt)
@@ -62,7 +67,7 @@ public class Dungeon : Scene
 
         Window("game",ImGuiWindowFlags_.ImGuiWindowFlags_NoTitleBar, () =>
         {
-            if (Death)
+            if (Player.Dead)
             {
                 Text($"player died");
                 Button($"Reset", buttonSize, Init);

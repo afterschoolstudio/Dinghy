@@ -17,10 +17,17 @@ public class Inventory
     private List<Shape> GridCells = new List<Shape>();
     public void Init()
     {
+        foreach (var c in GridCells)
+        {
+            c.Destroy();
+        }
+        GridCells.Clear();
+        
         Grid.TransformGrid(0f,1f,1f,new Vector2(0,350f));
         foreach (var pos in Grid.Points)
         {
-            GridCells.Add(new Shape(Palettes.ENDESGA[3],64,64,
+            GridCells.Add(
+            new Shape(Palettes.ENDESGA[3],64,64,
                 OnMouseEnter: (e, mods) =>
                 {
                     e.Get<ShapeRenderer>().Color = Palettes.ENDESGA[4];

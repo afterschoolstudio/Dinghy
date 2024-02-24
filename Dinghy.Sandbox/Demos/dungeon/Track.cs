@@ -19,10 +19,6 @@ public class Track
 
     public void Init(int max)
     {
-        foreach (var card in Cards)
-        {
-            card.Destroy();
-        }
         Cards.Clear();
         
         MaxTrackCards = max;

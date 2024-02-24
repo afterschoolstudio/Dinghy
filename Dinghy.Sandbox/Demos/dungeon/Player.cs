@@ -7,6 +7,16 @@ public class Player
     public int Hunger { get; set; } = 0;
     public int XP { get; private set; } = 0;
     public int MovedDistance { get; private set; } = 0;
+    public bool Dead { get; protected set; }
+
+    public void Init()
+    {
+        Health = MaxHealth;
+        Hunger = 0;
+        XP = 0;
+        MovedDistance = 0;
+        Dead = false;
+    }
     public void GrantXP(int xp)
     {
         XP += xp;
@@ -18,7 +28,7 @@ public class Player
 
     public void Kill()
     {
-        Dungeon.Death = true;
+        Dead = true;
     }
 
     public void Move()

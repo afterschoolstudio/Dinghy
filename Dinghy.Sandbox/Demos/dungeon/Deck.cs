@@ -7,10 +7,6 @@ public class Deck
     public List<DeckCard> Cards = new();
     public void Init()
     {
-        foreach (var card in Cards)
-        {
-            card.Destroy();
-        }
         Cards.Clear();
         
         foreach (var i in Depot.Generated.dungeon.cards.Lines)

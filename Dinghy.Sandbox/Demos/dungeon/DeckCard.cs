@@ -89,18 +89,31 @@ public class DeckCard
         Entity.ECSEntity.Add(new Systems.Shake());
         if (Health <= 0)
         {
-            Destroy();
+            MoveToGraveyard();
+            Dungeon.Player.GrantXP(XPValue);
             return;
         }
         UpdateDebugText();
     }
 
-    public void Destroy()
+    public void MoveToGraveyard()
     {
-        Dungeon.Deck.Cards.Remove(this);
-        Dungeon.Player.GrantXP(XPValue);
-        Dungeon.Track.Discard(this,false);
-        
+        if (DeckPosition.HasValue)
+        {
+            Dungeon.Deck.Cards.Remove(this);
+        }
+
+        if (TrackPosition.HasValue)
+        {
+            Dungeon.Track.Discard(this,false);
+        }
+
+        Dungeon.Graveyard.Add(this);
+
+    }
+
+    public void DestroyCardEntity()
+    {
         InputSystem.Events.Mouse.Move -= OnMouseMove;
         Entity.Destroy();
     }
@@ -115,6 +128,7 @@ public class DeckCard
 
     void MousePressed(Arch.Core.Entity e, List<Modifiers> m)
     {
+        if(Dungeon.Player.Dead){return;}
         if (Damageable)
         {
             Events.Commands.Execute?.Invoke(new PlayerAttackTrackCards([TrackPosition.Value]));
@@ -123,10 +137,12 @@ public class DeckCard
 
     void MouseOver(Arch.Core.Entity e, List<Modifiers> mods)
     {
+        if(Dungeon.Player.Dead){return;}
         Entity.Color = HoveredColor;
     }
     void MouseLeave(Arch.Core.Entity e, List<Modifiers> mods)
     {
+        if(Dungeon.Player.Dead){return;}
         Entity.Color = BaseColor;
     }
 
