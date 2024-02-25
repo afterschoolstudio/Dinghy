@@ -36,44 +36,58 @@ public record GameCommand
 }
 
 
-public abstract record PlayerCommand : GameCommand{}
-
-[GameCommandSerializationInfo("PlayerMove")]
-public record PlayerMove : PlayerCommand, IMakesTrackAct
-{
-    public int NumberRemoved { get; protected set; }
-    protected override void ExecuteCommand()
-    {
-        Dungeon.Player.Move();
-        Events.Commands.CommandExecuted?.Invoke(this);
-    }
-}
-
-[GameCommandSerializationInfo("PlayerWait")]
-public record PlayerWait : PlayerCommand, IMakesTrackAct
-{
-    protected override void ExecuteCommand()
-    {
-        Dungeon.Player.Wait();
-        Events.Commands.CommandExecuted?.Invoke(this);
-    }
-}
-
-[GameCommandSerializationInfo("PlayerAttackTrackCards")]
-public record PlayerAttackTrackCards(List<int> trackIndicies) : PlayerCommand, IMakesTrackAct
-{
-    protected override void ExecuteCommand()
-    {
-        Dungeon.Player.Attack(trackIndicies);
-        Events.Commands.CommandExecuted?.Invoke(this);
-    }
-}
-
-[GameCommandSerializationInfo("PlayerDeath")]
-public record PlayerDeath : PlayerCommand, IMakesTrackAct
+[GameCommandSerializationInfo("KillPlayer")]
+public record KillPlayer : GameCommand
 {
     protected override void ExecuteCommand()
     {
         Events.Commands.CommandExecuted?.Invoke(this);
     }
 }
+
+
+public interface ITriggersLogic
+{
+    public GameLogicEvent CreateLogicEvent();
+}
+
+// PLAYERINPUT COMMANDS ARE THINGS A PLAYER CAN DIRECTLY "DO" WITH THE GAME INPUT
+// THIS IS NOT RELATED TO LOGIC (THOUGH LOGIC CAN BE AN OUTCOME)
+public abstract record PlayerInputCommand : GameCommand{}
+public static class PlayerInputCommands
+{
+    [GameCommandSerializationInfo("PlayerMove")]
+    public record Move : PlayerInputCommand, ITriggersLogic
+    {
+        protected override void ExecuteCommand()
+        {
+            Dungeon.Player.Move();
+            Events.Commands.CommandExecuted?.Invoke(this);
+        }
+
+        public GameLogicEvent CreateLogicEvent() => new LogicEvents.Move();
+    }
+
+    [GameCommandSerializationInfo("PlayerWait")]
+    public record Wait : PlayerInputCommand, ITriggersLogic
+    {
+        public GameLogicEvent CreateLogicEvent() => new LogicEvents.Wait();
+        protected override void ExecuteCommand()
+        {
+            Dungeon.Player.Wait();
+            Events.Commands.CommandExecuted?.Invoke(this);
+        }
+    }
+
+    [GameCommandSerializationInfo("PlayerAttackTrackCards")]
+    public record Attack(DeckCard card) : PlayerInputCommand, ITriggersLogic
+    {
+        public GameLogicEvent CreateLogicEvent() => new LogicEvents.Attack(card.ID);
+        protected override void ExecuteCommand()
+        {
+            Dungeon.Track.DamageTrackCard(card);
+            Events.Commands.CommandExecuted?.Invoke(this);
+        }
+    }
+}
+

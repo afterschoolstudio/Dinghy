@@ -10,9 +10,9 @@ namespace Dinghy.Sandbox.Demos.dungeon;
 [DemoScene("dungeon")]
 public class Dungeon : Scene
 {
-    public static DA_STACK DA_STACK = new();
     public static EventBus EventBus = new();
     public static Player Player = new ();
+    public static int LogicStackID = 0;
     
 
     public static List<DeckCard> DiscardStack = new ();
@@ -20,15 +20,7 @@ public class Dungeon : Scene
     public static Deck Deck = new ();
     public static Track Track = new ();
     public static Inventory Inventory = new ();
-    public List<DeckCard> GetAllCards()
-    {
-        var l = new List<DeckCard>();
-        l.AddRange(DiscardStack);
-        l.AddRange(Graveyard);
-        l.AddRange(Deck.Cards);
-        l.AddRange(Track.Cards);
-        return l;
-    }
+
     public override void Create()
     {
         Init();
@@ -39,10 +31,12 @@ public class Dungeon : Scene
     {
         Player.Init();
         
-        foreach (var c in GetAllCards())
+        foreach (var c in AllCards)
         {
-            c.DestroyCardEntity();
+            c.Value.DestroyCardEntity();
         }
+        AllCards.Clear();
+        
         DiscardStack.Clear();
         Graveyard.Clear();
         
@@ -50,6 +44,14 @@ public class Dungeon : Scene
         Track.Init(4);
         Inventory.Init();
         Deck.Draw(4);
+    }
+
+    public static Dictionary<int, DeckCard> AllCards = new();
+    public static DeckCard CreateNewCard(string name, Depot.Generated.dungeon.cards.cardsLine data)
+    {
+        var card = new DeckCard(AllCards.Count, name, data);
+        AllCards.Add(AllCards.Count,card);
+        return card;
     }
 
     private ImVec2 buttonSize = new () { x = 100, y = 20 };
@@ -76,27 +78,27 @@ public class Dungeon : Scene
             Text($"HP: {Player.Health}/{Player.MaxHealth}");
             Text($"Hunger:{Player.Hunger}");
 
-            if (!Track.Cards.All(x => x.IsObstacle))
+            Button($"Move", buttonSize, () =>
             {
-                Button($"Move", buttonSize, () =>
-                {
-                    Events.Commands.Execute?.Invoke(new PlayerMove());
-                    //DONE shouldnt be able to move if all track cards are obstacles
-                    //DONE moving heals
-                    //DONE moving increases hunger
-                    //moving gets an attack of opportuninty if "trapped"
-                    //DONE move cycles a card from track (if possible)
-                    //DONE move draws if able
-                });
-            }
-            else
-            {
-                Text($"cant move, all are obstacles");
-            }
+                Events.Commands.Execute?.Invoke(new PlayerInputCommands.Move());
+            });
+            // if (!Track.Cards.All(x => x.IsObstacle))
+            // {
+                //DONE shouldnt be able to move if all track cards are obstacles
+                //DONE moving heals
+                //DONE moving increases hunger
+                //moving gets an attack of opportuninty if "trapped"
+                //DONE move cycles a card from track (if possible)
+                //DONE move draws if able
+            // }
+            // else
+            // {
+            //     Text($"cant move, all are obstacles");
+            // }
                 
             Button($"Wait", buttonSize, () =>
             {
-                Events.Commands.Execute?.Invoke(new PlayerWait());
+                Events.Commands.Execute?.Invoke(new PlayerInputCommands.Wait());
                 //DONE waiting increases hunger
                 //DONE enemies move close
                 //DONE enemies that can attack attack
@@ -112,9 +114,10 @@ public class Dungeon : Scene
             
             
             Text("track cards");
-            foreach (var e in Track.Cards.OrderBy(x => x.TrackPosition.Value))
+            foreach (var e in Track.Cards)
             {
-                Text($"{e.TrackPosition}:{e.Name}");
+                var slotname = e.Value != null ? e.Value.Name : "Empty";
+                Text($"{e.Key}:{slotname}");
             }
             Text("off track cards");
             foreach (var e in DiscardStack)
@@ -122,9 +125,9 @@ public class Dungeon : Scene
                 Text($"{e.Name}");
             }
             Text("deck cards");
-            foreach (var e in Deck.Cards.OrderBy(x => x.DeckPosition.Value))
+            foreach (var e in Deck.Cards)
             {
-                Text($"{e.DeckPosition}:{e.Name}");
+                Text($"{Deck.Cards.IndexOf(e)}:{e.Name}");
             }
         });
         // Quick.DrawEditGUIForObject("shake params",ref Shake);

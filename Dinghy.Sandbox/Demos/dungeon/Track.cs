@@ -1,3 +1,4 @@
+using Arch.Core.Extensions;
 using Dinghy.Core;
 
 namespace Dinghy.Sandbox.Demos.dungeon;
@@ -5,9 +6,7 @@ namespace Dinghy.Sandbox.Demos.dungeon;
 public class Track
 {
     public int MaxTrackCards { get; protected set; }
-    public bool CanAddNewCards => Cards.Count < MaxTrackCards;
-    public List<int> PositionList = new();
-    public List<DeckCard> Cards = new();
+    public Dictionary<int,DeckCard?> Cards = new();
     
     public Grid Grid = new (new (
         new(Engine.Width / 2f, Engine.Height / 2f), 
@@ -24,49 +23,50 @@ public class Track
         MaxTrackCards = max;
         for (int i = 0; i < MaxTrackCards; i++)
         {
-            PositionList.Add(i); 
+           Cards.Add(i,null); 
         }
     }
 
     public void UpdategGameCardState()
     {
-        foreach (var trackCard in Cards)
+        foreach (var trackCard in Cards.Where(x => x.Value != null))
         {
-            Grid.ApplyPositionToEntity(trackCard.TrackPosition.Value,trackCard.Entity);
+            Grid.ApplyPositionToEntity(trackCard.Key,trackCard.Value!.Entity);
         }
     }
 
     public void Cycle()
     {
-        var tc = Cards.FirstOrDefault(x => x.TrackPosition == 0);
-        if (tc != null && tc.CanCycleOffBOard)
+        if (Cards[0] != null)
         {
-            Discard(tc);
+            Dungeon.DiscardStack.Add(Cards[0]);
+            Cards[0] = null;
+            
+            //move everyone left
+            FillSlotsAfterCardRemoval(0);
+            //draw a replacement
             Dungeon.Deck.Draw(1);
         }
     }
 
-    public void Discard(DeckCard tc, bool addToDiscard = true)
+    public void FillSlotsAfterCardRemoval(int removedPos)
     {
-        if (Cards.Contains(tc))
+        for (int i = removedPos + 1; i < Cards.Count; i++)
         {
-            var removedPos = tc.TrackPosition;
-            Cards.Remove(tc);
-            tc.SetTrackPosition(null);
-            if (addToDiscard)
-            {
-                Dungeon.DiscardStack.Add(tc);
-            }
-            
-            //move everyone left
-            foreach (var dc in Cards)
-            {
-                if (dc.TrackPosition > removedPos)
-                {
-                    dc.SetTrackPosition(dc.TrackPosition-1);
-                }
-            }
-            Dungeon.Deck.Draw(1);
+            Cards[i-1] = Cards[i];
+            Cards[i] = null;
+        }
+    }
+
+    public void DamageTrackCard(DeckCard c)
+    {
+        c.Health -= 1;
+        c.Entity.ECSEntity.Add(new Systems.Shake());
+        if (c.Health <= 0)
+        {
+            Dungeon.Graveyard.Add(c);
+            c.Entity.Active = false;
+            // Dungeon.Player.GrantXP(XPValue);
         }
     }
 
@@ -74,14 +74,10 @@ public class Track
     {
         if (Cards.Count < MaxTrackCards)
         {
-            int targetPos = 0;
-            if (Cards.Any())
-            {
-                targetPos = PositionList.Except(Cards.Select(x => x.TrackPosition.Value)).Min();
-            }
-            Cards.Add(dc);
-            dc.SetTrackPosition(targetPos);
-            dc.SetDistance(3);
+            var targetPos = Cards.First(x => x.Value == null).Key;
+            Cards[targetPos] = dc;
+            dc.Distance = 3;
+            UpdategGameCardState();
             return true;
         }
         return false;
@@ -89,29 +85,9 @@ public class Track
 
     public void IncreaseCardDistances(int dist)
     {
-        foreach (var c in Cards)
+        foreach (var c in Cards.Where(x => x.Value != null))
         {
-            c.Distance += dist;
-        }
-    }
-
-    public bool HasValidTrackPosition(out int pos)
-    {
-        var l = PositionList.Except(Cards.Select(x => x.TrackPosition.Value));
-        if (!l.Any())
-        {
-            pos = -1;
-            return false;
-        }
-        pos = l.MinBy(x => x);
-        return true;
-    }
-
-    public void Act()
-    {
-        foreach (var c in Cards)
-        {   
-            c.Act();
+            c.Value!.Distance += dist;
         }
     }
 }

@@ -21,30 +21,22 @@ public class Deck
             };
             for (int j = 0; j < iterations; j++)
             {
-                var card = new DeckCard(i.ID + $"{j}", i, 4);
-                Cards.Add(card);
+                Cards.Add(Dungeon.CreateNewCard(i.ID + $"{j}", i));
             }
         }
         
         Cards = Cards.OrderBy(x => Quick.RandFloat()).ToList();
-        for (int i = 0; i < Cards.Count; i++)
-        {
-            Cards[i].SetDeckPosition(i);
-            Cards[i].SetTrackPosition(null);
-        }
     }
 
     public void Draw(int amount)
     {
         for (int i = 0; i < amount; i++)
         {
-            var nextDraw = Cards[0];
+            var nextDraw = Cards.First();
             if (Dungeon.Track.TryAddNewTrackCard(nextDraw))
             {
-                nextDraw.SetDeckPosition(null);
                 Cards.RemoveAt(0);
             }
         }
-        Dungeon.Track.UpdategGameCardState();
     }
 }

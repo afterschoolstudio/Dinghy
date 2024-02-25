@@ -9,3 +9,12 @@ public class Keyword
         //define trigger conditions in depot?
     }
 }
+
+public class Trigger
+{
+    public Trigger(string name)
+    {
+        Name = data.ID;
+        //define trigger conditions in depot?
+    }
+}

@@ -7,30 +7,44 @@ namespace Dinghy.Sandbox.Demos.dungeon;
 
 public class DeckCard
 {
+    public int ID { get; protected set; }
     public string Name { get; protected set; }
     public int MaxHealth => Data.health;
     public int Attack => Data.damage;
     public bool Damageable => Data.damageable;
-    public bool IsObstacle => Data.obstacle;
-    public bool CanCycleOffBOard => Data.canCycleOffBoard;
-    
-    
-    public int Health { get; protected set; }
+    // public bool IsObstacle => Data.obstacle;
+    // public int XPValue => Data.XPValue;
+
+
+    private int health;
+
+    public int Health
+    {
+        get => health;
+        set
+        {
+            health = value;
+            UpdateDebugText();
+        }
+    }
     public cards.cardsLine Data { get; private set; }
-    public int Distance { get; set; }
-    public int XPValue { get; set; }
-    public int? TrackPosition { get; protected set; }
-    public int? DeckPosition { get; protected set; }
+    public int distance;
+
+    public int Distance
+    {
+        get => distance;
+        set
+        {
+            distance = value;
+            UpdateDebugText();
+        }
+    }
     public Shape Entity;
 
     public Color HoveredColor = new Color(1.0f, 0.1f, 0.1f, 0.1f);
     public Color BaseColor = new Color(1.0f, 0.01f, 0.01f, 0.01f);
-    public DeckCard(string id, cards.cardsLine Data, int xp)
+    public DeckCard(int cardID, string name, cards.cardsLine Data)
     {
-        Name = id;
-        this.Data = Data;
-        Health = MaxHealth;
-        XPValue = xp;
         Entity = new Shape(BaseColor, 150, 450,OnMouseOver:MouseOver,OnMouseLeave:MouseLeave,OnMousePressed:MousePressed)
         {
             PivotX = 74,
@@ -38,8 +52,12 @@ public class DeckCard
             ColliderActive = true,
             Active = false
         };
+        
+        ID = cardID;
+        Name = name;
+        this.Data = Data;
+        Health = MaxHealth;
         UpdateDebugText();
-        InputSystem.Events.Mouse.Move += OnMouseMove;
     }
 
     void UpdateDebugText()
@@ -47,83 +65,17 @@ public class DeckCard
         var sb = new StringBuilder();
         sb.AppendLine(Name);
         sb.AppendLine($"{Health}/{MaxHealth}");
-        sb.AppendLine($"p:{TrackPosition}");
         sb.AppendLine($"d:{Distance}");
-        if (IsObstacle)
-        {
-            sb.AppendLine("obstacle");
-        }
-        Entity.DebugText = sb.ToString();
-    }
-
-    public void SetDeckPosition(int? pos) => DeckPosition = pos;
-
-    public void SetTrackPosition(int? pos)
-    {
-        TrackPosition = pos;
-        Entity.Active = TrackPosition.HasValue;
-        UpdateDebugText();
-    }
-
-    public void SetDistance(int distance)
-    {
-        Distance = distance;
-        UpdateDebugText();
-    }
-
-    public void Damage(int amt)
-    {
-        if (!Dungeon.ActiveDebugOptions.DontDamageEnemies)
-        {
-            Health--;
-        }
-        // Entity.ECSEntity.Add(new Systems.Shake
+        // if (IsObstacle)
         // {
-        //     Multiplier = Dungeon.Shake.Multiplier,
-        //     BaseShake = Dungeon.Shake.BaseShake,
-        //     Tick = Dungeon.Shake.Tick,
-        //     Decay = Dungeon.Shake.Decay,
-        //     DeathTime = Dungeon.Shake.DeathTime
-        // });
-
-        Entity.ECSEntity.Add(new Systems.Shake());
-        if (Health <= 0)
-        {
-            MoveToGraveyard();
-            Dungeon.Player.GrantXP(XPValue);
-            return;
-        }
-        UpdateDebugText();
-    }
-
-    public void MoveToGraveyard()
-    {
-        if (DeckPosition.HasValue)
-        {
-            Dungeon.Deck.Cards.Remove(this);
-        }
-
-        if (TrackPosition.HasValue)
-        {
-            Dungeon.Track.Discard(this,false);
-        }
-
-        Dungeon.Graveyard.Add(this);
-
+        //     sb.AppendLine("obstacle");
+        // }
+        Entity.DebugText = sb.ToString();
     }
 
     public void DestroyCardEntity()
     {
-        InputSystem.Events.Mouse.Move -= OnMouseMove;
         Entity.Destroy();
-    }
-
-    private void OnMouseMove(float arg1, float arg2, float arg3, float arg4, List<Modifiers> arg5)
-    {
-        // if (mouseDown)
-        // {
-        //     Quick.MoveToMouse(Entity);
-        // }
     }
 
     void MousePressed(Arch.Core.Entity e, List<Modifiers> m)
@@ -131,7 +83,7 @@ public class DeckCard
         if(Dungeon.Player.Dead){return;}
         if (Damageable)
         {
-            Events.Commands.Execute?.Invoke(new PlayerAttackTrackCards([TrackPosition.Value]));
+            Events.Commands.Execute?.Invoke(new PlayerInputCommands.Attack(this));
         }
     }
 
@@ -144,27 +96,5 @@ public class DeckCard
     {
         if(Dungeon.Player.Dead){return;}
         Entity.Color = BaseColor;
-    }
-
-    public void Act()
-    {
-        //NEED TO MAKE THIS DISTINGUISH BETWEEN ACTING DIRECTLY AND CHASING (FROM MOVEMENT)
-        //MAYBE AN INTERFACE DIFFERENCE?
-        
-        //try to attack if in range
-        if (Distance <= 1)
-        {
-            Dungeon.Player.Damage(Attack);
-        }
-        else
-        {
-            Distance -= 1;
-        }
-        UpdateDebugText();
-    }
-
-    public override string ToString()
-    {
-        return $"{Name} HP:{Health} DIST:{Distance} ATK:{Attack} XP:{XPValue}";
     }
 }

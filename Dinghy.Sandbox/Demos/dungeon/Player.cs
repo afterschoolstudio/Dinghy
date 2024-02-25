@@ -36,7 +36,7 @@ public class Player
         int moveDist = 1; //saturate this with status/buffs/etc
         Dungeon.Track.IncreaseCardDistances(moveDist);
         MovedDistance += moveDist;
-        Health = Health + 1 < MaxHealth ? Health + 1 : Health;
+        // Health = Health + 1 < MaxHealth ? Health + 1 : Health; moving this to keyword
         Hunger++;
         if (Hunger > 10)
         {
@@ -54,18 +54,6 @@ public class Player
         if (Hunger > 10)
         {
             Dungeon.Player.Kill();
-        }
-    }
-
-    public void Attack(List<int> trackIndicies)
-    {
-        var attacks = Dungeon.Track.Cards
-            .Where(x => trackIndicies.Contains(x.TrackPosition.Value))
-            .Where(x => x.Damageable)
-            .OrderBy(x => x.TrackPosition);
-        foreach (var c in attacks)
-        {
-            c.Damage(1);
         }
     }
 

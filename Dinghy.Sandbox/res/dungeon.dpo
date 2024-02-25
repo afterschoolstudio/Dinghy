@@ -164,23 +164,45 @@
                         "description": "text",
                         "defaultValue": "text"
                     }
+                },
+                {
+                    "typeStr": "list",
+                    "guid": "81c7a1f8-30d3-432c-aed2-e84a7a1697ed",
+                    "name": "triggers",
+                    "description": "new list field",
+                    "sheet": "93e4c8a1-98fe-49c9-a02a-0a6895835f72",
+                    "defaultValue": [],
+                    "iconName": "newList",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text"
+                    }
                 }
             ],
             "lines": [
                 {
                     "guid": "ee102472-7bd5-47c8-a83e-180d696c775d",
                     "id": "obstacle",
-                    "description": "wont cycle off the board if there are 4"
+                    "description": "wont cycle off the board if there are 4",
+                    "triggers": []
                 },
                 {
                     "guid": "364b7812-8096-4655-b5f6-3009bf785a94",
                     "id": "vengeance",
-                    "description": "cycles back into the deck when discarded"
+                    "description": "cycles back into the deck when discarded",
+                    "triggers": []
                 },
                 {
                     "guid": "127b7b57-eebb-4931-9bc1-1cfb7cbda4ba",
                     "id": "rejuvenate",
-                    "description": "heals when discarded"
+                    "description": "heals when discarded",
+                    "triggers": [
+                        {
+                            "guid": "aa180f6e-eb8b-4ac7-8f6c-80a4a1996b23",
+                            "id": "0",
+                            "newLineReference": "06284345-de25-4fa3-88db-740e89b01dc4"
+                        }
+                    ]
                 }
             ],
             "hidden": false,
@@ -226,6 +248,78 @@
             "isProps": false,
             "parentSheetGUID": "26410e70-1719-447a-ad54-9535289342fa",
             "columnGUID": "14ef2ab4-38d9-4e77-a4a9-27096de092d5"
+        },
+        {
+            "name": "logicTriggers",
+            "description": "description of what the sheet is",
+            "displayColumn": "id",
+            "guid": "9f81da92-9ca0-40cf-8f19-a6708db51354",
+            "columns": [],
+            "lines": [
+                {
+                    "guid": "1e991e43-8f83-4991-b772-432b4a6dcf08",
+                    "id": "discardAny"
+                },
+                {
+                    "guid": "2bc8feba-69ee-4fc3-abdf-3ed216fd4688",
+                    "id": "move"
+                },
+                {
+                    "guid": "8e0ff7ea-932c-4c76-841e-6183316f56ab",
+                    "id": "wait"
+                },
+                {
+                    "guid": "7a5e0077-5f07-4ce5-98b3-cbef5bed5c38",
+                    "id": "draw"
+                },
+                {
+                    "guid": "06284345-de25-4fa3-88db-740e89b01dc4",
+                    "id": "discardSelf"
+                }
+            ],
+            "hidden": false,
+            "isProps": false,
+            "configurable": {
+                "name": "text",
+                "description": "text",
+                "displayColumn": "columnSelect@name",
+                "columnSelect@name@displayColumn": {
+                    "allowedTypes": [
+                        "int",
+                        "float",
+                        "text",
+                        "longtext"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "triggers",
+            "description": "list@dc184815-0e1d-4366-8a44-65a34a8f5dc5",
+            "displayColumn": "id",
+            "guid": "93e4c8a1-98fe-49c9-a02a-0a6895835f72",
+            "columns": [
+                {
+                    "typeStr": "lineReference",
+                    "guid": "ae612a33-69eb-4248-95ba-2e1d40d83832",
+                    "name": "newLineReference",
+                    "description": "new line reference field",
+                    "sheet": "9f81da92-9ca0-40cf-8f19-a6708db51354",
+                    "defaultValue": "",
+                    "iconName": "newLineLink",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "sheet": "sheetSelect",
+                        "defaultValue": "lineSelect@sheet"
+                    }
+                }
+            ],
+            "lines": [],
+            "hidden": true,
+            "isProps": false,
+            "parentSheetGUID": "dc184815-0e1d-4366-8a44-65a34a8f5dc5",
+            "columnGUID": "81c7a1f8-30d3-432c-aed2-e84a7a1697ed"
         }
     ]
 }
