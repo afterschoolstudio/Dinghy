@@ -21,6 +21,8 @@ public class Dungeon : Scene
     public static Track Track = new ();
     public static Inventory Inventory = new ();
 
+    public static GameLogic GameLogic = new();
+
     public override void Create()
     {
         Init();
