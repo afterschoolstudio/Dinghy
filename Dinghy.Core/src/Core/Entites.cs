@@ -50,6 +50,10 @@ public class Entity
         }
     }
     
+    //NOTE: maybe get rid of rotation/scale/pivot for an entity specifically?
+    //they are more about component things instead of intrinsic entity things
+    
+    //also make physics and actual system to get rid of the jank setters
     private float scaleY = 1;
     public float ScaleY
     {
@@ -288,7 +292,6 @@ public class Scene : Entity
 public class Shape : Entity
 {
     private Color c;
-    private float height = 0;
     public Color Color
     {
         get => c;

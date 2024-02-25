@@ -54,29 +54,16 @@
                     }
                 },
                 {
-                    "typeStr": "bool",
-                    "guid": "cc906392-56ac-4c19-8185-df11f9106cc8",
-                    "description": "bool field",
-                    "name": "canCycleOffBoard",
-                    "defaultValue": true,
-                    "iconName": "newBool",
+                    "typeStr": "list",
+                    "guid": "14ef2ab4-38d9-4e77-a4a9-27096de092d5",
+                    "name": "keywords",
+                    "description": "new list field",
+                    "sheet": "3a60bec9-09b5-4137-b3c2-6ddbeb507544",
+                    "defaultValue": [],
+                    "iconName": "newList",
                     "configurable": {
                         "name": "text",
-                        "description": "text",
-                        "defaultValue": "bool"
-                    }
-                },
-                {
-                    "typeStr": "bool",
-                    "guid": "e0375680-4fde-44d4-99b9-3c29c9d07312",
-                    "description": "bool field",
-                    "name": "obstacle",
-                    "defaultValue": true,
-                    "iconName": "newBool",
-                    "configurable": {
-                        "name": "text",
-                        "description": "text",
-                        "defaultValue": "bool"
+                        "description": "text"
                     }
                 }
             ],
@@ -87,8 +74,13 @@
                     "damage": 0,
                     "damageable": false,
                     "health": 10,
-                    "canCycleOffBoard": true,
-                    "obstacle": false
+                    "keywords": [
+                        {
+                            "guid": "900640ee-79fc-41d9-981e-7d4ef8592d61",
+                            "keyword": "127b7b57-eebb-4931-9bc1-1cfb7cbda4ba",
+                            "id": "0"
+                        }
+                    ]
                 },
                 {
                     "guid": "9ddb05ba-7a13-40e2-81d2-d587c55874f4",
@@ -96,8 +88,13 @@
                     "damage": 1,
                     "damageable": true,
                     "health": 2,
-                    "canCycleOffBoard": false,
-                    "obstacle": true
+                    "keywords": [
+                        {
+                            "guid": "b73ea9ff-6472-40a7-89ff-461bf41372ac",
+                            "keyword": "ee102472-7bd5-47c8-a83e-180d696c775d",
+                            "id": "0"
+                        }
+                    ]
                 },
                 {
                     "guid": "953f603d-96ae-4e1c-b85e-a7bc0fb5ce87",
@@ -105,8 +102,13 @@
                     "damage": 2,
                     "damageable": true,
                     "health": 5,
-                    "canCycleOffBoard": false,
-                    "obstacle": true
+                    "keywords": [
+                        {
+                            "guid": "6b50e8ae-97c8-4ff7-892e-10af196048a5",
+                            "keyword": "ee102472-7bd5-47c8-a83e-180d696c775d",
+                            "id": "0"
+                        }
+                    ]
                 },
                 {
                     "guid": "ae613822-1ab2-4fa1-b9e7-0fdcd4ba70dd",
@@ -114,8 +116,18 @@
                     "damage": 0,
                     "damageable": true,
                     "health": 1,
-                    "canCycleOffBoard": true,
-                    "obstacle": true
+                    "keywords": [
+                        {
+                            "guid": "4cb6f05d-d72a-4efc-ae94-9c8d2531d25c",
+                            "keyword": "ee102472-7bd5-47c8-a83e-180d696c775d",
+                            "id": "0"
+                        },
+                        {
+                            "guid": "97feee04-7a42-458b-9ba8-6f4a22d25a89",
+                            "keyword": "127b7b57-eebb-4931-9bc1-1cfb7cbda4ba",
+                            "id": "1"
+                        }
+                    ]
                 }
             ],
             "hidden": false,
@@ -133,6 +145,87 @@
                     ]
                 }
             }
+        },
+        {
+            "name": "keywords",
+            "description": "card keywords",
+            "displayColumn": "id",
+            "guid": "dc184815-0e1d-4366-8a44-65a34a8f5dc5",
+            "columns": [
+                {
+                    "typeStr": "text",
+                    "guid": "857ac29b-75b1-472e-8e93-f7a91a0bf9a5",
+                    "name": "description",
+                    "description": "text field",
+                    "defaultValue": "",
+                    "iconName": "newText",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "defaultValue": "text"
+                    }
+                }
+            ],
+            "lines": [
+                {
+                    "guid": "ee102472-7bd5-47c8-a83e-180d696c775d",
+                    "id": "obstacle",
+                    "description": "wont cycle off the board if there are 4"
+                },
+                {
+                    "guid": "364b7812-8096-4655-b5f6-3009bf785a94",
+                    "id": "vengeance",
+                    "description": "cycles back into the deck when discarded"
+                },
+                {
+                    "guid": "127b7b57-eebb-4931-9bc1-1cfb7cbda4ba",
+                    "id": "rejuvenate",
+                    "description": "heals when discarded"
+                }
+            ],
+            "hidden": false,
+            "isProps": false,
+            "configurable": {
+                "name": "text",
+                "description": "text",
+                "displayColumn": "columnSelect@name",
+                "columnSelect@name@displayColumn": {
+                    "allowedTypes": [
+                        "int",
+                        "float",
+                        "text",
+                        "longtext"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "keywords",
+            "description": "list@26410e70-1719-447a-ad54-9535289342fa",
+            "displayColumn": "id",
+            "guid": "3a60bec9-09b5-4137-b3c2-6ddbeb507544",
+            "columns": [
+                {
+                    "typeStr": "lineReference",
+                    "guid": "2cea3548-5d62-45ac-9231-1cae6deb66f3",
+                    "name": "keyword",
+                    "description": "new line reference field",
+                    "sheet": "dc184815-0e1d-4366-8a44-65a34a8f5dc5",
+                    "defaultValue": "",
+                    "iconName": "newLineLink",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "sheet": "sheetSelect",
+                        "defaultValue": "lineSelect@sheet"
+                    }
+                }
+            ],
+            "lines": [],
+            "hidden": true,
+            "isProps": false,
+            "parentSheetGUID": "26410e70-1719-447a-ad54-9535289342fa",
+            "columnGUID": "14ef2ab4-38d9-4e77-a4a9-27096de092d5"
         }
     ]
 }

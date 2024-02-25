@@ -8,11 +8,12 @@ using Volatile;
 
 namespace Dinghy.Sandbox.Demos.dungeon;
 
-public class Systems
+public partial class Systems
 {
     public static void Init()
     {
         Engine.RegisterSystem(new ShakeSystem());
+        Engine.RegisterSystem(new GameLogicSystem());
         // Engine.RegisterSystem(new CollisionSystem());
         // Engine.RegisterSystem(new MouseEnemyCollisonHandler());
     }
