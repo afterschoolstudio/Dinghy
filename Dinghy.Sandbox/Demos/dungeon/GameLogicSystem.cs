@@ -1,4 +1,6 @@
+using Arch.CommandBuffer;
 using Arch.Core;
+using Arch.Core.Extensions;
 
 namespace Dinghy.Sandbox.Demos.dungeon;
 
@@ -9,17 +11,19 @@ public record GameLogicEvent
     public void Emit()
     {
         Engine.ECSWorld.Create(
-            new GameLogicEventMeta(Dungeon.LogicStackID),
+            new LogicEvents.Meta(Dungeon.LogicStackID),
             this);
         Dungeon.LogicStackID++;
     }
 }
 
-public record GameLogicEventMeta(int stackID, bool inprogress = false, bool dirty = false);
 
 public static class LogicEvents
 {
+    public record struct Meta(int stackID, bool inprogress = false, bool dirty = false);
+    
     public record Discard(int cardID) : GameLogicEvent;
+    public record Destroyed(int cardID) : GameLogicEvent;
     public record Move : GameLogicEvent;
     public record Wait : GameLogicEvent;
     public record Draw : GameLogicEvent;
@@ -51,24 +55,39 @@ public partial class Systems
     {
         QueryDescription trackCards = new QueryDescription().WithAll<Track.TrackComponent>();
         
-        QueryDescription discard = new QueryDescription().WithAll<LogicEvents.Discard>();
+        QueryDescription allEvents = new QueryDescription().WithAll<LogicEvents.Meta>();
+        QueryDescription discard = new QueryDescription().WithAll<LogicEvents.Discard, LogicEvents.Meta>();
         public void Update(double dt)
         {
-            Engine.ECSWorld.Query(in discard, (Arch.Core.Entity e, ref LogicEvents.Discard d) =>
+            Engine.ECSWorld.Query(in discard, (Arch.Core.Entity e, ref LogicEvents.Discard d, ref LogicEvents.Meta em) =>
+            {
+                var discardedCard = Dungeon.AllCards[d.cardID];
+                //check all track cards triggers that listen to discard effects
+                Engine.ECSWorld.Query(in trackCards, (Arch.Core.Entity e, ref Track.TrackComponent t) =>
                 {
-                    //check all track cards for discard effects based on keyword interface?
-                    Engine.ECSWorld.Query(in trackCards, (Arch.Core.Entity e, ref Track.TrackComponent t) =>
+                    //make this an enum flag for logic type
+                    foreach (var keyword in Dungeon.AllCards[t.cardID].Keywords)
                     {
-                        //make this an enum flag for logic type
-                        foreach (var keyword in Dungeon.AllCards[t.cardID].Keywords)
+                        if (keyword.Triggers.Any(x => x.Name == "discardSelf") && discardedCard == Dungeon.AllCards[t.cardID])
                         {
-                            if (keyword.Triggers.Any(x => x.Name == "discardSelf"))
-                            {
-                                //do stuff
-                            }
+                            keyword.TriggerFor(Dungeon.AllCards[t.cardID]);
                         }
-                    });
+                    }
                 });
+
+                em.dirty = true;
+            });
+
+            CommandBuffer cb = new CommandBuffer(Engine.ECSWorld);
+            Engine.ECSWorld.Query(in allEvents, (Arch.Core.Entity e, ref LogicEvents.Meta em) =>
+            {
+                if (em.dirty)
+                {
+                    cb.Add(in e, new Destroy());
+                }
+            });
+            cb.Playback();
+
         }
     }
 }

@@ -40,6 +40,8 @@ public class Track
     {
         if (Cards[0] != null)
         {
+            new LogicEvents.Discard(Cards[0].ID).Emit();
+            Cards[0].Entity.ECSEntity.Remove<TrackComponent>();
             Dungeon.DiscardStack.Add(Cards[0]);
             Cards[0] = null;
             
@@ -68,6 +70,10 @@ public class Track
         if (c.Health <= 0)
         {
             var cardPos = Cards.First(x => x.Value == c).Key;
+            
+            new LogicEvents.Destroyed(Cards[cardPos].ID).Emit();
+            Cards[cardPos].Entity.ECSEntity.Remove<TrackComponent>();
+            
             Cards[cardPos] = null;
             c.Entity.Active = false;
             Dungeon.Graveyard.Add(c);

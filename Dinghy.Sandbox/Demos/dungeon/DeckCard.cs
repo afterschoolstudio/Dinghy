@@ -58,7 +58,7 @@ public class DeckCard
         {
             foreach (var t in Data.keywords)
             {
-                Keywords.Add(Dungeon.GameLogic.Keywords.First(x => x.GUID == t.GUID));
+                Keywords.Add(Dungeon.GameLogic.Keywords.First(x => x.GUID == t.keyword.GUID));
             }
         }
         
@@ -75,6 +75,10 @@ public class DeckCard
         sb.AppendLine(Name);
         sb.AppendLine($"{Health}/{MaxHealth}");
         sb.AppendLine($"d:{Distance}");
+        foreach (var k in Keywords)
+        {
+            sb.AppendLine($"{k.Name}");
+        }
         // if (IsObstacle)
         // {
         //     sb.AppendLine("obstacle");

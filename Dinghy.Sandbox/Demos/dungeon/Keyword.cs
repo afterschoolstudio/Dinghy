@@ -17,6 +17,17 @@ public class Keyword
             }
         }
     }
+
+    public void TriggerFor(DeckCard c)
+    {
+        //this could maybe be linked scripts
+        switch (Name)
+        {
+            case "rejuvenate":
+                Dungeon.Player.Health += 1;
+                break;
+        }
+    }
 }
 
 public class Trigger
