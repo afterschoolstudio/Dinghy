@@ -5,6 +5,7 @@ namespace Dinghy.Sandbox.Demos.dungeon;
 
 public class Track
 {
+    public readonly record struct TrackComponent();
     public int MaxTrackCards { get; protected set; }
     public Dictionary<int,DeckCard?> Cards = new();
     
@@ -42,20 +43,22 @@ public class Track
             Dungeon.DiscardStack.Add(Cards[0]);
             Cards[0] = null;
             
-            //move everyone left
             FillSlotsAfterCardRemoval(0);
-            //draw a replacement
-            Dungeon.Deck.Draw(1);
         }
     }
 
     public void FillSlotsAfterCardRemoval(int removedPos)
     {
+        //move everyone left
         for (int i = removedPos + 1; i < Cards.Count; i++)
         {
             Cards[i-1] = Cards[i];
             Cards[i] = null;
         }
+        //draw a replacement
+        Dungeon.Deck.Draw(1);
+        
+        UpdategGameCardState();
     }
 
     public void DamageTrackCard(DeckCard c)
@@ -64,19 +67,23 @@ public class Track
         c.Entity.ECSEntity.Add(new Systems.Shake());
         if (c.Health <= 0)
         {
-            Dungeon.Graveyard.Add(c);
+            var cardPos = Cards.First(x => x.Value == c).Key;
+            Cards[cardPos] = null;
             c.Entity.Active = false;
+            Dungeon.Graveyard.Add(c);
+            FillSlotsAfterCardRemoval(cardPos);
             // Dungeon.Player.GrantXP(XPValue);
         }
     }
 
     public bool TryAddNewTrackCard(DeckCard dc)
     {
-        if (Cards.Count < MaxTrackCards)
+        if (Cards.Any(x => x.Value == null))
         {
             var targetPos = Cards.First(x => x.Value == null).Key;
             Cards[targetPos] = dc;
             dc.Distance = 3;
+            dc.Entity.ECSEntity.Add(new TrackComponent());
             UpdategGameCardState();
             return true;
         }
