@@ -3,6 +3,7 @@ namespace Dinghy.Sandbox.Demos.dungeon;
 public class Keyword
 {
     public string Name => Data.ID;
+    public string GUID => Data.GUID;
     public List<Trigger> Triggers = new();
     protected Depot.Generated.dungeon.keywords.keywordsLine Data;
     public Keyword(Depot.Generated.dungeon.keywords.keywordsLine data)

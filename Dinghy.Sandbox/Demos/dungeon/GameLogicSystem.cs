@@ -19,7 +19,7 @@ public record GameLogicEventMeta(int stackID, bool inprogress = false, bool dirt
 
 public static class LogicEvents
 {
-    public record Discard(DeckCard c) : GameLogicEvent;
+    public record Discard(int cardID) : GameLogicEvent;
     public record Move : GameLogicEvent;
     public record Wait : GameLogicEvent;
     public record Draw : GameLogicEvent;
@@ -49,12 +49,25 @@ public partial class Systems
     //THIS NEEDS TO BASICALLY BE A STATE MACHINE
     public class GameLogicSystem : DSystem, IUpdateSystem
     {
+        QueryDescription trackCards = new QueryDescription().WithAll<Track.TrackComponent>();
+        
         QueryDescription discard = new QueryDescription().WithAll<LogicEvents.Discard>();
         public void Update(double dt)
         {
             Engine.ECSWorld.Query(in discard, (Arch.Core.Entity e, ref LogicEvents.Discard d) =>
                 {
                     //check all track cards for discard effects based on keyword interface?
+                    Engine.ECSWorld.Query(in trackCards, (Arch.Core.Entity e, ref Track.TrackComponent t) =>
+                    {
+                        //make this an enum flag for logic type
+                        foreach (var keyword in Dungeon.AllCards[t.cardID].Keywords)
+                        {
+                            if (keyword.Triggers.Any(x => x.Name == "discardSelf"))
+                            {
+                                //do stuff
+                            }
+                        }
+                    });
                 });
         }
     }

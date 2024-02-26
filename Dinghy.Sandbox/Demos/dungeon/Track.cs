@@ -5,7 +5,7 @@ namespace Dinghy.Sandbox.Demos.dungeon;
 
 public class Track
 {
-    public readonly record struct TrackComponent();
+    public readonly record struct TrackComponent(int cardID);
     public int MaxTrackCards { get; protected set; }
     public Dictionary<int,DeckCard?> Cards = new();
     
@@ -84,7 +84,7 @@ public class Track
             Cards[targetPos] = dc;
             dc.Distance = 3;
             dc.Entity.Active = true;
-            dc.Entity.ECSEntity.Add(new TrackComponent());
+            dc.Entity.ECSEntity.Add(new TrackComponent(dc.ID));
             UpdategGameCardState();
             return true;
         }

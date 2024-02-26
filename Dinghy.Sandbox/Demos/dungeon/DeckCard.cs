@@ -12,6 +12,7 @@ public class DeckCard
     public int MaxHealth => Data.health;
     public int Attack => Data.damage;
     public bool Damageable => Data.damageable;
+    public List<Keyword> Keywords = new();
     // public bool IsObstacle => Data.obstacle;
     // public int XPValue => Data.XPValue;
 
@@ -52,6 +53,14 @@ public class DeckCard
             ColliderActive = true,
             Active = false
         };
+        
+        if (Data.keywords != null)
+        {
+            foreach (var t in Data.keywords)
+            {
+                Keywords.Add(Dungeon.GameLogic.Keywords.First(x => x.GUID == t.GUID));
+            }
+        }
         
         ID = cardID;
         Name = name;
