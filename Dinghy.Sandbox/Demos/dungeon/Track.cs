@@ -83,6 +83,7 @@ public class Track
             var targetPos = Cards.First(x => x.Value == null).Key;
             Cards[targetPos] = dc;
             dc.Distance = 3;
+            dc.Entity.Active = true;
             dc.Entity.ECSEntity.Add(new TrackComponent());
             UpdategGameCardState();
             return true;
