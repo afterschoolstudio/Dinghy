@@ -32,6 +32,7 @@ public class Dungeon : Scene
     public void Init()
     {
         Player.Init();
+        GameLogic.Init();
         
         foreach (var c in AllCards)
         {
