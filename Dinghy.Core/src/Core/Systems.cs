@@ -799,7 +799,7 @@ public class DebugOverlaySystem : DSystem, IUpdateSystem
                     ImGuiWindowFlags_.ImGuiWindowFlags_NoMove |
                     ImGuiWindowFlags_.ImGuiWindowFlags_NoResize |
                     ImGuiWindowFlags_.ImGuiWindowFlags_NoBringToFrontOnFocus);
-                ImGUIHelper.Wrappers.Text($"{e.Id}\n{o.e.DebugText}");
+                ImGUIHelper.Wrappers.Text($"{e.Id}\n{p.x},{p.y}\n{o.e.DebugText}");
                 if (Engine.drawDebugColliders)
                 {
                     ImGUIHelper.Wrappers.DrawQuad(bounds);

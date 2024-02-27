@@ -206,17 +206,30 @@ public partial class Systems
                 em.dirty = true;
             });
             
-            //wait
-            Engine.ECSWorld.Query(in wait, (Arch.Core.Entity e, ref LogicEvents.Wait d, ref LogicEvents.Meta em) =>
+            //destroyed
+            Engine.ECSWorld.Query(in destroyed, (Arch.Core.Entity e, ref LogicEvents.Destroyed d, ref LogicEvents.Meta em) =>
             {
                 bool eventCancelled = false;
+                var destroyedCard = Dungeon.AllCards[d.cardID];
                 //check all track cards triggers that listen to discard effects
                 Engine.ECSWorld.Query(in trackCards, (Arch.Core.Entity e, ref Track.TrackComponent t) =>
                 {
                     //make this an enum flag for logic type
                     foreach (var keyword in Dungeon.AllCards[t.cardID].Keywords)
                     {
-                        if (keyword.Triggers.Any(x => x.Name == "wait"))
+                        if (keyword.Triggers.Any(x => x.Name == "destroyedAny"))
+                        {
+                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled);
+                        }
+                    }
+                });
+                
+                Engine.ECSWorld.Query(in trackCards, (Arch.Core.Entity e, ref Track.TrackComponent t) =>
+                {
+                    //make this an enum flag for logic type
+                    foreach (var keyword in Dungeon.AllCards[t.cardID].Keywords)
+                    {
+                        if (keyword.Triggers.Any(x => x.Name == "destroyedSelf") && destroyedCard == Dungeon.AllCards[t.cardID])
                         {
                             keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled);
                         }

@@ -190,7 +190,13 @@
                     "guid": "364b7812-8096-4655-b5f6-3009bf785a94",
                     "id": "vengeance",
                     "description": "cycles back into the deck when discarded",
-                    "triggers": []
+                    "triggers": [
+                        {
+                            "guid": "b15654ab-f182-4b88-be62-a162746f8e49",
+                            "newLineReference": "06284345-de25-4fa3-88db-740e89b01dc4",
+                            "id": "0"
+                        }
+                    ]
                 },
                 {
                     "guid": "127b7b57-eebb-4931-9bc1-1cfb7cbda4ba",
@@ -279,6 +285,14 @@
                 {
                     "guid": "e0b5e390-0e63-4205-8223-296105b2e1e4",
                     "id": "attack"
+                },
+                {
+                    "guid": "7a4e00a2-b966-45ed-b303-9885416fdfe3",
+                    "id": "destroyedAny"
+                },
+                {
+                    "guid": "6c4d260a-e952-4bdc-b9b8-45fcca2d6769",
+                    "id": "destroyedSelf"
                 }
             ],
             "hidden": false,

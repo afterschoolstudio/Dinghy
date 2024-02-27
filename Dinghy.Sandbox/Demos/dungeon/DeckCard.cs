@@ -41,7 +41,6 @@ public class DeckCard
         }
     }
     public Shape Entity;
-
     public Color HoveredColor = new Color(1.0f, 0.1f, 0.1f, 0.1f);
     public Color BaseColor = new Color(1.0f, 0.01f, 0.01f, 0.01f);
     public DeckCard(int cardID, string name, cards.cardsLine Data)

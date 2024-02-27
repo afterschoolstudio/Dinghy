@@ -29,8 +29,11 @@ public class Track
         }
     }
 
+    private List<DeckCard> lastUpdatedTrackCards = new();
     public void MoveTrackCardsToLatestTrackPositions(bool applyPositionsDirectly = false)
     {
+        var updated = new List<DeckCard>();
+        float timeOffset = 0f;
         foreach (var trackCard in Cards.Where(x => x.Value != null))
         {
             if (applyPositionsDirectly)
@@ -39,24 +42,36 @@ public class Track
             }
             else
             {
-                Coroutines.Add(movePosition(trackCard.Value!,trackCard.Value!.Entity.X,Grid.Points[trackCard.Key].X));
+                if (!lastUpdatedTrackCards.Contains(trackCard.Value))
+                {
+                    trackCard.Value!.Entity.X = Engine.Width + 200;
+                }
+                trackCard.Value!.Entity.Y = Grid.Points[trackCard.Key].Y;
+                // trackCard.Value!.Entity.X = Engine.Width + 100;
+                Coroutines.Add(movePosition(trackCard.Value!,trackCard.Value!.Entity.X,Grid.Points[trackCard.Key].X,timeOffset));
+                timeOffset += 0.2f;
             }
+            updated.Add(trackCard.Value);
         }
 
-        IEnumerator movePosition(DeckCard c, float startX, float endX)
+        lastUpdatedTrackCards = new List<DeckCard>(updated);
+    }
+    
+    IEnumerator movePosition(DeckCard c, float startX, float endX, float timeOffset)
+    {
+        TimeSince off = 0;
+        var trans = new Transition<float>(startX, endX, Easing.Option.EaseOutElastic);
+        while (off < timeOffset)
         {
-            Console.WriteLine("Coroutine started!");
-            TimeSince ts = 0;
-            var trans = new Transition<float>(startX, endX, Easing.Option.EaseInOutSine);
-            while (ts < 2)
-            {
-                Console.WriteLine(ts);
-                c.Entity.X = (float)trans.Sample(ts/2f);
-                yield return null;
-            }
             yield return null;
-            Console.WriteLine("coroutine ended passed!");
         }
+        TimeSince ts = 0;
+        while (ts < 0.5f)
+        {
+            c.Entity.X = startX + ((endX - startX) * (float)trans.Sample(ts / 0.5f));
+            yield return null;
+        }
+        yield return null;
     }
 
     public void RemoveTrackCard(int trackIndex) => RemoveTrackCard(Cards[trackIndex]);
@@ -97,13 +112,12 @@ public class Track
             c.Entity.ECSEntity.Add(new Systems.Shake());
             if (c.Health <= 0)
             {
-                var cardPos = Cards.First(x => x.Value == c).Key;
-                
-                new LogicEvents.Destroyed(Cards[cardPos].ID).Emit(() =>
+                Console.WriteLine("destroying");
+                new LogicEvents.Destroyed(c.ID).Emit(() =>
                 {
-                    Cards[cardPos].Entity.ECSEntity.Remove<TrackComponent>();
-                    
-                    Cards[cardPos] = null;
+                    Console.WriteLine("destroy callback");
+                    c.Entity.ECSEntity.Remove<TrackComponent>();
+                    Cards[Cards.First(x => x.Value == c).Key] = null;
                     c.Entity.Active = false;
                     Dungeon.Graveyard.Add(c);
                     FillEmptyTrackCardSpaces();
