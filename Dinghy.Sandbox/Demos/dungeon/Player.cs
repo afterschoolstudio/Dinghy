@@ -36,7 +36,11 @@ public class Player
         new LogicEvents.Move().Emit(() =>
         {
             int moveDist = 1; //saturate this with status/buffs/etc
-            Dungeon.Track.IncreaseCardDistances(moveDist);
+            foreach (var c in Dungeon.Track.Cards.Where(x => x.Value != null))
+            {
+                c.Value!.Distance += moveDist;
+            }
+            
             MovedDistance += moveDist;
             // Health = Health + 1 < MaxHealth ? Health + 1 : Health; moving this to keyword
             Hunger++;
@@ -46,7 +50,14 @@ public class Player
             }
             else
             {
-                Dungeon.Track.Cycle();
+                //cycle cards
+                new LogicEvents.Discard(Dungeon.Track.Cards[0].ID).Emit(() =>
+                {
+                    Dungeon.DiscardStack.Add(Dungeon.Track.Cards[0]);
+                    Dungeon.Track.RemoveTrackCard(Dungeon.Track.Cards[0]);
+                    Dungeon.Track.FillEmptyTrackCardSpaces();
+                    Dungeon.Deck.Draw();
+                });
             }
         });
     }

@@ -18,7 +18,7 @@ public abstract record GameLogicEvent
 }
 public static class LogicEvents
 {
-    public record struct Meta(int stackID, Action completionCallback, bool inprogress = false, bool dirty = false);
+    public record struct Meta(int stackID, Action completionCallback, bool cancelled = false, bool dirty = false);
     public record Discard(int cardID) : GameLogicEvent
     {
         protected override void CreateECSObject()
@@ -108,6 +108,7 @@ public partial class Systems
             Engine.ECSWorld.Query(in discard, (Arch.Core.Entity e, ref LogicEvents.Discard d, ref LogicEvents.Meta em) =>
             {
                 var discardedCard = Dungeon.AllCards[d.cardID];
+                bool eventCancelled = false;
                 //check all track cards triggers that listen to discard effects
                 Engine.ECSWorld.Query(in trackCards, (Arch.Core.Entity e, ref Track.TrackComponent t) =>
                 {
@@ -116,23 +117,27 @@ public partial class Systems
                     {
                         if (keyword.Triggers.Any(x => x.Name == "discardSelf") && discardedCard == Dungeon.AllCards[t.cardID])
                         {
-                            keyword.TriggerFor(Dungeon.AllCards[t.cardID]);
+                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled);
                         }
                         
                         if (keyword.Triggers.Any(x => x.Name == "discard"))
                         {
-                            keyword.TriggerFor(Dungeon.AllCards[t.cardID]);
+                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled);
                         }
                     }
                 });
-                
-                em.completionCallback?.Invoke();
+
+                if (!eventCancelled)
+                {
+                    em.completionCallback?.Invoke();
+                }
                 em.dirty = true;
             });
             
             //move
             Engine.ECSWorld.Query(in move, (Arch.Core.Entity e, ref LogicEvents.Move m, ref LogicEvents.Meta em) =>
             {
+                bool eventCancelled = false;
                 //check all track cards triggers that listen to discard effects
                 Engine.ECSWorld.Query(in trackCards, (Arch.Core.Entity e, ref Track.TrackComponent t) =>
                 {
@@ -141,18 +146,22 @@ public partial class Systems
                     {
                         if (keyword.Triggers.Any(x => x.Name == "move"))
                         {
-                            keyword.TriggerFor(Dungeon.AllCards[t.cardID]);
+                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled);
                         }
                     }
                 });
                 
-                em.completionCallback?.Invoke();
+                if (!eventCancelled)
+                {
+                    em.completionCallback?.Invoke();
+                }
                 em.dirty = true;
             });
             
             //wait
             Engine.ECSWorld.Query(in wait, (Arch.Core.Entity e, ref LogicEvents.Wait w, ref LogicEvents.Meta em) =>
             {
+                bool eventCancelled = false;
                 //check all track cards triggers that listen to discard effects
                 Engine.ECSWorld.Query(in trackCards, (Arch.Core.Entity e, ref Track.TrackComponent t) =>
                 {
@@ -161,18 +170,22 @@ public partial class Systems
                     {
                         if (keyword.Triggers.Any(x => x.Name == "wait"))
                         {
-                            keyword.TriggerFor(Dungeon.AllCards[t.cardID]);
+                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled);
                         }
                     }
                 });
                 
-                em.completionCallback?.Invoke();
+                if (!eventCancelled)
+                {
+                    em.completionCallback?.Invoke();
+                }
                 em.dirty = true;
             });
             
             //draw
             Engine.ECSWorld.Query(in draw, (Arch.Core.Entity e, ref LogicEvents.Draw d, ref LogicEvents.Meta em) =>
             {
+                bool eventCancelled = false;
                 //check all track cards triggers that listen to discard effects
                 Engine.ECSWorld.Query(in trackCards, (Arch.Core.Entity e, ref Track.TrackComponent t) =>
                 {
@@ -181,18 +194,22 @@ public partial class Systems
                     {
                         if (keyword.Triggers.Any(x => x.Name == "draw"))
                         {
-                            keyword.TriggerFor(Dungeon.AllCards[t.cardID]);
+                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled);
                         }
                     }
                 });
                 
-                em.completionCallback?.Invoke();
+                if (!eventCancelled)
+                {
+                    em.completionCallback?.Invoke();
+                }
                 em.dirty = true;
             });
             
             //wait
             Engine.ECSWorld.Query(in wait, (Arch.Core.Entity e, ref LogicEvents.Wait d, ref LogicEvents.Meta em) =>
             {
+                bool eventCancelled = false;
                 //check all track cards triggers that listen to discard effects
                 Engine.ECSWorld.Query(in trackCards, (Arch.Core.Entity e, ref Track.TrackComponent t) =>
                 {
@@ -201,18 +218,22 @@ public partial class Systems
                     {
                         if (keyword.Triggers.Any(x => x.Name == "wait"))
                         {
-                            keyword.TriggerFor(Dungeon.AllCards[t.cardID]);
+                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled);
                         }
                     }
                 });
                 
-                em.completionCallback?.Invoke();
+                if (!eventCancelled)
+                {
+                    em.completionCallback?.Invoke();
+                }
                 em.dirty = true;
             });
             
             //attacked
             Engine.ECSWorld.Query(in attacked, (Arch.Core.Entity e, ref LogicEvents.Attack d, ref LogicEvents.Meta em) =>
             {
+                bool eventCancelled = false;
                 var attackedCard = Dungeon.AllCards[d.cardID];
                 //check all track cards triggers that listen to discard effects
                 Engine.ECSWorld.Query(in trackCards, (Arch.Core.Entity e, ref Track.TrackComponent t) =>
@@ -222,12 +243,15 @@ public partial class Systems
                     {
                         if (keyword.Triggers.Any(x => x.Name == "attack") && attackedCard == Dungeon.AllCards[t.cardID])
                         {
-                            keyword.TriggerFor(Dungeon.AllCards[t.cardID]);
+                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled);
                         }
                     }
                 });
                 
-                em.completionCallback?.Invoke();
+                if (!eventCancelled)
+                {
+                    em.completionCallback?.Invoke();
+                }
                 em.dirty = true;
             });
 

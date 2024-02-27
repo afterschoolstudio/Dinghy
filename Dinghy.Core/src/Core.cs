@@ -29,17 +29,19 @@ public static partial class Engine
 
     private static HashSet<DSystem> DefaultSystems = new HashSet<DSystem>()
     {
+        //preupdate
+        new FrameAnimationSystem(),
         //update
         InputSystem,
         new SceneSystem(),
         new ManagedComponentSystem(),
+        new CoroutineSystem(),
         new CollisionSystem(),
         new CollisionCallbackSystem(),
         //render
         new ParticleRenderSystem(),
         new SpriteRenderSystem(),
         new ShapeRenderSystem(),
-        new FrameAnimationSystem(),
         //cleanup
         new EventCleaningSystem(),
         //debug

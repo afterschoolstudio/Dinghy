@@ -1,5 +1,7 @@
+using System.Collections;
 using System.Diagnostics;
 using System.Numerics;
+using Arch.CommandBuffer;
 using Arch.Core;
 using Arch.Core.Extensions;
 using Dinghy.Core;
@@ -744,6 +746,26 @@ public class EventCleaningSystem : DSystem, ICleanupSystem
             });
     }
 }
+
+public readonly record struct Coroutine(IEnumerator coroutine);
+public class CoroutineSystem : DSystem, IUpdateSystem
+{
+    QueryDescription coroutine = new QueryDescription().WithAll<Coroutine>();
+    public void Update(double dt)
+    {
+        CommandBuffer cb = new(Engine.ECSWorld);
+        Engine.ECSWorld.Query(in coroutine, (Arch.Core.Entity e, ref Coroutine c) =>  {
+            if (!c.coroutine.MoveNext())
+            {
+                // e.Add(new Destroy());
+                Console.WriteLine("DESTROYING COROUTINE");
+                cb.Add(in e, new Destroy());
+            }
+        });
+        cb.Playback();
+    }
+}
+
 
 public class DebugOverlaySystem : DSystem, IUpdateSystem
 {

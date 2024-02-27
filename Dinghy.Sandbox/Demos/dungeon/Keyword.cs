@@ -18,7 +18,8 @@ public class Keyword
         }
     }
 
-    public void TriggerFor(DeckCard c)
+    //bool dictates if the calling event should be cancelled after the effect is invoked
+    public void TriggerFor(DeckCard c, ref bool cancelEvent)
     {
         //this could maybe be linked scripts
         
@@ -27,6 +28,11 @@ public class Keyword
         {
             case "rejuvenate":
                 Dungeon.Player.Health += 1;
+                break;
+            case "vengeance":
+                Dungeon.Track.RemoveTrackCard(c);
+                Dungeon.Deck.Cards.Add(c);
+                cancelEvent = true;
                 break;
         }
     }

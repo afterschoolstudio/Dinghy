@@ -46,7 +46,10 @@ public class Dungeon : Scene
         Deck.Init();
         Track.Init(4);
         Inventory.Init();
-        Deck.Draw(4);
+        for (int i = 0; i < Track.MaxTrackCards; i++)
+        {
+            Deck.Draw(true);
+        }
     }
 
     public static Dictionary<int, DeckCard> AllCards = new();

@@ -5,14 +5,16 @@ public class Transition<T>
     public T StartValue;
     public T TargetValue;
     public Easing.Option EasingOption;
-    // public delegate double TransitionFunction(double time);
-
-    // public TransitionFunction Sample;
     public Transition(T start, T end, Easing.Option option)
     {
         StartValue = start;
         TargetValue = end;
         EasingOption = option;
+    }
+
+    public double SampleOverTime(double inputTime, double duration)
+    {
+        return Sample(Quick.Map(inputTime, 0, duration, 0, 1f));
     }
 
     public double Sample(double time) => EasingOption switch

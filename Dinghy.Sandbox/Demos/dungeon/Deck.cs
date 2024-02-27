@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices.JavaScript;
+using Arch.Core.Extensions;
 
 namespace Dinghy.Sandbox.Demos.dungeon;
 
@@ -28,15 +29,21 @@ public class Deck
         Cards = Cards.OrderBy(x => Quick.RandFloat()).ToList();
     }
 
-    public void Draw(int amount)
+    public void Draw(bool applyNewPositionsDirectly = false)
     {
-        for (int i = 0; i < amount; i++)
+        new LogicEvents.Draw().Emit(() =>
         {
             var nextDraw = Cards.First();
-            if (Dungeon.Track.TryAddNewTrackCard(nextDraw))
-            {
-                Cards.RemoveAt(0);
-            }
-        }
+            
+            var targetPos = Dungeon.Track.Cards.First(x => x.Value == null).Key;
+            Dungeon.Track.Cards[targetPos] = nextDraw;
+            nextDraw.Distance = 3;
+            nextDraw.Entity.Active = true;
+            nextDraw.Entity.ECSEntity.Add(new Track.TrackComponent(nextDraw.ID));
+            
+            Cards.Remove(nextDraw);
+            
+            Dungeon.Track.MoveTrackCardsToLatestTrackPositions(applyNewPositionsDirectly);
+        });
     }
 }

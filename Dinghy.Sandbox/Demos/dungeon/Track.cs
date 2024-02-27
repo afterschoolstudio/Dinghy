@@ -1,3 +1,4 @@
+using System.Collections;
 using Arch.Core.Extensions;
 using Dinghy.Core;
 
@@ -28,42 +29,64 @@ public class Track
         }
     }
 
-    public void UpdategGameCardState()
+    public void MoveTrackCardsToLatestTrackPositions(bool applyPositionsDirectly = false)
     {
         foreach (var trackCard in Cards.Where(x => x.Value != null))
         {
-            Grid.ApplyPositionToEntity(trackCard.Key,trackCard.Value!.Entity);
-        }
-    }
-
-    public void Cycle()
-    {
-        if (Cards[0] != null)
-        {
-            new LogicEvents.Discard(Cards[0].ID).Emit(() =>
+            if (applyPositionsDirectly)
             {
-                Cards[0].Entity.ECSEntity.Remove<TrackComponent>();
-                Dungeon.DiscardStack.Add(Cards[0]);
-                Cards[0].Entity.Active = false;
-                Cards[0] = null;
-                
-                FillSlotsAfterCardRemoval(0);
-            });
+                Grid.ApplyPositionToEntity(trackCard.Key,trackCard.Value!.Entity);
+            }
+            else
+            {
+                Coroutines.Add(movePosition(trackCard.Value!,trackCard.Value!.Entity.X,Grid.Points[trackCard.Key].X));
+            }
+        }
+
+        IEnumerator movePosition(DeckCard c, float startX, float endX)
+        {
+            Console.WriteLine("Coroutine started!");
+            TimeSince ts = 0;
+            var trans = new Transition<float>(startX, endX, Easing.Option.EaseInOutSine);
+            while (ts < 2)
+            {
+                Console.WriteLine(ts);
+                c.Entity.X = (float)trans.Sample(ts/2f);
+                yield return null;
+            }
+            yield return null;
+            Console.WriteLine("coroutine ended passed!");
         }
     }
 
-    public void FillSlotsAfterCardRemoval(int removedPos)
+    public void RemoveTrackCard(int trackIndex) => RemoveTrackCard(Cards[trackIndex]);
+    public void RemoveTrackCard(DeckCard card)
     {
-        //move everyone left
-        for (int i = removedPos + 1; i < Cards.Count; i++)
+        var index = Cards.First(x => x.Value == card).Key;
+        Cards[index].Entity.ECSEntity.Remove<TrackComponent>();
+        Cards[index].Entity.Active = false;
+        Cards[index] = null;
+    }
+
+    public void FillEmptyTrackCardSpaces()
+    {
+        for (int i = 0; i < Cards.Count; i++)
         {
-            Cards[i-1] = Cards[i];
-            Cards[i] = null;
+            if (Cards[i] == null)
+            {
+                fillInTrackForEmptyPos(i);
+            }
         }
-        //draw a replacement
-        Dungeon.Deck.Draw(1);
-        
-        UpdategGameCardState();
+
+        void fillInTrackForEmptyPos(int empty)
+        {
+            //move everyone left
+            for (int i = empty + 1; i < Cards.Count; i++)
+            {
+                Cards[i-1] = Cards[i];
+                Cards[i] = null;
+            }
+        }
     }
 
     public void DamageTrackCard(DeckCard c)
@@ -83,33 +106,10 @@ public class Track
                     Cards[cardPos] = null;
                     c.Entity.Active = false;
                     Dungeon.Graveyard.Add(c);
-                    FillSlotsAfterCardRemoval(cardPos);
-                    // Dungeon.Player.GrantXP(XPValue);
+                    FillEmptyTrackCardSpaces();
+                    Dungeon.Deck.Draw();
                 });
             }
         });
-    }
-
-    public bool TryAddNewTrackCard(DeckCard dc)
-    {
-        if (Cards.Any(x => x.Value == null))
-        {
-            var targetPos = Cards.First(x => x.Value == null).Key;
-            Cards[targetPos] = dc;
-            dc.Distance = 3;
-            dc.Entity.Active = true;
-            dc.Entity.ECSEntity.Add(new TrackComponent(dc.ID));
-            UpdategGameCardState();
-            return true;
-        }
-        return false;
-    }
-
-    public void IncreaseCardDistances(int dist)
-    {
-        foreach (var c in Cards.Where(x => x.Value != null))
-        {
-            c.Value!.Distance += dist;
-        }
     }
 }
