@@ -33,28 +33,34 @@ public class Player
 
     public void Move()
     {
-        int moveDist = 1; //saturate this with status/buffs/etc
-        Dungeon.Track.IncreaseCardDistances(moveDist);
-        MovedDistance += moveDist;
-        // Health = Health + 1 < MaxHealth ? Health + 1 : Health; moving this to keyword
-        Hunger++;
-        if (Hunger > 10)
+        new LogicEvents.Move().Emit(() =>
         {
-            Dungeon.Player.Kill();
-        }
-        else
-        {
-            Dungeon.Track.Cycle();
-        }
+            int moveDist = 1; //saturate this with status/buffs/etc
+            Dungeon.Track.IncreaseCardDistances(moveDist);
+            MovedDistance += moveDist;
+            // Health = Health + 1 < MaxHealth ? Health + 1 : Health; moving this to keyword
+            Hunger++;
+            if (Hunger > 10)
+            {
+                Dungeon.Player.Kill();
+            }
+            else
+            {
+                Dungeon.Track.Cycle();
+            }
+        });
     }
 
     public void Wait()
     {
-        Hunger++;
-        if (Hunger > 10)
+        new LogicEvents.Wait().Emit(() =>
         {
-            Dungeon.Player.Kill();
-        }
+            Hunger++;
+            if (Hunger > 10)
+            {
+                Dungeon.Player.Kill();
+            }
+        });
     }
 
     public void Damage(int dmg)

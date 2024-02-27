@@ -78,6 +78,10 @@ public class DeckCard
         foreach (var k in Keywords)
         {
             sb.AppendLine($"{k.Name}");
+            foreach (var t in k.Triggers)
+            {
+                sb.AppendLine($"    {t.Name}");
+            }
         }
         // if (IsObstacle)
         // {

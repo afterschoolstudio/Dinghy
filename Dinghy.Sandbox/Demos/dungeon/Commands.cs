@@ -46,32 +46,24 @@ public record KillPlayer : GameCommand
 }
 
 
-public interface ITriggersLogic
-{
-    public GameLogicEvent CreateLogicEvent();
-}
-
 // PLAYERINPUT COMMANDS ARE THINGS A PLAYER CAN DIRECTLY "DO" WITH THE GAME INPUT
 // THIS IS NOT RELATED TO LOGIC (THOUGH LOGIC CAN BE AN OUTCOME)
 public abstract record PlayerInputCommand : GameCommand{}
 public static class PlayerInputCommands
 {
     [GameCommandSerializationInfo("PlayerMove")]
-    public record Move : PlayerInputCommand, ITriggersLogic
+    public record Move : PlayerInputCommand
     {
         protected override void ExecuteCommand()
         {
             Dungeon.Player.Move();
             Events.Commands.CommandExecuted?.Invoke(this);
         }
-
-        public GameLogicEvent CreateLogicEvent() => new LogicEvents.Move();
     }
 
     [GameCommandSerializationInfo("PlayerWait")]
-    public record Wait : PlayerInputCommand, ITriggersLogic
+    public record Wait : PlayerInputCommand
     {
-        public GameLogicEvent CreateLogicEvent() => new LogicEvents.Wait();
         protected override void ExecuteCommand()
         {
             Dungeon.Player.Wait();
@@ -80,9 +72,8 @@ public static class PlayerInputCommands
     }
 
     [GameCommandSerializationInfo("PlayerAttackTrackCards")]
-    public record Attack(DeckCard card) : PlayerInputCommand, ITriggersLogic
+    public record Attack(DeckCard card) : PlayerInputCommand
     {
-        public GameLogicEvent CreateLogicEvent() => new LogicEvents.Attack(card.ID);
         protected override void ExecuteCommand()
         {
             Dungeon.Track.DamageTrackCard(card);

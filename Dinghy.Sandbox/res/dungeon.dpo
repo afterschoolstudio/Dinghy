@@ -275,6 +275,10 @@
                 {
                     "guid": "06284345-de25-4fa3-88db-740e89b01dc4",
                     "id": "discardSelf"
+                },
+                {
+                    "guid": "e0b5e390-0e63-4205-8223-296105b2e1e4",
+                    "id": "attack"
                 }
             ],
             "hidden": false,

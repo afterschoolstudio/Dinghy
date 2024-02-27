@@ -40,12 +40,15 @@ public class Track
     {
         if (Cards[0] != null)
         {
-            new LogicEvents.Discard(Cards[0].ID).Emit();
-            Cards[0].Entity.ECSEntity.Remove<TrackComponent>();
-            Dungeon.DiscardStack.Add(Cards[0]);
-            Cards[0] = null;
-            
-            FillSlotsAfterCardRemoval(0);
+            new LogicEvents.Discard(Cards[0].ID).Emit(() =>
+            {
+                Cards[0].Entity.ECSEntity.Remove<TrackComponent>();
+                Dungeon.DiscardStack.Add(Cards[0]);
+                Cards[0].Entity.Active = false;
+                Cards[0] = null;
+                
+                FillSlotsAfterCardRemoval(0);
+            });
         }
     }
 
@@ -65,21 +68,26 @@ public class Track
 
     public void DamageTrackCard(DeckCard c)
     {
-        c.Health -= 1;
-        c.Entity.ECSEntity.Add(new Systems.Shake());
-        if (c.Health <= 0)
+        new LogicEvents.Attack(c.ID).Emit(() =>
         {
-            var cardPos = Cards.First(x => x.Value == c).Key;
-            
-            new LogicEvents.Destroyed(Cards[cardPos].ID).Emit();
-            Cards[cardPos].Entity.ECSEntity.Remove<TrackComponent>();
-            
-            Cards[cardPos] = null;
-            c.Entity.Active = false;
-            Dungeon.Graveyard.Add(c);
-            FillSlotsAfterCardRemoval(cardPos);
-            // Dungeon.Player.GrantXP(XPValue);
-        }
+            c.Health -= 1;
+            c.Entity.ECSEntity.Add(new Systems.Shake());
+            if (c.Health <= 0)
+            {
+                var cardPos = Cards.First(x => x.Value == c).Key;
+                
+                new LogicEvents.Destroyed(Cards[cardPos].ID).Emit(() =>
+                {
+                    Cards[cardPos].Entity.ECSEntity.Remove<TrackComponent>();
+                    
+                    Cards[cardPos] = null;
+                    c.Entity.Active = false;
+                    Dungeon.Graveyard.Add(c);
+                    FillSlotsAfterCardRemoval(cardPos);
+                    // Dungeon.Player.GrantXP(XPValue);
+                });
+            }
+        });
     }
 
     public bool TryAddNewTrackCard(DeckCard dc)

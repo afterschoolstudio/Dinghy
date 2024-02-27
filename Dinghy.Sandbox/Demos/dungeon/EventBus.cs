@@ -27,10 +27,5 @@ public class EventBus
         //say we're done
         executedCommands.Add(c);
         Events.Commands.ExecutedCommandsUpdated?.Invoke(c);
-
-        if (c is ITriggersLogic tl)
-        {
-            tl.CreateLogicEvent().Emit();;
-        }
     }
 }

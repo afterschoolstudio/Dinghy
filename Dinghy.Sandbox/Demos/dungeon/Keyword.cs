@@ -21,6 +21,8 @@ public class Keyword
     public void TriggerFor(DeckCard c)
     {
         //this could maybe be linked scripts
+        
+        //TODO FILL OUT OTHER KEYWORDS / DESCRIPTIONs (HOW DOES OBSTACLE)
         switch (Name)
         {
             case "rejuvenate":
