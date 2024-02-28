@@ -71,6 +71,10 @@ public class Player
             {
                 Dungeon.Player.Kill();
             }
+            else
+            {
+                Dungeon.Track.Act();
+            }
         });
     }
 

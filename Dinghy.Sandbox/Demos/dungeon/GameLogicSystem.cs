@@ -13,6 +13,7 @@ public abstract record GameLogicEvent
     {
         OnComplete += onComplete;
         CreateECSObject();
+        Dungeon.LogicStackID++;
     }
     protected abstract void CreateECSObject();
 }
@@ -26,7 +27,6 @@ public static class LogicEvents
             Engine.ECSWorld.Create(
                 new LogicEvents.Meta(Dungeon.LogicStackID,OnComplete),
                 this);
-            Dungeon.LogicStackID++;
         }
     }
 
@@ -37,7 +37,16 @@ public static class LogicEvents
             Engine.ECSWorld.Create(
                 new LogicEvents.Meta(Dungeon.LogicStackID,OnComplete),
                 this);
-            Dungeon.LogicStackID++;
+        }
+    }
+    
+    public record TrackCardAttackPlayer(int cardID) : GameLogicEvent
+    {
+        protected override void CreateECSObject()
+        {
+            Engine.ECSWorld.Create(
+                new LogicEvents.Meta(Dungeon.LogicStackID,OnComplete),
+                this);
         }
     }
 
@@ -48,7 +57,6 @@ public static class LogicEvents
             Engine.ECSWorld.Create(
                 new LogicEvents.Meta(Dungeon.LogicStackID,OnComplete),
                 this);
-            Dungeon.LogicStackID++;
         }
     }
 
@@ -59,7 +67,6 @@ public static class LogicEvents
             Engine.ECSWorld.Create(
                 new LogicEvents.Meta(Dungeon.LogicStackID,OnComplete),
                 this);
-            Dungeon.LogicStackID++;
         }
     }
 
@@ -70,18 +77,16 @@ public static class LogicEvents
             Engine.ECSWorld.Create(
                 new LogicEvents.Meta(Dungeon.LogicStackID,OnComplete),
                 this);
-            Dungeon.LogicStackID++;
         }
     }
 
-    public record Attack(int cardID) : GameLogicEvent
+    public record AttackTrackCard(int cardID) : GameLogicEvent
     {
         protected override void CreateECSObject()
         {
             Engine.ECSWorld.Create(
                 new LogicEvents.Meta(Dungeon.LogicStackID,OnComplete),
                 this);
-            Dungeon.LogicStackID++;
         }
     }
 }
@@ -99,8 +104,9 @@ public partial class Systems
         QueryDescription move = new QueryDescription().WithAll<LogicEvents.Move, LogicEvents.Meta>();
         QueryDescription wait = new QueryDescription().WithAll<LogicEvents.Wait, LogicEvents.Meta>();
         QueryDescription destroyed = new QueryDescription().WithAll<LogicEvents.Destroyed, LogicEvents.Meta>();
-        QueryDescription attacked = new QueryDescription().WithAll<LogicEvents.Attack, LogicEvents.Meta>();
+        QueryDescription playerAttacked = new QueryDescription().WithAll<LogicEvents.AttackTrackCard, LogicEvents.Meta>();
         QueryDescription draw = new QueryDescription().WithAll<LogicEvents.Draw, LogicEvents.Meta>();
+        QueryDescription trackCardAttacked = new QueryDescription().WithAll<LogicEvents.TrackCardAttackPlayer, LogicEvents.Meta>();
         
         public void Update(double dt)
         {
@@ -207,7 +213,7 @@ public partial class Systems
             });
             
             //attacked
-            Engine.ECSWorld.Query(in attacked, (Arch.Core.Entity e, ref LogicEvents.Attack d, ref LogicEvents.Meta em) =>
+            Engine.ECSWorld.Query(in playerAttacked, (Arch.Core.Entity e, ref LogicEvents.AttackTrackCard d, ref LogicEvents.Meta em) =>
             {
                 bool eventCancelled = false;
                 var attackedCard = Dungeon.AllCards[d.cardID];
@@ -217,7 +223,37 @@ public partial class Systems
                     //make this an enum flag for logic type
                     foreach (var keyword in Dungeon.AllCards[t.cardID].Keywords)
                     {
-                        if (keyword.Triggers.Any(x => x.Name == "attack") && attackedCard == Dungeon.AllCards[t.cardID])
+                        if (keyword.Triggers.Any(x => x.Name == "attackedByPlayer") && attackedCard == Dungeon.AllCards[t.cardID])
+                        {
+                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled);
+                        }
+                    }
+                });
+                
+                if (!eventCancelled)
+                {
+                    em.completionCallback?.Invoke();
+                }
+                em.dirty = true;
+            });
+            
+            //card is attacking
+            Engine.ECSWorld.Query(in trackCardAttacked, (Arch.Core.Entity e, ref LogicEvents.TrackCardAttackPlayer d, ref LogicEvents.Meta em) =>
+            {
+                bool eventCancelled = false;
+                var attackingCard = Dungeon.AllCards[d.cardID];
+                //check all track cards triggers that listen to discard effects
+                Engine.ECSWorld.Query(in trackCards, (Arch.Core.Entity e, ref Track.TrackComponent t) =>
+                {
+                    //make this an enum flag for logic type
+                    foreach (var keyword in Dungeon.AllCards[t.cardID].Keywords)
+                    {
+                        if (keyword.Triggers.Any(x => x.Name == "selfAttacking") && attackingCard == Dungeon.AllCards[t.cardID])
+                        {
+                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled);
+                        }
+                        
+                        if (keyword.Triggers.Any(x => x.Name == "anyAttacking"))
                         {
                             keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled);
                         }

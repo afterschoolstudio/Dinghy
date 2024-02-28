@@ -1,4 +1,5 @@
 using System.Reflection;
+using Arch.Core;
 
 namespace Dinghy.Sandbox.Demos.dungeon;
 
@@ -72,11 +73,16 @@ public static class PlayerInputCommands
     }
 
     [GameCommandSerializationInfo("PlayerAttackTrackCards")]
-    public record Attack(DeckCard card) : PlayerInputCommand
+    public record Attack(List<DeckCard> cards) : PlayerInputCommand
     {
         protected override void ExecuteCommand()
         {
-            Dungeon.Track.DamageTrackCard(card);
+            foreach (var c in cards)
+            {
+                Dungeon.Track.DamageTrackCard(c);
+            }
+            //maybe need to move the acting into the damage?
+            Dungeon.Track.Act();
             Events.Commands.CommandExecuted?.Invoke(this);
         }
     }

@@ -284,7 +284,7 @@
                 },
                 {
                     "guid": "e0b5e390-0e63-4205-8223-296105b2e1e4",
-                    "id": "attack"
+                    "id": "attackedByPlayer"
                 },
                 {
                     "guid": "7a4e00a2-b966-45ed-b303-9885416fdfe3",
@@ -293,6 +293,14 @@
                 {
                     "guid": "6c4d260a-e952-4bdc-b9b8-45fcca2d6769",
                     "id": "destroyedSelf"
+                },
+                {
+                    "guid": "07239113-e257-4a50-ae46-d467d468acdb",
+                    "id": "selfAttacking"
+                },
+                {
+                    "guid": "9638cbdc-1a56-4e90-830a-355dc307402f",
+                    "id": "anyAttacking"
                 }
             ],
             "hidden": false,

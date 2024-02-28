@@ -95,7 +95,8 @@ public class DeckCard
         if(Dungeon.Player.Dead){return;}
         if (Damageable)
         {
-            Events.Commands.Execute?.Invoke(new PlayerInputCommands.Attack(this));
+            //TODO: gather all attacked things based on equipment
+            Events.Commands.Execute?.Invoke(new PlayerInputCommands.Attack([this]));
         }
     }
 

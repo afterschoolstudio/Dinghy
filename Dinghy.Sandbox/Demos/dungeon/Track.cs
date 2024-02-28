@@ -105,9 +105,40 @@ public class Track
         }
     }
 
+    public void Act()
+    {
+        Coroutines.Add(TrackAct());
+    }
+    IEnumerator TrackAct()
+    {
+        int i = 0;
+        bool spawnedLogic = false;
+        while (i < MaxTrackCards)
+        {
+            if (Cards[i] != null && Cards[i].Attack > 0 && !spawnedLogic)
+            {
+                //maybe do some highlight?
+                spawnedLogic = true;
+                new LogicEvents.TrackCardAttackPlayer(Cards[i].ID).Emit(() =>
+                {
+                    Console.WriteLine($"{Cards[i].ID} damaging player for {Cards[i].Attack}");
+                    Dungeon.Player.Damage(Cards[i].Attack);
+                    i++;
+                    spawnedLogic = false;
+                });
+            }
+            else
+            {
+                i++;
+                spawnedLogic = false;
+            }
+            yield return null;
+        }
+    }
+
     public void DamageTrackCard(DeckCard c)
     {
-        new LogicEvents.Attack(c.ID).Emit(() =>
+        new LogicEvents.AttackTrackCard(c.ID).Emit(() =>
         {
             c.Health -= 1;
             Coroutines.Add(Shake(c, defaultShake,() =>
