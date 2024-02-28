@@ -94,6 +94,15 @@ public static class ImGUIHelper
                 Internal.Sokol.ImGUI.igText((sbyte*)t_p);
             }
         }
+        
+        public static unsafe void SeperatorText(string text)
+        {
+            var t = System.Text.Encoding.UTF8.GetBytes(text);
+            fixed (byte* t_p = t)
+            {
+                Internal.Sokol.ImGUI.igSeparatorText((sbyte*)t_p);
+            }
+        }
 
         public static unsafe void DragFloat(string label, ref float value, float speed, float min, float max, string format, ImGuiSliderFlags_ flags)
         {

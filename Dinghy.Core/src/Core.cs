@@ -740,11 +740,11 @@ public static partial class Engine
     private static unsafe void Cleanup()
     {
         Events.SceneUnmounted -= OnSceneUnmounted;
-        ImGUI.shutdown();
         fixed (sg_imgui_t* ctx = &gfx_dbgui)
         {
             GfxDebugGUI.discard(ctx);
         }
+        ImGUI.shutdown();
         // Gfx.destroy_image(image);
         GP.shutdown();
         // GL.shutdown();

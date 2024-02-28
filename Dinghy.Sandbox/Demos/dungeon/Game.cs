@@ -119,23 +119,23 @@ public class Dungeon : Scene
             //picking up counts as an action
             
             
-            Text("track cards");
+            SeperatorText("track cards");
             foreach (var e in Track.Cards)
             {
                 var slotname = e.Value != null ? e.Value.Name : "Empty";
                 Text($"{e.Key}:{slotname}");
             }
-            Text("off track cards");
+            SeperatorText("off track cards");
             foreach (var e in DiscardStack)
             {
                 Text($"{e.Name}");
             }
-            Text("graveyard");
+            SeperatorText("graveyard");
             foreach (var e in Graveyard)
             {
                 Text($"{e.Name}");
             }
-            Text("deck cards");
+            SeperatorText("deck cards");
             foreach (var e in Deck.Cards)
             {
                 Text($"{Deck.Cards.IndexOf(e)}:{e.Name}");
