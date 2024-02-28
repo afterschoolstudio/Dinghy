@@ -130,6 +130,11 @@ public class Dungeon : Scene
             {
                 Text($"{e.Name}");
             }
+            Text("graveyard");
+            foreach (var e in Graveyard)
+            {
+                Text($"{e.Name}");
+            }
             Text("deck cards");
             foreach (var e in Deck.Cards)
             {

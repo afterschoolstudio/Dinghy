@@ -22,8 +22,8 @@ public class EntityEmitter : Scene
             for (int i = 0; i < emissionRate; i++)
             {
                 var rand = RandUnitCircle();
-                var dx = rand.x * 4;
-                var dy = rand.y * 4;
+                var dx = rand.X * 4;
+                var dy = rand.Y * 4;
                 new Shape(new Color(Palettes.ENDESGA[Quick.Random.Next(Palettes.ENDESGA.Count)]),update:(self, dt) =>
                 {
                     self.X += dx;

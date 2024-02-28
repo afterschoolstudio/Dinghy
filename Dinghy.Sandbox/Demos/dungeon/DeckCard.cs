@@ -82,10 +82,6 @@ public class DeckCard
                 sb.AppendLine($"    {t.Name}");
             }
         }
-        // if (IsObstacle)
-        // {
-        //     sb.AppendLine("obstacle");
-        // }
         Entity.DebugText = sb.ToString();
     }
 

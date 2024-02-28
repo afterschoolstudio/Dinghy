@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Numerics;
 using Arch.Core.Extensions;
 using Dinghy.Core;
 
@@ -109,21 +110,59 @@ public class Track
         new LogicEvents.Attack(c.ID).Emit(() =>
         {
             c.Health -= 1;
-            c.Entity.ECSEntity.Add(new Systems.Shake());
-            if (c.Health <= 0)
+            Coroutines.Add(Shake(c, defaultShake,() =>
             {
-                Console.WriteLine("destroying");
-                new LogicEvents.Destroyed(c.ID).Emit(() =>
+                if (c.Health <= 0)
                 {
-                    Console.WriteLine("destroy callback");
-                    c.Entity.ECSEntity.Remove<TrackComponent>();
-                    Cards[Cards.First(x => x.Value == c).Key] = null;
-                    c.Entity.Active = false;
-                    Dungeon.Graveyard.Add(c);
-                    FillEmptyTrackCardSpaces();
-                    Dungeon.Deck.Draw();
-                });
-            }
+                    Console.WriteLine("destroying");
+                    new LogicEvents.Destroyed(c.ID).Emit(() =>
+                    {
+                        Console.WriteLine("destroy callback");
+                        c.Entity.ECSEntity.Remove<TrackComponent>();
+                        Cards[Cards.First(x => x.Value == c).Key] = null;
+                        c.Entity.Active = false;
+                        Dungeon.Graveyard.Add(c);
+                        FillEmptyTrackCardSpaces();
+                        Dungeon.Deck.Draw();
+                    });
+                }
+            }));
         });
+    }
+
+    private ShakeParams defaultShake = new ShakeParams();
+    IEnumerator Shake(DeckCard c, ShakeParams p, Action onComplete)
+    {
+        c.Entity.ColliderActive = false;
+        Vector2 start = new Vector2(c.Entity.X, c.Entity.Y);
+        TimeSince t = 0;
+        TimeSince shakeTimer = 0;
+        while (t < p.DeathTime)
+        {
+            if (shakeTimer >= p.Tick)
+            {
+                var next = start + Quick.RandUnitCircle() * p.BaseShake * p.Multiplier;
+                c.Entity.X = next.X;
+                c.Entity.Y = next.Y;
+                shakeTimer = 0f;
+            }
+            
+            p.BaseShake -= p.Decay * (float)Engine.DeltaTime;
+            p.BaseShake = MathF.Max( p.BaseShake, 0 );
+            yield return null;
+        }
+        c.Entity.X = start.X;
+        c.Entity.Y = start.Y;
+        c.Entity.ColliderActive = true;
+        onComplete?.Invoke();
+    }
+    
+    public struct ShakeParams()
+    {
+        public float Multiplier = 1f;
+        public float BaseShake = 12f;
+        public float Tick = 0.001f;
+        public float Decay = 190f;
+        public float DeathTime = 0.1f;
     }
 }

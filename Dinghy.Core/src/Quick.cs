@@ -1,9 +1,9 @@
 ﻿using System.Reflection;
+using System.Numerics;
 using Arch.Core;
 using Dinghy.Core;
 using Dinghy.Core.ImGUI;
 using Dinghy.Internal.Sokol;
-using Volatile;
 
 namespace Dinghy;
 
@@ -30,10 +30,10 @@ public static class Quick
         e.Y = InputSystem.MouseY;
     }
 
-    public static Volatile.Vector2 RandUnitCircle()
+    public static Vector2 RandUnitCircle()
     {
         var radian = RandDouble() * Math.PI * 2;
-        return new Volatile.Vector2(
+        return new Vector2(
             (float)Math.Cos(radian),
             (float)Math.Sin(radian));
     }
@@ -95,8 +95,8 @@ public static class Quick
                         case "Point":
                         {
                             Vector2 value = (Vector2)fieldInfo.GetValue(o);
-                            float x = value.x;
-                            float y = value.y;
+                            float x = value.X;
+                            float y = value.Y;
                             ImGUIHelper.Wrappers.SliderFloat2(editLabelName, ref x, ref y, 1f, 1000f, "",
                                 ImGuiSliderFlags_.ImGuiSliderFlags_None);
                             fieldInfo.SetValue(o, new Vector2(x,y));
