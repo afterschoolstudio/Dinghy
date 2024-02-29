@@ -64,6 +64,22 @@ var sokol = new lib("sokol", [
             new("traverse","./libs/sokol/src/sokol/util/sokol_color.h"),
         ],
         rspInclude:sokol_settings),
+    new ("sokol_fontstash", 
+        "./libs/sokol/bindgen/sokol_fontstash_bindgen_helper.h",
+        "sfons_",
+        "Fontstash",
+        "../Dinghy.Core/src/generated/lib/sokol/Sokol.Fontstash.cs",
+        [
+            new("traverse",[
+                "./libs/sokol/stb_truetype.h",
+                "./libs/sokol/fontstash.h",
+                "./libs/sokol/src/sokol/util/sokol_fontstash.h",
+            ]),
+            new ("remap",[
+                "FONScontext*=@void*",
+            ])
+        ],
+        rspInclude:sokol_settings),
     new ("sokol_debugtext", 
         "./libs/sokol/bindgen/sokol_debugtext_bindgen_helper.h",
         "sdtx_",
