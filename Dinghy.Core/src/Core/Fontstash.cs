@@ -10,149 +10,132 @@ public class FontstashRenderer : IFontStashRenderer
 {
     public void Draw(object texture, Vector2 pos, Rectangle? src, FSColor color, float rotation, Vector2 scale, float depth)
     {
-        var p = new Position(pos.X, pos.Y, scale.X, scale.Y, rotation, 0f, 0);
-        sgp_rect source = default;
-        source.x = src.Value.X;
-        source.y = src.Value.Y;
-        source.w = src.Value.Width;
-        source.h = src.Value.Height;
-        Engine.DrawTexturedRect(p,(sg_image)texture,source);
+        (texture as FontTexture).Draw(pos, src, color, rotation, scale, depth);
     }
 
     public readonly FontstashTextManager _textureManager = new();
     public ITexture2DManager TextureManager => _textureManager;
 }
 
-public class FontstashTextManager : ITexture2DManager
+public class FontTexture
 {
-    private Dictionary<uint, List<uint>> fontPixels = new();
-    public object CreateTexture(int width, int height)
+    public uint WHITE = 0xFFFF0000;
+    private List<uint> pixels = new();
+    public Point Size;
+    private bool pixelsDirty = false;
+    public void Write(Rectangle bounds, byte[] data)
     {
-        // uint WHITE = 0xFFFFFFFF;
-        uint WHITE = 0xFFFF0000;
-        var basePixels = new List<uint>();
-        for (int i = 0; i < (width*height); i++)
+        var uintData = new List<uint>(bounds.Width * bounds.Height);
+        for (int i = 0; i < uintData.Capacity; i++)
         {
-            basePixels.Add(WHITE);
+            /*
+             *               uint 0
+             *  byte0    byte1    byte2    byte3
+             *  AAAAAAAA RRRRRRRR GGGGGGGG BBBBBBBB 
+             *  00000000 00000000 00000000 00000000
+             */
+            
+            int byteIndex = i * 4;
+            uint color = (uint)(
+                data[byteIndex + 0] << 24 | // Red
+                data[byteIndex + 1] << 16 | // Green
+                data[byteIndex + 2] << 8 | // Blue
+                data[byteIndex + 3]); // Alpha
+            uintData.Add(color);
         }
         
-        var font_desc = default(sg_image_desc);
-        font_desc.width = width;
-        font_desc.height = height;
-        font_desc.usage = sg_usage.SG_USAGE_DYNAMIC;
-        unsafe
+        // Console.WriteLine($"data count: {uintData.Count}");
+        // Console.WriteLine($"bounds: {update.bounds.X},{update.bounds.Y} w:{update.bounds.Width} h:{update.bounds.Height}");
+        
+        //debug glpyh patches-------------
+        // var letter = default(sg_image_desc);
+        // letter.width = bounds.Width;
+        // letter.height = bounds.Height;
+        // var dbp = new Dinghy.NativeInterop.Utils.NativeArray<uint>(uintData.Count);
+        // for (int i = 0; i < uintData.Count; i++)
+        // {
+        //     dbp[i] = uintData[i];
+        // }
+        // letter.data.subimage.e0_0 = dbp.AsSgRange();
+        // unsafe
+        // {
+        //     Gfx.make_image(&letter);
+        // }
+        //------------
+
+        
+        // patch the new uint data in currentPixels
+        for (int y = 0; y < bounds.Height; y++)
         {
-            var img = Gfx.make_image(&font_desc);
-            fontPixels.Add(img.id,basePixels);
-            return img;
-        }
-    }
-
-    public Point GetTextureSize(object texture)
-    {
-        var q = Gfx.query_image_desc((sg_image)texture);
-        return new Point(new Size(q.width, q.height));
-    }
-
-    public Dictionary<object, List<(Rectangle bounds, byte[] data)>> frameUpdateOperations = new();
-    public void SetTextureData(object texture, Rectangle bounds, byte[] data)
-    {
-        if (!frameUpdateOperations.ContainsKey(texture))
-        {
-            frameUpdateOperations.Add(texture, new List<(Rectangle, byte[])>());
-        }
-        frameUpdateOperations[texture].Add((bounds,data));
-    }
-
-    public void ClearTextUpdates()
-    {
-        frameUpdateOperations.Clear();
-    }
-
-    public void ApplyTextureUpdates()
-    {
-        foreach (var textureUpdate in frameUpdateOperations)
-        {
-            var img = (sg_image)textureUpdate.Key;
-            var q = Gfx.query_image_desc(img);
-            int textureWidth = q.width;
-            
-            foreach (var update in textureUpdate.Value)
+            for (int x = 0; x < bounds.Width; x++)
             {
-                var uintData = new List<uint>(update.data.Length / 4);
-                // Convert byte array to uint array
-                for (int i = 0; i < uintData.Capacity; i++)
-                {
-                    int byteIndex = i * 4;
-                    uint color = (uint)(
-                        update.data[byteIndex + 0] << 24 | // Red
-                        update.data[byteIndex + 1] << 16 | // Green
-                        update.data[byteIndex + 2] << 8 | // Blue
-                        update.data[byteIndex + 3]); // Alpha
-
-                    uintData.Add(color); // Use Add method to append the item
-                }
-                
-                Console.WriteLine($"data count: {uintData.Count}");
-                Console.WriteLine($"bounds: {update.bounds.X},{update.bounds.Y} w:{update.bounds.Width} h:{update.bounds.Height}");
-                //debug glpyh patches
-                // var letter = default(sg_image_desc);
-                // letter.width = update.bounds.Width;
-                // letter.height = update.bounds.Height;
-                // var dbp = new Dinghy.NativeInterop.Utils.NativeArray<uint>(uintData.Count);
-                // for (int i = 0; i < uintData.Count; i++)
-                // {
-                //     dbp[i] = uintData[i];
-                // }
-                // letter.data.subimage.e0_0 = dbp.AsSgRange();
-                // unsafe
-                // {
-                //     Gfx.make_image(&letter);
-                // }
-                // //------------
-
-                
-                // patch the new uint data in currentPixels
-                var bounds = update.bounds;
-                for (int y = 0; y < bounds.Height; y++)
-                {
-                    for (int x = 0; x < bounds.Width; x++)
-                    {
-                        //bounds.x/y are worldpos of texture
-                        var textureIndex = ((bounds.Y + y) * textureWidth) + bounds.X + x;
-                        int uintDataIndex = y * bounds.Width + x;
-                        fontPixels[img.id][textureIndex] = uintData[uintDataIndex];
-                    }
-                }
-
-                // for (int y = 0; y < bounds.Height; y++)
-                // {
-                //     for (int x = 0; x < bounds.Width; x++)
-                //     {
-                //         int currentPixelIndex = (bounds.Top + y) * textureWidth + (bounds.Left + x);
-                //         int uintDataIndex = y * bounds.Width + x;
-                //         if (currentPixelIndex < fontPixels[img.id].Count && uintDataIndex < uintData.Count)
-                //         {
-                //             fontPixels[img.id][currentPixelIndex] = uintData[uintDataIndex];
-                //         }
-                //     }
-                // }
+                //bounds.x/y are worldpos of texture
+                var textureIndex = ((bounds.Y + y) * Width) + bounds.X + x;
+                int uintDataIndex = y * bounds.Width + x;
+                pixels[textureIndex] = uintData[uintDataIndex];
             }
-            
-            //apply batched updates
-            var newPixels = new Dinghy.NativeInterop.Utils.NativeArray<uint>(fontPixels[img.id].Count);
-            for (int i = 0; i < (fontPixels[img.id].Count); i++)
+        }
+
+        pixelsDirty = true;
+    }
+
+    private bool imageBuilt;
+    private sg_image internalImage;
+    public int Width { get; protected set; }
+    public int Height { get; protected set; }
+    public FontTexture(int width, int height)
+    {
+        Width = width;
+        Height = height;
+        Size = new Point(width, height);
+        for (int i = 0; i < (width*height); i++)
+        {
+            pixels.Add(WHITE);
+        }
+    }
+
+    public void Draw(Vector2 pos, Rectangle? src, FSColor color, float rotation, Vector2 scale, float depth)
+    {
+        var p = new Position(pos.X, pos.Y, scale.X, scale.Y, rotation, 0f, 0);
+        sgp_rect source = default;
+        source.x = src.Value.X;
+        source.y = src.Value.Y;
+        source.w = src.Value.Width;
+        source.h = src.Value.Height;
+
+        if (pixelsDirty)
+        {
+            if (imageBuilt)
             {
-                newPixels[i] = fontPixels[img.id][i];
+                //sokol doesn't like you updating a texture more than once per frame
+                //but fontstash writes constantly to a new texture in a given frame as it builds the font atlas
+                //so we just incrementally build the atlas and trash the image resources that exist if they are dirty
+                Gfx.destroy_image(internalImage);
+            }
+            var nativePixels = new Dinghy.NativeInterop.Utils.NativeArray<uint>(pixels.Count);
+            for (int i = 0; i < pixels.Count; i++)
+            {
+                nativePixels[i] = pixels[i];
             }
             unsafe
             {
                 //apply the image data
-                sg_image_data d = default;
-                d.subimage.e0_0 = newPixels.AsSgRange();
-                Gfx.update_image(img, &d);
+                sg_image_desc d = default;
+                d.width = Width;
+                d.height = Height;
+                d.data.subimage.e0_0 = nativePixels.AsSgRange();
+                internalImage = Gfx.make_image(&d);
             }
+            imageBuilt = true;
+            pixelsDirty = false;
         }
-        
+        Engine.DrawTexturedRect(p,internalImage,source);
     }
+}
+
+public class FontstashTextManager : ITexture2DManager
+{
+    public object CreateTexture(int width, int height) => new FontTexture(width, height);
+    public Point GetTextureSize(object texture) => (texture as FontTexture).Size;
+    public void SetTextureData(object texture, Rectangle bounds, byte[] data) => (texture as FontTexture).Write(bounds, data);
 }

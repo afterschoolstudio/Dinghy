@@ -510,9 +510,7 @@ public static partial class Engine
         var font = fontSystem.GetFont(32);
         var size = font.MeasureString(text, scale);
         var origin = new Vector2(size.X / 2.0f, size.Y / 2.0f);
-        fontRenderer._textureManager.ClearTextUpdates();
         font.DrawText(fontRenderer, text, new Vector2(400, 400), FSColor.LightCoral, 0.0f, origin, scale);
-        fontRenderer._textureManager.ApplyTextureUpdates();
         // drawDebugText(DebugFont.C64,$"{t}ms \ne: {GlobalScene.Entities.Count} \n {InputSystem.MouseX},{InputSystem.MouseY} \n {DebugTextStr}");
 
         // setting this to load instead of clear allows us to toggle sokol_gp clearing
