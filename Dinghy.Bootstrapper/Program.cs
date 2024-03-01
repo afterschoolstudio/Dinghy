@@ -6,13 +6,17 @@ using static SimpleExec.Command;
 
 //NOTE: Requires ClangSharpPInvokeGenerator to be installed as a global tool
 
+List<string> EmptyList = new List<string>();
+flag traverse = new flag("traverse", EmptyList);
+flag remap = new flag("remap", EmptyList);
+
 var bindgenBase = new rsp("base", 
 [
     new ("config",
     [
         "latest-codegen",
         "single-file",
-        "exclude-funcs-with-body",
+        // "exclude-funcs-with-body",
         "generate-aggressive-inlining",
         "generate-file-scoped-namespaces",
         "log-exclusions",
@@ -22,7 +26,8 @@ var bindgenBase = new rsp("base",
     ]),
     new ("additional",[
         "-Wno-ignored-attributes",
-        "-Wno-unsupported-attribute"
+        "-Wno-nullability-completeness",
+        "-Wunused-function"
     ])
 ]);
 
@@ -31,7 +36,8 @@ var sokol_settings = new rsp("sokol_settings", rspInclude: bindgenBase, flags:
     new("include-directory", [
         "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include",
         "/Library/Developer/CommandLineTools/usr/lib/clang/13.0.0/include/",
-        "./libs/sokol/src/sokol"
+        "./libs/sokol/src/sokol",
+        "./libs/sokol/src/"
     ]),
     new("define-macro", [
         "SOKOL_DLL",
@@ -61,23 +67,23 @@ var sokol = new lib("sokol", [
         "Color",
         "../Dinghy.Core/src/generated/lib/sokol/Sokol.Color.cs",
         [
-            new("traverse","./libs/sokol/src/sokol/util/sokol_color.h"),
+            traverse with { flagParams = ["./libs/sokol/src/sokol/util/sokol_color.h"]}
         ],
         rspInclude:sokol_settings),
     new ("sokol_fontstash", 
-        "./libs/sokol/bindgen/sokol_fontstash_bindgen_helper.h",
+        "./libs/sokol/bindgen/sokol_fontstash_bindgen_helper.c",
+        // "./libs/sokol/src/fontstash.h",
         "sfons_",
         "Fontstash",
         "../Dinghy.Core/src/generated/lib/sokol/Sokol.Fontstash.cs",
         [
-            new("traverse",[
-                "./libs/sokol/stb_truetype.h",
+            traverse with { flagParams = [
                 "./libs/sokol/fontstash.h",
                 "./libs/sokol/src/sokol/util/sokol_fontstash.h",
-            ]),
-            new ("remap",[
+            ]},
+            remap with { flagParams = [
                 "FONScontext*=@void*",
-            ])
+            ]}
         ],
         rspInclude:sokol_settings),
     new ("sokol_debugtext", 
@@ -86,7 +92,7 @@ var sokol = new lib("sokol", [
         "DebugText",
         "../Dinghy.Core/src/generated/lib/sokol/Sokol.DebugText.cs",
         [
-            new("traverse","./libs/sokol/src/sokol/util/sokol_debugtext.h"),
+            traverse with { flagParams = ["./libs/sokol/src/sokol/util/sokol_debugtext.h"]}
         ],
         rspInclude:sokol_settings),
     new ("sokol_gfx", 
@@ -101,8 +107,8 @@ var sokol = new lib("sokol", [
         "GfxDebugGUI",
         "../Dinghy.Core/src/generated/lib/sokol/Sokol.Graphics.DebugGUI.cs",
         [
-            new("traverse","./libs/sokol/src/sokol/util/sokol_gfx_imgui.h"),
-            new("remap","FILE*=@void*"),
+            traverse with { flagParams = ["./libs/sokol/src/sokol/util/sokol_gfx_imgui.h"]},
+            remap with { flagParams = ["FILE*=@void*"]}
         ],
         rspInclude:sokol_settings),
     new ("sokol_glue", 
@@ -111,7 +117,16 @@ var sokol = new lib("sokol", [
         "Glue",
         "../Dinghy.Core/src/generated/lib/sokol/Sokol.Glue.cs",
         [
-            new("traverse","./libs/sokol/src/sokol/sokol_glue.h")
+            traverse with { flagParams = ["./libs/sokol/src/sokol/sokol_glue.h"]}
+        ],
+        rspInclude:sokol_settings),
+    new ("sokol_gl", 
+        "./libs/sokol/bindgen/sokol_gl_bindgen_helper.h",
+        "sgl_",
+        "GL",
+        "../Dinghy.Core/src/generated/lib/sokol/Sokol.GL.cs",
+        [
+            traverse with { flagParams = ["./libs/sokol/src/sokol/util/sokol_gl.h"]}
         ],
         rspInclude:sokol_settings),
     new ("sokol_gp", 
@@ -120,7 +135,7 @@ var sokol = new lib("sokol", [
         "GP",
         "../Dinghy.Core/src/generated/lib/sokol/Sokol.GP.cs",
         [
-            new("traverse","./libs/sokol/src/sokol_gp/sokol_gp.h")
+            traverse with { flagParams = ["./libs/sokol/src/sokol_gp/sokol_gp.h"]}
         ],
         rspInclude:sokol_settings),
     new ("sokol_imgui", 
@@ -129,15 +144,15 @@ var sokol = new lib("sokol", [
         "ImGUI",
         "../Dinghy.Core/src/generated/lib/sokol/Sokol.ImGUI.cs",
         [
-            new("traverse",[
+            traverse with { flagParams = [
                 "./libs/sokol/src/sokol/util/sokol_imgui.h",
                 "./libs/cimgui/src/cimgui/cimgui.h"
-            ]),
-            new("remap",[
+            ]},
+            remap with { flagParams = [
                 "FILE*=@void*",
                 "__sFILE*=@void*",
                 "__arglist=@params string[] args"
-            ]),
+            ]}
         ],
         rspInclude:sokol_settings),
     new ("sokol_log", 
@@ -205,12 +220,6 @@ List<lib> buildLibs = [
     cute
 ];
 
-// foreach (var rsp in sokol.bindgen)
-// {
-//     Console.WriteLine(rsp.Write().contents);
-// }
-
-
 var projectDir = Directory.GetCurrentDirectory();
 Console.WriteLine(projectDir);
 string bindgenpath(string libName,string rspFileName) => Path.Combine(projectDir, $"libs/{libName}/bindgen/{rspFileName}.rsp");
@@ -242,6 +251,12 @@ foreach (var l in buildLibs)
             File.WriteAllText(b.name,b.contents);
         });
         
+        Target($"{l.libName}:bindgen:{rsp.name}:emit_rsp", () =>
+        {
+            var b = rsp.Write();
+            Console.Write(b);
+        });
+        
         Target($"{l.libName}:bindgen:{rsp.name}", DependsOn($"{l.libName}:bindgen:{rsp.name}:write_rsp"), () =>
         {
             try
@@ -270,39 +285,22 @@ foreach (var l in buildLibs)
 
 Target("default", DependsOn(buildLibs.Select(x => x.libName).ToArray()));
 
-//
-// Target("npm:install", () => Run("npm","install"));
-//
-// // Create build target esbuild:dist target which will minify
-// // CSS under static/css and add it to wwwroot/css folder
-// // This build target has a depedency on `npm:install` build target
-//
-// Target("esbuild:dist", DependsOn("npm:install"), () => Run("npm","run minify"));
-//
-// // Create build target esbuild:dist target which will allow to
-// // watch for changes in dev env
-// // This build target has a depedency on `npm:install` build target
-// Target("esbuild:watch", DependsOn("npm:install"), () => Run("npm","run watch"));
-//
-// // Create a build target Clean the web project output from previous build
-// Target("clean", () => Run("dotnet","clean src/WebApp/WebApp.csproj"));
-//
-// // Create a build target to compile the web project
-// // This build target depends on `clean` build target
-// Target("compile", DependsOn("clean"), () => Run("dotnet","build ./src/WebApp/WebApp.csproj -c Release"));
-//
-// // Create a build target to watch for changes in dev
-// Target("watch", () => Run("dotnet", "watch --project ./src/WebApp/WebApp.csproj"));
-//
-// // Create a default target
-// // This target depends on `esbuild:dist` and `compile` build targets
-// Target("default", DependsOn("esbuild:dist", "compile"));
-//
-//
-// Target("build-all", DependsOn());
-
-// run the build target requested and exit
 await RunTargetsAndExitAsync(args);
+
+
+/*
+ * DATA BELOW HERE--------------------------------------------------------------------------------
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ * 
+ */
 
 public record rsp
 {
@@ -382,6 +380,3 @@ public record flag
 }
 
 public record lib(string libName, List<rsp> bindgen);
-
-
-// Create a build target for npm install to make esbuild available for use

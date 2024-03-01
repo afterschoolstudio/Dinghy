@@ -6,7 +6,7 @@ using Dinghy.Internal.STB;
 using Arch.Core;
 using Dinghy.Core;
 using Dinghy.Core.ImGUI;
-using Volatile;
+using FontStashSharp;
 using Utils = Dinghy.NativeInterop.Utils;
 
 namespace Dinghy;
@@ -66,7 +66,7 @@ public static partial class Engine
     }
 
     public static uint idCounter;
-    public static VoltWorld PhysicsWorld;
+    public static Volatile.VoltWorld PhysicsWorld;
     public static World ECSWorld;
     public static Scene GlobalScene;
     public static Pointer Cursor;
@@ -211,10 +211,17 @@ public static partial class Engine
         public int height;
         public sg_image img;
     }
+    
+    
+    public unsafe struct font_context
+    {
+        public void* ctx;
+    }
 
     public static bool Clear = true;
 
     public static core_state state = default;
+    public static font_context font_state = default;
     
     public static sg_imgui_t gfx_dbgui = default;
 
@@ -229,6 +236,9 @@ public static partial class Engine
         //call native logger
         // desc.logger.func = (delegate* unmanaged[Cdecl]<sbyte*, uint, uint, sbyte*, uint, sbyte*, void*, void>)NativeLibrary.GetExport(NativeLibrary.Load("libs/sokol"), "slog_func");
         Gfx.setup(&desc);
+
+        sgl_desc_t gl_desc = default;
+        GL.setup(&gl_desc);
 
         simgui_desc_t imgui_desc = default;
         imgui_desc.logger.func = &Sokol_Logger;
@@ -311,12 +321,35 @@ public static partial class Engine
         ECSWorld = World.Create();
         GlobalScene = new(){Name = "Global Scene"};
         Cursor = new() { Name = "Cursor" };
+
+        
+        //USE SOKOL_FONTSTASH - NOT WORKING BECAUSE CANT GENERATE FONTSTASH.H BINDINGS
+        // sfons_desc_t font_desc = default;
+        // font_desc.width = 128;
+        // font_desc.height = 128;
+        // font_state.ctx = Fontstash.create(&font_desc);
+        // Fontstash.destroy(font_state.ctx);
+        
+        var settings = new FontSystemSettings
+        {
+            FontResolutionFactor = 2,
+            KernelWidth = 2,
+            KernelHeight = 2
+        };
+
+        fontSystem = new FontSystem(settings);
+        fontSystem.AddFont(File.ReadAllBytes(@"data/fonts/inter/Inter-Regular.ttf"));
         
         GlobalScene.Mount(-1);
         GlobalScene.Load(() => {GlobalScene.Start();});
         Events.SceneUnmounted += OnSceneUnmounted;
         Setup?.Invoke();
     }
+
+    public static FontSystem fontSystem;
+    public static FontstashRenderer fontRenderer = new();
+
+
 
     public static int Width;
     public static int Height;
@@ -471,7 +504,15 @@ public static partial class Engine
                 ps.PostUpdate(DeltaTime);
             }
         }
-
+        
+        var text = "abcdefghijklmnopqrstuvwxyz";
+        var scale = new Vector2(2, 2);
+        var font = fontSystem.GetFont(32);
+        var size = font.MeasureString(text, scale);
+        var origin = new Vector2(size.X / 2.0f, size.Y / 2.0f);
+        fontRenderer._textureManager.ClearTextUpdates();
+        font.DrawText(fontRenderer, text, new Vector2(400, 400), FSColor.LightCoral, 0.0f, origin, scale);
+        fontRenderer._textureManager.ApplyTextureUpdates();
         // drawDebugText(DebugFont.C64,$"{t}ms \ne: {GlobalScene.Entities.Count} \n {InputSystem.MouseX},{InputSystem.MouseY} \n {DebugTextStr}");
 
         // setting this to load instead of clear allows us to toggle sokol_gp clearing
@@ -571,44 +612,26 @@ public static partial class Engine
         GP.pop_transform();
         // GP.draw_filled_rect(x,y,img.internalData.width,img.internalData.height);
         GP.reset_image(0);
-        
-        /*
-        // (float x, float y) clipPos = 
-        //     (2f * (x / (Width * App.dpi_scale())),
-        //     2f * (y / (Height * App.dpi_scale())));
-        GL.texture(img.internalData.sg_image, state.smp);
-        if (img.alphaIsTransparecy)
-        {
-            GL.load_pipeline(state.alpha_pip);
-        }
-        else
-        {
-            GL.load_default_pipeline();
-        }
-        // GL.texture(state.checkerboard.img, state.smp);
-        // GL.load_default_pipeline();
-
-        
-        // GL.push_matrix();
-        //gl clip space is -1 -> + 1, lower left to top right
-        // GL.translate(-1 + clipPos.x,1-clipPos.y,0); //this puts us at the top left of the image
-        // GL.scale(scale, scale, 1.0f);
-        // GL.rotate(GL.rad(angle_deg), 0.0f, 0.0f, 1.0f);
-        GL.begin_quads();
-        var clip_img_height = img.internalData.height / (Height * App.dpi_scale());
-        var clip_img_width =       img.internalData.width / (Width * App.dpi_scale());
-        
-        // var clip_img_height = state.checkerboard.height / (Height * App.dpi_scale());
-        // var clip_img_width =       state.checkerboard.width / (Width * App.dpi_scale());
-        
-        GL.v2f_t2f_c3b( x, y-clip_img_height,  0, 0,  255, 255, 0); //bottom left
-        GL.v2f_t2f_c3b(  x + clip_img_width, y-clip_img_height,  1, 0,  0, 255, 0); //bottom right
-        GL.v2f_t2f_c3b(  x + clip_img_width, y,  1, 1,  0, 0, 255); //top right
-        GL.v2f_t2f_c3b( x, y,  0, 1,  255, 0, 0); //top left
-        // GL.translate(1f,-1f,0);
-        GL.end();
-        // GL.pop_matrix();
-        */
+    }
+    
+    public static void DrawTexturedRect(Position p, sg_image i,sgp_rect src)
+    {
+        GP.set_color(1.0f, 1.0f, 1.0f, 1.0f);
+        GP.set_blend_mode(sgp_blend_mode.SGP_BLENDMODE_BLEND);
+        GP.set_image(0,i);
+        GP.push_transform();
+        GP.translate(p.x - p.pivotX,p.y - p.pivotY);
+        GP.rotate_at(p.rotation, p.pivotX, p.pivotY);
+        GP.scale_at(p.scaleX, p.scaleY, p.pivotX, p.pivotY);
+        GP.draw_textured_rect(0,
+            //this is the rect to draw the source "to", basically can scale the rect (maybe do wrapping?)
+            //we assume this is the width and height of the frame itself
+            src,
+            //this is the rect index into the texture itself
+            src);
+        GP.pop_transform();
+        // GP.draw_filled_rect(x,y,img.internalData.width,img.internalData.height);
+        GP.reset_image(0);
     }
     
     public static void DrawShape(Position p, ShapeRenderer r)
@@ -771,22 +794,26 @@ public static partial class Engine
     public static bool LoadImage(string path, out int width, out int height, out sg_image img)
     {
         var fileBytes = File.ReadAllBytes(path);
+        return LoadImage(fileBytes, out width, out height, out img);
+    }
+
+    public static bool LoadImage(byte[] bytes, out int width, out int height, out sg_image img)
+    {
         img = default;
         height = 0;
         width = 0;
         unsafe
         {
-            fixed (byte* imgptr = fileBytes)
+            fixed (byte* imgptr = bytes)
             {
                 int imgx, imgy, channels;
-                var ok = STB.stbi_info_from_memory(imgptr, fileBytes.Length, &imgx, &imgy, &channels);
-                // Console.WriteLine($"mem test: {ok}: {imgx} {imgy} {channels}");
+                var ok = STB.stbi_info_from_memory(imgptr, bytes.Length, &imgx, &imgy, &channels);
                 if (ok == 0)
                 {
                     return false;
                 }
                 // STB.stbi_set_flip_vertically_on_load(1);
-                var stbimg = STB.stbi_load_from_memory(imgptr, fileBytes.Length, &imgx,&imgy, &channels, 4);
+                var stbimg = STB.stbi_load_from_memory(imgptr, bytes.Length, &imgx,&imgy, &channels, 4);
                 sg_image_desc stb_img_desc = default;
                 stb_img_desc.width = imgx;
                 stb_img_desc.height = imgy;

@@ -1,9 +1,0 @@
-﻿@settings.rsp
---file
-sokol_gp_bindgen_helper.h
---traverse
-../src/sokol_gp/sokol_gp.h
---methodClassName
-GP
---output
-../../../../Dinghy.Core/src/generated/lib/sokol/Sokol.GP.cs

@@ -1,9 +1,0 @@
-﻿@settings.rsp
---file
-../src/sokol/sokol_app.h
---prefixStrip
-sapp_
---methodClassName
-App
---output
-../../../../Dinghy.Core/src/generated/lib/sokol/Sokol.App.cs

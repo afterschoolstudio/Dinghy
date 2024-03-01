@@ -1,9 +1,0 @@
-﻿@settings.rsp
---file
-../src/sokol/sokol_audio.h
---prefixStrip
-saudio_
---methodClassName
-Audio
---output
-../../../../Dinghy.Core/src/generated/lib/sokol/Sokol.Audio.cs

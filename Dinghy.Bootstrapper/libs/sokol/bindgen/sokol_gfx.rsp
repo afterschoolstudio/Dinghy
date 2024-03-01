@@ -1,9 +1,0 @@
-@settings.rsp
---file
-../src/sokol/sokol_gfx.h
---prefixStrip
-sg_
---methodClassName
-Gfx
---output
-../../../../Dinghy.Core/src/generated/lib/sokol/Sokol.Graphics.cs

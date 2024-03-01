@@ -31,7 +31,6 @@
 #include "../src/sokol/util/sokol_color.h"
 #include "../src/sokol/util/sokol_debugtext.h"
 #include "../src/sokol/util/sokol_gl.h"
-#include "../src/stb_truetype.h"
 #include "../src/fontstash.h"
 #include "../src/sokol/util/sokol_fontstash.h"
 #include "../../cimgui/src/cimgui/cimgui.h"

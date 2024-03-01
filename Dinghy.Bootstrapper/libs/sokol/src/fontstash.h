@@ -17,7 +17,7 @@
 //	misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
 //
-
+#include <stdlib.h> 
 #ifndef FONS_H
 #define FONS_H
 
@@ -26,11 +26,16 @@ extern "C" {
 #endif
 
 // To make the implementation private to the file that generates the implementation
-#ifdef FONS_STATIC
-#define FONS_DEF static
-#else
+// #ifdef FONS_STATIC
+// 	#define FONS_DEF static
+// #else
+// 	#ifdef defined(_WIN32) || defined __CYGWIN__
+// 		#define FONS_DEF __declspec(dllexport)
+// 	#else
+// 		#define FONS_DEF extern
+// 	#endif
+// #endif
 #define FONS_DEF extern
-#endif
 
 #define FONS_INVALID -1
 
