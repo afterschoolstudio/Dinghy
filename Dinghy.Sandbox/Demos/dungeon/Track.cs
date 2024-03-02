@@ -75,7 +75,7 @@ public class Track
         yield return null;
     }
 
-    IEnumerator attackPlayer(DeckCard c, float startY, float endY, Action completionCallback)
+    IEnumerator attackPlayer(DeckCard c, float startY, float endY)
     {
         var trans = new Transition<float>(startY, endY, Easing.Option.EaseOutElastic);
         TimeSince ts = 0;
@@ -92,7 +92,6 @@ public class Track
             yield return null;
         }
         yield return null;
-        completionCallback?.Invoke();
     }
 
     public void RemoveTrackCard(int trackIndex) => RemoveTrackCard(Cards[trackIndex]);
@@ -125,9 +124,9 @@ public class Track
         }
     }
 
-    public void Act()
+    public void Act(Action onComplete = null)
     {
-        Coroutines.Add(TrackAct());
+        Coroutines.Start(TrackAct(),onComplete);
     }
     IEnumerator TrackAct()
     {
@@ -139,12 +138,21 @@ public class Track
             {
                 //maybe do some highlight?
                 spawnedLogic = true;
-                new LogicEvents.TrackCardAttackPlayer(Cards[i].ID).Emit(() =>
+                new LogicEvents.TrackCardAttackPlayer(Cards[i].ID).Emit((success) =>
                 {
-                    Console.WriteLine($"{Cards[i].ID} damaging player for {Cards[i].Attack}");
-                    Dungeon.Player.Damage(Cards[i].Attack);
-                    i++;
-                    spawnedLogic = false;
+                    if(success)
+                    {
+                        Console.WriteLine($"{Cards[i].ID} damaging player for {Cards[i].Attack}");
+                        Coroutines.Start(attackPlayer(Cards[i],Cards[i].Entity.Y,Cards[i].Entity.Y + 120),() => {
+                            i++;
+                            spawnedLogic = false;
+                        });
+                    }
+                    else
+                    {
+                        i++;
+                        spawnedLogic = false;
+                    }
                 });
             }
             else
@@ -156,33 +164,50 @@ public class Track
         }
     }
 
-    public void DamageTrackCard(DeckCard c)
+    public void DamageTrackCards(List<DeckCard> cards, Action onComplete = null)
     {
-        new LogicEvents.AttackTrackCard(c.ID).Emit(() =>
+        var c = cards.First(); //NOTE: assuming one for now
+        new LogicEvents.AttackTrackCard(c.ID).Emit((success) =>
         {
+            if(!success){onComplete?.Invoke();return;}
             c.Health -= 1;
-            Coroutines.Add(Shake(c, defaultShake,() =>
+            Coroutines.Start(Shake(c, defaultShake),() =>
             {
                 if (c.Health <= 0)
                 {
                     Console.WriteLine("destroying");
-                    new LogicEvents.Destroyed(c.ID).Emit(() =>
+                    new LogicEvents.Destroyed(c.ID).Emit((success) =>
                     {
+                        if(!success){onComplete?.Invoke();return;}
                         Console.WriteLine("destroy callback");
                         c.Entity.ECSEntity.Remove<TrackComponent>();
                         Cards[Cards.First(x => x.Value == c).Key] = null;
                         c.Entity.Active = false;
                         Dungeon.Graveyard.Add(c);
-                        FillEmptyTrackCardSpaces();
-                        Dungeon.Deck.Draw();
+
+                        //note right now this assumes one death
+                        //should instead do this after multiple deaths processed
+                        Dungeon.Track.Act(() => {
+                            FillEmptyTrackCardSpaces();
+                            Dungeon.Deck.Draw();
+                            onComplete?.Invoke();
+                        });
                     });
                 }
-            }));
+                else
+                {
+                    Dungeon.Track.Act(() => {
+                        onComplete?.Invoke();
+                    });
+                }
+            });
         });
+
+        
     }
 
     private ShakeParams defaultShake = new ShakeParams();
-    IEnumerator Shake(DeckCard c, ShakeParams p, Action onComplete)
+    IEnumerator Shake(DeckCard c, ShakeParams p)
     {
         c.Entity.ColliderActive = false;
         Vector2 start = new Vector2(c.Entity.X, c.Entity.Y);
@@ -205,7 +230,6 @@ public class Track
         c.Entity.X = start.X;
         c.Entity.Y = start.Y;
         c.Entity.ColliderActive = true;
-        onComplete?.Invoke();
     }
     
     public struct ShakeParams()

@@ -33,10 +33,11 @@ public class Player
         Dead = true;
     }
 
-    public void Move()
+    public void Move(Action onComplete = null)
     {
-        new LogicEvents.Move().Emit(() =>
+        new LogicEvents.Move().Emit((success) =>
         {
+            if(!success){onComplete?.Invoke();return;}
             int moveDist = 1; //saturate this with status/buffs/etc
             foreach (var c in Dungeon.Track.Cards.Where(x => x.Value != null))
             {
@@ -45,45 +46,52 @@ public class Player
             
             MovedDistance += moveDist;
             // Health = Health + 1 < MaxHealth ? Health + 1 : Health; moving this to keyword
-            Hunger++;
-            if (Hunger > 10)
+            Fullness--;
+            if (Fullness <= 0)
             {
                 Dungeon.Player.Kill();
+                onComplete?.Invoke();
             }
             else
             {
                 //cycle cards
-                new LogicEvents.Discard(Dungeon.Track.Cards[0].ID).Emit(() =>
+                new LogicEvents.Discard(Dungeon.Track.Cards[0].ID).Emit((success) =>
                 {
+                    if(!success){onComplete?.Invoke();return;}
                     Dungeon.DiscardStack.Add(Dungeon.Track.Cards[0]);
                     Dungeon.Track.RemoveTrackCard(Dungeon.Track.Cards[0]);
                     Dungeon.Track.FillEmptyTrackCardSpaces();
                     Dungeon.Deck.Draw();
+                    onComplete?.Invoke();
                 });
             }
         });
     }
 
-    public void Wait()
+    public void Wait(Action onComplete = null)
     {
-        new LogicEvents.Wait().Emit(() =>
+        new LogicEvents.Wait().Emit((success) =>
         {
-            Hunger++;
-            if (Hunger > 10)
+            if(!success){onComplete?.Invoke();return;}
+            Fullness--;
+            if (Fullness <= 0)
             {
                 Dungeon.Player.Kill();
+                onComplete?.Invoke();
             }
             else
             {
-                Dungeon.Track.Act();
+                Dungeon.Track.Act(() => {
+                    onComplete?.Invoke();
+                });
             }
         });
     }
 
-    public void Damage(int dmg)
+    public void TakeDamageFromTrackCard(DeckCard c)
     {
         if(Dungeon.ActiveDebugOptions.Invincible){return;}
-        Health -= dmg;
+        Health -= c.Attack;
         if (Health <= 0)
         {
             Dungeon.Player.Kill();

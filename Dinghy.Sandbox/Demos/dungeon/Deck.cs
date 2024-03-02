@@ -32,8 +32,9 @@ public class Deck
 
     public void Draw(bool applyNewPositionsDirectly = false)
     {
-        new LogicEvents.Draw().Emit(() =>
+        new LogicEvents.Draw().Emit((success) =>
         {
+            if(!success){return;}
             var nextDraw = Cards.First();
             
             var targetPos = Dungeon.Track.Cards.First(x => x.Value == null).Key;

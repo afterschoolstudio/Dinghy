@@ -8,8 +8,8 @@ namespace Dinghy.Sandbox.Demos.dungeon;
 
 public abstract record GameLogicEvent
 {
-    public Action OnComplete;
-    public void Emit(Action onComplete = null)
+    public Action<bool> OnComplete;
+    public void Emit(Action<bool> onComplete = null)
     {
         OnComplete += onComplete;
         CreateECSObject();
@@ -19,7 +19,7 @@ public abstract record GameLogicEvent
 }
 public static class LogicEvents
 {
-    public record struct Meta(int stackID, Action completionCallback, bool cancelled = false, bool dirty = false);
+    public record struct Meta(int stackID, Action<bool> completionCallback, bool cancelled = false, bool dirty = false);
     public record Discard(int cardID) : GameLogicEvent
     {
         protected override void CreateECSObject()
@@ -35,7 +35,7 @@ public static class LogicEvents
         protected override void CreateECSObject()
         {
             Engine.ECSWorld.Create(
-                new LogicEvents.Meta(Dungeon.LogicStackID,Complete),
+                new LogicEvents.Meta(Dungeon.LogicStackID,OnComplete),
                 this);
         }
     }
