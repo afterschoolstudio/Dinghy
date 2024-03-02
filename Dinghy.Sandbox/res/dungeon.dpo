@@ -228,9 +228,15 @@
                 {
                     "guid": "ee102472-7bd5-47c8-a83e-180d696c775d",
                     "id": "obstacle",
-                    "description": "wont cycle off the board if there are 4",
-                    "triggers": [],
-                    "implemented": false
+                    "description": "wont discard if the track is full of obstacles",
+                    "triggers": [
+                        {
+                            "guid": "5b414e78-ae53-4bd8-adcb-a83dc1286821",
+                            "trigger": "06284345-de25-4fa3-88db-740e89b01dc4",
+                            "id": "0"
+                        }
+                    ],
+                    "implemented": true
                 },
                 {
                     "guid": "364b7812-8096-4655-b5f6-3009bf785a94",
@@ -269,7 +275,7 @@
                             "trigger": "06284345-de25-4fa3-88db-740e89b01dc4"
                         }
                     ],
-                    "implemented": false
+                    "implemented": true
                 },
                 {
                     "guid": "dc186624-641f-4999-82a6-d998d971a4f0",

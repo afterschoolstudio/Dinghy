@@ -8,22 +8,22 @@ namespace Dinghy.Sandbox.Demos.dungeon;
 public class Track
 {
     public readonly record struct TrackComponent(int cardID);
-    public int MaxTrackCards { get; protected set; }
+    public int MaxTrackCards => Dungeon.TrackSize;
     public Dictionary<int,DeckCard?> Cards = new();
-    
-    public Grid Grid = new (new (
+    public Grid Grid;
+
+    public void Init()
+    {
+        Grid = new (new (
         new(Engine.Width / 2f, Engine.Height / 2f), 
         new(0.5f, 0.5f), 
         200, 450, 
         new(0.5f, 0.5f), 
-        4,
+        Dungeon.TrackSize,
         1));
 
-    public void Init(int max)
-    {
         Cards.Clear();
         
-        MaxTrackCards = max;
         for (int i = 0; i < MaxTrackCards; i++)
         {
            Cards.Add(i,null); 
@@ -49,7 +49,7 @@ public class Track
                 }
                 trackCard.Value!.Entity.Y = Grid.Points[trackCard.Key].Y;
                 // trackCard.Value!.Entity.X = Engine.Width + 100;
-                Coroutines.Add(movePosition(trackCard.Value!,trackCard.Value!.Entity.X,Grid.Points[trackCard.Key].X,timeOffset));
+                Coroutines.Start(movePosition(trackCard.Value!,trackCard.Value!.Entity.X,Grid.Points[trackCard.Key].X,timeOffset));
                 timeOffset += 0.2f;
             }
             updated.Add(trackCard.Value);
@@ -73,6 +73,26 @@ public class Track
             yield return null;
         }
         yield return null;
+    }
+
+    IEnumerator attackPlayer(DeckCard c, float startY, float endY, Action completionCallback)
+    {
+        var trans = new Transition<float>(startY, endY, Easing.Option.EaseOutElastic);
+        TimeSince ts = 0;
+        while (ts < 0.1f)
+        {
+            c.Entity.Y = startY + ((endY - startY) * (float)trans.Sample(ts / 0.1f));
+            yield return null;
+        }
+        Dungeon.Player.TakeDamageFromTrackCard(c);
+        ts = 0;
+        while (ts < 0.1f)
+        {
+            c.Entity.Y = endY + ((startY - endY) * (float)trans.Sample(ts / 0.1f));
+            yield return null;
+        }
+        yield return null;
+        completionCallback?.Invoke();
     }
 
     public void RemoveTrackCard(int trackIndex) => RemoveTrackCard(Cards[trackIndex]);

@@ -18,6 +18,7 @@ public class Deck
                 "big enemy" => 2,
                 "rock" => 8,
                 "floor" => 15,
+                "stairs" => 1,
                 _ => 0
             };
             for (int j = 0; j < iterations; j++)

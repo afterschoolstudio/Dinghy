@@ -57,8 +57,9 @@ public static class PlayerInputCommands
     {
         protected override void ExecuteCommand()
         {
-            Dungeon.Player.Move();
-            Events.Commands.CommandExecuted?.Invoke(this);
+            Dungeon.Player.Move(() => {
+                Events.Commands.CommandExecuted?.Invoke(this);
+            });
         }
     }
 
@@ -67,8 +68,9 @@ public static class PlayerInputCommands
     {
         protected override void ExecuteCommand()
         {
-            Dungeon.Player.Wait();
-            Events.Commands.CommandExecuted?.Invoke(this);
+            Dungeon.Player.Wait(() => {
+                Events.Commands.CommandExecuted?.Invoke(this);
+            });
         }
     }
 
@@ -77,13 +79,9 @@ public static class PlayerInputCommands
     {
         protected override void ExecuteCommand()
         {
-            foreach (var c in cards)
-            {
-                Dungeon.Track.DamageTrackCard(c);
-            }
-            //maybe need to move the acting into the damage?
-            Dungeon.Track.Act();
-            Events.Commands.CommandExecuted?.Invoke(this);
+            Dungeon.Track.DamageTrackCards(cards, () => {
+                Events.Commands.CommandExecuted?.Invoke(this);
+            });
         }
     }
 }

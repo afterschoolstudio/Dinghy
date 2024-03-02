@@ -747,7 +747,7 @@ public class EventCleaningSystem : DSystem, ICleanupSystem
     }
 }
 
-public readonly record struct Coroutine(IEnumerator coroutine);
+public readonly record struct Coroutine(IEnumerator coroutine, Action completionCallback);
 public class CoroutineSystem : DSystem, IUpdateSystem
 {
     QueryDescription coroutine = new QueryDescription().WithAll<Coroutine>();
@@ -757,6 +757,7 @@ public class CoroutineSystem : DSystem, IUpdateSystem
         Engine.ECSWorld.Query(in coroutine, (Arch.Core.Entity e, ref Coroutine c) =>  {
             if (!c.coroutine.MoveNext())
             {
+                c.completionCallback?.Invoke();
                 // e.Add(new Destroy());
                 Console.WriteLine("DESTROYING COROUTINE");
                 cb.Add(in e, new Destroy());

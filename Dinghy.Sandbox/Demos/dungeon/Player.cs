@@ -1,10 +1,12 @@
+using System.Collections;
+
 namespace Dinghy.Sandbox.Demos.dungeon;
 
 public class Player
 {
     public int MaxHealth { get; set; } = 10;
     public int Health { get; set; } = 10;
-    public int Hunger { get; set; } = 0;
+    public int Fullness { get; set; } = 10;
     public int XP { get; private set; } = 0;
     public int MovedDistance { get; private set; } = 0;
     public bool Dead { get; protected set; }
@@ -12,7 +14,7 @@ public class Player
     public void Init()
     {
         Health = MaxHealth;
-        Hunger = 0;
+        Fullness = 10;
         XP = 0;
         MovedDistance = 0;
         Dead = false;

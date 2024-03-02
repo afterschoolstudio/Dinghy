@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace Dinghy.Sandbox.Demos.dungeon;
 
 public class Keyword
@@ -13,17 +15,20 @@ public class Keyword
         {
             foreach (var t in Data.triggers)
             {
-                Triggers.Add(Dungeon.GameLogic.Triggers.Find(x => x.GUID == t.newLineReference.GUID));
+                Triggers.Add(Dungeon.GameLogic.Triggers.Find(x => x.GUID == t.trigger.GUID));
             }
         }
     }
 
     //bool dictates if the calling event should be cancelled after the effect is invoked
-    public void TriggerFor(DeckCard c, ref bool cancelEvent)
+    public void TriggerFor(DeckCard c, ref bool cancelEvent, string triggerEvent)
     {
         //this could maybe be linked scripts
         
-        //TODO FILL OUT OTHER KEYWORDS / DESCRIPTIONs (HOW DOES OBSTACLE)
+        //TODO FILL OUT OTHER KEYWORDS / DESCRIPTIONs
+
+        //should potentially make this spawn other logic events?
+        //things like counterattack shouldn't happen directly, instead they need to happen after an attack is successful
         switch (Name)
         {
             case "rejuvenate":
@@ -40,8 +45,13 @@ public class Keyword
                 cancelEvent = true;
                 break;
             case "obstacle":
-                Dungeon.Track.RemoveTrackCard(c);
-                Dungeon.Deck.Cards.Add(c);
+                if(!Dungeon.Track.Cards.Any(x => x.Value != null && !x.Value.Keywords.Any(z => z.Name == "obstacle")))
+                {
+                    cancelEvent = true;
+                }
+                break;
+            case "exit":
+                Dungeon.NextDungeonRoom();
                 cancelEvent = true;
                 break;
         }

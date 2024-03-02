@@ -17,6 +17,7 @@ public class Dungeon : Scene
 
     public static List<DeckCard> DiscardStack = new ();
     public static List<DeckCard> Graveyard = new ();
+    public static int TrackSize = 5;
     public static Deck Deck = new ();
     public static Track Track = new ();
     public static Inventory Inventory = new ();
@@ -44,8 +45,41 @@ public class Dungeon : Scene
         Graveyard.Clear();
         
         Deck.Init();
-        Track.Init(4);
+        Track.Init();
         Inventory.Init();
+        for (int i = 0; i < 5; i++)
+        {
+            Console.WriteLine("drawing card");
+            Deck.Draw(true);
+        }
+    }
+
+    public static void NextDungeonRoom()
+    {
+        Console.WriteLine("next dungeon room");
+        //fetch all valid cards for destructions
+        List<DeckCard> destroyCards = new();
+        destroyCards.AddRange(DiscardStack);
+        destroyCards.AddRange(Graveyard);
+        destroyCards.AddRange(Deck.Cards);
+        var nonNullTrackCards = Track.Cards.Where(x => x.Value != null);
+        if(nonNullTrackCards.Any())
+        {
+            destroyCards.AddRange(nonNullTrackCards.Select(x => x.Value)!);
+        }
+        //NOTE: KEEP INVENTORY
+
+        foreach (var c in destroyCards)
+        {
+            AllCards.Remove(c.ID);
+            c.DestroyCardEntity();
+        }
+        DiscardStack.Clear();
+        Graveyard.Clear();
+
+        Deck.Init();
+        Track.Init();
+
         for (int i = 0; i < Track.MaxTrackCards; i++)
         {
             Deck.Draw(true);
@@ -82,7 +116,7 @@ public class Dungeon : Scene
                 return;
             }
             Text($"HP: {Player.Health}/{Player.MaxHealth}");
-            Text($"Hunger:{Player.Hunger}");
+            Text($"Fullness:{Player.Fullness}");
 
             Button($"Move", buttonSize, () =>
             {

@@ -35,7 +35,7 @@ public static class LogicEvents
         protected override void CreateECSObject()
         {
             Engine.ECSWorld.Create(
-                new LogicEvents.Meta(Dungeon.LogicStackID,OnComplete),
+                new LogicEvents.Meta(Dungeon.LogicStackID,Complete),
                 this);
         }
     }
@@ -123,20 +123,17 @@ public partial class Systems
                     {
                         if (keyword.Triggers.Any(x => x.Name == "discardSelf") && discardedCard == Dungeon.AllCards[t.cardID])
                         {
-                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled);
+                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled,"discardSelf");
                         }
                         
                         if (keyword.Triggers.Any(x => x.Name == "discard"))
                         {
-                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled);
+                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled,"discard");
                         }
                     }
                 });
 
-                if (!eventCancelled)
-                {
-                    em.completionCallback?.Invoke();
-                }
+                em.completionCallback?.Invoke(!eventCancelled);
                 em.dirty = true;
             });
             
@@ -152,15 +149,12 @@ public partial class Systems
                     {
                         if (keyword.Triggers.Any(x => x.Name == "move"))
                         {
-                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled);
+                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled,"move");
                         }
                     }
                 });
                 
-                if (!eventCancelled)
-                {
-                    em.completionCallback?.Invoke();
-                }
+                em.completionCallback?.Invoke(!eventCancelled);
                 em.dirty = true;
             });
             
@@ -176,15 +170,12 @@ public partial class Systems
                     {
                         if (keyword.Triggers.Any(x => x.Name == "wait"))
                         {
-                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled);
+                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled,"wait");
                         }
                     }
                 });
                 
-                if (!eventCancelled)
-                {
-                    em.completionCallback?.Invoke();
-                }
+                em.completionCallback?.Invoke(!eventCancelled);
                 em.dirty = true;
             });
             
@@ -200,15 +191,12 @@ public partial class Systems
                     {
                         if (keyword.Triggers.Any(x => x.Name == "draw"))
                         {
-                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled);
+                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled,"draw");
                         }
                     }
                 });
                 
-                if (!eventCancelled)
-                {
-                    em.completionCallback?.Invoke();
-                }
+                em.completionCallback?.Invoke(!eventCancelled);
                 em.dirty = true;
             });
             
@@ -225,15 +213,12 @@ public partial class Systems
                     {
                         if (keyword.Triggers.Any(x => x.Name == "attackedByPlayer") && attackedCard == Dungeon.AllCards[t.cardID])
                         {
-                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled);
+                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled,"attackedByPlayer");
                         }
                     }
                 });
                 
-                if (!eventCancelled)
-                {
-                    em.completionCallback?.Invoke();
-                }
+                em.completionCallback?.Invoke(!eventCancelled);
                 em.dirty = true;
             });
             
@@ -250,20 +235,17 @@ public partial class Systems
                     {
                         if (keyword.Triggers.Any(x => x.Name == "selfAttacking") && attackingCard == Dungeon.AllCards[t.cardID])
                         {
-                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled);
+                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled,"selfAttacking");
                         }
                         
                         if (keyword.Triggers.Any(x => x.Name == "anyAttacking"))
                         {
-                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled);
+                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled,"selfAttacking");
                         }
                     }
                 });
                 
-                if (!eventCancelled)
-                {
-                    em.completionCallback?.Invoke();
-                }
+                em.completionCallback?.Invoke(!eventCancelled);
                 em.dirty = true;
             });
             
@@ -280,7 +262,7 @@ public partial class Systems
                     {
                         if (keyword.Triggers.Any(x => x.Name == "destroyedAny"))
                         {
-                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled);
+                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled,"destroyedAny");
                         }
                     }
                 });
@@ -292,15 +274,12 @@ public partial class Systems
                     {
                         if (keyword.Triggers.Any(x => x.Name == "destroyedSelf") && destroyedCard == Dungeon.AllCards[t.cardID])
                         {
-                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled);
+                            keyword.TriggerFor(Dungeon.AllCards[t.cardID], ref eventCancelled,"destroyedSelf");
                         }
                     }
                 });
                 
-                if (!eventCancelled)
-                {
-                    em.completionCallback?.Invoke();
-                }
+                em.completionCallback?.Invoke(!eventCancelled);
                 em.dirty = true;
             });
 
