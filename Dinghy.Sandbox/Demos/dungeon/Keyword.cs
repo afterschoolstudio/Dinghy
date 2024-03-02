@@ -31,6 +31,16 @@ public class Keyword
                 break;
             case "vengeance":
                 Dungeon.Track.RemoveTrackCard(c);
+                Dungeon.Deck.Cards.Insert(0,c);
+                cancelEvent = true;
+                break;
+            case "cycles":
+                Dungeon.Track.RemoveTrackCard(c);
+                Dungeon.Deck.Cards.Add(c);
+                cancelEvent = true;
+                break;
+            case "obstacle":
+                Dungeon.Track.RemoveTrackCard(c);
                 Dungeon.Deck.Cards.Add(c);
                 cancelEvent = true;
                 break;
