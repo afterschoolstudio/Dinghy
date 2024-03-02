@@ -338,7 +338,7 @@ public static partial class Engine
         };
 
         fontSystem = new FontSystem(settings);
-        fontSystem.AddFont(File.ReadAllBytes(@"data/fonts/inter/Inter-Regular.ttf"));
+        fontSystem.AddFont(File.ReadAllBytes(@"data/fonts/hack/Hack-Bold.ttf"));
         
         GlobalScene.Mount(-1);
         GlobalScene.Load(() => {GlobalScene.Start();});
@@ -506,11 +506,16 @@ public static partial class Engine
         }
         
         var text = "abcdefghijklmnopqrstuvwxyz";
-        var scale = new Vector2(2, 2);
-        var font = fontSystem.GetFont(32);
-        var size = font.MeasureString(text, scale);
-        var origin = new Vector2(size.X / 2.0f, size.Y / 2.0f);
-        font.DrawText(fontRenderer, text, new Vector2(400, 400), FSColor.LightCoral, 0.0f, origin, scale);
+        var scale = new Vector2(1, 1);
+        
+        var font = fontSystem.GetFont(48*App.dpi_scale());
+        var size = font.MeasureString(text, scale, characterSpacing:10.1f);
+        var normalized_font_pivot = new Vector2(size.X / 2.0f, size.Y / 2.0f);
+        font.DrawText(fontRenderer, text, new Vector2(Engine.Width/2f, Engine.Height/2f), FSColor.LightCoral);
+        foreach (var tex in fontRenderer._textureManager.CreatedFontTextures)
+        {
+            tex.PumpDraw();
+        }
         // drawDebugText(DebugFont.C64,$"{t}ms \ne: {GlobalScene.Entities.Count} \n {InputSystem.MouseX},{InputSystem.MouseY} \n {DebugTextStr}");
 
         // setting this to load instead of clear allows us to toggle sokol_gp clearing

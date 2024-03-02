@@ -8,6 +8,7 @@ namespace Dinghy.Core;
 
 public class FontstashRenderer : IFontStashRenderer
 {
+    private List<FontTexture> CreatedTextures = new List<FontTexture>();
     public void Draw(object texture, Vector2 pos, Rectangle? src, FSColor color, float rotation, Vector2 scale, float depth)
     {
         (texture as FontTexture).Draw(pos, src, color, rotation, scale, depth);
@@ -94,24 +95,21 @@ public class FontTexture
         }
     }
 
+    private List<(Position pos, sgp_rect src)> batchedDraw = new();
     public void Draw(Vector2 pos, Rectangle? src, FSColor color, float rotation, Vector2 scale, float depth)
     {
-        var p = new Position(pos.X, pos.Y, scale.X, scale.Y, rotation, 0f, 0);
-        sgp_rect source = default;
-        source.x = src.Value.X;
-        source.y = src.Value.Y;
-        source.w = src.Value.Width;
-        source.h = src.Value.Height;
+        sgp_rect rect_src = default;
+        rect_src.x = src.Value.X;
+        rect_src.y = src.Value.Y;
+        rect_src.w = src.Value.Width;
+        rect_src.h = src.Value.Height;
+        batchedDraw.Add((new Position(pos.X,pos.Y,scale.X,scale.Y,rotation,0.5f,0.5f),rect_src));
+    }
 
-        if (pixelsDirty)
+    public void PumpDraw()
+    {
+        if (!imageBuilt)
         {
-            if (imageBuilt)
-            {
-                //sokol doesn't like you updating a texture more than once per frame
-                //but fontstash writes constantly to a new texture in a given frame as it builds the font atlas
-                //so we just incrementally build the atlas and trash the image resources that exist if they are dirty
-                Gfx.destroy_image(internalImage);
-            }
             var nativePixels = new Dinghy.NativeInterop.Utils.NativeArray<uint>(pixels.Count);
             for (int i = 0; i < pixels.Count; i++)
             {
@@ -127,15 +125,26 @@ public class FontTexture
                 internalImage = Gfx.make_image(&d);
             }
             imageBuilt = true;
-            pixelsDirty = false;
         }
-        Engine.DrawTexturedRect(p,internalImage,source);
+
+        foreach (var b in batchedDraw)
+        {
+            Engine.DrawTexturedRect(b.pos,internalImage,b.src);
+        }
+        batchedDraw.Clear();
     }
 }
 
 public class FontstashTextManager : ITexture2DManager
 {
-    public object CreateTexture(int width, int height) => new FontTexture(width, height);
+    public List<FontTexture> CreatedFontTextures = new();
+    public object CreateTexture(int width, int height)
+    {
+        var tex = new FontTexture(width, height);
+        CreatedFontTextures.Add(tex);
+        return tex;
+    }
+
     public Point GetTextureSize(object texture) => (texture as FontTexture).Size;
     public void SetTextureData(object texture, Rectangle bounds, byte[] data) => (texture as FontTexture).Write(bounds, data);
 }
