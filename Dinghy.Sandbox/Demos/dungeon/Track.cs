@@ -79,16 +79,17 @@ public class Track
     {
         var trans = new Transition<float>(startY, endY, Easing.Option.EaseOutElastic);
         TimeSince ts = 0;
-        while (ts < 0.1f)
+        while (ts < 0.2f)
         {
-            c.Entity.Y = startY + ((endY - startY) * (float)trans.Sample(ts / 0.1f));
+            c.Entity.Y = startY + ((endY - startY) * (float)trans.Sample(ts / 0.2f));
             yield return null;
         }
         Dungeon.Player.TakeDamageFromTrackCard(c);
         ts = 0;
-        while (ts < 0.1f)
+        trans = new Transition<float>(startY, endY, Easing.Option.EaseOutExpo);
+        while (ts < 0.12f)
         {
-            c.Entity.Y = endY + ((startY - endY) * (float)trans.Sample(ts / 0.1f));
+            c.Entity.Y = endY + ((startY - endY) * (float)trans.Sample(ts / 0.12f));
             yield return null;
         }
         yield return null;
@@ -143,7 +144,7 @@ public class Track
                     if(success)
                     {
                         Console.WriteLine($"{Cards[i].ID} damaging player for {Cards[i].Attack}");
-                        Coroutines.Start(attackPlayer(Cards[i],Cards[i].Entity.Y,Cards[i].Entity.Y + 120),() => {
+                        Coroutines.Start(attackPlayer(Cards[i],Cards[i].Entity.Y,Cards[i].Entity.Y + 80),() => {
                             i++;
                             spawnedLogic = false;
                         });
