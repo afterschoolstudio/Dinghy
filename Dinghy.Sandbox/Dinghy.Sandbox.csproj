@@ -24,6 +24,10 @@
         </Content>
     </ItemGroup>
 
+    <PropertyGroup>
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    </PropertyGroup>
+
     <ItemGroup>
       <ProjectReference Include="..\Depot.SourceGenerator\Depot.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
       <ProjectReference Include="..\Dinghy.Core\Dinghy.Core.csproj" />

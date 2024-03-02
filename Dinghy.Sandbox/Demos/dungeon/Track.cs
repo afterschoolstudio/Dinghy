@@ -139,7 +139,8 @@ public class Track
             {
                 //maybe do some highlight?
                 spawnedLogic = true;
-                new LogicEvents.TrackCardAttackPlayer(Cards[i].ID).Emit((success) =>
+
+                LogicEvents.Emit(new LogicEvents.LogicData(cardID:Cards[i].ID),Depot.Generated.dungeon.logicTriggers.attackedByPlayer,(success) =>
                 {
                     if(success)
                     {

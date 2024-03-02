@@ -35,7 +35,7 @@ public class Player
 
     public void Move(Action onComplete = null)
     {
-        new LogicEvents.Move().Emit((success) =>
+        LogicEvents.Emit(Depot.Generated.dungeon.logicTriggers.move,(success) =>
         {
             if(!success){onComplete?.Invoke();return;}
             int moveDist = 1; //saturate this with status/buffs/etc
@@ -55,7 +55,7 @@ public class Player
             else
             {
                 //cycle cards
-                new LogicEvents.Discard(Dungeon.Track.Cards[0].ID).Emit((success) =>
+                LogicEvents.Emit(Depot.Generated.dungeon.logicTriggers.discard,new LogicEvents.LogicData(Dungeon.Track.Cards[0].ID),(success) =>
                 {
                     if(!success){onComplete?.Invoke();return;}
                     Dungeon.DiscardStack.Add(Dungeon.Track.Cards[0]);

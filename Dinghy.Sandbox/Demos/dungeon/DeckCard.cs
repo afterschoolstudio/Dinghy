@@ -9,10 +9,11 @@ public class DeckCard
 {
     public int ID { get; protected set; }
     public string Name { get; protected set; }
+    public cards.cardsLine Data { get; private set; }
     public int MaxHealth => Data.health;
     public int Attack => Data.damage;
     public bool Damageable => Data.damageable;
-    public List<Keyword> Keywords = new();
+    public List<Depot.Generated.dungeon.keywords.keywordsLine> Keywords = new();
     // public bool IsObstacle => Data.obstacle;
     // public int XPValue => Data.XPValue;
 
@@ -28,7 +29,6 @@ public class DeckCard
             UpdateDebugText();
         }
     }
-    public cards.cardsLine Data { get; private set; }
     public int distance;
 
     public int Distance
@@ -57,7 +57,7 @@ public class DeckCard
         {
             foreach (var t in Data.keywords)
             {
-                Keywords.Add(Dungeon.GameLogic.Keywords.First(x => x.GUID == t.keyword.GUID));
+                Keywords.Add(t.keyword);
             }
         }
         

@@ -233,7 +233,8 @@
                         {
                             "guid": "5b414e78-ae53-4bd8-adcb-a83dc1286821",
                             "trigger": "06284345-de25-4fa3-88db-740e89b01dc4",
-                            "id": "0"
+                            "id": "0",
+                            "target": "self"
                         }
                     ],
                     "implemented": true
@@ -246,7 +247,8 @@
                         {
                             "guid": "b15654ab-f182-4b88-be62-a162746f8e49",
                             "id": "0",
-                            "trigger": "06284345-de25-4fa3-88db-740e89b01dc4"
+                            "trigger": "06284345-de25-4fa3-88db-740e89b01dc4",
+                            "target": "self"
                         }
                     ],
                     "implemented": true
@@ -259,7 +261,8 @@
                         {
                             "guid": "aa180f6e-eb8b-4ac7-8f6c-80a4a1996b23",
                             "id": "0",
-                            "trigger": "06284345-de25-4fa3-88db-740e89b01dc4"
+                            "trigger": "06284345-de25-4fa3-88db-740e89b01dc4",
+                            "target": "self"
                         }
                     ],
                     "implemented": true
@@ -272,7 +275,8 @@
                         {
                             "guid": "d75a04cd-a6b1-4f6f-b7a9-36b55ed41282",
                             "id": "1",
-                            "trigger": "06284345-de25-4fa3-88db-740e89b01dc4"
+                            "trigger": "06284345-de25-4fa3-88db-740e89b01dc4",
+                            "target": "self"
                         }
                     ],
                     "implemented": true
@@ -285,7 +289,8 @@
                         {
                             "guid": "4dd975e6-db49-4fdb-bd6d-afcdd46f27f2",
                             "id": "0",
-                            "trigger": "06284345-de25-4fa3-88db-740e89b01dc4"
+                            "trigger": "06284345-de25-4fa3-88db-740e89b01dc4",
+                            "target": "self"
                         }
                     ],
                     "implemented": false
@@ -294,7 +299,14 @@
                     "guid": "e381798d-971d-4f82-a38d-ea548b497b59",
                     "id": "vengeance",
                     "description": "goes to the top of the draw pile when discarded",
-                    "triggers": [],
+                    "triggers": [
+                        {
+                            "guid": "9872f616-d299-4daf-bbb0-3608368c8911",
+                            "trigger": "06284345-de25-4fa3-88db-740e89b01dc4",
+                            "target": "self",
+                            "id": "0"
+                        }
+                    ],
                     "implemented": true
                 },
                 {
@@ -357,10 +369,6 @@
             "columns": [],
             "lines": [
                 {
-                    "guid": "1e991e43-8f83-4991-b772-432b4a6dcf08",
-                    "id": "discardAny"
-                },
-                {
                     "guid": "2bc8feba-69ee-4fc3-abdf-3ed216fd4688",
                     "id": "move"
                 },
@@ -374,27 +382,19 @@
                 },
                 {
                     "guid": "06284345-de25-4fa3-88db-740e89b01dc4",
-                    "id": "discardSelf"
+                    "id": "discard"
                 },
                 {
                     "guid": "e0b5e390-0e63-4205-8223-296105b2e1e4",
                     "id": "attackedByPlayer"
                 },
                 {
-                    "guid": "7a4e00a2-b966-45ed-b303-9885416fdfe3",
-                    "id": "destroyedAny"
-                },
-                {
                     "guid": "6c4d260a-e952-4bdc-b9b8-45fcca2d6769",
-                    "id": "destroyedSelf"
+                    "id": "destroyed"
                 },
                 {
                     "guid": "07239113-e257-4a50-ae46-d467d468acdb",
-                    "id": "selfAttacking"
-                },
-                {
-                    "guid": "9638cbdc-1a56-4e90-830a-355dc307402f",
-                    "id": "anyAttacking"
+                    "id": "attacking"
                 }
             ],
             "hidden": false,
@@ -432,6 +432,21 @@
                         "description": "text",
                         "sheet": "sheetSelect",
                         "defaultValue": "lineSelect@sheet"
+                    }
+                },
+                {
+                    "typeStr": "enum",
+                    "guid": "c4680f1a-9ad6-4493-8385-6555983d09e4",
+                    "name": "target",
+                    "description": "new enum field",
+                    "options": "self, any",
+                    "defaultValue": "self",
+                    "iconName": "newEnum",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "defaultValue": "text",
+                        "options": "text"
                     }
                 }
             ],

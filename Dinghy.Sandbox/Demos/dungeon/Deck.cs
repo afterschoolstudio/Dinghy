@@ -32,7 +32,7 @@ public class Deck
 
     public void Draw(bool applyNewPositionsDirectly = false)
     {
-        new LogicEvents.Draw().Emit((success) =>
+        LogicEvents.Emit(Depot.Generated.dungeon.logicTriggers.draw,(success) =>
         {
             if(!success){return;}
             var nextDraw = Cards.First();

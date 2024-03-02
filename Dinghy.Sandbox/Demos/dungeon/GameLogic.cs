@@ -2,24 +2,11 @@
 
 public class GameLogic
 {
-    public List<Keyword> Keywords = new();
-    public List<Trigger> Triggers = new();
+    public List<Depot.Generated.dungeon.keywords.keywordsLine> Keywords => Depot.Generated.dungeon.keywords.Lines;
+    public List<Depot.Generated.dungeon.logicTriggers.logicTriggersLine> Triggers => Depot.Generated.dungeon.logicTriggers.Lines;
 
     public void Init()
     {
-        Keywords.Clear();
-        Triggers.Clear();
-        
-        foreach (var t in Depot.Generated.dungeon.logicTriggers.Lines)
-        {
-            Triggers.Add(new Trigger(t));
-        }
-            
-        foreach (var t in Depot.Generated.dungeon.keywords.Lines)
-        {
-            Keywords.Add(new Keyword(t));
-        }
-
         foreach (var k in Keywords)
         {
             Console.WriteLine($"keyword: {k.Name}");
