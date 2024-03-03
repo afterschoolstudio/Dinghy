@@ -29,36 +29,38 @@ public static class Keywords
 
         //should potentially make this spawn other logic events?
         //things like counterattack shouldn't happen directly, instead they need to happen after an attack is successful
-        switch (triggeringKeyword)
+        if (triggeringKeyword == Depot.Generated.dungeon.keywords.rejuvenate)
         {
-            case Depot.Generated.dungeon.keywords.rejuvenate:
-                Dungeon.Player.Health += 1;
-                break;
-            case Depot.Generated.dungeon.keywords.vengeance:
-                var card = Dungeon.AllCards[data.cardID];
-                Dungeon.Track.RemoveTrackCard(card);
-                Dungeon.Deck.Cards.Insert(0,card);
+            Dungeon.Player.Health += 1;
+        }
+        else if (triggeringKeyword == Depot.Generated.dungeon.keywords.vengeance)
+        {
+            Dungeon.Track.RemoveTrackCard(Dungeon.AllCards[data.cardID]);
+            Dungeon.Deck.Cards.Insert(0, Dungeon.AllCards[data.cardID]);
+            eventCancelled = true;
+        }
+        else if (triggeringKeyword == Depot.Generated.dungeon.keywords.cycles)
+        {
+            Dungeon.Track.RemoveTrackCard(Dungeon.AllCards[data.cardID]);
+            Dungeon.Deck.Cards.Add(Dungeon.AllCards[data.cardID]);
+            eventCancelled = true;
+        }
+        else if (triggeringKeyword == Depot.Generated.dungeon.keywords.obstacle)
+        {
+            if (!Dungeon.Track.Cards.Any(x =>
+                    x.Value != null && !x.Value.Keywords.Contains(Depot.Generated.dungeon.keywords.obstacle)))
+            {
                 eventCancelled = true;
-                break;
-            case Depot.Generated.dungeon.keywords.cycles:
-                var card = Dungeon.AllCards[data.cardID];
-                Dungeon.Track.RemoveTrackCard(card);
-                Dungeon.Deck.Cards.Add(card);
-                eventCancelled = true;
-                break;
-            case Depot.Generated.dungeon.keywords.obstacle:
-                if(!Dungeon.Track.Cards.Any(x => x.Value != null && !x.Value.Keywords.Any(z => z.Name == "obstacle")))
-                {
-                    eventCancelled = true;
-                }
-                break;
-            case Depot.Generated.dungeon.keywords.exit:
-                Dungeon.NextDungeonRoom();
-                eventCancelled = true;
-                break;
-            default:
-                Console.WriteLine("unhandled keyword: " + triggeringKeyword.ID);
-                break;
+            }
+        }
+        else if (triggeringKeyword == Depot.Generated.dungeon.keywords.exit)
+        {
+            Dungeon.NextDungeonRoom();
+            eventCancelled = true;
+        }
+        else
+        {
+            Console.WriteLine("unhandled keyword: " + triggeringKeyword.ID);
         }
 
         completionCallback?.Invoke(!eventCancelled,stackID);
@@ -69,20 +71,20 @@ public static class Keywords
         DeckCard triggeringCard,
         Depot.Generated.dungeon.keywords.keywordsLine triggeringKeyword, 
         Depot.Generated.dungeon.logicTriggers.logicTriggersLine triggeringLogic,
-        LogicData? data)
+        LogicEvents.LogicData? data)
     {
-        if(!data.HasValue){return true;} //we assume null right now is just a player action with no data associated, and hence is valid
+        if(data == null){return true;} //we assume null right now is just a player action with no data associated, and hence is valid
         
-        var keywordLogicBinding = triggeringKeyword.triggers.FirstOrDefault(x => x.trigger = triggeringLogic);
+        var keywordLogicBinding = triggeringKeyword.triggers.FirstOrDefault(x => x.trigger == triggeringLogic);
         if(keywordLogicBinding == null)
         {
             Console.WriteLine("BAD: LOGIC BINDING KEYWORD MISMATCH");
             return false;
         }
 
-        return keywordLogicBinding.target switch 
+        return keywordLogicBinding.target.ToString() switch 
         {
-            "self" => triggeringCard.ID == data.Value.cardID,
+            "self" => triggeringCard.ID == data.cardID,
             "any" => true,
             _ => false
         };

@@ -76,10 +76,10 @@ public class DeckCard
         sb.AppendLine($"d:{Distance}");
         foreach (var k in Keywords)
         {
-            sb.AppendLine($"{k.Name}");
-            foreach (var t in k.Triggers)
+            sb.AppendLine($"{k.ID}");
+            foreach (var t in k.triggers)
             {
-                sb.AppendLine($"    {t.Name}");
+                sb.AppendLine($"    {t.trigger.ID}");
             }
         }
         Entity.DebugText = sb.ToString();

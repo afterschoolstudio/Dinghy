@@ -35,7 +35,7 @@ public class Player
 
     public void Move(Action onComplete = null)
     {
-        LogicEvents.Emit(Depot.Generated.dungeon.logicTriggers.move,(success) =>
+        LogicEvents.Emit(Depot.Generated.dungeon.logicTriggers.move,onComplete:(success) =>
         {
             if(!success){onComplete?.Invoke();return;}
             int moveDist = 1; //saturate this with status/buffs/etc
@@ -70,20 +70,26 @@ public class Player
 
     public void Wait(Action onComplete = null)
     {
-        new LogicEvents.Wait().Emit((success) =>
+        Depot.Generated.dungeon.logicTriggers.discard.Emit(onComplete:(success) =>
         {
-            if(!success){onComplete?.Invoke();return;}
-            Fullness--;
-            if (Fullness <= 0)
+            if (success)
             {
-                Dungeon.Player.Kill();
-                onComplete?.Invoke();
+                Fullness--;
+                if (Fullness <= 0)
+                {
+                    Dungeon.Player.Kill();
+                    onComplete?.Invoke();
+                }
+                else
+                {
+                    Dungeon.Track.Act(() => {
+                        onComplete?.Invoke();
+                    });
+                }
             }
             else
             {
-                Dungeon.Track.Act(() => {
-                    onComplete?.Invoke();
-                });
+                onComplete?.Invoke();
             }
         });
     }

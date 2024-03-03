@@ -22,6 +22,14 @@ public static class LogicEvents
     }
 }
 
+public static class LogicExtentions
+{
+    public static void Emit(this Depot.Generated.dungeon.logicTriggers.logicTriggersLine line, LogicEvents.LogicData? data = null, Action<bool> onComplete = null)
+    {
+        LogicEvents.Emit(line,data,onComplete);
+    }
+}
+
 public partial class Systems
 {
     //THIS NEEDS TO BASICALLY BE A STATE MACHINE
@@ -54,7 +62,7 @@ public partial class Systems
                     {
                         foreach (var trackCardKeyword in Dungeon.AllCards[t.cardID].Keywords)
                         {
-                            if (trackCardKeyword.Triggers.Contains(logicEvent))
+                            if (trackCardKeyword.triggers.Select(x => x.trigger).Contains(logicEvent))
                             {
                                 Keywords.Trigger(Dungeon.AllCards[t.cardID],stackID,activeData,trackCardKeyword,logicEvent,KeywordTriggerComplete);
                             }
