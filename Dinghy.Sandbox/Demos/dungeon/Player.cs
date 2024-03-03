@@ -35,9 +35,8 @@ public class Player
 
     public void Move(Action onComplete = null)
     {
-        LogicEvents.Emit(Depot.Generated.dungeon.logicTriggers.move,onComplete:(success) =>
+        Depot.Generated.dungeon.logicTriggers.move.Emit(executeMain:() =>
         {
-            if(!success){onComplete?.Invoke();return;}
             int moveDist = 1; //saturate this with status/buffs/etc
             foreach (var c in Dungeon.Track.Cards.Where(x => x.Value != null))
             {
@@ -55,42 +54,42 @@ public class Player
             else
             {
                 //cycle cards
-                LogicEvents.Emit(Depot.Generated.dungeon.logicTriggers.discard,new LogicEvents.LogicData(Dungeon.Track.Cards[0].ID),(success) =>
+                Depot.Generated.dungeon.logicTriggers.discard.Emit(new LogicEvents.LogicData(Dungeon.Track.Cards[0].ID),() =>
                 {
-                    if(!success){onComplete?.Invoke();return;}
                     Dungeon.DiscardStack.Add(Dungeon.Track.Cards[0]);
                     Dungeon.Track.RemoveTrackCard(Dungeon.Track.Cards[0]);
                     Dungeon.Track.FillEmptyTrackCardSpaces();
                     Dungeon.Deck.Draw();
+                },finalCompletion: () =>
+                {
                     onComplete?.Invoke();
                 });
             }
+        },finalCompletion: () =>
+        {
+            onComplete?.Invoke();
         });
     }
 
     public void Wait(Action onComplete = null)
     {
-        Depot.Generated.dungeon.logicTriggers.discard.Emit(onComplete:(success) =>
+        Depot.Generated.dungeon.logicTriggers.discard.Emit(executeMain:() =>
         {
-            if (success)
+            Fullness--;
+            if (Fullness <= 0)
             {
-                Fullness--;
-                if (Fullness <= 0)
-                {
-                    Dungeon.Player.Kill();
-                    onComplete?.Invoke();
-                }
-                else
-                {
-                    Dungeon.Track.Act(() => {
-                        onComplete?.Invoke();
-                    });
-                }
+                Dungeon.Player.Kill();
+                onComplete?.Invoke();
             }
             else
             {
-                onComplete?.Invoke();
+                Dungeon.Track.Act(() => {
+                    onComplete?.Invoke();
+                });
             }
+        },finalCompletion: () =>
+        {
+            onComplete?.Invoke();
         });
     }
 

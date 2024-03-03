@@ -140,21 +140,17 @@ public class Track
                 //maybe do some highlight?
                 spawnedLogic = true;
                 
-                Depot.Generated.dungeon.logicTriggers.attacking.Emit(new LogicEvents.LogicData(cardID:Cards[i].ID),(success) =>
+                Depot.Generated.dungeon.logicTriggers.attacking.Emit(new LogicEvents.LogicData(cardID:Cards[i].ID),() =>
                 {
-                    if(success)
-                    {
-                        Console.WriteLine($"{Cards[i].ID} damaging player for {Cards[i].Attack}");
-                        Coroutines.Start(attackPlayer(Cards[i],Cards[i].Entity.Y,Cards[i].Entity.Y + 80),() => {
-                            i++;
-                            spawnedLogic = false;
-                        });
-                    }
-                    else
-                    {
+                    Console.WriteLine($"{Cards[i].ID} damaging player for {Cards[i].Attack}");
+                    Coroutines.Start(attackPlayer(Cards[i],Cards[i].Entity.Y,Cards[i].Entity.Y + 80),() => {
                         i++;
                         spawnedLogic = false;
-                    }
+                    });
+                },cancelled: () =>
+                {
+                    i++;
+                    spawnedLogic = false;
                 });
             }
             else
@@ -169,53 +165,45 @@ public class Track
     public void DamageTrackCards(List<DeckCard> cards, Action onComplete = null)
     {
         var c = cards.First(); //NOTE: assuming one for now
-        Depot.Generated.dungeon.logicTriggers.attackedByPlayer.Emit(new LogicEvents.LogicData(cardID:c.ID),(success) =>
+        Depot.Generated.dungeon.logicTriggers.attackedByPlayer.Emit(new LogicEvents.LogicData(cardID:c.ID),() =>
         {
-            if (success)
+            c.Health -= 1;
+            Coroutines.Start(Shake(c, defaultShake),() =>
             {
-                c.Health -= 1;
-                Coroutines.Start(Shake(c, defaultShake),() =>
+                if (c.Health <= 0)
                 {
-                    if (c.Health <= 0)
+                    Console.WriteLine("destroying");
+                    // LogicEvents.Emit(new LogicEvents.LogicData(cardID:c.ID),Depot.Generated.dungeon.logicTriggers.destroyed,(success) =>
+                    Depot.Generated.dungeon.logicTriggers.destroyed.Emit(new LogicEvents.LogicData(cardID:c.ID),() =>
                     {
-                        Console.WriteLine("destroying");
-                        // LogicEvents.Emit(new LogicEvents.LogicData(cardID:c.ID),Depot.Generated.dungeon.logicTriggers.destroyed,(success) =>
-                        Depot.Generated.dungeon.logicTriggers.destroyed.Emit(new LogicEvents.LogicData(cardID:c.ID),(success) =>
-                        {
-                            if (success)
-                            {
-                                Console.WriteLine("destroy callback");
-                                c.Entity.ECSEntity.Remove<TrackComponent>();
-                                Cards[Cards.First(x => x.Value == c).Key] = null;
-                                c.Entity.Active = false;
-                                Dungeon.Graveyard.Add(c);
+                        Console.WriteLine("destroy callback");
+                        c.Entity.ECSEntity.Remove<TrackComponent>();
+                        Cards[Cards.First(x => x.Value == c).Key] = null;
+                        c.Entity.Active = false;
+                        Dungeon.Graveyard.Add(c);
 
-                                //note right now this assumes one death
-                                //should instead do this after multiple deaths processed
-                                Dungeon.Track.Act(() => {
-                                    FillEmptyTrackCardSpaces();
-                                    Dungeon.Deck.Draw();
-                                    onComplete?.Invoke();
-                                });
-                            }
-                            else
-                            {
-                                onComplete?.Invoke();
-                            }
-                        });
-                    }
-                    else
-                    {
+                        //note right now this assumes one death
+                        //should instead do this after multiple deaths processed
                         Dungeon.Track.Act(() => {
+                            FillEmptyTrackCardSpaces();
+                            Dungeon.Deck.Draw();
                             onComplete?.Invoke();
                         });
-                    }
-                });
-            }
-            else
-            {
-                onComplete?.Invoke();   
-            }
+                    },cancelled: () =>
+                    {
+                        onComplete?.Invoke();
+                    });
+                }
+                else
+                {
+                    Dungeon.Track.Act(() => {
+                        onComplete?.Invoke();
+                    });
+                }
+            });
+        },cancelled: () =>
+        {
+            onComplete?.Invoke();   
         });
 
         

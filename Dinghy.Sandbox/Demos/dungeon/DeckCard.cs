@@ -77,10 +77,7 @@ public class DeckCard
         foreach (var k in Keywords)
         {
             sb.AppendLine($"{k.ID}");
-            foreach (var t in k.triggers)
-            {
-                sb.AppendLine($"    {t.trigger.ID}");
-            }
+            sb.AppendLine($"    {k.trigger.trigger.ID}");
         }
         Entity.DebugText = sb.ToString();
     }

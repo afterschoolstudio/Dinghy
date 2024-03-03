@@ -198,19 +198,6 @@
                     }
                 },
                 {
-                    "typeStr": "list",
-                    "guid": "81c7a1f8-30d3-432c-aed2-e84a7a1697ed",
-                    "name": "triggers",
-                    "description": "new list field",
-                    "sheet": "93e4c8a1-98fe-49c9-a02a-0a6895835f72",
-                    "defaultValue": [],
-                    "iconName": "newList",
-                    "configurable": {
-                        "name": "text",
-                        "description": "text"
-                    }
-                },
-                {
                     "typeStr": "bool",
                     "guid": "4673db3a-2a23-4780-88f1-35e509e97018",
                     "description": "bool field",
@@ -222,6 +209,19 @@
                         "description": "text",
                         "defaultValue": "bool"
                     }
+                },
+                {
+                    "typeStr": "props",
+                    "guid": "acc97fe3-6bbe-42b3-9b3d-b4df1b820511",
+                    "name": "trigger",
+                    "description": "new properties field",
+                    "sheet": "54f5eadf-d5ed-4a4c-bccf-ce029c71c7b2",
+                    "defaultValue": {},
+                    "iconName": "newProps",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text"
+                    }
                 }
             ],
             "lines": [
@@ -229,92 +229,80 @@
                     "guid": "ee102472-7bd5-47c8-a83e-180d696c775d",
                     "id": "obstacle",
                     "description": "wont discard if the track is full of obstacles",
-                    "triggers": [
-                        {
-                            "guid": "5b414e78-ae53-4bd8-adcb-a83dc1286821",
-                            "trigger": "06284345-de25-4fa3-88db-740e89b01dc4",
-                            "id": "0",
-                            "target": "self"
-                        }
-                    ],
-                    "implemented": true
+                    "implemented": true,
+                    "trigger": {
+                        "guid": "76db3075-bc96-46f7-bc19-fda8280288ed",
+                        "phase": "pre",
+                        "trigger": "06284345-de25-4fa3-88db-740e89b01dc4",
+                        "target": "self"
+                    }
                 },
                 {
                     "guid": "364b7812-8096-4655-b5f6-3009bf785a94",
                     "id": "cycles",
                     "description": "cycles back into the deck when discarded",
-                    "triggers": [
-                        {
-                            "guid": "b15654ab-f182-4b88-be62-a162746f8e49",
-                            "id": "0",
-                            "trigger": "06284345-de25-4fa3-88db-740e89b01dc4",
-                            "target": "self"
-                        }
-                    ],
-                    "implemented": true
+                    "implemented": true,
+                    "trigger": {
+                        "guid": "4f2d2501-68f3-46ec-8bc9-f69929e51003",
+                        "phase": "post",
+                        "trigger": "06284345-de25-4fa3-88db-740e89b01dc4",
+                        "target": "self"
+                    }
                 },
                 {
                     "guid": "127b7b57-eebb-4931-9bc1-1cfb7cbda4ba",
                     "id": "rejuvenate",
                     "description": "heals when discarded",
-                    "triggers": [
-                        {
-                            "guid": "aa180f6e-eb8b-4ac7-8f6c-80a4a1996b23",
-                            "id": "0",
-                            "trigger": "06284345-de25-4fa3-88db-740e89b01dc4",
-                            "target": "self"
-                        }
-                    ],
-                    "implemented": true
+                    "implemented": true,
+                    "trigger": {
+                        "guid": "cef2c037-05bb-4a13-91bd-161b391c7ec7",
+                        "phase": "post",
+                        "trigger": "06284345-de25-4fa3-88db-740e89b01dc4",
+                        "target": "self"
+                    }
                 },
                 {
                     "guid": "0b4d97d8-a7ae-453e-8842-0558ed776a95",
                     "id": "exit",
                     "description": "exits the floor",
-                    "triggers": [
-                        {
-                            "guid": "d75a04cd-a6b1-4f6f-b7a9-36b55ed41282",
-                            "id": "1",
-                            "trigger": "06284345-de25-4fa3-88db-740e89b01dc4",
-                            "target": "self"
-                        }
-                    ],
-                    "implemented": true
+                    "implemented": true,
+                    "trigger": {
+                        "guid": "ae775d2e-116e-442c-a27c-d3ca9c976c28",
+                        "phase": "post",
+                        "trigger": "06284345-de25-4fa3-88db-740e89b01dc4",
+                        "target": "self"
+                    }
                 },
                 {
                     "guid": "dc186624-641f-4999-82a6-d998d971a4f0",
                     "id": "lootable",
                     "description": "on track discard this goes into inventory",
-                    "triggers": [
-                        {
-                            "guid": "4dd975e6-db49-4fdb-bd6d-afcdd46f27f2",
-                            "id": "0",
-                            "trigger": "06284345-de25-4fa3-88db-740e89b01dc4",
-                            "target": "self"
-                        }
-                    ],
-                    "implemented": false
+                    "implemented": false,
+                    "trigger": {
+                        "guid": "1a1a5431-b35c-45d0-9d53-4ad72c67f3c2",
+                        "phase": "post",
+                        "trigger": "06284345-de25-4fa3-88db-740e89b01dc4",
+                        "target": "self"
+                    }
                 },
                 {
                     "guid": "e381798d-971d-4f82-a38d-ea548b497b59",
                     "id": "vengeance",
                     "description": "goes to the top of the draw pile when discarded",
-                    "triggers": [
-                        {
-                            "guid": "9872f616-d299-4daf-bbb0-3608368c8911",
-                            "trigger": "06284345-de25-4fa3-88db-740e89b01dc4",
-                            "target": "self",
-                            "id": "0"
-                        }
-                    ],
-                    "implemented": true
+                    "implemented": true,
+                    "trigger": {
+                        "guid": "69609232-6b7d-460f-a7a5-351880b49dd6",
+                        "phase": "post",
+                        "trigger": "06284345-de25-4fa3-88db-740e89b01dc4",
+                        "target": "self"
+                    }
                 },
                 {
                     "guid": "726e3110-2212-4bad-8f27-ec74de763fe7",
                     "id": "ranged",
                     "description": "can attack at >2 distance",
-                    "triggers": [],
-                    "implemented": false
+                    "implemented": false,
+                    "trigger": {}
                 }
             ],
             "hidden": false,
@@ -414,49 +402,6 @@
             }
         },
         {
-            "name": "triggers",
-            "description": "list@dc184815-0e1d-4366-8a44-65a34a8f5dc5",
-            "displayColumn": "id",
-            "guid": "93e4c8a1-98fe-49c9-a02a-0a6895835f72",
-            "columns": [
-                {
-                    "typeStr": "lineReference",
-                    "guid": "ae612a33-69eb-4248-95ba-2e1d40d83832",
-                    "name": "trigger",
-                    "description": "new line reference field",
-                    "sheet": "9f81da92-9ca0-40cf-8f19-a6708db51354",
-                    "defaultValue": "",
-                    "iconName": "newLineLink",
-                    "configurable": {
-                        "name": "text",
-                        "description": "text",
-                        "sheet": "sheetSelect",
-                        "defaultValue": "lineSelect@sheet"
-                    }
-                },
-                {
-                    "typeStr": "enum",
-                    "guid": "c4680f1a-9ad6-4493-8385-6555983d09e4",
-                    "name": "target",
-                    "description": "new enum field",
-                    "options": "self, any",
-                    "defaultValue": "self",
-                    "iconName": "newEnum",
-                    "configurable": {
-                        "name": "text",
-                        "description": "text",
-                        "defaultValue": "text",
-                        "options": "text"
-                    }
-                }
-            ],
-            "lines": [],
-            "hidden": true,
-            "isProps": false,
-            "parentSheetGUID": "dc184815-0e1d-4366-8a44-65a34a8f5dc5",
-            "columnGUID": "81c7a1f8-30d3-432c-aed2-e84a7a1697ed"
-        },
-        {
             "name": "dropTable",
             "description": "list@26410e70-1719-447a-ad54-9535289342fa",
             "displayColumn": "id",
@@ -483,6 +428,64 @@
             "isProps": false,
             "parentSheetGUID": "26410e70-1719-447a-ad54-9535289342fa",
             "columnGUID": "b596124e-9372-4488-9cfb-d26adb31aae6"
+        },
+        {
+            "name": "trigger",
+            "description": "props@dc184815-0e1d-4366-8a44-65a34a8f5dc5",
+            "displayColumn": "id",
+            "guid": "54f5eadf-d5ed-4a4c-bccf-ce029c71c7b2",
+            "columns": [
+                {
+                    "typeStr": "enum",
+                    "guid": "59b7ff68-6970-477c-a0eb-1637731e37a9",
+                    "name": "phase",
+                    "description": "phase",
+                    "options": "pre, post",
+                    "defaultValue": "post",
+                    "iconName": "newEnum",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "defaultValue": "text",
+                        "options": "text"
+                    }
+                },
+                {
+                    "typeStr": "lineReference",
+                    "guid": "52f7f711-0ccf-4adc-9bff-89279af84d66",
+                    "name": "trigger",
+                    "description": "new line reference field",
+                    "sheet": "9f81da92-9ca0-40cf-8f19-a6708db51354",
+                    "defaultValue": "",
+                    "iconName": "newLineLink",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "sheet": "sheetSelect",
+                        "defaultValue": "lineSelect@sheet"
+                    }
+                },
+                {
+                    "typeStr": "enum",
+                    "guid": "04faa6c0-3b11-4ef2-8612-8aca9b632353",
+                    "name": "target",
+                    "description": "new enum field",
+                    "options": "self, any",
+                    "defaultValue": "self",
+                    "iconName": "newEnum",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "defaultValue": "text",
+                        "options": "text"
+                    }
+                }
+            ],
+            "lines": [],
+            "hidden": true,
+            "isProps": true,
+            "parentSheetGUID": "dc184815-0e1d-4366-8a44-65a34a8f5dc5",
+            "columnGUID": "acc97fe3-6bbe-42b3-9b3d-b4df1b820511"
         }
     ]
 }

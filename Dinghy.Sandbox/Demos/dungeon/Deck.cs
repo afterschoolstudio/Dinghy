@@ -32,9 +32,9 @@ public class Deck
 
     public void Draw(bool applyNewPositionsDirectly = false)
     {
-        LogicEvents.Emit(Depot.Generated.dungeon.logicTriggers.draw,onComplete:(success) =>
+        Console.WriteLine("trying to draw");
+        Depot.Generated.dungeon.logicTriggers.draw.Emit(executeMain:() =>
         {
-            if(!success){return;}
             var nextDraw = Cards.First();
             
             var targetPos = Dungeon.Track.Cards.First(x => x.Value == null).Key;
