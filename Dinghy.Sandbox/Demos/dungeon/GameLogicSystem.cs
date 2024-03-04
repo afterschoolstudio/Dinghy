@@ -27,6 +27,54 @@ public static class LogicEvents
 
 public static class LogicExtentions
 {
+    public static void Emit(this Depot.Generated.dungeon.logicTriggers.logicTriggersLine logicEvent, 
+        Systems.Logic.Event parentEvent,
+        LogicEvents.LogicData? data = null)
+    {
+        var mainEvent = new Systems.Logic.Event(parentEvent); //TODO: switch on logicEvent type? - this is what the logic event (draw/discard/etc.) actuall does
+        //attach pre-events to our event
+        foreach (var trackCard in Dungeon.Track.Cards.Where(x => x.Value != null))
+        {
+            foreach (var keyword in trackCard.Value!.Keywords)
+            {
+                if (keyword.trigger.trigger == logicEvent && 
+                    keyword.trigger.phase == Depot.Generated.dungeon.keywords.triggerProps.phase_ENUM.pre &&
+                    ValidateKeywordTriggerTarget(trackCard.Value!,keyword,data)
+                    )
+                {
+                    keyword.Emit(mainEvent) //TODO: (also this implicitly adds children)  switch on keyword type? - this is what the keyword actually does
+                }
+            }
+            
+        }
+
+        bool ValidateKeywordTriggerTarget(
+            DeckCard triggeringCard,
+            Depot.Generated.dungeon.keywords.keywordsLine triggeringKeyword,
+            LogicEvents.LogicData? data)
+        {
+            if(data == null){return true;}
+            return triggeringKeyword.trigger.target.ToString() switch 
+            {
+                "self" => triggeringCard.ID == data.cardID,
+                "any" => true,
+                _ => false
+            };
+        }
+    }
+    
+    public static void Emit(this Depot.Generated.dungeon.keywords.keywordsLine keyword, 
+        Systems.Logic.Event parentEvent,
+        LogicEvents.LogicData? data = nulll)
+    {
+        var mainEvent = new Systems.Logic.Event(parentEvent); //TODO: switch on logicEvent type?
+    }
+    
+    
+    
+    
+    
+
     public static void Emit(this Depot.Generated.dungeon.logicTriggers.logicTriggersLine line, LogicEvents.LogicData? data = null, Action executeMain = null, Action finalCompletion = null, Action cancelled = null)
     {
         Console.WriteLine("emitting " + line.ID);

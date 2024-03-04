@@ -10,4 +10,13 @@ public static class Coroutines
             new Coroutine(c,completionCallback)
         );
     }
+
+    public static IEnumerator WaitForSeconds(float seconds)
+    {
+        TimeSince ts = 0;
+        while (ts < seconds)
+        {
+            yield return null;
+        }
+    }
 }
