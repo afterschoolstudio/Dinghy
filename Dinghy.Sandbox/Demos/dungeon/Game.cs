@@ -25,6 +25,7 @@ public class Dungeon : Scene
     public override void Create()
     {
         Init();
+        Keywords.InitBindings();
         Systems.Init();
     }
 

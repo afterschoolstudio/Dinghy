@@ -13,8 +13,6 @@ public partial class Systems
 {
     public static void Init()
     {
-        Engine.RegisterSystem(new GameLogicSystem());
-        
         Coroutines.Start(LogicProcess());
         // Engine.RegisterSystem(new CollisionSystem());
         // Engine.RegisterSystem(new MouseEnemyCollisonHandler());
@@ -22,47 +20,26 @@ public partial class Systems
 
     public static class Logic
     {
-        public static Event RootEvent = new(null); 
+        public record EventData(int cardID);
+        
+        public static Event RootEvent = new(null,null);
         public class Event
         {
             public Event ParentEvent { get; protected set; }
             public List<Event> ChildEvents { get; protected set; } = new List<Event>();
             public bool Executed;
-            public Event(Event parentEvent)
+            public bool Complete;
+            public IEnumerator ExecutionRoutine { get; protected set; }
+            public Event(Event parentEvent, IEnumerator executionRoutine)
             {
                 ParentEvent = parentEvent;
                 ParentEvent.ChildEvents.Add(this);
-            }
-
-            public void Execute()
-            {
-                Coroutines.Start(Executer(), () =>
-                {
-                    var nextChild = ChildEvents.FirstOrDefault(x => !x.Executed);
-                    if (nextChild != null)
-                    {
-                        nextChild.Execute();
-                    }
-                    else if
-                    {
-                        
-                    }
-                    foreach (var child in ChildEvents)
-                    {
-                         child.Execute();
-                    }
-                });
-            }
-
-            public IEnumerator Executer()
-            {
-                //TODO: IMPLEMENT
-                yield return null;
+                ExecutionRoutine = executionRoutine;
             }
         }
     }
 
-    public static List<Logic.Event> ExecutedEvents = new List<Logic.Event>();
+    public static List<Logic.Event> ExecutedEvents = new ();
     static bool LogicEventExecuting => ActiveEvent != null;
     public static Logic.Event? LastExecutedEvent;
     public static Logic.Event? ActiveEvent;
@@ -70,59 +47,58 @@ public partial class Systems
     {
         while(true)
         {
-            if (Logic.RootEvent.ChildEvents.Count <= 0)
-            {
-                yield return Coroutines.WaitForSeconds(1.5f);
-                continue;
-            }
+            //prune the logic tree
+            Logic.RootEvent.ChildEvents.RemoveAll(x => x.Complete);
             
-            if(!LogicEventExecuting)
+            //do we have any incomplete children
+            if(Logic.RootEvent.ChildEvents.Any() && !LogicEventExecuting)
             {
-                ActiveEvent = GetNextEvent();
-                Coroutines.Start(ActiveEvent.Executer(), () =>
+                //TODO: need to check if LastExecutedEvent is logic event and then spawn post-events from this at the parent of LastExecutedEvent
+                GetNextEvent(Logic.RootEvent.ChildEvents.First(), out ActiveEvent);
+                Coroutines.Start(ActiveEvent.ExecutionRoutine, () =>
                 {
                     ExecutedEvents.Add(ActiveEvent);
                     ActiveEvent.Executed = true;
-                    //prune the event tree
-                    Logic.RootEvent.ChildEvents.RemoveAll(x => x.Executed);
                     LastExecutedEvent = ActiveEvent;
                     ActiveEvent = null;
                 });
             }
+            
+            yield return Coroutines.WaitForSeconds(1.5f);
+
         }
-
-        Logic.Event GetNextEvent()
+        
+        bool GetNextEvent(Logic.Event node, out Logic.Event nextEvent)
         {
-            return GetNextValidNodeFromNode(LastExecutedEvent ?? Logic.RootEvent);
-
-            Logic.Event GetNextValidNodeFromNode(Logic.Event start)
+            nextEvent = null;
+            if (node == null || node.Complete)
             {
-                //depth first to first valid child
-                var validChildEvent = start.ChildEvents.FirstOrDefault(x => !x.Executed);
-                if (validChildEvent != null)
-                {
-                    return GetNextValidNodeFromNode(validChildEvent);
-                }
-                //then self
-                if (start == LastExecutedEvent)
-                {
-                    LastExecutedEvent.ParentEvent
-                }
-                return start;
-                
-                //then to sibling
-                var validSiblingEvent = start.ParentEvent.ChildEvents.FirstOrDefault(x => !x.Executed);
-                if (validSiblingEvent != null)
-                {
-                    return GetNextValidNodeFromNode(validSiblingEvent);
-                }
-                
-                //all the way down, then sibling, then parent
-                //TODO: IMPLEMENT
-                var startNode = start;
-                var targetNode;
-                while
+                return false; // Node is either null or fully processed, so return null.
             }
+
+            if (!node.Executed)
+            {
+                // This checks if the node itself is the next unexecuted event,
+                // but doesn't immediately mark it as executed; that should be done after the actual execution logic.
+                nextEvent = node;
+                return true;
+            }
+
+            foreach (var child in node.ChildEvents)
+            {
+                // Recursively search for an unexecuted event in the children
+                if (GetNextEvent(child,out var n))
+                {
+                    nextEvent = n; // Found an unexecuted event in the children
+                    return true;
+                }
+            }
+
+            // If this point is reached, all children are executed or complete, so mark this node as complete
+            node.Complete = true;
+
+            // No unexecuted child found and this node is either executed or marked complete, so return null
+            return false;
         }
     }
 }

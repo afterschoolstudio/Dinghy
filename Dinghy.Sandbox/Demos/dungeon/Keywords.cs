@@ -1,56 +1,78 @@
 using System.Collections;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace Dinghy.Sandbox.Demos.dungeon;
 
 public static class Keywords
 {
-    //bool dictates if the calling event should be cancelled after the effect is invoked
-    public static IEnumerator Trigger(
-        DeckCard triggeringCard,
-        int logicEventID,
-        int stackExecutionID,
-        LogicEvents.LogicData? data, 
-        Depot.Generated.dungeon.keywords.keywordsLine triggeringKeyword, 
-        Depot.Generated.dungeon.logicTriggers.logicTriggersLine triggeringLogic 
-    )
+    public class KeywordBindingAttribute : System.Attribute
     {
-        //this could maybe be linked scripts
-
-        //should potentially make this spawn other logic events?
-        //things like counterattack shouldn't happen directly, instead they need to happen after an attack is successful
-        if (triggeringKeyword == Depot.Generated.dungeon.keywords.rejuvenate)
+        public string KeywordID { get; protected set; }
+        public KeywordBindingAttribute(string keywordID)
         {
-            Dungeon.Player.Health += 1;
+            KeywordID = keywordID;
         }
-        else if (triggeringKeyword == Depot.Generated.dungeon.keywords.vengeance)
-        {
-            Dungeon.Track.RemoveTrackCard(Dungeon.AllCards[data.cardID]);
-            Dungeon.Deck.Cards.Insert(0, Dungeon.AllCards[data.cardID]);
-        }
-        else if (triggeringKeyword == Depot.Generated.dungeon.keywords.cycles)
-        {
-            Dungeon.Track.RemoveTrackCard(Dungeon.AllCards[data.cardID]);
-            Dungeon.Deck.Cards.Add(Dungeon.AllCards[data.cardID]);
-        }
-        else if (triggeringKeyword == Depot.Generated.dungeon.keywords.exit)
-        {
-            Dungeon.NextDungeonRoom();
-        }
-        else
-        {
-            Console.WriteLine("unhandled keyword: " + triggeringKeyword.ID);
-        }
-        yield return null;
     }
 
-    public static bool KeywordCancelsMain(Depot.Generated.dungeon.keywords.keywordsLine keyword)
+    public static Dictionary<string, MethodInfo> KeywordBindingDict = new Dictionary<string, MethodInfo>();
+    public static void InitBindings()
     {
-        if(keyword == Depot.Generated.dungeon.keywords.obstacle)
+        // Get all methods in the current class
+        foreach (var method in typeof(Keywords).GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance))
         {
-            return !Dungeon.Track.Cards.Any(x =>
-                    x.Value != null && !x.Value.Keywords.Contains(Depot.Generated.dungeon.keywords.obstacle));
+            // Check if the method has the KeywordBinding attribute
+            var attribute = method.GetCustomAttribute<KeywordBindingAttribute>();
+            if (attribute != null && method.IsStatic && method.ReturnType == typeof(IEnumerator) && method.GetParameters().Length == 0)
+            {
+                KeywordBindingDict.Add(attribute.KeywordID, method);
+            }
         }
-        return false;
+    }
+    public static Systems.Logic.Event Emit(this Depot.Generated.dungeon.keywords.keywordsLine keyword, Systems.Logic.Event parent)
+    {
+        if (KeywordBindingDict.TryGetValue(keyword.ID, out MethodInfo methodInfo))
+        {
+            // For static methods, the first parameter is null. For instance methods, you need an instance.
+            return new Systems.Logic.Event(parent, (IEnumerator)methodInfo.Invoke(null, null));
+        }
+        throw new KeyNotFoundException($"No method bound to keyword '{keyword}'.");
+    }
+    
+    [KeywordBinding("rejuvenate")]
+    public static IEnumerator Rejuvenate()
+    {
+        Dungeon.Player.Health += 1;
+        yield return null;
+    }
+        
+    [KeywordBinding("vengeance")]
+    public static IEnumerator Vengeance()
+    {
+        Dungeon.Track.RemoveTrackCard(Dungeon.AllCards[data.cardID]);
+        Dungeon.Deck.Cards.Insert(0, Dungeon.AllCards[data.cardID]);
+        yield return null;
+    }
+     
+    [KeywordBinding("cycles")]
+    public static IEnumerator Cycles()
+    {
+        Dungeon.Track.RemoveTrackCard(Dungeon.AllCards[data.cardID]);
+        Dungeon.Deck.Cards.Add(Dungeon.AllCards[data.cardID]);
+        yield return null;
+    }
+    [KeywordBinding("obstacle")]
+    public static IEnumerator Obstacle()
+    {
+        // need to tie this into global state
+        // parent.Cancelled = !Dungeon.Track.Cards.Any(x =>
+        //     x.Value != null && !x.Value.Keywords.Contains(Depot.Generated.dungeon.keywords.obstacle));
+        yield return null;
+    }
+    [KeywordBinding("exit")]
+    public static IEnumerator Exit()
+    {
+        Dungeon.NextDungeonRoom();
+        yield return null;
     }
 }
