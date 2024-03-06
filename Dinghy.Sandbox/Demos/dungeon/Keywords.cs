@@ -36,7 +36,7 @@ public static class Keywords
             // For static methods, the first parameter is null. For instance methods, you need an instance.
             return new Systems.Logic.Event(parent, (IEnumerator)methodInfo.Invoke(null, null));
         }
-        throw new KeyNotFoundException($"No method bound to keyword '{keyword}'.");
+        throw new KeyNotFoundException($"No method bound to keyword '{keyword.ID}'.");
     }
     
     [KeywordBinding("rejuvenate")]

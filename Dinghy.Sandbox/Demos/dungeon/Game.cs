@@ -26,6 +26,7 @@ public class Dungeon : Scene
     {
         Init();
         Keywords.InitBindings();
+        Logic.InitBindings();
         Systems.Init();
     }
 
