@@ -36,7 +36,7 @@ public static class Keywords
     {
         if (KeywordBindingDict.TryGetValue(keyword.ID, out MethodInfo methodInfo))
         {
-            var newEvent = new Systems.Logic.Event(keyword.ID, (IEnumerator)methodInfo.Invoke(null, [data]));
+            var newEvent = new Systems.Logic.Event(keyword.ID, (IEnumerator)methodInfo.Invoke(null, [Systems.Logic.EventCounter,data]));
             parent.ChildEvents.Add(newEvent);
             // For static methods, the first parameter is null. For instance methods, you need an instance.
             return newEvent;
@@ -45,15 +45,17 @@ public static class Keywords
     }
     
     [KeywordBinding("rejuvenate")]
-    public static IEnumerator Rejuvenate(Systems.Logic.EventData? d)
+    public static IEnumerator Rejuvenate(int eventID, Systems.Logic.EventData? d)
     {
         Dungeon.Player.Health += 1;
         yield return null;
     }
         
     [KeywordBinding("vengeance")]
-    public static IEnumerator Vengeance(Systems.Logic.EventData? d)
+    public static IEnumerator Vengeance(int eventID, Systems.Logic.EventData? d)
     {
+        //TODO: find way to move a card globally
+        //this needs to be moved to deck, but only should work if we're in discard based on triggers
         var card = Dungeon.AllCards[d.cardID];
         Dungeon.Track.RemoveTrackCard(card);
         Dungeon.Deck.Cards.Insert(0, card);
@@ -61,15 +63,15 @@ public static class Keywords
     }
      
     [KeywordBinding("cycles")]
-    public static IEnumerator Cycles(Systems.Logic.EventData? d)
+    public static IEnumerator Cycles(int eventID, Systems.Logic.EventData? d)
     {
+        //TODO: need to take this out of discard
         var card = Dungeon.AllCards[d.cardID];
-        Dungeon.Track.RemoveTrackCard(card);
         Dungeon.Deck.Cards.Add(card);
         yield return null;
     }
     [KeywordBinding("obstacle")]
-    public static IEnumerator Obstacle(Systems.Logic.EventData? d)
+    public static IEnumerator Obstacle(int eventID, Systems.Logic.EventData? d)
     {
         // need to tie this into global state
         // parent.Cancelled = !Dungeon.Track.Cards.Any(x =>
@@ -77,7 +79,7 @@ public static class Keywords
         yield return null;
     }
     [KeywordBinding("exit")]
-    public static IEnumerator Exit(Systems.Logic.EventData? d)
+    public static IEnumerator Exit(int eventID, Systems.Logic.EventData? d)
     {
         Dungeon.NextDungeonRoom();
         yield return null;

@@ -44,8 +44,6 @@ public class Player
                 {
                     Dungeon.Track.MoveTrackCardsToLatestTrackPositions();
                 });
-            }, onComplete: () =>
-            {
             });
         }, onComplete:onComplete);
     }

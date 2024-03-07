@@ -24,7 +24,25 @@ public partial class Systems
         public record EventData(int cardID);
         
         public static Event RootEvent = new(null,null);
-        private static int EventCounter = 0;
+        public static int EventCounter { get; protected set;  } = 0;
+
+        public static Event FindEventWithID(int id)
+        {
+            return FindInNode(Logic.RootEvent);
+            Event FindInNode(Logic.Event e)
+            {
+                foreach (var c in e.ChildEvents)
+                {
+                    if (c.Index == id)
+                    {
+                        return c;
+                    }
+                    return FindInNode(c);
+                }
+                Console.WriteLine("unable to find node with id: " + id);
+                return null;
+            }
+        }
         public class Event
         {
             public string Name { get; protected set; }
@@ -32,7 +50,7 @@ public partial class Systems
             public List<Event> ChildEvents { get; protected set; } = new List<Event>();
             public bool Executed;
             public bool Complete;
-            public bool SpawnedPostEvents;
+            public bool Cancelled;
             public IEnumerator ExecutionRoutine { get; protected set; }
             private Action<Event> PostExecution;
             public Action OnComplete;
@@ -46,7 +64,7 @@ public partial class Systems
                 PostExecution = postExecution;
                 OnComplete = onComplete;
             }
-
+            
             public void SpawnPostEvents()
             {
                 PostExecution?.Invoke(this);
@@ -130,7 +148,11 @@ public partial class Systems
                 {
                     ExecutedEvents.Add(ActiveEvent);
                     ActiveEvent.Executed = true;
-                    ActiveEvent.SpawnPostEvents();
+                    if (!ActiveEvent.Cancelled)
+                    {
+                        //we only spawn post events if our main event was a success
+                        ActiveEvent.SpawnPostEvents();
+                    }
                     LastExecutedEvent = ActiveEvent;
                     ActiveEvent = null;
                 });

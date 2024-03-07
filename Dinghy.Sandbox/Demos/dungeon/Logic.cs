@@ -50,7 +50,7 @@ public static class Logic
     {
         if (LogicBindingDict.TryGetValue(m.ToString(), out MethodInfo methodInfo))
         {
-            var newEvent =  new Systems.Logic.Event(m.ToString(), (IEnumerator)methodInfo.Invoke(null, [data]),postExecution, onComplete);
+            var newEvent =  new Systems.Logic.Event(m.ToString(), (IEnumerator)methodInfo.Invoke(null, [Systems.Logic.EventCounter,data]),postExecution, onComplete);
             parent.ChildEvents.Add(newEvent);
             return newEvent;
         }
@@ -66,7 +66,25 @@ public static class Logic
     {
         if (LogicBindingDict.TryGetValue(logicEvent.ID, out MethodInfo methodInfo))
         {
-            var main = new Systems.Logic.Event(logicEvent.ID,(IEnumerator)methodInfo.Invoke(null, [data]),postExecution, onComplete);
+            var main = new Systems.Logic.Event(logicEvent.ID,(IEnumerator)methodInfo.Invoke(null, [Systems.Logic.EventCounter,data]), e =>
+            {
+                //attach post-events to our event
+                foreach (var trackCard in Dungeon.Track.Cards.Where(x => x.Value != null && x.Value.Health > 0))
+                {
+                    foreach (var keyword in trackCard.Value!.Keywords)
+                    {
+                        if (keyword.trigger.trigger == logicEvent &&
+                            keyword.trigger.phase == Depot.Generated.dungeon.keywords.triggerProps.phase_ENUM.post &&
+                            ValidateKeywordTriggerTarget(trackCard.Value!, keyword, data)
+                           )
+                        {
+                            keyword.Emit(e,data);
+                        }
+                    }
+
+                }
+            }, onComplete);
+            
             parent.ChildEvents.Add(main);
             //attach pre-events to our event
             foreach (var trackCard in Dungeon.Track.Cards.Where(x => x.Value != null))
@@ -122,7 +140,7 @@ public static class Logic
      */
 
     [LogicBinding("move")]
-    public static IEnumerator Move(Systems.Logic.EventData? d)
+    public static IEnumerator Move(int eventID, Systems.Logic.EventData? d)
     {
         int moveDist = 1; //saturate this with status/buffs/etc
         foreach (var c in Dungeon.Track.Cards.Where(x => x.Value != null))
@@ -139,7 +157,7 @@ public static class Logic
         yield return null;
     }
     [LogicBinding("wait")]
-    public static IEnumerator Wait(Systems.Logic.EventData? d)
+    public static IEnumerator Wait(int eventID, Systems.Logic.EventData? d)
     {
         Dungeon.Player.Fullness--;
         if (Dungeon.Player.Fullness <= 0)
@@ -149,8 +167,9 @@ public static class Logic
         yield return null;
     }
     [LogicBinding("draw")]
-    public static IEnumerator Draw(Systems.Logic.EventData? d)
+    public static IEnumerator Draw(int eventID, Systems.Logic.EventData? d)
     {
+        //TODO: cancel this if not possible to draw
         var nextDraw = Dungeon.Deck.Cards.First();
         var targetPos = Dungeon.Track.Cards.First(x => x.Value == null).Key;
         Dungeon.Track.Cards[targetPos] = nextDraw;
@@ -160,7 +179,7 @@ public static class Logic
         yield return null;
     }
     [LogicBinding("discard")]
-    public static IEnumerator Discard(Systems.Logic.EventData? d)
+    public static IEnumerator Discard(int eventID, Systems.Logic.EventData? d)
     {
         var card = Dungeon.AllCards[d.cardID];
         Dungeon.DiscardStack.Add(card);
@@ -168,7 +187,7 @@ public static class Logic
         yield return null;
     }
     [LogicBinding("attackedByPlayer")]
-    public static IEnumerator AttackedByPlayer(Systems.Logic.EventData? d)
+    public static IEnumerator AttackedByPlayer(int eventID, Systems.Logic.EventData? d)
     {
         var card = Dungeon.AllCards[d.cardID];
         yield return Dungeon.Effects.Shake(card);
@@ -176,7 +195,7 @@ public static class Logic
         yield return null;
     }
     [LogicBinding("destroyed")]
-    public static IEnumerator Destroyed(Systems.Logic.EventData? d)
+    public static IEnumerator Destroyed(int eventID, Systems.Logic.EventData? d)
     {
         var card = Dungeon.AllCards[d.cardID];
         card.Entity.Active = false;
@@ -184,7 +203,7 @@ public static class Logic
         yield return null;
     }
     [LogicBinding("attacking")]
-    public static IEnumerator Attacking(Systems.Logic.EventData? d)
+    public static IEnumerator Attacking(int eventID, Systems.Logic.EventData? d)
     {
         var card = Dungeon.AllCards[d.cardID];
         float startY = card.Entity.Y;
@@ -214,25 +233,25 @@ public static class Logic
     }
     
     [LogicBinding(MetaEvents.PlayerAttacking)]
-    public static IEnumerator PlayerAttacking(Systems.Logic.EventData? d)
+    public static IEnumerator PlayerAttacking(int eventID, Systems.Logic.EventData? d)
     {
         yield return null;
     }
     
     [LogicBinding(MetaEvents.CardsActing)]
-    public static IEnumerator CardsActing(Systems.Logic.EventData? d)
+    public static IEnumerator CardsActing(int eventID, Systems.Logic.EventData? d)
     {
         yield return null;
     }
     
     [LogicBinding(MetaEvents.DeathReap)]
-    public static IEnumerator DeathReap(Systems.Logic.EventData? d)
+    public static IEnumerator DeathReap(int eventID, Systems.Logic.EventData? d)
     {
         yield return null;
     }
     
     [LogicBinding(MetaEvents.DrawingMultipleCards)]
-    public static IEnumerator DrawingMultipleCards(Systems.Logic.EventData? d)
+    public static IEnumerator DrawingMultipleCards(int eventID, Systems.Logic.EventData? d)
     {
         yield return null;
     }
