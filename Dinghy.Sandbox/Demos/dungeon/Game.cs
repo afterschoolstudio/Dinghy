@@ -25,10 +25,10 @@ public class Dungeon : Scene
 
     public override void Create()
     {
-        Init();
         Keywords.InitBindings();
         Logic.InitBindings();
         Systems.Init();
+        Init();
     }
 
     public void Init()

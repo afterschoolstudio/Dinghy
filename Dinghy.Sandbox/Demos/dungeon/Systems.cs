@@ -14,7 +14,7 @@ public partial class Systems
 {
     public static void Init()
     {
-        Coroutines.Start(LogicProcess());
+        Coroutines.Start(LogicProcess(),"main logic process");
         // Engine.RegisterSystem(new CollisionSystem());
         // Engine.RegisterSystem(new MouseEnemyCollisonHandler());
     }
@@ -28,7 +28,6 @@ public partial class Systems
         public class Event
         {
             public int Index = 0;
-            public Event ParentEvent { get; protected set; }
             public List<Event> ChildEvents { get; protected set; } = new List<Event>();
             public bool Executed;
             public bool Complete;
@@ -36,12 +35,11 @@ public partial class Systems
             public IEnumerator ExecutionRoutine { get; protected set; }
             private Action<Event> PostExecution;
             public Action OnComplete;
-            public Event(Event parentEvent, IEnumerator executionRoutine, Action<Event> postExecution = null, Action onComplete = null)
+            public Event(IEnumerator executionRoutine, Action<Event> postExecution = null, Action onComplete = null)
             {
+                //NOTE: In onComplete you should not add new nodes to this, they will not be addressed
                 Index = EventCounter;
                 EventCounter++;
-                ParentEvent = parentEvent;
-                ParentEvent.ChildEvents.Add(this);
                 ExecutionRoutine = executionRoutine;
                 PostExecution = postExecution;
                 OnComplete = onComplete;
@@ -61,14 +59,20 @@ public partial class Systems
                 {
                     Depot.Generated.dungeon.logicTriggers.destroyed.Emit(e, new EventData(cardID: c.Value.ID));
                 }
+            }, onComplete: () =>
+            {
+                if (Dungeon.Player.Health <= 0)
+                {
+                    Dungeon.Player.Kill();
+                }
             });
         }
     }
 
     public static List<Logic.Event> ExecutedEvents = new ();
     static bool LogicEventExecuting => ActiveEvent != null;
-    public static Logic.Event? LastExecutedEvent;
     public static Logic.Event? ActiveEvent;
+    public static Logic.Event? LastExecutedEvent;
 
     private static int lastDeathReapIndex = -1;
     static Logic.Event deathReapEventCheck;
@@ -95,7 +99,7 @@ public partial class Systems
             //note that getnextevent also marks nodes complete so it's important that we run it here. complete nodes will get pruned in next loop iteration
             if(Logic.RootEvent.ChildEvents.Any() && !LogicEventExecuting && GetNextEvent(Logic.RootEvent.ChildEvents.First(), out ActiveEvent))
             {
-                Coroutines.Start(ActiveEvent.ExecutionRoutine, () =>
+                Coroutines.Start(ActiveEvent.ExecutionRoutine, $"event{ActiveEvent.Index}", () =>
                 {
                     ExecutedEvents.Add(ActiveEvent);
                     ActiveEvent.Executed = true;
@@ -141,6 +145,7 @@ public partial class Systems
                 node.SpawnedPostEvents = true;
                 return false; //we need to return so that the new children can be picked up (if added)
             }
+            node.OnComplete?.Invoke();
             node.Complete = true;
 
             // No unexecuted child found and this node is either executed or marked complete, so return null
@@ -152,7 +157,7 @@ public partial class Systems
     {
         StringBuilder sb = new StringBuilder();
         sb.AppendLine("flowchart TD");
-        GetNodeRelations(sb,Logic.RootEvent);
+        GetNodeRelations(Logic.RootEvent);
         return sb.ToString();
         
         void GetNodeRelations(Logic.Event e)

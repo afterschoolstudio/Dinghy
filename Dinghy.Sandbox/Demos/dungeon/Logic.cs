@@ -43,13 +43,15 @@ public static class Logic
 
     public static Systems.Logic.Event Emit(
         this MetaEvents m,
-        Systems.Logic.Event parent = null,
+        Systems.Logic.Event parent,
         Systems.Logic.EventData? data = null,
         Action<Systems.Logic.Event> postExecution = null, Action onComplete = null)
     {
         if (LogicBindingDict.TryGetValue(m.ToString(), out MethodInfo methodInfo))
         {
-            return new Systems.Logic.Event(parent, (IEnumerator)methodInfo.Invoke(null, [data]),postExecution, onComplete);
+            var newEvent =  new Systems.Logic.Event( (IEnumerator)methodInfo.Invoke(null, [data]),postExecution, onComplete);
+            parent.ChildEvents.Add(newEvent);
+            return newEvent;
         }
         
         throw new KeyNotFoundException($"No method bound to logic '{m.ToString()}'.");
@@ -57,14 +59,14 @@ public static class Logic
 
     public static Systems.Logic.Event Emit(
         this Depot.Generated.dungeon.logicTriggers.logicTriggersLine logicEvent,
-        Systems.Logic.Event parent = null,
+        Systems.Logic.Event parent,
         Systems.Logic.EventData? data = null,
         Action<Systems.Logic.Event> postExecution = null, Action onComplete = null)
     {
         if (LogicBindingDict.TryGetValue(logicEvent.ID, out MethodInfo methodInfo))
         {
-            var main = new Systems.Logic.Event(parent, (IEnumerator)methodInfo.Invoke(null, [data]));
-
+            var main = new Systems.Logic.Event((IEnumerator)methodInfo.Invoke(null, [data]));
+            parent.ChildEvents.Add(main);
             //attach pre-events to our event
             foreach (var trackCard in Dungeon.Track.Cards.Where(x => x.Value != null))
             {
@@ -186,27 +188,28 @@ public static class Logic
     [LogicBinding("attacking")]
     public static IEnumerator Attacking(Systems.Logic.EventData? d)
     {
-        //DeckCard c, float startY, float endY
+        var card = Dungeon.AllCards[d.cardID];
+        float startY = card.Entity.Y;
+        float endY = card.Entity.Y + 80;
+
         var trans = new Transition<float>(startY, endY, Easing.Option.EaseOutElastic);
         TimeSince ts = 0;
         while (ts < 0.2f)
         {
-            c.Entity.Y = startY + ((endY - startY) * (float)trans.Sample(ts / 0.2f));
+            card.Entity.Y = startY + ((endY - startY) * (float)trans.Sample(ts / 0.2f));
             yield return null;
         }
         //damage player
-        if(Dungeon.ActiveDebugOptions.Invincible){return;}
-        Health -= c.Attack;
-        if (Health <= 0)
+        if (!Dungeon.ActiveDebugOptions.Invincible)
         {
-            Dungeon.Player.Kill();
+            Dungeon.Player.Health -= card.Attack;
         }
         //done damaging player
         ts = 0;
         trans = new Transition<float>(startY, endY, Easing.Option.EaseOutExpo);
         while (ts < 0.12f)
         {
-            c.Entity.Y = endY + ((startY - endY) * (float)trans.Sample(ts / 0.12f));
+            card.Entity.Y = endY + ((startY - endY) * (float)trans.Sample(ts / 0.12f));
             yield return null;
         }
         yield return null;

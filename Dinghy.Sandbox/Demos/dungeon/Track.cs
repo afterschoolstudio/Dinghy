@@ -50,7 +50,7 @@ public class Track
                 }
                 trackCard.Value!.Entity.Y = Grid.Points[trackCard.Key].Y;
                 // trackCard.Value!.Entity.X = Engine.Width + 100;
-                Coroutines.Start(movePosition(trackCard.Value!,trackCard.Value!.Entity.X,Grid.Points[trackCard.Key].X,timeOffset));
+                Coroutines.Start(movePosition(trackCard.Value!,trackCard.Value!.Entity.X,Grid.Points[trackCard.Key].X,timeOffset),"card movement");
                 timeOffset += 0.2f;
             }
             updated.Add(trackCard.Value);
@@ -107,7 +107,7 @@ public class Track
     public void Act(Systems.Logic.Event? parentEvent = null,Action onComplete = null)
     {
         var spawningEvent = parentEvent ?? Systems.Logic.RootEvent;
-        Logic.EmitMeta(Logic.MetaEvents.CardsActing, spawningEvent, postExecution: e =>
+        Logic.MetaEvents.CardsActing.Emit(spawningEvent, postExecution: e =>
         {
             foreach (var card in Cards.Where(x => x.Value != null))
             {

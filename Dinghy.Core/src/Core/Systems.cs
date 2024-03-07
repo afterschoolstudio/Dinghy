@@ -747,7 +747,7 @@ public class EventCleaningSystem : DSystem, ICleanupSystem
     }
 }
 
-public readonly record struct Coroutine(IEnumerator coroutine, Action completionCallback);
+public readonly record struct Coroutine(IEnumerator coroutine, string name, Action completionCallback);
 public class CoroutineSystem : DSystem, IUpdateSystem
 {
     QueryDescription coroutine = new QueryDescription().WithAll<Coroutine>();
@@ -759,7 +759,7 @@ public class CoroutineSystem : DSystem, IUpdateSystem
             {
                 c.completionCallback?.Invoke();
                 // e.Add(new Destroy());
-                Console.WriteLine("DESTROYING COROUTINE");
+                Console.WriteLine("DESTROYING COROUTINE " + c.name);
                 cb.Add(in e, new Destroy());
             }
         });

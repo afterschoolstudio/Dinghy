@@ -37,7 +37,7 @@ public class Player
     {
         Depot.Generated.dungeon.logicTriggers.move.Emit(Systems.Logic.RootEvent, postExecution: e =>
         {
-            Depot.Generated.dungeon.logicTriggers.discard.Emit(e,new Systems.Logic.EventData(Dungeon.Track.Cards[0].ID), postExeuction:e =>
+            Depot.Generated.dungeon.logicTriggers.discard.Emit(e,new Systems.Logic.EventData(Dungeon.Track.Cards[0].ID), postExecution:e =>
             {
                 Depot.Generated.dungeon.logicTriggers.draw.Emit(e);
             });

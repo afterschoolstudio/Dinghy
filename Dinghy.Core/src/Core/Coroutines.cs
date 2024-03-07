@@ -4,10 +4,10 @@ namespace Dinghy.Core;
 
 public static class Coroutines
 {
-    public static void Start(IEnumerator c, Action completionCallback = null)
+    public static void Start(IEnumerator c, string name, Action completionCallback = null)
     {
         Engine.ECSWorld.Create(
-            new Coroutine(c,completionCallback)
+            new Coroutine(c,name,completionCallback)
         );
     }
 
