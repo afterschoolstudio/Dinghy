@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Collections;
+using System.Text;
 using Arch.CommandBuffer;
 using Arch.Core;
 using Arch.Core.Extensions;
@@ -23,19 +24,44 @@ public partial class Systems
         public record EventData(int cardID);
         
         public static Event RootEvent = new(null,null);
+        private static int EventCounter = 0;
         public class Event
         {
+            public int Index = 0;
             public Event ParentEvent { get; protected set; }
             public List<Event> ChildEvents { get; protected set; } = new List<Event>();
             public bool Executed;
             public bool Complete;
+            public bool SpawnedPostEvents;
             public IEnumerator ExecutionRoutine { get; protected set; }
-            public Event(Event parentEvent, IEnumerator executionRoutine)
+            private Action<Event> PostExecution;
+            public Action OnComplete;
+            public Event(Event parentEvent, IEnumerator executionRoutine, Action<Event> postExecution = null, Action onComplete = null)
             {
+                Index = EventCounter;
+                EventCounter++;
                 ParentEvent = parentEvent;
                 ParentEvent.ChildEvents.Add(this);
                 ExecutionRoutine = executionRoutine;
+                PostExecution = postExecution;
+                OnComplete = onComplete;
             }
+
+            public void SpawnPostEvents()
+            {
+                PostExecution?.Invoke(this);
+            }
+        }
+
+        public static void EmitDeathReap()
+        {
+            dungeon.Logic.MetaEvents.DeathReap.Emit(RootEvent, postExecution: e =>
+            {
+                foreach (var c in Dungeon.Track.Cards.Where(x => x.Value != null && x.Value.Health <= 0))
+                {
+                    Depot.Generated.dungeon.logicTriggers.destroyed.Emit(e, new EventData(cardID: c.Value.ID));
+                }
+            });
         }
     }
 
@@ -43,18 +69,32 @@ public partial class Systems
     static bool LogicEventExecuting => ActiveEvent != null;
     public static Logic.Event? LastExecutedEvent;
     public static Logic.Event? ActiveEvent;
+
+    private static int lastDeathReapIndex = -1;
+    static Logic.Event deathReapEventCheck;
+    private static string currentNodeGraphDiagram;
     public static IEnumerator LogicProcess()
     {
         while(true)
         {
+            currentNodeGraphDiagram = WriteNodeGraph();
             //prune the logic tree
             Logic.RootEvent.ChildEvents.RemoveAll(x => x.Complete);
-            
-            //do we have any incomplete children
-            if(Logic.RootEvent.ChildEvents.Any() && !LogicEventExecuting)
+
+            //reap dead cards
+            if (Logic.RootEvent.ChildEvents.Any())
             {
-                //TODO: need to check if LastExecutedEvent is logic event and then spawn post-events from this at the parent of LastExecutedEvent
-                GetNextEvent(Logic.RootEvent.ChildEvents.First(), out ActiveEvent);
+                deathReapEventCheck = Logic.RootEvent.ChildEvents.FirstOrDefault(x => x.Index > lastDeathReapIndex);
+                if(deathReapEventCheck != null)
+                {
+                    lastDeathReapIndex = deathReapEventCheck.Index;
+                    Logic.EmitDeathReap();
+                }
+            }
+            
+            //note that getnextevent also marks nodes complete so it's important that we run it here. complete nodes will get pruned in next loop iteration
+            if(Logic.RootEvent.ChildEvents.Any() && !LogicEventExecuting && GetNextEvent(Logic.RootEvent.ChildEvents.First(), out ActiveEvent))
+            {
                 Coroutines.Start(ActiveEvent.ExecutionRoutine, () =>
                 {
                     ExecutedEvents.Add(ActiveEvent);
@@ -95,11 +135,43 @@ public partial class Systems
             }
 
             // If this point is reached, all children are executed or complete, so mark this node as complete
+            if (!node.SpawnedPostEvents)
+            {
+                node.SpawnPostEvents();
+                node.SpawnedPostEvents = true;
+                return false; //we need to return so that the new children can be picked up (if added)
+            }
             node.Complete = true;
 
             // No unexecuted child found and this node is either executed or marked complete, so return null
             return false;
         }
+    }
+
+    public static string WriteNodeGraph()
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.AppendLine("flowchart TD");
+        GetNodeRelations(sb,Logic.RootEvent);
+        return sb.ToString();
+        
+        void GetNodeRelations(Logic.Event e)
+        {
+            foreach (var c in e.ChildEvents)
+            {
+                sb.AppendLine($"{e.Index}-->{c.Index}");
+                GetNodeRelations(c);
+            }
+        }
+        /*
+flowchart TD
+    A[Start] --> B{Is it?}
+    B -- Yes --> C[OK]
+    C --> D[Rethink]
+    D --> B
+    B -- No ----> E[End]
+         */
+
     }
 }
 

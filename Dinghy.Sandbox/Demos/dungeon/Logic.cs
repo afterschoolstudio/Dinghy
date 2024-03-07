@@ -12,6 +12,7 @@ public static class Logic
     public class LogicBindingAttribute : System.Attribute
     {
         public string LogicID { get; protected set; }
+        public LogicBindingAttribute(MetaEvents m) : this(m.ToString()){}
         public LogicBindingAttribute(string logicID)
         {
             LogicID = logicID;
@@ -33,10 +34,32 @@ public static class Logic
         }
     }
 
+    public enum MetaEvents
+    {
+        PlayerAttacking,
+        CardsActing,
+        DeathReap
+    }
+
+    public static Systems.Logic.Event Emit(
+        this MetaEvents m,
+        Systems.Logic.Event parent = null,
+        Systems.Logic.EventData? data = null,
+        Action<Systems.Logic.Event> postExecution = null, Action onComplete = null)
+    {
+        if (LogicBindingDict.TryGetValue(m.ToString(), out MethodInfo methodInfo))
+        {
+            return new Systems.Logic.Event(parent, (IEnumerator)methodInfo.Invoke(null, [data]),postExecution, onComplete);
+        }
+        
+        throw new KeyNotFoundException($"No method bound to logic '{m.ToString()}'.");
+    }
+
     public static Systems.Logic.Event Emit(
         this Depot.Generated.dungeon.logicTriggers.logicTriggersLine logicEvent,
         Systems.Logic.Event parent = null,
-        Systems.Logic.EventData? data = null)
+        Systems.Logic.EventData? data = null,
+        Action<Systems.Logic.Event> postExecution = null, Action onComplete = null)
     {
         if (LogicBindingDict.TryGetValue(logicEvent.ID, out MethodInfo methodInfo))
         {
@@ -81,25 +104,67 @@ public static class Logic
             };
         }
     }
+    
+    /*
+     * LOGIC BINDINGS-------------------------------------------------------------------
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     * 
+     */
 
     [LogicBinding("move")]
     public static IEnumerator Move(Systems.Logic.EventData? d)
     {
+        int moveDist = 1; //saturate this with status/buffs/etc
+        foreach (var c in Dungeon.Track.Cards.Where(x => x.Value != null))
+        {
+            c.Value!.Distance += moveDist;
+        }
+        Dungeon.Player.MovedDistance += moveDist;
+        // Health = Health + 1 < MaxHealth ? Health + 1 : Health; moving this to keyword
+        Dungeon.Player.Fullness--;
+        if (Dungeon.Player.Fullness <= 0)
+        {
+            Dungeon.Player.Kill();
+        }
         yield return null;
     }
     [LogicBinding("wait")]
     public static IEnumerator Wait(Systems.Logic.EventData? d)
     {
+        Dungeon.Player.Fullness--;
+        if (Dungeon.Player.Fullness <= 0)
+        {
+            Dungeon.Player.Kill();
+        }
         yield return null;
     }
     [LogicBinding("draw")]
     public static IEnumerator Draw(Systems.Logic.EventData? d)
     {
+        var nextDraw = Dungeon.Deck.Cards.First();
+        var targetPos = Dungeon.Track.Cards.First(x => x.Value == null).Key;
+        Dungeon.Track.Cards[targetPos] = nextDraw;
+        nextDraw.Distance = 3;
+        nextDraw.Entity.Active = true;
+        Dungeon.Deck.Cards.Remove(nextDraw);
+        // Dungeon.Track.MoveTrackCardsToLatestTrackPositions(applyNewPositionsDirectly);
+        Dungeon.Track.MoveTrackCardsToLatestTrackPositions();
         yield return null;
     }
     [LogicBinding("discard")]
     public static IEnumerator Discard(Systems.Logic.EventData? d)
     {
+        var card = Dungeon.AllCards[d.cardID];
+        Dungeon.DiscardStack.Add(card);
+        Dungeon.Track.RemoveTrackCard(card);
+        Dungeon.Track.MoveTrackCardsToLatestTrackPositions();
         yield return null;
     }
     [LogicBinding("attackedByPlayer")]
@@ -113,22 +178,54 @@ public static class Logic
     [LogicBinding("destroyed")]
     public static IEnumerator Destroyed(Systems.Logic.EventData? d)
     {
-        c.Entity.ECSEntity.Remove<TrackComponent>();
-        Cards[Cards.First(x => x.Value == c).Key] = null;
-        c.Entity.Active = false;
-        Dungeon.Graveyard.Add(c);
-
-        //note right now this assumes one death
-        //should instead do this after multiple deaths processed
-        Dungeon.Track.Act(() => {
-            FillEmptyTrackCardSpaces();
-            Dungeon.Deck.Draw();
-            onComplete?.Invoke();
-        });
+        var card = Dungeon.AllCards[d.cardID];
+        card.Entity.Active = false;
+        Dungeon.Graveyard.Add(card);
         yield return null;
     }
     [LogicBinding("attacking")]
     public static IEnumerator Attacking(Systems.Logic.EventData? d)
+    {
+        //DeckCard c, float startY, float endY
+        var trans = new Transition<float>(startY, endY, Easing.Option.EaseOutElastic);
+        TimeSince ts = 0;
+        while (ts < 0.2f)
+        {
+            c.Entity.Y = startY + ((endY - startY) * (float)trans.Sample(ts / 0.2f));
+            yield return null;
+        }
+        //damage player
+        if(Dungeon.ActiveDebugOptions.Invincible){return;}
+        Health -= c.Attack;
+        if (Health <= 0)
+        {
+            Dungeon.Player.Kill();
+        }
+        //done damaging player
+        ts = 0;
+        trans = new Transition<float>(startY, endY, Easing.Option.EaseOutExpo);
+        while (ts < 0.12f)
+        {
+            c.Entity.Y = endY + ((startY - endY) * (float)trans.Sample(ts / 0.12f));
+            yield return null;
+        }
+        yield return null;
+    }
+    
+    [LogicBinding(MetaEvents.PlayerAttacking)]
+    public static IEnumerator PlayerAttacking(Systems.Logic.EventData? d)
+    {
+        yield return null;
+    }
+    
+    [LogicBinding(MetaEvents.CardsActing)]
+    public static IEnumerator CardsActing(Systems.Logic.EventData? d)
+    {
+        yield return null;
+    }
+    
+    [LogicBinding(MetaEvents.DeathReap)]
+    public static IEnumerator DeathReap(Systems.Logic.EventData? d)
     {
         yield return null;
     }

@@ -50,7 +50,7 @@ public class Dungeon : Scene
         for (int i = 0; i < 5; i++)
         {
             Console.WriteLine("drawing card");
-            Deck.Draw(true);
+            Depot.Generated.dungeon.logicTriggers.draw.Emit(Systems.Logic.RootEvent);
         }
     }
 
@@ -82,7 +82,7 @@ public class Dungeon : Scene
 
         for (int i = 0; i < Track.MaxTrackCards; i++)
         {
-            Deck.Draw(true);
+            Depot.Generated.dungeon.logicTriggers.draw.Emit(Systems.Logic.RootEvent);
         }
     }
 

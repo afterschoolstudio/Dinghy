@@ -29,7 +29,10 @@ public static class Keywords
             }
         }
     }
-    public static Systems.Logic.Event Emit(this Depot.Generated.dungeon.keywords.keywordsLine keyword, Systems.Logic.Event parent)
+    public static Systems.Logic.Event Emit(
+        this Depot.Generated.dungeon.keywords.keywordsLine keyword, 
+        Systems.Logic.Event parent,
+        Systems.Logic.EventData? data = null)
     {
         if (KeywordBindingDict.TryGetValue(keyword.ID, out MethodInfo methodInfo))
         {
@@ -49,16 +52,18 @@ public static class Keywords
     [KeywordBinding("vengeance")]
     public static IEnumerator Vengeance(Systems.Logic.EventData? d)
     {
-        Dungeon.Track.RemoveTrackCard(Dungeon.AllCards[data.cardID]);
-        Dungeon.Deck.Cards.Insert(0, Dungeon.AllCards[data.cardID]);
+        var card = Dungeon.AllCards[d.cardID];
+        Dungeon.Track.RemoveTrackCard(card);
+        Dungeon.Deck.Cards.Insert(0, card);
         yield return null;
     }
      
     [KeywordBinding("cycles")]
     public static IEnumerator Cycles(Systems.Logic.EventData? d)
     {
-        Dungeon.Track.RemoveTrackCard(Dungeon.AllCards[data.cardID]);
-        Dungeon.Deck.Cards.Add(Dungeon.AllCards[data.cardID]);
+        var card = Dungeon.AllCards[d.cardID];
+        Dungeon.Track.RemoveTrackCard(card);
+        Dungeon.Deck.Cards.Add(card);
         yield return null;
     }
     [KeywordBinding("obstacle")]

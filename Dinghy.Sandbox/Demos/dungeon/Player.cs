@@ -8,7 +8,7 @@ public class Player
     public int Health { get; set; } = 10;
     public int Fullness { get; set; } = 10;
     public int XP { get; private set; } = 0;
-    public int MovedDistance { get; private set; } = 0;
+    public int MovedDistance { get; set; } = 0;
     public bool Dead { get; protected set; }
 
     public void Init()
@@ -35,71 +35,38 @@ public class Player
 
     public void Move(Action onComplete = null)
     {
-        Depot.Generated.dungeon.logicTriggers.move.Emit(executeMain:() =>
+        Depot.Generated.dungeon.logicTriggers.move.Emit(Systems.Logic.RootEvent, postExecution: e =>
         {
-            int moveDist = 1; //saturate this with status/buffs/etc
-            foreach (var c in Dungeon.Track.Cards.Where(x => x.Value != null))
+            Depot.Generated.dungeon.logicTriggers.discard.Emit(e,new Systems.Logic.EventData(Dungeon.Track.Cards[0].ID), postExeuction:e =>
             {
-                c.Value!.Distance += moveDist;
-            }
-            
-            MovedDistance += moveDist;
-            // Health = Health + 1 < MaxHealth ? Health + 1 : Health; moving this to keyword
-            Fullness--;
-            if (Fullness <= 0)
-            {
-                Dungeon.Player.Kill();
-                onComplete?.Invoke();
-            }
-            else
-            {
-                //cycle cards
-                Depot.Generated.dungeon.logicTriggers.discard.Emit(new LogicEvents.LogicData(Dungeon.Track.Cards[0].ID),() =>
-                {
-                    Dungeon.DiscardStack.Add(Dungeon.Track.Cards[0]);
-                    Dungeon.Track.RemoveTrackCard(Dungeon.Track.Cards[0]);
-                    Dungeon.Track.FillEmptyTrackCardSpaces();
-                    Dungeon.Deck.Draw();
-                },finalCompletion: () =>
-                {
-                    onComplete?.Invoke();
-                });
-            }
-        },finalCompletion: () =>
-        {
-            onComplete?.Invoke();
-        });
+                Depot.Generated.dungeon.logicTriggers.draw.Emit(e);
+            });
+        }, onComplete:onComplete);
     }
 
     public void Wait(Action onComplete = null)
     {
-        Depot.Generated.dungeon.logicTriggers.discard.Emit(executeMain:() =>
+        Depot.Generated.dungeon.logicTriggers.wait.Emit(Systems.Logic.RootEvent, postExecution: e =>
         {
-            Fullness--;
-            if (Fullness <= 0)
-            {
-                Dungeon.Player.Kill();
-                onComplete?.Invoke();
-            }
-            else
-            {
-                Dungeon.Track.Act(() => {
-                    onComplete?.Invoke();
-                });
-            }
-        },finalCompletion: () =>
-        {
-            onComplete?.Invoke();
-        });
+            Dungeon.Track.Act(e);
+        }, onComplete:onComplete);
     }
-
-    public void TakeDamageFromTrackCard(DeckCard c)
+    
+    public void DamageTrackCards(List<DeckCard> cards, Action onComplete = null)
     {
-        if(Dungeon.ActiveDebugOptions.Invincible){return;}
-        Health -= c.Attack;
-        if (Health <= 0)
+        Logic.MetaEvents.PlayerAttacking.Emit(Systems.Logic.RootEvent, postExecution: e =>
         {
-            Dungeon.Player.Kill();
-        }
+            foreach (var card in cards)
+            {
+                Depot.Generated.dungeon.logicTriggers.attackedByPlayer.Emit(e,new Systems.Logic.EventData(cardID:card.ID));
+            }
+        }, onComplete: () =>
+        {
+            Dungeon.Track.Act(onComplete: () =>
+            {
+                Dungeon.Track.MoveTrackCardsToLatestTrackPositions();
+                Depot.Generated.dungeon.logicTriggers.draw.Emit(Systems.Logic.RootEvent, onComplete: onComplete);
+            });
+        });
     }
 }

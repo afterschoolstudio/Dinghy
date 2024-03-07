@@ -79,7 +79,7 @@ public static class PlayerInputCommands
     {
         protected override void ExecuteCommand()
         {
-            Dungeon.Track.DamageTrackCards(cards, () => {
+            Dungeon.Player.DamageTrackCards(cards, () => {
                 Events.Commands.CommandExecuted?.Invoke(this);
             });
         }

@@ -29,23 +29,4 @@ public class Deck
         
         Cards = Cards.OrderBy(x => Quick.RandFloat()).ToList();
     }
-
-    public void Draw(bool applyNewPositionsDirectly = false)
-    {
-        Console.WriteLine("trying to draw");
-        Depot.Generated.dungeon.logicTriggers.draw.Emit(executeMain:() =>
-        {
-            var nextDraw = Cards.First();
-            
-            var targetPos = Dungeon.Track.Cards.First(x => x.Value == null).Key;
-            Dungeon.Track.Cards[targetPos] = nextDraw;
-            nextDraw.Distance = 3;
-            nextDraw.Entity.Active = true;
-            nextDraw.Entity.ECSEntity.Add(new Track.TrackComponent(nextDraw.ID));
-            
-            Cards.Remove(nextDraw);
-            
-            Dungeon.Track.MoveTrackCardsToLatestTrackPositions(applyNewPositionsDirectly);
-        });
-    }
 }
