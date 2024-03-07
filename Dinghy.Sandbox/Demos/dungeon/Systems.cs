@@ -27,6 +27,7 @@ public partial class Systems
         private static int EventCounter = 0;
         public class Event
         {
+            public string Name { get; protected set; }
             public int Index = 0;
             public List<Event> ChildEvents { get; protected set; } = new List<Event>();
             public bool Executed;
@@ -35,10 +36,11 @@ public partial class Systems
             public IEnumerator ExecutionRoutine { get; protected set; }
             private Action<Event> PostExecution;
             public Action OnComplete;
-            public Event(IEnumerator executionRoutine, Action<Event> postExecution = null, Action onComplete = null)
+            public Event(string name, IEnumerator executionRoutine, Action<Event> postExecution = null, Action onComplete = null)
             {
                 //NOTE: In onComplete you should not add new nodes to this, they will not be addressed
                 Index = EventCounter;
+                Name = $"{name}_{Index}";
                 EventCounter++;
                 ExecutionRoutine = executionRoutine;
                 PostExecution = postExecution;
@@ -53,17 +55,40 @@ public partial class Systems
 
         public static void EmitDeathReap()
         {
+            var destroyedNumber = 0;
             dungeon.Logic.MetaEvents.DeathReap.Emit(RootEvent, postExecution: e =>
             {
+                destroyedNumber = 0;
                 foreach (var c in Dungeon.Track.Cards.Where(x => x.Value != null && x.Value.Health <= 0))
                 {
+                    destroyedNumber++;
                     Depot.Generated.dungeon.logicTriggers.destroyed.Emit(e, new EventData(cardID: c.Value.ID));
                 }
             }, onComplete: () =>
             {
-                if (Dungeon.Player.Health <= 0)
+                if (destroyedNumber > 0)
                 {
-                    Dungeon.Player.Kill();
+                    dungeon.Logic.MetaEvents.DrawingMultipleCards.Emit(RootEvent, postExecution: e =>
+                    {
+                        for (int i = 0; i < destroyedNumber; i++)
+                        {
+                            Depot.Generated.dungeon.logicTriggers.draw.Emit(e);
+                        }
+                    }, onComplete: () =>
+                    {
+                        Dungeon.Track.MoveTrackCardsToLatestTrackPositions();
+                        if (Dungeon.Player.Health <= 0)
+                        {
+                            Dungeon.Player.Kill();
+                        }
+                    });
+                }
+                else
+                {
+                    if (Dungeon.Player.Health <= 0)
+                    {
+                        Dungeon.Player.Kill();
+                    }
                 }
             });
         }
@@ -76,11 +101,13 @@ public partial class Systems
 
     private static int lastDeathReapIndex = -1;
     static Logic.Event deathReapEventCheck;
-    private static string currentNodeGraphDiagram;
+    private static string lastTickNodeGraphDiagram = "";
+    private static string currentNodeGraphDiagram = "";
     public static IEnumerator LogicProcess()
     {
         while(true)
         {
+            lastTickNodeGraphDiagram = currentNodeGraphDiagram;
             currentNodeGraphDiagram = WriteNodeGraph();
             //prune the logic tree
             Logic.RootEvent.ChildEvents.RemoveAll(x => x.Complete);
@@ -91,7 +118,7 @@ public partial class Systems
                 deathReapEventCheck = Logic.RootEvent.ChildEvents.FirstOrDefault(x => x.Index > lastDeathReapIndex);
                 if(deathReapEventCheck != null)
                 {
-                    lastDeathReapIndex = deathReapEventCheck.Index;
+                    lastDeathReapIndex = deathReapEventCheck.Index + 1; //we add one because when we emit outselves that is the new index
                     Logic.EmitDeathReap();
                 }
             }
@@ -103,6 +130,7 @@ public partial class Systems
                 {
                     ExecutedEvents.Add(ActiveEvent);
                     ActiveEvent.Executed = true;
+                    ActiveEvent.SpawnPostEvents();
                     LastExecutedEvent = ActiveEvent;
                     ActiveEvent = null;
                 });
@@ -138,13 +166,13 @@ public partial class Systems
                 }
             }
 
+            // if (!node.SpawnedPostEvents)
+            // {
+            //     node.SpawnPostEvents();
+            //     node.SpawnedPostEvents = true;
+            //     return false; //we need to return so that the new children can be picked up (if added)
+            // }
             // If this point is reached, all children are executed or complete, so mark this node as complete
-            if (!node.SpawnedPostEvents)
-            {
-                node.SpawnPostEvents();
-                node.SpawnedPostEvents = true;
-                return false; //we need to return so that the new children can be picked up (if added)
-            }
             node.OnComplete?.Invoke();
             node.Complete = true;
 
@@ -164,7 +192,7 @@ public partial class Systems
         {
             foreach (var c in e.ChildEvents)
             {
-                sb.AppendLine($"{e.Index}-->{c.Index}");
+                sb.AppendLine($"{e.Index}[{e.Name}]-->{c.Index}[{c.Name}]");
                 GetNodeRelations(c);
             }
         }

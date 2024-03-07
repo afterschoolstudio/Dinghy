@@ -113,7 +113,7 @@ public class Track
             {
                 if (card.Value.Attack > 0)
                 {
-                    Depot.Generated.dungeon.logicTriggers.attacking.Emit(e);
+                    Depot.Generated.dungeon.logicTriggers.attacking.Emit(e,new Systems.Logic.EventData(card.Value.ID));
                 }
             }
         }, onComplete: onComplete);

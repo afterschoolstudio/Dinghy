@@ -38,7 +38,8 @@ public static class Logic
     {
         PlayerAttacking,
         CardsActing,
-        DeathReap
+        DeathReap,
+        DrawingMultipleCards
     }
 
     public static Systems.Logic.Event Emit(
@@ -49,7 +50,7 @@ public static class Logic
     {
         if (LogicBindingDict.TryGetValue(m.ToString(), out MethodInfo methodInfo))
         {
-            var newEvent =  new Systems.Logic.Event( (IEnumerator)methodInfo.Invoke(null, [data]),postExecution, onComplete);
+            var newEvent =  new Systems.Logic.Event(m.ToString(), (IEnumerator)methodInfo.Invoke(null, [data]),postExecution, onComplete);
             parent.ChildEvents.Add(newEvent);
             return newEvent;
         }
@@ -65,7 +66,7 @@ public static class Logic
     {
         if (LogicBindingDict.TryGetValue(logicEvent.ID, out MethodInfo methodInfo))
         {
-            var main = new Systems.Logic.Event((IEnumerator)methodInfo.Invoke(null, [data]));
+            var main = new Systems.Logic.Event(logicEvent.ID,(IEnumerator)methodInfo.Invoke(null, [data]),postExecution, onComplete);
             parent.ChildEvents.Add(main);
             //attach pre-events to our event
             foreach (var trackCard in Dungeon.Track.Cards.Where(x => x.Value != null))
@@ -156,8 +157,6 @@ public static class Logic
         nextDraw.Distance = 3;
         nextDraw.Entity.Active = true;
         Dungeon.Deck.Cards.Remove(nextDraw);
-        // Dungeon.Track.MoveTrackCardsToLatestTrackPositions(applyNewPositionsDirectly);
-        Dungeon.Track.MoveTrackCardsToLatestTrackPositions();
         yield return null;
     }
     [LogicBinding("discard")]
@@ -166,7 +165,6 @@ public static class Logic
         var card = Dungeon.AllCards[d.cardID];
         Dungeon.DiscardStack.Add(card);
         Dungeon.Track.RemoveTrackCard(card);
-        Dungeon.Track.MoveTrackCardsToLatestTrackPositions();
         yield return null;
     }
     [LogicBinding("attackedByPlayer")]
@@ -229,6 +227,12 @@ public static class Logic
     
     [LogicBinding(MetaEvents.DeathReap)]
     public static IEnumerator DeathReap(Systems.Logic.EventData? d)
+    {
+        yield return null;
+    }
+    
+    [LogicBinding(MetaEvents.DrawingMultipleCards)]
+    public static IEnumerator DrawingMultipleCards(Systems.Logic.EventData? d)
     {
         yield return null;
     }

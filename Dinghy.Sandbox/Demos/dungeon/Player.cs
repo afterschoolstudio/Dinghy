@@ -39,7 +39,13 @@ public class Player
         {
             Depot.Generated.dungeon.logicTriggers.discard.Emit(e,new Systems.Logic.EventData(Dungeon.Track.Cards[0].ID), postExecution:e =>
             {
-                Depot.Generated.dungeon.logicTriggers.draw.Emit(e);
+                Dungeon.Track.MoveTrackCardsToLatestTrackPositions();
+                Depot.Generated.dungeon.logicTriggers.draw.Emit(e,onComplete: () =>
+                {
+                    Dungeon.Track.MoveTrackCardsToLatestTrackPositions();
+                });
+            }, onComplete: () =>
+            {
             });
         }, onComplete:onComplete);
     }
@@ -62,11 +68,7 @@ public class Player
             }
         }, onComplete: () =>
         {
-            Dungeon.Track.Act(onComplete: () =>
-            {
-                Dungeon.Track.MoveTrackCardsToLatestTrackPositions();
-                Depot.Generated.dungeon.logicTriggers.draw.Emit(Systems.Logic.RootEvent, onComplete: onComplete);
-            });
+            Dungeon.Track.Act(onComplete: onComplete);
         });
     }
 }

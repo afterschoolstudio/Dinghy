@@ -36,7 +36,7 @@ public static class Keywords
     {
         if (KeywordBindingDict.TryGetValue(keyword.ID, out MethodInfo methodInfo))
         {
-            var newEvent = new Systems.Logic.Event( (IEnumerator)methodInfo.Invoke(null, [data]));
+            var newEvent = new Systems.Logic.Event(keyword.ID, (IEnumerator)methodInfo.Invoke(null, [data]));
             parent.ChildEvents.Add(newEvent);
             // For static methods, the first parameter is null. For instance methods, you need an instance.
             return newEvent;

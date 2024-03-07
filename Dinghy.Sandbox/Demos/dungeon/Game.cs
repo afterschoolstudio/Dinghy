@@ -47,11 +47,17 @@ public class Dungeon : Scene
         Deck.Init();
         Track.Init();
         Inventory.Init();
-        for (int i = 0; i < 5; i++)
+        
+        Logic.MetaEvents.DrawingMultipleCards.Emit(Systems.Logic.RootEvent, postExecution: e =>
         {
-            Console.WriteLine("drawing card");
-            Depot.Generated.dungeon.logicTriggers.draw.Emit(Systems.Logic.RootEvent);
-        }
+            for (int i = 0; i < 5; i++)
+            {
+                Depot.Generated.dungeon.logicTriggers.draw.Emit(e);
+            }
+        }, onComplete: () =>
+        {
+            Track.MoveTrackCardsToLatestTrackPositions();
+        });
     }
 
     public static void NextDungeonRoom()
@@ -80,10 +86,16 @@ public class Dungeon : Scene
         Deck.Init();
         Track.Init();
 
-        for (int i = 0; i < Track.MaxTrackCards; i++)
+        Logic.MetaEvents.DrawingMultipleCards.Emit(Systems.Logic.RootEvent, postExecution: e =>
         {
-            Depot.Generated.dungeon.logicTriggers.draw.Emit(Systems.Logic.RootEvent);
-        }
+            for (int i = 0; i < Track.MaxTrackCards; i++)
+            {
+                Depot.Generated.dungeon.logicTriggers.draw.Emit(e);
+            }
+        }, onComplete: () =>
+        {
+            Track.MoveTrackCardsToLatestTrackPositions();
+        });
     }
 
     public static Dictionary<int, DeckCard> AllCards = new();
