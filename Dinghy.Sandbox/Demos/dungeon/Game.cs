@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Linq;
 using System.Numerics;
 using Depot.Generated.dungeon;
@@ -50,7 +51,7 @@ public class Dungeon : Scene
         
         Logic.MetaEvents.DrawingMultipleCards.Emit(Systems.Logic.RootEvent, postExecution: e =>
         {
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < TrackSize; i++)
             {
                 Depot.Generated.dungeon.logicTriggers.draw.Emit(e);
             }
@@ -58,6 +59,76 @@ public class Dungeon : Scene
         {
             Track.MoveTrackCardsToLatestTrackPositions();
         });
+    }
+
+    public enum CardLocation
+    {
+        NOTFOUND,
+        Track,
+        Discard,
+        Deck,
+        Graveyard,
+        Inventory
+    }
+
+    public static IEnumerator MoveCard(DeckCard c, CardLocation destination, int? targetPosition = null)
+    {
+        //NOTE: TODO: this isn't complete and is meant more as the way to globally handle transitions between card states
+        var currentLocation =
+            DiscardStack.Contains(c) ? CardLocation.Discard :
+            Graveyard.Contains(c) ? CardLocation.Graveyard :
+            Deck.Cards.Contains(c) ? CardLocation.Deck :
+            Track.Cards.Values.Contains(c) ? CardLocation.Track :
+            Inventory.Cards.Values.Contains(c) ? CardLocation.Inventory : CardLocation.NOTFOUND;
+        if (currentLocation == CardLocation.NOTFOUND)
+        {
+            Console.WriteLine("CARD NOT FOUND: " + c.ID);
+        }
+        
+        //TODO: validate destination target before moving and return if invalid
+        
+        switch (currentLocation)
+        {
+            //TODO: some way of notifying if we need to update card positions in track?
+            //or we can literally just do it in here?
+            case CardLocation.Track:
+                Track.RemoveTrackCard(c);
+                break;
+            case CardLocation.Discard:
+                DiscardStack.Remove(c);
+                break;
+            case CardLocation.Deck:
+                Deck.Cards.Remove(c);
+                break;
+            case CardLocation.Graveyard:
+                Graveyard.Remove(c);
+                break;
+            case CardLocation.Inventory:
+                Inventory.Cards.Remove(Inventory.Cards.First(x => x.Value == c).Key);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(destination), destination, null);
+        }
+        
+        //do fancy transition from current location to new location
+        //TODO: card add logic for desitnations here
+        switch (destination)
+        {
+            case CardLocation.Track:
+                break;
+            case CardLocation.Discard:
+                break;
+            case CardLocation.Deck:
+                break;
+            case CardLocation.Graveyard:
+                break;
+            case CardLocation.Inventory:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(destination), destination, null);
+        }
+
+        yield return null;
     }
 
     public static void NextDungeonRoom()

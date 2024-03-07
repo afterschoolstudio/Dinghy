@@ -15,6 +15,7 @@ public class Inventory
         2));
 
     private List<Shape> GridCells = new List<Shape>();
+    public Dictionary<int,DeckCard?> Cards = new();
     public void Init()
     {
         foreach (var c in GridCells)
@@ -43,6 +44,11 @@ public class Inventory
                 Y = pos.Y,
                 ColliderActive = true
             });
+        }
+        
+        for (int i = 0; i < GridCells.Count; i++)
+        {
+            Cards.Add(i,null); 
         }
     }
 }

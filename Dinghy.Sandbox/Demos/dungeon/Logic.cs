@@ -50,7 +50,7 @@ public static class Logic
     {
         if (LogicBindingDict.TryGetValue(m.ToString(), out MethodInfo methodInfo))
         {
-            var newEvent =  new Systems.Logic.Event(m.ToString(), (IEnumerator)methodInfo.Invoke(null, [Systems.Logic.EventCounter,data]),postExecution, onComplete);
+            var newEvent =  new Systems.Logic.Event(m.ToString(), (IEnumerator)methodInfo.Invoke(null, [Systems.Logic.GetCurrentEventCounter(),data]),postExecution, onComplete);
             parent.ChildEvents.Add(newEvent);
             return newEvent;
         }
@@ -66,7 +66,7 @@ public static class Logic
     {
         if (LogicBindingDict.TryGetValue(logicEvent.ID, out MethodInfo methodInfo))
         {
-            var main = new Systems.Logic.Event(logicEvent.ID,(IEnumerator)methodInfo.Invoke(null, [Systems.Logic.EventCounter,data]), e =>
+            var main = new Systems.Logic.Event(logicEvent.ID,(IEnumerator)methodInfo.Invoke(null, [Systems.Logic.GetCurrentEventCounter(),data]), e =>
             {
                 //attach post-events to our event
                 foreach (var trackCard in Dungeon.Track.Cards.Where(x => x.Value != null && x.Value.Health > 0))
@@ -169,14 +169,30 @@ public static class Logic
     [LogicBinding("draw")]
     public static IEnumerator Draw(int eventID, Systems.Logic.EventData? d)
     {
-        //TODO: cancel this if not possible to draw
-        var nextDraw = Dungeon.Deck.Cards.First();
-        var targetPos = Dungeon.Track.Cards.First(x => x.Value == null).Key;
-        Dungeon.Track.Cards[targetPos] = nextDraw;
-        nextDraw.Distance = 3;
-        nextDraw.Entity.Active = true;
-        Dungeon.Deck.Cards.Remove(nextDraw);
-        yield return null;
+        var callingEvent = Systems.Logic.FindEventWithID(eventID);
+        if (Dungeon.Deck.Cards.Any())
+        {
+            var nextDraw = Dungeon.Deck.Cards.First();
+            try
+            {
+                var targetPos = Dungeon.Track.Cards.First(x => x.Value == null).Key;
+                Dungeon.Track.Cards[targetPos] = nextDraw;
+                nextDraw.Distance = 3;
+                nextDraw.Entity.Active = true;
+                Dungeon.Deck.Cards.Remove(nextDraw);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            yield return null;
+        }
+        else
+        {
+            callingEvent.Cancelled = true;
+            yield return null;
+        }
     }
     [LogicBinding("discard")]
     public static IEnumerator Discard(int eventID, Systems.Logic.EventData? d)

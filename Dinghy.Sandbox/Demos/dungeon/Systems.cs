@@ -23,26 +23,45 @@ public partial class Systems
     {
         public record EventData(int cardID);
         
-        public static Event RootEvent = new(null,null);
-        public static int EventCounter { get; protected set;  } = 0;
+        public static Event RootEvent = new("root",null); //root is ID 0
+        static int EventCounter = 1;
+        public static int GetCurrentEventCounter() => EventCounter;
 
         public static Event FindEventWithID(int id)
         {
-            return FindInNode(Logic.RootEvent);
+            Event result = FindInNode(RootEvent);
+            if (result == null)
+            {
+                Console.WriteLine("Unable to find node with id: " + id);
+            }
+            return result;
+            
+            //
+
             Event FindInNode(Logic.Event e)
             {
+                if (e.Index == id)
+                {
+                    return e; // In case the root itself is the event we're looking for
+                }
+        
                 foreach (var c in e.ChildEvents)
                 {
                     if (c.Index == id)
                     {
-                        return c;
+                        return c; // Found the event, return it
                     }
-                    return FindInNode(c);
+                    Event found = FindInNode(c); // Continue searching in the child
+                    if (found != null)
+                    {
+                        return found; // If found in a deeper level, return the found event
+                    }
                 }
-                Console.WriteLine("unable to find node with id: " + id);
-                return null;
+                return null; // If not found in this node or its children, return null
             }
         }
+        
+        
         public class Event
         {
             public string Name { get; protected set; }
@@ -144,7 +163,7 @@ public partial class Systems
             //note that getnextevent also marks nodes complete so it's important that we run it here. complete nodes will get pruned in next loop iteration
             if(Logic.RootEvent.ChildEvents.Any() && !LogicEventExecuting && GetNextEvent(Logic.RootEvent.ChildEvents.First(), out ActiveEvent))
             {
-                Coroutines.Start(ActiveEvent.ExecutionRoutine, $"event{ActiveEvent.Index}", () =>
+                Coroutines.Start(ActiveEvent.ExecutionRoutine, $"event_{ActiveEvent.Name}", () =>
                 {
                     ExecutedEvents.Add(ActiveEvent);
                     ActiveEvent.Executed = true;

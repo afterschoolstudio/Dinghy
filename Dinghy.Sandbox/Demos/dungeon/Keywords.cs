@@ -36,7 +36,7 @@ public static class Keywords
     {
         if (KeywordBindingDict.TryGetValue(keyword.ID, out MethodInfo methodInfo))
         {
-            var newEvent = new Systems.Logic.Event(keyword.ID, (IEnumerator)methodInfo.Invoke(null, [Systems.Logic.EventCounter,data]));
+            var newEvent = new Systems.Logic.Event(keyword.ID, (IEnumerator)methodInfo.Invoke(null, [Systems.Logic.GetCurrentEventCounter(),data]));
             parent.ChildEvents.Add(newEvent);
             // For static methods, the first parameter is null. For instance methods, you need an instance.
             return newEvent;
@@ -54,10 +54,9 @@ public static class Keywords
     [KeywordBinding("vengeance")]
     public static IEnumerator Vengeance(int eventID, Systems.Logic.EventData? d)
     {
-        //TODO: find way to move a card globally
-        //this needs to be moved to deck, but only should work if we're in discard based on triggers
         var card = Dungeon.AllCards[d.cardID];
-        Dungeon.Track.RemoveTrackCard(card);
+        Dungeon.DiscardStack.Remove(card);
+        //TODO: non jam version: yield return Dungeon.MoveCard(card, Dungeon.CardLocation.Deck, 0);
         Dungeon.Deck.Cards.Insert(0, card);
         yield return null;
     }
@@ -65,8 +64,8 @@ public static class Keywords
     [KeywordBinding("cycles")]
     public static IEnumerator Cycles(int eventID, Systems.Logic.EventData? d)
     {
-        //TODO: need to take this out of discard
         var card = Dungeon.AllCards[d.cardID];
+        Dungeon.DiscardStack.Remove(card);
         Dungeon.Deck.Cards.Add(card);
         yield return null;
     }
