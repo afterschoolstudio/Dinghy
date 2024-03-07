@@ -165,9 +165,15 @@ public class Track
     public void DamageTrackCards(List<DeckCard> cards, Action onComplete = null)
     {
         var c = cards.First(); //NOTE: assuming one for now
-        Depot.Generated.dungeon.logicTriggers.attackedByPlayer.Emit(new LogicEvents.LogicData(cardID:c.ID),() =>
+        Depot.Generated.dungeon.logicTriggers.attackedByPlayer.Emit(new Systems.Logic.EventData(cardID:c.ID), Systems.Logic.RootEvent);
+            //some death reaper update?
+            
+            =>
         {
+            yield return Shake(c, defaultShake);
             c.Health -= 1;
+            
+            
             Coroutines.Start(Shake(c, defaultShake),() =>
             {
                 if (c.Health <= 0)
@@ -209,38 +215,4 @@ public class Track
         
     }
 
-    private ShakeParams defaultShake = new ShakeParams();
-    IEnumerator Shake(DeckCard c, ShakeParams p)
-    {
-        c.Entity.ColliderActive = false;
-        Vector2 start = new Vector2(c.Entity.X, c.Entity.Y);
-        TimeSince t = 0;
-        TimeSince shakeTimer = 0;
-        while (t < p.DeathTime)
-        {
-            if (shakeTimer >= p.Tick)
-            {
-                var next = start + Quick.RandUnitCircle() * p.BaseShake * p.Multiplier;
-                c.Entity.X = next.X;
-                c.Entity.Y = next.Y;
-                shakeTimer = 0f;
-            }
-            
-            p.BaseShake -= p.Decay * (float)Engine.DeltaTime;
-            p.BaseShake = MathF.Max( p.BaseShake, 0 );
-            yield return null;
-        }
-        c.Entity.X = start.X;
-        c.Entity.Y = start.Y;
-        c.Entity.ColliderActive = true;
-    }
-    
-    public struct ShakeParams()
-    {
-        public float Multiplier = 1f;
-        public float BaseShake = 12f;
-        public float Tick = 0.001f;
-        public float Decay = 190f;
-        public float DeathTime = 0.1f;
-    }
 }

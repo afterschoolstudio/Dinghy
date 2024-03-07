@@ -26,7 +26,7 @@ public static class Logic
         {
             // Check if the method has the KeywordBinding attribute
             var attribute = method.GetCustomAttribute<LogicBindingAttribute>();
-            if (attribute != null && method.IsStatic && method.ReturnType == typeof(IEnumerator) && method.GetParameters().Length == 0)
+            if (attribute != null && method.IsStatic && method.ReturnType == typeof(IEnumerator))
             {
                 LogicBindingDict.Add(attribute.LogicID, method);
             }
@@ -40,7 +40,7 @@ public static class Logic
     {
         if (LogicBindingDict.TryGetValue(logicEvent.ID, out MethodInfo methodInfo))
         {
-            var main = new Systems.Logic.Event(parent, (IEnumerator)methodInfo.Invoke(null, null));
+            var main = new Systems.Logic.Event(parent, (IEnumerator)methodInfo.Invoke(null, [data]));
 
             //attach pre-events to our event
             foreach (var trackCard in Dungeon.Track.Cards.Where(x => x.Value != null))
@@ -52,7 +52,7 @@ public static class Logic
                         ValidateKeywordTriggerTarget(trackCard.Value!, keyword, data)
                        )
                     {
-                        keyword.Emit(main);
+                        keyword.Emit(main,data);
                     }
                 }
 
@@ -83,37 +83,52 @@ public static class Logic
     }
 
     [LogicBinding("move")]
-    public static IEnumerator Move()
+    public static IEnumerator Move(Systems.Logic.EventData? d)
     {
         yield return null;
     }
     [LogicBinding("wait")]
-    public static IEnumerator Wait()
+    public static IEnumerator Wait(Systems.Logic.EventData? d)
     {
         yield return null;
     }
     [LogicBinding("draw")]
-    public static IEnumerator Draw()
+    public static IEnumerator Draw(Systems.Logic.EventData? d)
     {
         yield return null;
     }
     [LogicBinding("discard")]
-    public static IEnumerator Discard()
+    public static IEnumerator Discard(Systems.Logic.EventData? d)
     {
         yield return null;
     }
     [LogicBinding("attackedByPlayer")]
-    public static IEnumerator AttackedByPlayer()
+    public static IEnumerator AttackedByPlayer(Systems.Logic.EventData? d)
     {
+        var card = Dungeon.AllCards[d.cardID];
+        yield return Dungeon.Effects.Shake(card);
+        card.Health -= 1;
         yield return null;
     }
     [LogicBinding("destroyed")]
-    public static IEnumerator Destroyed()
+    public static IEnumerator Destroyed(Systems.Logic.EventData? d)
     {
+        c.Entity.ECSEntity.Remove<TrackComponent>();
+        Cards[Cards.First(x => x.Value == c).Key] = null;
+        c.Entity.Active = false;
+        Dungeon.Graveyard.Add(c);
+
+        //note right now this assumes one death
+        //should instead do this after multiple deaths processed
+        Dungeon.Track.Act(() => {
+            FillEmptyTrackCardSpaces();
+            Dungeon.Deck.Draw();
+            onComplete?.Invoke();
+        });
         yield return null;
     }
     [LogicBinding("attacking")]
-    public static IEnumerator Attacking()
+    public static IEnumerator Attacking(Systems.Logic.EventData? d)
     {
         yield return null;
     }

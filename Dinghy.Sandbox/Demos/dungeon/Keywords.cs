@@ -23,7 +23,7 @@ public static class Keywords
         {
             // Check if the method has the KeywordBinding attribute
             var attribute = method.GetCustomAttribute<KeywordBindingAttribute>();
-            if (attribute != null && method.IsStatic && method.ReturnType == typeof(IEnumerator) && method.GetParameters().Length == 0)
+            if (attribute != null && method.IsStatic && method.ReturnType == typeof(IEnumerator))
             {
                 KeywordBindingDict.Add(attribute.KeywordID, method);
             }
@@ -34,20 +34,20 @@ public static class Keywords
         if (KeywordBindingDict.TryGetValue(keyword.ID, out MethodInfo methodInfo))
         {
             // For static methods, the first parameter is null. For instance methods, you need an instance.
-            return new Systems.Logic.Event(parent, (IEnumerator)methodInfo.Invoke(null, null));
+            return new Systems.Logic.Event(parent, (IEnumerator)methodInfo.Invoke(null, [data]));
         }
-        throw new KeyNotFoundException($"No method bound to keyword '{keyword.ID}'.");
+        throw new KeyNotFoundException($"No method bound to keyword {keyword.ID}.");
     }
     
     [KeywordBinding("rejuvenate")]
-    public static IEnumerator Rejuvenate()
+    public static IEnumerator Rejuvenate(Systems.Logic.EventData? d)
     {
         Dungeon.Player.Health += 1;
         yield return null;
     }
         
     [KeywordBinding("vengeance")]
-    public static IEnumerator Vengeance()
+    public static IEnumerator Vengeance(Systems.Logic.EventData? d)
     {
         Dungeon.Track.RemoveTrackCard(Dungeon.AllCards[data.cardID]);
         Dungeon.Deck.Cards.Insert(0, Dungeon.AllCards[data.cardID]);
@@ -55,14 +55,14 @@ public static class Keywords
     }
      
     [KeywordBinding("cycles")]
-    public static IEnumerator Cycles()
+    public static IEnumerator Cycles(Systems.Logic.EventData? d)
     {
         Dungeon.Track.RemoveTrackCard(Dungeon.AllCards[data.cardID]);
         Dungeon.Deck.Cards.Add(Dungeon.AllCards[data.cardID]);
         yield return null;
     }
     [KeywordBinding("obstacle")]
-    public static IEnumerator Obstacle()
+    public static IEnumerator Obstacle(Systems.Logic.EventData? d)
     {
         // need to tie this into global state
         // parent.Cancelled = !Dungeon.Track.Cards.Any(x =>
@@ -70,7 +70,7 @@ public static class Keywords
         yield return null;
     }
     [KeywordBinding("exit")]
-    public static IEnumerator Exit()
+    public static IEnumerator Exit(Systems.Logic.EventData? d)
     {
         Dungeon.NextDungeonRoom();
         yield return null;

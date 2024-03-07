@@ -21,6 +21,7 @@ public class Dungeon : Scene
     public static Deck Deck = new ();
     public static Track Track = new ();
     public static Inventory Inventory = new ();
+    public static Effects Effects = new Effects();
 
     public override void Create()
     {
