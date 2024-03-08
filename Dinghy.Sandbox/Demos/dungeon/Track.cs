@@ -30,32 +30,30 @@ public class Track
     }
 
     private List<DeckCard> lastUpdatedTrackCards = new();
-    public void MoveTrackCardsToLatestTrackPositions(bool applyPositionsDirectly = false)
+    public IEnumerator MoveTrackCardsToLatestTrackPositions(bool applyPositionsDirectly = false)
     {
         FillEmptyTrackCardSpaces();
         
         var updated = new List<DeckCard>();
-        float timeOffset = 0f;
         foreach (var trackCard in Cards.Where(x => x.Value != null))
         {
             if (applyPositionsDirectly)
             {
                 Grid.ApplyPositionToEntity(trackCard.Key,trackCard.Value!.Entity);
             }
-            else
+            else if(MathF.Abs(trackCard.Value!.Entity.X - Grid.Points[trackCard.Key].X) > 0.5f)
             {
                 if (!lastUpdatedTrackCards.Contains(trackCard.Value))
                 {
                     trackCard.Value!.Entity.X = Engine.Width + 200;
                 }
                 trackCard.Value!.Entity.Y = Grid.Points[trackCard.Key].Y;
+                yield return movePosition(trackCard.Value!,trackCard.Value!.Entity.X,Grid.Points[trackCard.Key].X);
                 // trackCard.Value!.Entity.X = Engine.Width + 100;
-                Coroutines.Start(movePosition(trackCard.Value!,trackCard.Value!.Entity.X,Grid.Points[trackCard.Key].X,timeOffset),"card movement");
-                timeOffset += 0.2f;
             }
             updated.Add(trackCard.Value);
         }
-
+        
         lastUpdatedTrackCards = new List<DeckCard>(updated);
     }
     
@@ -80,14 +78,9 @@ public class Track
         }
     }
     
-    IEnumerator movePosition(DeckCard c, float startX, float endX, float timeOffset)
+    private IEnumerator movePosition(DeckCard c, float startX, float endX)
     {
-        TimeSince off = 0;
         var trans = new Transition<float>(startX, endX, Easing.Option.EaseOutElastic);
-        while (off < timeOffset)
-        {
-            yield return null;
-        }
         TimeSince ts = 0;
         while (ts < 0.5f)
         {

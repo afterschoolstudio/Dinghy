@@ -11,12 +11,33 @@ public static class Coroutines
         );
     }
 
-    public static IEnumerator WaitForSeconds(float seconds)
+    // public static IEnumerator WaitForSeconds(float seconds)
+    // {
+    //     TimeSince ts = 0;
+    //     while (ts < seconds)
+    //     {
+    //         yield return null;
+    //     }
+    // }
+    
+    // Base class for yield instructions
+    public abstract class CustomYieldInstruction
     {
-        TimeSince ts = 0;
-        while (ts < seconds)
+        public abstract bool KeepWaiting { get; }
+    }
+    
+
+    // Implementation for waiting for a duration
+    public class WaitForSeconds : CustomYieldInstruction
+    {
+        private float duration;
+        private TimeSince runTime;
+        public WaitForSeconds(float duration)
         {
-            yield return null;
+            this.duration = duration;
+            runTime = 0;
         }
+
+        public override bool KeepWaiting => runTime < duration;
     }
 }

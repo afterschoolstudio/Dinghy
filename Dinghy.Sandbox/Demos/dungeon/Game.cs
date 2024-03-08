@@ -57,7 +57,8 @@ public class Dungeon : Scene
             }
         }, onComplete: () =>
         {
-            Track.MoveTrackCardsToLatestTrackPositions();
+            Console.WriteLine("init draw complete");
+            Coroutines.Start(Track.MoveTrackCardsToLatestTrackPositions(),"initial track card movement");
         });
     }
 
@@ -165,7 +166,7 @@ public class Dungeon : Scene
             }
         }, onComplete: () =>
         {
-            Track.MoveTrackCardsToLatestTrackPositions();
+            Coroutines.Start(Track.MoveTrackCardsToLatestTrackPositions(),"initial track card movement");
         });
     }
 

@@ -83,6 +83,7 @@ public static class Logic
                     }
 
                 }
+                postExecution?.Invoke(e);
             }, onComplete);
             
             parent.ChildEvents.Add(main);
@@ -170,22 +171,15 @@ public static class Logic
     public static IEnumerator Draw(int eventID, Systems.Logic.EventData? d)
     {
         var callingEvent = Systems.Logic.FindEventWithID(eventID);
-        if (Dungeon.Deck.Cards.Any())
+        var hasOpenSpot = Dungeon.Track.Cards.Any(x => x.Value == null);
+        if (Dungeon.Deck.Cards.Any() && hasOpenSpot)
         {
             var nextDraw = Dungeon.Deck.Cards.First();
-            try
-            {
-                var targetPos = Dungeon.Track.Cards.First(x => x.Value == null).Key;
-                Dungeon.Track.Cards[targetPos] = nextDraw;
-                nextDraw.Distance = 3;
-                nextDraw.Entity.Active = true;
-                Dungeon.Deck.Cards.Remove(nextDraw);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            var targetPos = Dungeon.Track.Cards.FirstOrDefault(x => x.Value == null).Key;
+            Dungeon.Track.Cards[targetPos] = nextDraw;
+            nextDraw.Distance = 3;
+            nextDraw.Entity.Active = true;
+            Dungeon.Deck.Cards.Remove(nextDraw);
             yield return null;
         }
         else
@@ -216,6 +210,11 @@ public static class Logic
         var card = Dungeon.AllCards[d.cardID];
         card.Entity.Active = false;
         Dungeon.Graveyard.Add(card);
+        if (Dungeon.Track.Cards.ContainsValue(card))
+        {
+            Dungeon.Track.RemoveTrackCard(card);
+            yield return Dungeon.Track.MoveTrackCardsToLatestTrackPositions();
+        }
         yield return null;
     }
     [LogicBinding("attacking")]

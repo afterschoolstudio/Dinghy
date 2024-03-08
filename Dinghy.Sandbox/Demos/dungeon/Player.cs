@@ -1,4 +1,5 @@
 using System.Collections;
+using Dinghy.Core;
 
 namespace Dinghy.Sandbox.Demos.dungeon;
 
@@ -35,14 +36,26 @@ public class Player
 
     public void Move(Action onComplete = null)
     {
-        Depot.Generated.dungeon.logicTriggers.move.Emit(Systems.Logic.RootEvent, postExecution: e =>
+        Console.WriteLine("player initirated move, spawning move");
+        Depot.Generated.dungeon.logicTriggers.move.Emit(Systems.Logic.RootEvent, postExecution: move =>
         {
-            Depot.Generated.dungeon.logicTriggers.discard.Emit(e,new Systems.Logic.EventData(Dungeon.Track.Cards[0].ID), postExecution:e =>
+            move.Frozen = true;
+            Depot.Generated.dungeon.logicTriggers.discard.Emit(move,new Systems.Logic.EventData(Dungeon.Track.Cards[0].ID), postExecution:discard =>
             {
-                Dungeon.Track.MoveTrackCardsToLatestTrackPositions();
-                Depot.Generated.dungeon.logicTriggers.draw.Emit(e,onComplete: () =>
+                discard.Frozen = true;
+                Coroutines.Start(Dungeon.Track.MoveTrackCardsToLatestTrackPositions(),"player movement card update after discard",() =>
                 {
-                    Dungeon.Track.MoveTrackCardsToLatestTrackPositions();
+                    Depot.Generated.dungeon.logicTriggers.draw.Emit(discard,onComplete: () =>
+                    {
+                        Coroutines.Start(Dungeon.Track.MoveTrackCardsToLatestTrackPositions(),
+                            "player movement card update after draw",
+                            () =>
+                            {
+                                move.Frozen = false;
+                                discard.Frozen = false;
+                            });
+                    });
+                    
                 });
             });
         }, onComplete:onComplete);

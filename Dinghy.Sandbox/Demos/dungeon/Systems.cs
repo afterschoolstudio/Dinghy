@@ -70,6 +70,7 @@ public partial class Systems
             public bool Executed;
             public bool Complete;
             public bool Cancelled;
+            public bool Frozen = false;
             public IEnumerator ExecutionRoutine { get; protected set; }
             private Action<Event> PostExecution;
             public Action OnComplete;
@@ -87,6 +88,14 @@ public partial class Systems
             public void SpawnPostEvents()
             {
                 PostExecution?.Invoke(this);
+            }
+
+            public string GetDebugName()
+            {
+                return @$"{Index}[""`{Name}
+cp:{Complete}
+ex:{Executed}
+fz:{Frozen}`""]";
             }
         }
 
@@ -140,14 +149,22 @@ public partial class Systems
     static Logic.Event deathReapEventCheck;
     private static string lastTickNodeGraphDiagram = "";
     private static string currentNodeGraphDiagram = "";
+    private static TimeSince writeTick; 
     public static IEnumerator LogicProcess()
     {
+        writeTick = 0;
         while(true)
         {
             lastTickNodeGraphDiagram = currentNodeGraphDiagram;
             currentNodeGraphDiagram = WriteNodeGraph();
+            if (writeTick > 1.5f)
+            {
+                File.WriteAllText("lastTick.md",lastTickNodeGraphDiagram);
+                File.WriteAllText("thistick.md",currentNodeGraphDiagram);
+                writeTick = 0;
+            }
             //prune the logic tree
-            Logic.RootEvent.ChildEvents.RemoveAll(x => x.Complete);
+            Logic.RootEvent.ChildEvents.RemoveAll(x => x.Complete && !x.Frozen);
 
             //reap dead cards
             if (Logic.RootEvent.ChildEvents.Any())
@@ -176,15 +193,14 @@ public partial class Systems
                     ActiveEvent = null;
                 });
             }
-            
-            yield return Coroutines.WaitForSeconds(1.5f);
 
+            yield return null;
         }
         
         bool GetNextEvent(Logic.Event node, out Logic.Event nextEvent)
         {
             nextEvent = null;
-            if (node == null || node.Complete)
+            if (node == null || (node.Complete && !node.Frozen))
             {
                 return false; // Node is either null or fully processed, so return null.
             }
@@ -207,15 +223,14 @@ public partial class Systems
                 }
             }
 
-            // if (!node.SpawnedPostEvents)
-            // {
-            //     node.SpawnPostEvents();
-            //     node.SpawnedPostEvents = true;
-            //     return false; //we need to return so that the new children can be picked up (if added)
-            // }
             // If this point is reached, all children are executed or complete, so mark this node as complete
-            node.OnComplete?.Invoke();
-            node.Complete = true;
+            // nodes can also explicitly be marked as non-Compleatable in order for exeuction to basically keep trying at that node position
+            // this is useful for waiting on animation type stuff
+            if (!node.Complete && !node.Frozen)
+            {
+                node.OnComplete?.Invoke();
+                node.Complete = true;
+            }
 
             // No unexecuted child found and this node is either executed or marked complete, so return null
             return false;
@@ -225,15 +240,18 @@ public partial class Systems
     public static string WriteNodeGraph()
     {
         StringBuilder sb = new StringBuilder();
+        sb.AppendLine("```mermaid");
         sb.AppendLine("flowchart TD");
         GetNodeRelations(Logic.RootEvent);
+        sb.AppendLine("```");
         return sb.ToString();
         
         void GetNodeRelations(Logic.Event e)
         {
+            sb.AppendLine(e.GetDebugName());
             foreach (var c in e.ChildEvents)
             {
-                sb.AppendLine($"{e.Index}[{e.Name}]-->{c.Index}[{c.Name}]");
+                sb.AppendLine($"{e.Index}-->{c.Index}");
                 GetNodeRelations(c);
             }
         }

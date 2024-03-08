@@ -747,23 +747,75 @@ public class EventCleaningSystem : DSystem, ICleanupSystem
     }
 }
 
-public readonly record struct Coroutine(IEnumerator coroutine, string name, Action completionCallback);
+public record struct Coroutine(IEnumerator coroutine, string name, Action completionCallback, Stack<IEnumerator> executionStack = null);
 public class CoroutineSystem : DSystem, IUpdateSystem
 {
     QueryDescription coroutine = new QueryDescription().WithAll<Coroutine>();
     public void Update(double dt)
     {
+        //old - no nesting
+        // CommandBuffer cb = new(Engine.ECSWorld);
+        // Engine.ECSWorld.Query(in coroutine, (Arch.Core.Entity e, ref Coroutine c) =>  {
+        //     if (!c.coroutine.MoveNext())
+        //     {
+        //         c.completionCallback?.Invoke();
+        //         // e.Add(new Destroy());
+        //         Console.WriteLine("DESTROYING COROUTINE " + c.name);
+        //         cb.Add(in e, new Destroy());
+        //     }
+        // });
+        // cb.Playback();
+        
+        //new - nesting
         CommandBuffer cb = new(Engine.ECSWorld);
         Engine.ECSWorld.Query(in coroutine, (Arch.Core.Entity e, ref Coroutine c) =>  {
-            if (!c.coroutine.MoveNext())
+            // Ensure the stack is initialized
+            if (c.executionStack == null)
             {
-                c.completionCallback?.Invoke();
-                // e.Add(new Destroy());
-                Console.WriteLine("DESTROYING COROUTINE " + c.name);
-                cb.Add(in e, new Destroy());
+                c.executionStack = new Stack<IEnumerator>();
+                c.executionStack.Push(c.coroutine); // Assuming 'coroutine' is the initial IEnumerator
+            }
+
+            if (c.executionStack.Count > 0)
+            {
+                var currentCoroutine = c.executionStack.Peek();
+                if (!currentCoroutine.MoveNext())
+                {
+                    c.executionStack.Pop(); // Finished, so remove it
+                    if (c.executionStack.Count > 0)
+                    {
+                        return; // Exit early, as there's another coroutine to resume next update
+                    }
+                    // Otherwise, this was the last coroutine
+                    c.completionCallback?.Invoke();
+                    Console.WriteLine("DESTROYING COROUTINE " + c.name);
+                    cb.Add(in e, new Destroy());
+                }
+                else
+                {
+                    // Handle yield return of another IEnumerator
+                    var currentYield = currentCoroutine.Current;
+                    if (currentYield == null)
+                    {
+                        // yield return null;
+                        // Handle waiting for the next frame
+                    }
+                    else if (currentYield is IEnumerator nestedCoroutine)
+                    {
+                        c.executionStack.Push(nestedCoroutine);
+                    }
+                    else if (currentYield is Coroutines.CustomYieldInstruction customYield)
+                    {
+                        if (!customYield.KeepWaiting)
+                        {
+                            c.executionStack.Pop();
+                        }
+                    }
+                }
             }
         });
         cb.Playback();
+        
     }
 }
 

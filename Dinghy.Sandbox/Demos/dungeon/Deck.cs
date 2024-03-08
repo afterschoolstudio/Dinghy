@@ -23,7 +23,9 @@ public class Deck
             };
             for (int j = 0; j < iterations; j++)
             {
-                Cards.Add(Dungeon.CreateNewCard(i.ID + $"{j}", i));
+                var newCard = Dungeon.CreateNewCard(i.ID + $"{j}", i);
+                newCard.Entity.X = Engine.Width + 200;
+                Cards.Add(newCard);
             }
         }
         

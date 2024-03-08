@@ -23,6 +23,7 @@ public class Inventory
             c.Destroy();
         }
         GridCells.Clear();
+        Cards.Clear();
         
         Grid.TransformGrid(0f,1f,1f,new Vector2(0,350f));
         foreach (var pos in Grid.Points)
