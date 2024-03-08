@@ -152,17 +152,8 @@ fz:{Frozen}`""]";
     private static TimeSince writeTick; 
     public static IEnumerator LogicProcess()
     {
-        writeTick = 0;
         while(true)
         {
-            lastTickNodeGraphDiagram = currentNodeGraphDiagram;
-            currentNodeGraphDiagram = WriteNodeGraph();
-            if (writeTick > 1.5f)
-            {
-                File.WriteAllText("lastTick.md",lastTickNodeGraphDiagram);
-                File.WriteAllText("thistick.md",currentNodeGraphDiagram);
-                writeTick = 0;
-            }
             //prune the logic tree
             Logic.RootEvent.ChildEvents.RemoveAll(x => x.Complete && !x.Frozen);
 
@@ -180,6 +171,11 @@ fz:{Frozen}`""]";
             //note that getnextevent also marks nodes complete so it's important that we run it here. complete nodes will get pruned in next loop iteration
             if(Logic.RootEvent.ChildEvents.Any() && !LogicEventExecuting && GetNextEvent(Logic.RootEvent.ChildEvents.First(), out ActiveEvent))
             {
+                lastTickNodeGraphDiagram = currentNodeGraphDiagram;
+                currentNodeGraphDiagram = WriteNodeGraph();
+                File.WriteAllText("lastTick.md",lastTickNodeGraphDiagram);
+                File.WriteAllText("thistick.md",currentNodeGraphDiagram);
+                
                 Coroutines.Start(ActiveEvent.ExecutionRoutine, $"event_{ActiveEvent.Name}", () =>
                 {
                     ExecutedEvents.Add(ActiveEvent);
@@ -191,6 +187,11 @@ fz:{Frozen}`""]";
                     }
                     LastExecutedEvent = ActiveEvent;
                     ActiveEvent = null;
+                    
+                    lastTickNodeGraphDiagram = currentNodeGraphDiagram;
+                    currentNodeGraphDiagram = WriteNodeGraph();
+                    File.WriteAllText("lastTick.md",lastTickNodeGraphDiagram);
+                    File.WriteAllText("thistick.md",currentNodeGraphDiagram);
                 });
             }
 
