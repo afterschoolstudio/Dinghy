@@ -6,6 +6,7 @@ using static Dinghy.Resources;
 
 namespace Dinghy;
 
+public record struct RenderItem(int renderOrder);
 public record struct SpriteRenderer
 {
     public Texture Texture { get;  set; }
@@ -63,6 +64,7 @@ public record struct Position(float x = 0, float y = 0, float scaleX = 1, float 
 public record ManagedComponent(Component managedComponent);
 public readonly record struct Destroy();
 public record struct Active(bool active = true);
+public record struct SceneMember(int sceneID);
 public readonly record struct HasManagedOwner(Dinghy.Entity e);
 public record ParticleEmitterComponent
 {

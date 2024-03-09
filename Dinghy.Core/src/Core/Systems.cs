@@ -82,15 +82,168 @@ public class SceneSystem : DSystem, IUpdateSystem
     }
 }
 
-public abstract class RenderSystem : DSystem, IUpdateSystem
+public abstract class RenderSystem : DSystem, IPostUpdateSystem
 {
-    public void Update(double dt)
+    public void PostUpdate(double dt)
     {
         Render(dt);
     }
 
     protected abstract void Render(double dt);
 }
+
+public class SceneRenderSystem : RenderSystem
+{
+    QueryDescription scenes = new QueryDescription().WithAll<Active,SceneComponent>(); 
+    QueryDescription validRenderEntites = new QueryDescription().WithAll<Active,RenderItem>();      
+
+    
+    QueryDescription renderedSprites = new QueryDescription().WithAll<Active,Position,SpriteRenderer,SceneMember>();      
+    QueryDescription renderedShapes = new QueryDescription().WithAll<Active,Position,ShapeRenderer,SceneMember>();      
+    QueryDescription renderedParticles = new QueryDescription().WithAll<Active,Position,ParticleEmitterComponent,SceneMember>();      
+
+    
+    private List<Scene> scenesToUpdate = new List<Scene>();
+    protected override void Render(double dt)
+    {
+        scenesToUpdate.Clear();
+        Engine.ECSWorld.Query(in scenes, (Arch.Core.Entity e, ref Active a, ref SceneComponent scene) => {
+            if(!a.active){return;}
+            if (Engine.MountedScenes.ContainsValue(scene.ManagedScene) && scene.ManagedScene.Status == Scene.SceneStatus.Running)
+            {
+                scenesToUpdate.Add(scene.ManagedScene);
+            }
+        });
+        scenesToUpdate = scenesToUpdate.OrderBy(scene => Engine.MountedScenes.First(x => x.Value == scene).Key);
+        
+        //note that entites are implicitly added to the global scene if no explicit scene is set, so every entity is in a scene
+        foreach (var updatingScene in scenesToUpdate)
+        {
+            List< (Arch.Core.Entity entity, RenderItem renderItem)> sceneOrderedEntities = new ();
+            Engine.ECSWorld.Query(in validRenderEntites, (Arch.Core.Entity e, ref Active a, ref RenderItem r) =>
+            {
+                if(!a.active){return;}
+                sceneOrderedEntities.Add((e,r));
+            });
+
+            foreach (var item in sceneOrderedEntities.OrderBy(x => x.renderItem.renderOrder))
+            {
+                if (item.entity.Has<SpriteRenderer>())
+                {
+                    //tODO:
+                }
+            }
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            //TODO: could further sort these by some base "render" component
+            Engine.ECSWorld.Query(in renderedSprites, (Arch.Core.Entity e, ref Active a, ref SpriteRenderer r, ref Position p) =>
+            {
+                if(!a.active){return;}
+                if (!r.Texture.DataLoaded)
+                {
+                    r.Texture.Load();
+                }
+                Engine.DrawTexturedRect(p,r);
+            });
+            
+            Engine.ECSWorld.Query(in renderedShapes, (Arch.Core.Entity e,ref Active a,  ref ShapeRenderer r, ref Position p) =>
+            {
+                if(!a.active){return;}
+                Engine.DrawShape(p, r);
+            });
+            
+            Engine.ECSWorld.Query(in renderedParticles, (Arch.Core.Entity e, ref Position p,ref Active a,  ref ParticleEmitterComponent emitter) =>
+            {
+                if(!a.active){return;}
+                // Update the particles
+                List<int> activeIndices = new List<int>();
+                // List<int> newIndicies = new List<int>();
+                var possibleParticleSlots = emitter.Config.EmissionRate * dt;
+                emitter.Accumulator += possibleParticleSlots;
+                var freeSlots = (int)emitter.Accumulator;
+
+                // Reactivate old inactive particles if possible
+                for (int i = 0; i < emitter.Particles.Count; i++)
+                {
+                    if (emitter.Particles[i].Active)
+                    {
+                        emitter.Particles[i].Age += dt;
+                        if (emitter.Particles[i].Age > emitter.Config.ParticleConfig.Lifespan)
+                        {
+                            //staged for inactive
+                            if (freeSlots == 0)
+                            {
+                                //go inactive if no free slots
+                                emitter.Particles[i].Active = false;
+                                continue;
+                            }
+                            
+                            //otherwise remake this particle
+                            emitter.Particles[i].Reset();
+                            emitter.Particles[i].Config = new ParticleEmitterComponent.ParticleConfig(emitter.Config.ParticleConfig);
+                            emitter.Particles[i].Config.EmissionPoint = new(p.x, p.y);
+                            emitter.Particles[i].Resolve();
+                    
+                            activeIndices.Add(i);
+                            freeSlots--;
+                            emitter.Accumulator--;
+                        }
+
+                        else
+                        {
+                            //particle still active
+                            emitter.Particles[i].Resolve();
+                            emitter.Particles[i].X += emitter.Particles[i].DX;
+                            emitter.Particles[i].Y += emitter.Particles[i].DY;
+                            activeIndices.Add(i);
+                        }
+                    }
+                    else if (freeSlots > 0)
+                    {
+                        //reset and toggle to active if there is a slot 
+                        emitter.Particles[i].Reset();
+                        emitter.Particles[i].Active = true;
+                        emitter.Particles[i].Config = new ParticleEmitterComponent.ParticleConfig(emitter.Config.ParticleConfig);
+                        emitter.Particles[i].Config.EmissionPoint = new(p.x, p.y);
+                        emitter.Particles[i].Resolve();
+                    
+                        activeIndices.Add(i);
+                        freeSlots--;
+                        emitter.Accumulator--;
+                    }
+                }
+
+                // Create new particles if needed and maximum limit is not reached
+                while (freeSlots > 0 && emitter.Particles.Count < emitter.Config.MaxParticles)
+                {
+                    ParticleEmitterComponent.Particle newParticle = new();
+                    newParticle.Active = true;
+                    emitter.Particles.Add(newParticle);
+                    newParticle.Resolve();
+                    activeIndices.Add(emitter.Particles.Count - 1);
+                    freeSlots--;
+                    emitter.Accumulator--;
+                }
+
+                // Draw the particles
+                if (activeIndices.Count > 0)
+                {
+                    Engine.DrawParticles(p, emitter, activeIndices);
+                }
+            });
+        }
+    }
+}
+
 public class SpriteRenderSystem : RenderSystem
 {
     QueryDescription query = new QueryDescription().WithAll<Active,Position,SpriteRenderer>();      // Should have all specified components

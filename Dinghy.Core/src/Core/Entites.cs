@@ -11,6 +11,7 @@ namespace Dinghy;
 
 public class Entity
 {
+    public int ID;
     public string Name { get; set; } = "entity";
     public string DebugText = "";
     // public bool DestoryOnLoad = true;
@@ -145,15 +146,17 @@ public class Entity
     public Scene? Scene;
     public Entity(bool startEnabled, Scene scene, bool addToSceneHeirarchy = true, Action<Entity,double> update = null)
     {
+        ID = Engine.GetNextEntityID();
+        Scene = scene != null ? scene : Engine.TargetScene;
         Arch.Core.Entity e = Engine.ECSWorld.Create(
             new Active(startEnabled),
             new HasManagedOwner(this),
             new Position(X,Y), 
-            new UpdateListener(this,update)
+            new UpdateListener(this,update),
+            new SceneMember(Scene.ID)
         );
         ECSEntityReference = Engine.ECSWorld.Reference(e);
         Engine.ECSWorld.Add<Entity>(ECSEntity);
-        Scene = scene != null ? scene : Engine.TargetScene;
         if (addToSceneHeirarchy)
         {
             Engine.SceneEntityMap[Scene].Add(this);
@@ -195,6 +198,14 @@ public class Component
 
 public class Scene : Entity
 {
+    private int sceneRenderCounter = 0;
+    public int GetNextSceneRenderCounter()
+    {
+        var curr = sceneRenderCounter;
+        sceneRenderCounter++;
+        return curr;
+    }
+    
     public enum SceneLoadStatus
     {
         Unloaded,
@@ -322,6 +333,7 @@ public class Shape : Entity
         var rend = new ShapeRenderer(color, width, height);
         ECSEntity.Add(
             rend,
+            new RenderItem(scene.GetNextSceneRenderCounter()),
             new Collider(0,0,width,height,false,collisionStart,collisionContinue,collisionStop,OnMouseUp, OnMousePressed, OnMouseDown, OnMouseScroll,OnMouseEnter,OnMouseLeave,OnMouseOver));
     }
 
@@ -376,6 +388,7 @@ public class Sprite : Entity
         var rend = new SpriteRenderer(Data.Texture, Data.Rect);
         ECSEntity.Add(
             rend,
+            new RenderItem(scene.GetNextSceneRenderCounter()),
             new Collider(0,0,Data.Rect.width,Data.Rect.height,false,collisionStart,collisionContinue,collisionStop,OnMouseUp, OnMousePressed, OnMouseDown, OnMouseScroll,OnMouseEnter,OnMouseLeave,OnMouseOver));
     }
     
@@ -416,6 +429,7 @@ public class AnimatedSprite : Entity
         var rend = new SpriteRenderer(Data.Texture, Data.Animations.First().Frames[0]);
         ECSEntity.Add(
             rend,
+            new RenderItem(scene.GetNextSceneRenderCounter()),
             new SpriteAnimator(Data.Animations),
             new Collider(0,0,Data.Animations.First().Frames[0].width,Data.Animations.First().Frames[0].height,false,collisionStart,collisionContinue,collisionStop,OnMouseUp,OnMousePressed, OnMouseDown, OnMouseScroll,OnMouseEnter,OnMouseLeave,OnMouseOver));
     }
@@ -440,6 +454,7 @@ public class ParticleEmitter : Entity
     {
         Config = config;
         ECSEntity.Add(
+            new RenderItem(scene.GetNextSceneRenderCounter()),
             new ParticleEmitterComponent(config));
     }
 }

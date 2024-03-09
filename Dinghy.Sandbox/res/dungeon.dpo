@@ -160,6 +160,21 @@
                         }
                     ],
                     "dropTable": []
+                },
+                {
+                    "guid": "5115ec2a-90a4-4173-9cbc-fa7b7e68d09d",
+                    "id": "sword",
+                    "damage": 0,
+                    "damageable": false,
+                    "health": 1,
+                    "keywords": [
+                        {
+                            "guid": "549ddbdd-1baa-40f6-899e-d114eec79613",
+                            "keyword": "dc186624-641f-4999-82a6-d998d971a4f0",
+                            "id": "0"
+                        }
+                    ],
+                    "dropTable": []
                 }
             ],
             "hidden": false,

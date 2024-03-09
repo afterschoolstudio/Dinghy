@@ -14,11 +14,20 @@ using Internal.Sokol;
 
 public static partial class Engine
 {
+    private static int entityIDCounter = 0;
+    public static int GetNextEntityID()
+    {
+        var curr = entityIDCounter;
+        entityIDCounter++;
+        return curr;
+    }
+    
     public static Action Update;
     public static Action Setup;
     public static InputSystem InputSystem = new InputSystem();
     static DestructionSystem DestructionSystem = new DestructionSystem();
     static EntityUpdateSystem EntityUpdate = new ();
+    static DebugOverlaySystem DebugOverlay = new ();
     public static string DebugTextStr = "";
     static Color ClearColor;
 
@@ -38,14 +47,16 @@ public static partial class Engine
         new CoroutineSystem(),
         new CollisionSystem(),
         new CollisionCallbackSystem(),
-        //render
-        new ParticleRenderSystem(),
-        new SpriteRenderSystem(),
-        new ShapeRenderSystem(),
+        //render - postupdate
+        new SceneRenderSystem(),
+        // new EntityRenderSystem(),
+        
+        //we dont process raw render stuff
+        // new ParticleRenderSystem(),
+        // new SpriteRenderSystem(),
+        // new ShapeRenderSystem(),
         //cleanup
         new EventCleaningSystem(),
-        //debug
-        new DebugOverlaySystem(),
     };
     static HashSet<DSystem> ActiveSystems = new();
     public static void RegisterSystem(DSystem system)
@@ -483,17 +494,7 @@ public static partial class Engine
             if (s is IUpdateSystem us)
             {
                 if(s is EntityUpdateSystem) {continue;} //we handle this above
-                if (s is DebugOverlaySystem)
-                {
-                    if (drawDebugOverlay)
-                    {
-                        us.Update(DeltaTime);
-                    }
-                }
-                else
-                {
-                    us.Update(DeltaTime);
-                }
+                us.Update(DeltaTime);
             }
         }
         foreach (var s in ActiveSystems)
@@ -503,6 +504,11 @@ public static partial class Engine
             {
                 ps.PostUpdate(DeltaTime);
             }
+        }
+        
+        if (drawDebugOverlay)
+        {
+            DebugOverlay.Update(DeltaTime);
         }
         
         var text = "abcdefghijklmnopqrstuvwxyz";
