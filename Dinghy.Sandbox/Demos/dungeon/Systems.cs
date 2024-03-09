@@ -171,10 +171,7 @@ fz:{Frozen}`""]";
             //note that getnextevent also marks nodes complete so it's important that we run it here. complete nodes will get pruned in next loop iteration
             if(Logic.RootEvent.ChildEvents.Any() && !LogicEventExecuting && GetNextEvent(Logic.RootEvent.ChildEvents.First(), out ActiveEvent))
             {
-                lastTickNodeGraphDiagram = currentNodeGraphDiagram;
-                currentNodeGraphDiagram = WriteNodeGraph();
-                File.WriteAllText("lastTick.md",lastTickNodeGraphDiagram);
-                File.WriteAllText("thistick.md",currentNodeGraphDiagram);
+                UpdateDebugGraph();
                 
                 Coroutines.Start(ActiveEvent.ExecutionRoutine, $"event_{ActiveEvent.Name}", () =>
                 {
@@ -188,10 +185,7 @@ fz:{Frozen}`""]";
                     LastExecutedEvent = ActiveEvent;
                     ActiveEvent = null;
                     
-                    lastTickNodeGraphDiagram = currentNodeGraphDiagram;
-                    currentNodeGraphDiagram = WriteNodeGraph();
-                    File.WriteAllText("lastTick.md",lastTickNodeGraphDiagram);
-                    File.WriteAllText("thistick.md",currentNodeGraphDiagram);
+                    UpdateDebugGraph();
                 });
             }
 
@@ -236,6 +230,14 @@ fz:{Frozen}`""]";
             // No unexecuted child found and this node is either executed or marked complete, so return null
             return false;
         }
+    }
+
+    public static void UpdateDebugGraph()
+    {
+        lastTickNodeGraphDiagram = currentNodeGraphDiagram;
+        currentNodeGraphDiagram = WriteNodeGraph();
+        File.WriteAllText("lastTick.md",lastTickNodeGraphDiagram);
+        File.WriteAllText("thistick.md",currentNodeGraphDiagram);
     }
 
     public static string WriteNodeGraph()
