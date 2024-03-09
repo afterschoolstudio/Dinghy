@@ -98,46 +98,6 @@ ex:{Executed}
 fz:{Frozen}`""]";
             }
         }
-
-        public static void EmitDeathReap()
-        {
-            var destroyedNumber = 0;
-            dungeon.Logic.MetaEvents.DeathReap.Emit(RootEvent, postExecution: e =>
-            {
-                destroyedNumber = 0;
-                foreach (var c in Dungeon.Track.Cards.Where(x => x.Value != null && x.Value.Health <= 0))
-                {
-                    destroyedNumber++;
-                    Depot.Generated.dungeon.logicTriggers.destroyed.Emit(e, new EventData(cardID: c.Value.ID));
-                }
-            }, onComplete: () =>
-            {
-                if (destroyedNumber > 0)
-                {
-                    dungeon.Logic.MetaEvents.DrawingMultipleCards.Emit(RootEvent, postExecution: e =>
-                    {
-                        for (int i = 0; i < destroyedNumber; i++)
-                        {
-                            Depot.Generated.dungeon.logicTriggers.draw.Emit(e);
-                        }
-                    }, onComplete: () =>
-                    {
-                        Dungeon.Track.MoveTrackCardsToLatestTrackPositions();
-                        if (Dungeon.Player.Health <= 0)
-                        {
-                            Dungeon.Player.Kill();
-                        }
-                    });
-                }
-                else
-                {
-                    if (Dungeon.Player.Health <= 0)
-                    {
-                        Dungeon.Player.Kill();
-                    }
-                }
-            });
-        }
     }
 
     public static List<Logic.Event> ExecutedEvents = new ();
@@ -164,7 +124,43 @@ fz:{Frozen}`""]";
                 if(deathReapEventCheck != null)
                 {
                     lastDeathReapIndex = deathReapEventCheck.Index + 1; //we add one because when we emit outselves that is the new index
-                    Logic.EmitDeathReap();
+                    
+                    #region Emit Death Reap
+                    dungeon.Logic.MetaEvents.DeathReap.Emit(Logic.RootEvent, postExecution: e =>
+                    {
+                        foreach (var c in Dungeon.Track.Cards.Where(x => x.Value != null && x.Value.Health <= 0))
+                        {
+                            Depot.Generated.dungeon.logicTriggers.destroyed.Emit(e, new Logic.EventData(cardID: c.Value.ID));
+                        }
+                    }, onComplete: () =>
+                    {
+                        if (Dungeon.Track.HasEmptyPositions(out var pos))
+                        {
+                            dungeon.Logic.MetaEvents.DrawingMultipleCards.Emit(Logic.RootEvent, postExecution: e =>
+                            {
+                                for (int i = 0; i < pos.Count; i++)
+                                {
+                                    Depot.Generated.dungeon.logicTriggers.draw.Emit(e);
+                                }
+                            }, onComplete: () =>
+                            {
+                                if (Dungeon.Player.Health <= 0)
+                                {
+                                    Dungeon.Player.Kill();
+                                }
+                                else
+                                {
+                                    Coroutines.Start(Dungeon.Track.MoveTrackCardsToLatestTrackPositions(),
+                                        "card movement post destroy");
+                                }
+                            });
+                        }
+                        else if (Dungeon.Player.Health <= 0)
+                        {
+                            Dungeon.Player.Kill();
+                        }
+                    });
+                    #endregion
                 }
             }
             

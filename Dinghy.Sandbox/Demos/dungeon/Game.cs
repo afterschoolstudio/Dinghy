@@ -22,6 +22,7 @@ public class Dungeon : Scene
     public static Deck Deck = new ();
     public static Track Track = new ();
     public static Inventory Inventory = new ();
+    public static Equipment Equipment = new ();
     public static Effects Effects = new Effects();
 
     public override void Create()
@@ -48,6 +49,7 @@ public class Dungeon : Scene
         Deck.Init();
         Track.Init();
         Inventory.Init();
+        Equipment.Init();
         
         Logic.MetaEvents.DrawingMultipleCards.Emit(Systems.Logic.RootEvent, postExecution: e =>
         {
@@ -69,7 +71,8 @@ public class Dungeon : Scene
         Discard,
         Deck,
         Graveyard,
-        Inventory
+        Inventory,
+        Equipment
     }
 
     public static IEnumerator MoveCard(DeckCard c, CardLocation destination, int? targetPosition = null)
@@ -80,6 +83,7 @@ public class Dungeon : Scene
             Graveyard.Contains(c) ? CardLocation.Graveyard :
             Deck.Cards.Contains(c) ? CardLocation.Deck :
             Track.Cards.Values.Contains(c) ? CardLocation.Track :
+            Equipment.Cards.Values.Contains(c) ? CardLocation.Equipment :
             Inventory.Cards.Values.Contains(c) ? CardLocation.Inventory : CardLocation.NOTFOUND;
         if (currentLocation == CardLocation.NOTFOUND)
         {
@@ -107,6 +111,9 @@ public class Dungeon : Scene
             case CardLocation.Inventory:
                 Inventory.Cards.Remove(Inventory.Cards.First(x => x.Value == c).Key);
                 break;
+            case CardLocation.Equipment:
+                Equipment.Cards.Remove(Equipment.Cards.First(x => x.Value == c).Key);
+                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(destination), destination, null);
         }
@@ -124,6 +131,8 @@ public class Dungeon : Scene
             case CardLocation.Graveyard:
                 break;
             case CardLocation.Inventory:
+                break;
+            case CardLocation.Equipment:
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(destination), destination, null);
@@ -145,7 +154,7 @@ public class Dungeon : Scene
         {
             destroyCards.AddRange(nonNullTrackCards.Select(x => x.Value)!);
         }
-        //NOTE: KEEP INVENTORY
+        //NOTE: KEEP INVENTORY + EQUIPMENT
 
         foreach (var c in destroyCards)
         {

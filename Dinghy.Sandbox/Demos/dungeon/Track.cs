@@ -10,6 +10,19 @@ public class Track
     public int MaxTrackCards => Dungeon.TrackSize;
     public Dictionary<int,DeckCard?> Cards = new();
     public Grid Grid;
+    public List<DeckCard> ValidActors => Cards.Where(x => x.Value != null && x.Value.Health > 0).Select(x => x.Value!).ToList();
+    public List<KeyValuePair<int,DeckCard?>> EmptyPositions => Cards.Where(x => x.Value == null).ToList();
+    public bool HasEmptyPositions(out List<int> positions)
+    {
+        positions = new List<int>();
+        foreach (var p in EmptyPositions)
+        {
+            positions.Add(p.Key);
+        }
+        return positions.Any();
+    }
+    
+    
 
     public void Init()
     {
@@ -102,11 +115,12 @@ public class Track
         var spawningEvent = parentEvent ?? Systems.Logic.RootEvent;
         Logic.MetaEvents.CardsActing.Emit(spawningEvent, postExecution: e =>
         {
-            foreach (var card in Cards.Where(x => x.Value != null))
+            foreach (var card in ValidActors)
             {
-                if (card.Value.Attack > 0)
+                //NOTE: right now acting is only attacking
+                if (card.Attack > 0)
                 {
-                    Depot.Generated.dungeon.logicTriggers.attacking.Emit(e,new Systems.Logic.EventData(card.Value.ID));
+                    Depot.Generated.dungeon.logicTriggers.attacking.Emit(e,new Systems.Logic.EventData(card.ID));
                 }
             }
         }, onComplete: onComplete);

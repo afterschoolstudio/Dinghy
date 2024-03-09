@@ -77,9 +77,7 @@ public class Player
             {
                 Depot.Generated.dungeon.logicTriggers.attackedByPlayer.Emit(e,new Systems.Logic.EventData(cardID:card.ID));
             }
-        }, onComplete: () =>
-        {
-            Dungeon.Track.Act(onComplete: onComplete);
-        });
+            Dungeon.Track.Act(e);
+        }, onComplete: onComplete);
     }
 }
