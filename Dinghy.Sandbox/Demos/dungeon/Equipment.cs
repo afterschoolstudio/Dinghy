@@ -6,18 +6,19 @@ namespace Dinghy.Sandbox.Demos.dungeon;
 
 public class Equipment
 {
-    public Grid Grid = new (new (
-        new(Engine.Width / 2f, Engine.Height / 2f), 
-        new(0.5f, 0.5f), 
-        74, 74, 
-        new(0.5f, 0.5f), 
-        5,
-        1));
+    public Grid Grid;
 
     private List<Shape> GridCells = new List<Shape>();
     public Dictionary<int,DeckCard?> Cards = new();
     public void Init()
     {
+        Grid = new (new (
+            new(Engine.Width / 2f, Engine.Height / 2f), 
+            new(0.5f, 0.5f), 
+            74, 74, 
+            new(0.5f, 0.5f), 
+            5,
+            1));
         foreach (var c in GridCells)
         {
             c.Destroy();

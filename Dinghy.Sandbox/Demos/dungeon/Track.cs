@@ -33,6 +33,7 @@ public class Track
         new(0.5f, 0.5f), 
         Dungeon.TrackSize,
         1));
+        Grid.TransformGrid(0f,1f,1f,new Vector2(0,-100));
 
         Cards.Clear();
         
