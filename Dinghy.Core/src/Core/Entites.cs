@@ -148,13 +148,21 @@ public class Entity
     {
         ID = Engine.GetNextEntityID();
         Scene = scene != null ? scene : Engine.TargetScene;
-        Arch.Core.Entity e = Engine.ECSWorld.Create(
-            new Active(startEnabled),
-            new HasManagedOwner(this),
-            new Position(X,Y), 
-            new UpdateListener(this,update),
-            new SceneMember(Scene.ID)
-        );
+        Arch.Core.Entity e = addToSceneHeirarchy
+            //in-scene entity
+            ? Engine.ECSWorld.Create(
+                new Active(startEnabled),
+                new HasManagedOwner(this),
+                new Position(X, Y),
+                new UpdateListener(this, update),
+                new SceneMember(Scene.ID)
+            )
+            //non-in-scene entity
+            : Engine.ECSWorld.Create(
+                new Active(startEnabled),
+                new HasManagedOwner(this),
+                new Position(X, Y),
+                new UpdateListener(this, update));
         ECSEntityReference = Engine.ECSWorld.Reference(e);
         Engine.ECSWorld.Add<Entity>(ECSEntity);
         if (addToSceneHeirarchy)
@@ -331,9 +339,10 @@ public class Shape : Entity
     {
         c = color;
         var rend = new ShapeRenderer(color, width, height);
+        sceneRenderOrder = Scene.GetNextSceneRenderCounter();
         ECSEntity.Add(
             rend,
-            new RenderItem(scene.GetNextSceneRenderCounter()),
+            new RenderItem(sceneRenderOrder),
             new Collider(0,0,width,height,false,collisionStart,collisionContinue,collisionStop,OnMouseUp, OnMousePressed, OnMouseDown, OnMouseScroll,OnMouseEnter,OnMouseLeave,OnMouseOver));
     }
 
@@ -347,6 +356,18 @@ public class Shape : Entity
             ref var c = ref ECSEntity.Get<Collider>();
             c.active = value;
             colliderActive = value;
+        }
+    }
+    
+    private int sceneRenderOrder;
+    public int SceneRenderOrder
+    {
+        get => sceneRenderOrder;
+        set
+        {
+            ref var r = ref ECSEntity.Get<RenderItem>();
+            r.renderOrder = value;
+            sceneRenderOrder = value;
         }
     }
     // [BindECSComponentValue<Collider>("active")]
@@ -385,10 +406,11 @@ public class Sprite : Entity
         ) : base(startEnabled,scene,update:update)
     {
         Data = spriteData;
+        sceneRenderOrder = Scene.GetNextSceneRenderCounter();
         var rend = new SpriteRenderer(Data.Texture, Data.Rect);
         ECSEntity.Add(
             rend,
-            new RenderItem(scene.GetNextSceneRenderCounter()),
+            new RenderItem(sceneRenderOrder),
             new Collider(0,0,Data.Rect.width,Data.Rect.height,false,collisionStart,collisionContinue,collisionStop,OnMouseUp, OnMousePressed, OnMouseDown, OnMouseScroll,OnMouseEnter,OnMouseLeave,OnMouseOver));
     }
     
@@ -401,6 +423,18 @@ public class Sprite : Entity
             ref var c = ref ECSEntity.Get<Collider>();
             c.active = value;
             colliderActive = value;
+        }
+    }
+    
+    private int sceneRenderOrder;
+    public int SceneRenderOrder
+    {
+        get => sceneRenderOrder;
+        set
+        {
+            ref var r = ref ECSEntity.Get<RenderItem>();
+            r.renderOrder = value;
+            sceneRenderOrder = value;
         }
     }
 }
@@ -427,9 +461,10 @@ public class AnimatedSprite : Entity
     {
         Data = animatedSpriteData;
         var rend = new SpriteRenderer(Data.Texture, Data.Animations.First().Frames[0]);
+        sceneRenderOrder = Scene.GetNextSceneRenderCounter();
         ECSEntity.Add(
             rend,
-            new RenderItem(scene.GetNextSceneRenderCounter()),
+            new RenderItem(sceneRenderOrder),
             new SpriteAnimator(Data.Animations),
             new Collider(0,0,Data.Animations.First().Frames[0].width,Data.Animations.First().Frames[0].height,false,collisionStart,collisionContinue,collisionStop,OnMouseUp,OnMousePressed, OnMouseDown, OnMouseScroll,OnMouseEnter,OnMouseLeave,OnMouseOver));
     }
@@ -443,6 +478,18 @@ public class AnimatedSprite : Entity
             ref var c = ref ECSEntity.Get<Collider>();
             c.active = value;
             colliderActive = value;
+        }
+    }
+    
+    private int sceneRenderOrder;
+    public int SceneRenderOrder
+    {
+        get => sceneRenderOrder;
+        set
+        {
+            ref var r = ref ECSEntity.Get<RenderItem>();
+            r.renderOrder = value;
+            sceneRenderOrder = value;
         }
     }
 }
