@@ -212,7 +212,18 @@ public static class Logic
         Dungeon.Graveyard.Add(card);
         if (Dungeon.Track.Cards.ContainsValue(card))
         {
+            var trackPos = Dungeon.Track.Cards.First(x => x.Value == card).Key;
             Dungeon.Track.RemoveTrackCard(card);
+            
+            //add loot drop
+            if(card.LootTable != null)
+            {
+                var drop = card.LootTable.GetDrop();
+                Dungeon.Track.Cards[trackPos] = drop;
+                drop.Distance = 3;
+                drop.Entity.Active = true;
+            }
+            
             yield return Dungeon.Track.MoveTrackCardsToLatestTrackPositions();
         }
         yield return null;

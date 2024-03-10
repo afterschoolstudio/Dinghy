@@ -132,18 +132,8 @@ fz:{Frozen}`""]";
                     {
                         foreach (var c in Dungeon.Track.Cards.Where(x => x.Value != null && x.Value.Health <= 0))
                         {
-                            Depot.Generated.dungeon.logicTriggers.destroyed.Emit(e, new Logic.EventData(cardID: c.Value.ID), postExecution :
-                                de =>
-                                {
-                                    var destroyedCard = Dungeon.AllCards[de.cardID];
-                                    if(destroyedCard.LootTable != null)
-                                    {
-                                        var drop = destroyedCard.LootTable.GetDrop();
-                                        Dungeon.Track.Cards[destroyedCard.LastTrackPosition] = drop;
-                                        drop.Distance = 3;
-                                        drop.Entity.Active = true;
-                                    }
-                                });
+                            Depot.Generated.dungeon.logicTriggers.destroyed.Emit(e,
+                                new Logic.EventData(cardID: c.Value.ID));
                         }
                     }, onComplete: () =>
                     {

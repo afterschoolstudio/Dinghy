@@ -90,11 +90,6 @@ public class Track
                 Cards[i] = null;
             }
         }
-
-        foreach (var card in Cards.Where(x => x.Value != null))
-        {
-            card.Value.LastTrackPosition = card.Key;
-        }
     }
     
     private IEnumerator movePosition(DeckCard c, float startX, float endX)

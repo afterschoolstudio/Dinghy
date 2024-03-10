@@ -13,7 +13,6 @@ public class DeckCard
     public int MaxHealth => Data.health;
     public int Attack => Data.damage;
     public bool Damageable => Data.damageable;
-    public int LastTrackPosition = -1;
     public List<Depot.Generated.dungeon.keywords.keywordsLine> Keywords = new();
     public DropTable LootTable;
     // public bool IsObstacle => Data.obstacle;
@@ -21,8 +20,8 @@ public class DeckCard
 
     public class DropTable
     {
-        public Depot.Generated.dungeon.cards.dropTable.dropTable Data;
-        public DropTable(Depot.Generated.dungeon.cards.dropTable.dropTable table)
+        public List<Depot.Generated.dungeon.cards.dropTableList.dropTableListLine> Data;
+        public DropTable(List<Depot.Generated.dungeon.cards.dropTableList.dropTableListLine> table)
         {
             Data = table;
         }
@@ -30,9 +29,8 @@ public class DeckCard
         public DeckCard GetDrop()
         {
             //TODO: actually calculate the table
-            var next = Data.Lines.First().dropOption;
-            var card = dungeon.CreateNewCard(next.ID,next);
-            Dungeon.AllCards.Add(card);
+            var next = Data.First().dropOption;
+            var card = Dungeon.CreateNewCard(next.ID,next);
             return card;
         }
 
