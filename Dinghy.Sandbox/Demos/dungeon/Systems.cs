@@ -23,7 +23,7 @@ public partial class Systems
     {
         public record EventData(int cardID);
         
-        public static Event RootEvent = new("root",null); //root is ID 0
+        public static Event RootEvent = new("root",null,null); //root is ID 0
         static int EventCounter = 1;
         public static int GetCurrentEventCounter() => EventCounter;
 
@@ -74,7 +74,8 @@ public partial class Systems
             public IEnumerator ExecutionRoutine { get; protected set; }
             private Action<Event> PostExecution;
             public Action OnComplete;
-            public Event(string name, IEnumerator executionRoutine, Action<Event> postExecution = null, Action onComplete = null)
+            public EventData? Data { get; protected set; }
+            public Event(string name, EventData? data, IEnumerator executionRoutine, Action<Event> postExecution = null, Action onComplete = null)
             {
                 //NOTE: In onComplete you should not add new nodes to this, they will not be addressed
                 Index = EventCounter;
@@ -83,6 +84,7 @@ public partial class Systems
                 ExecutionRoutine = executionRoutine;
                 PostExecution = postExecution;
                 OnComplete = onComplete;
+                Data = data;
             }
             
             public void SpawnPostEvents()
@@ -130,7 +132,18 @@ fz:{Frozen}`""]";
                     {
                         foreach (var c in Dungeon.Track.Cards.Where(x => x.Value != null && x.Value.Health <= 0))
                         {
-                            Depot.Generated.dungeon.logicTriggers.destroyed.Emit(e, new Logic.EventData(cardID: c.Value.ID));
+                            Depot.Generated.dungeon.logicTriggers.destroyed.Emit(e, new Logic.EventData(cardID: c.Value.ID), postExecution :
+                                de =>
+                                {
+                                    var destroyedCard = Dungeon.AllCards[de.cardID];
+                                    if(destroyedCard.LootTable != null)
+                                    {
+                                        var drop = destroyedCard.LootTable.GetDrop();
+                                        Dungeon.Track.Cards[destroyedCard.LastTrackPosition] = drop;
+                                        drop.Distance = 3;
+                                        drop.Entity.Active = true;
+                                    }
+                                });
                         }
                     }, onComplete: () =>
                     {

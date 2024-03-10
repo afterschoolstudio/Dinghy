@@ -144,7 +144,13 @@
                             "id": "1"
                         }
                     ],
-                    "dropTable": []
+                    "dropTable": [
+                        {
+                            "guid": "f8c61015-107c-4775-b5d1-de12d713289b",
+                            "dropOption": "5115ec2a-90a4-4173-9cbc-fa7b7e68d09d",
+                            "id": "0"
+                        }
+                    ]
                 },
                 {
                     "guid": "a988e378-ec8b-4a00-8362-59a827cf8eab",

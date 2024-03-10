@@ -50,7 +50,7 @@ public static class Logic
     {
         if (LogicBindingDict.TryGetValue(m.ToString(), out MethodInfo methodInfo))
         {
-            var newEvent =  new Systems.Logic.Event(m.ToString(), (IEnumerator)methodInfo.Invoke(null, [Systems.Logic.GetCurrentEventCounter(),data]),postExecution, onComplete);
+            var newEvent =  new Systems.Logic.Event(m.ToString(), data, (IEnumerator)methodInfo.Invoke(null, [Systems.Logic.GetCurrentEventCounter(),data]),postExecution, onComplete);
             parent.ChildEvents.Add(newEvent);
             return newEvent;
         }
@@ -66,7 +66,7 @@ public static class Logic
     {
         if (LogicBindingDict.TryGetValue(logicEvent.ID, out MethodInfo methodInfo))
         {
-            var main = new Systems.Logic.Event(logicEvent.ID,(IEnumerator)methodInfo.Invoke(null, [Systems.Logic.GetCurrentEventCounter(),data]), e =>
+            var main = new Systems.Logic.Event(logicEvent.ID, data,(IEnumerator)methodInfo.Invoke(null, [Systems.Logic.GetCurrentEventCounter(),data]), e =>
             {
                 //attach post-events to our event
                 foreach (var trackCard in Dungeon.Track.Cards.Where(x => x.Value != null && x.Value.Health > 0))
