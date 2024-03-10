@@ -109,7 +109,20 @@
                             "id": "0"
                         }
                     ],
-                    "dropTable": []
+                    "dropTable": [
+                        {
+                            "guid": "eaf32d53-9914-46d7-8aee-5ad9243c9947",
+                            "dropOption": "",
+                            "id": "0",
+                            "weight": 80
+                        },
+                        {
+                            "guid": "75fd32ce-3e6f-47a4-b846-1b96c1f7a3a9",
+                            "dropOption": "e6eec356-9f65-4936-a3a0-b371c524fd4e",
+                            "id": "1",
+                            "weight": 20
+                        }
+                    ]
                 },
                 {
                     "guid": "953f603d-96ae-4e1c-b85e-a7bc0fb5ce87",
@@ -124,7 +137,14 @@
                             "id": "0"
                         }
                     ],
-                    "dropTable": []
+                    "dropTable": [
+                        {
+                            "guid": "fa5d959c-472f-4c42-b1cd-f95c8e1173b1",
+                            "dropOption": "e6eec356-9f65-4936-a3a0-b371c524fd4e",
+                            "weight": 100,
+                            "id": "1"
+                        }
+                    ]
                 },
                 {
                     "guid": "ae613822-1ab2-4fa1-b9e7-0fdcd4ba70dd",
@@ -147,8 +167,9 @@
                     "dropTable": [
                         {
                             "guid": "f8c61015-107c-4775-b5d1-de12d713289b",
-                            "dropOption": "5115ec2a-90a4-4173-9cbc-fa7b7e68d09d",
-                            "id": "0"
+                            "dropOption": "e6eec356-9f65-4936-a3a0-b371c524fd4e",
+                            "id": "0",
+                            "weight": 100
                         }
                     ]
                 },
@@ -178,6 +199,26 @@
                             "guid": "549ddbdd-1baa-40f6-899e-d114eec79613",
                             "keyword": "dc186624-641f-4999-82a6-d998d971a4f0",
                             "id": "0"
+                        }
+                    ],
+                    "dropTable": []
+                },
+                {
+                    "guid": "e6eec356-9f65-4936-a3a0-b371c524fd4e",
+                    "id": "food",
+                    "damage": 0,
+                    "damageable": true,
+                    "health": 0,
+                    "keywords": [
+                        {
+                            "guid": "fa0223fa-4ea0-4750-b9c2-6c10be2c1dcf",
+                            "keyword": "3452f997-c577-45a8-acac-9b8b676c77e5",
+                            "id": "0"
+                        },
+                        {
+                            "guid": "0f11d2b5-135f-40ce-9838-babc551e5768",
+                            "keyword": "dc186624-641f-4999-82a6-d998d971a4f0",
+                            "id": "1"
                         }
                     ],
                     "dropTable": []
@@ -324,6 +365,18 @@
                     "description": "can attack at >2 distance",
                     "implemented": false,
                     "trigger": {}
+                },
+                {
+                    "guid": "3452f997-c577-45a8-acac-9b8b676c77e5",
+                    "id": "eat",
+                    "description": "grants 2 fullness on use",
+                    "implemented": false,
+                    "trigger": {
+                        "guid": "72f2934e-5fc8-4085-8518-d9d4e7410a61",
+                        "phase": "post",
+                        "trigger": "015b6677-c84e-4b4f-9423-2d6b8b0661a3",
+                        "target": "self"
+                    }
                 }
             ],
             "hidden": false,
@@ -404,6 +457,10 @@
                 {
                     "guid": "07239113-e257-4a50-ae46-d467d468acdb",
                     "id": "attacking"
+                },
+                {
+                    "guid": "015b6677-c84e-4b4f-9423-2d6b8b0661a3",
+                    "id": "use"
                 }
             ],
             "hidden": false,
@@ -441,6 +498,23 @@
                         "description": "text",
                         "sheet": "sheetSelect",
                         "defaultValue": "lineSelect@sheet"
+                    }
+                },
+                {
+                    "typeStr": "int",
+                    "guid": "c91bdac5-ea82-4b2b-a6e1-70fc8c726dca",
+                    "description": "int field",
+                    "name": "weight",
+                    "min": -10000,
+                    "max": 100000,
+                    "defaultValue": 0,
+                    "iconName": "newInt",
+                    "configurable": {
+                        "name": "text",
+                        "description": "text",
+                        "min": "int",
+                        "max": "int",
+                        "defaultValue": "int"
                     }
                 }
             ],

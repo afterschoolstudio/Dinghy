@@ -83,4 +83,27 @@ public static class Keywords
         Dungeon.NextDungeonRoom();
         yield return null;
     }
+    
+    [KeywordBinding("lootable")]
+    public static IEnumerator Lootable(int eventID, Systems.Logic.EventData? d)
+    {
+        var callingEvent = Systems.Logic.FindEventWithID(eventID);
+        var card = Dungeon.AllCards[d.cardID];
+        if (!Dungeon.Inventory.TryAddToInventory(card))
+        {
+            callingEvent.Cancelled = true;
+        }
+        yield return null;
+    }
+    
+    [KeywordBinding("eat")]
+    public static IEnumerator Eat(int eventID, Systems.Logic.EventData? d)
+    {
+        Dungeon.Player.Fullness += 2;
+        if (Dungeon.Player.Fullness > 10)
+        {
+            Dungeon.Player.Fullness = 10;
+        }
+        yield return null;
+    }
 }

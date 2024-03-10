@@ -66,7 +66,8 @@ public static class Logic
     {
         if (LogicBindingDict.TryGetValue(logicEvent.ID, out MethodInfo methodInfo))
         {
-            var main = new Systems.Logic.Event(logicEvent.ID, data,(IEnumerator)methodInfo.Invoke(null, [Systems.Logic.GetCurrentEventCounter(),data]), e =>
+            var main = new Systems.Logic.Event(logicEvent.ID, data,(IEnumerator)methodInfo.Invoke(null, [Systems.Logic.GetCurrentEventCounter(),data]), 
+                e =>
             {
                 //attach post-events to our event
                 foreach (var trackCard in Dungeon.Track.Cards.Where(x => x.Value != null && x.Value.Health > 0))
@@ -204,6 +205,18 @@ public static class Logic
         card.Health -= 1;
         yield return null;
     }
+    
+    [LogicBinding("use")]
+    public static IEnumerator Use(int eventID, Systems.Logic.EventData? d)
+    {
+        var card = Dungeon.AllCards[d.cardID];
+        card.Entity.Active = false;
+        Dungeon.Graveyard.Add(card);
+        
+        Dungeon.Inventory.RemoveFromInventory(card); //right now use only works in inventory
+        yield return null;
+    }
+    
     [LogicBinding("destroyed")]
     public static IEnumerator Destroyed(int eventID, Systems.Logic.EventData? d)
     {
@@ -216,12 +229,11 @@ public static class Logic
             Dungeon.Track.RemoveTrackCard(card);
             
             //add loot drop
-            if(card.LootTable != null)
+            if(card.LootTable != null && card.LootTable.GetNextDrop(out var droppedCard))
             {
-                var drop = card.LootTable.GetDrop();
-                Dungeon.Track.Cards[trackPos] = drop;
-                drop.Distance = 3;
-                drop.Entity.Active = true;
+                Dungeon.Track.Cards[trackPos] = droppedCard;
+                droppedCard.Distance = 3;
+                droppedCard.Entity.Active = true;
             }
             
             yield return Dungeon.Track.MoveTrackCardsToLatestTrackPositions();

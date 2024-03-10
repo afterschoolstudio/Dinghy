@@ -14,29 +14,9 @@ public class DeckCard
     public int Attack => Data.damage;
     public bool Damageable => Data.damageable;
     public List<Depot.Generated.dungeon.keywords.keywordsLine> Keywords = new();
-    public DropTable LootTable;
+    public LootTable LootTable;
     // public bool IsObstacle => Data.obstacle;
     // public int XPValue => Data.XPValue;
-
-    public class DropTable
-    {
-        public List<Depot.Generated.dungeon.cards.dropTableList.dropTableListLine> Data;
-        public DropTable(List<Depot.Generated.dungeon.cards.dropTableList.dropTableListLine> table)
-        {
-            Data = table;
-        }
-
-        public DeckCard GetDrop()
-        {
-            //TODO: actually calculate the table
-            var next = Data.First().dropOption;
-            var card = Dungeon.CreateNewCard(next.ID,next);
-            return card;
-        }
-
-    }
-
-
 
     private int health;
 
@@ -83,7 +63,12 @@ public class DeckCard
 
         if (Data.dropTable != null)
         {
-            LootTable = new DropTable(Data.dropTable);
+            LootTable = new();
+            foreach (var opt in Data.dropTable)
+            {
+                LootTable.AddItem(opt.dropOption, opt.weight);
+            }
+            LootTable.PrepareRanges();
         }
         
         ID = cardID;

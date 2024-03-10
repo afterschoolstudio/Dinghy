@@ -37,6 +37,10 @@ public class Inventory
                 OnMouseLeave: (e,mods) =>
                 {
                     e.Get<ShapeRenderer>().Color = Palettes.ENDESGA[3];
+                },
+                OnMouseUp: (e, mods) =>
+                {
+                    TryUseInvItem(e.Id);
                 })
             {
                 PivotX = 32,
@@ -50,6 +54,43 @@ public class Inventory
         for (int i = 0; i < GridCells.Count; i++)
         {
             Cards.Add(i,null); 
+        }
+    }
+
+    public void TryUseInvItem(int entityID)
+    {
+        var target = GridCells.First(x => x.ECSEntity.Id == entityID);
+        var index = GridCells.IndexOf(target);
+        if (Cards[index] != null)
+        {
+            Depot.Generated.dungeon.logicTriggers.use.Emit(Systems.Logic.RootEvent, postExecution: move =>
+            {
+                RemoveFromInventory(Cards[index]);
+            });
+        }
+    }
+
+    public bool TryAddToInventory(DeckCard c)
+    {
+        var hasTargetPos = Cards.Any(x => x.Value == null);
+        if (hasTargetPos)
+        {
+            var targetPos = Cards.First(x => x.Value == null).Key;
+            Cards.Add(targetPos,c);
+            GridCells[targetPos].DebugText = c.Name;
+        }
+
+        return false;
+    }
+
+    public void RemoveFromInventory(DeckCard c)
+    {
+        var hasTargetPos = Cards.Any(x => x.Value == c);
+        if (hasTargetPos)
+        {
+            var targetPos = Cards.First(x => x.Value == c).Key;
+            Cards.Remove(targetPos);
+            GridCells[targetPos].DebugText = "";
         }
     }
 }

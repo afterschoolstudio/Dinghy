@@ -506,10 +506,10 @@ public static partial class Engine
             }
         }
         
-        if (drawDebugOverlay)
-        {
+        // if (drawDebugOverlay)
+        // {
+        // }
             DebugOverlay.Update(DeltaTime);
-        }
         
         var text = "abcdefghijklmnopqrstuvwxyz";
         var scale = new Vector2(1, 1);

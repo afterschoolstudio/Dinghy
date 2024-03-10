@@ -25,6 +25,7 @@ public class Dungeon : Scene
     public static Equipment Equipment = new ();
     public static Effects Effects = new Effects();
 
+    public static int CurrentFloor = 1;
     public override void Create()
     {
         Keywords.InitBindings();
@@ -109,7 +110,7 @@ public class Dungeon : Scene
                 Graveyard.Remove(c);
                 break;
             case CardLocation.Inventory:
-                Inventory.Cards.Remove(Inventory.Cards.First(x => x.Value == c).Key);
+                Inventory.RemoveFromInventory(c);
                 break;
             case CardLocation.Equipment:
                 Equipment.Cards.Remove(Equipment.Cards.First(x => x.Value == c).Key);
@@ -144,6 +145,7 @@ public class Dungeon : Scene
     public static void NextDungeonRoom()
     {
         Console.WriteLine("next dungeon room");
+        CurrentFloor++;
         //fetch all valid cards for destructions
         List<DeckCard> destroyCards = new();
         destroyCards.AddRange(DiscardStack);
@@ -252,7 +254,12 @@ public class Dungeon : Scene
                 var slotname = e.Value != null ? e.Value.Name : "Empty";
                 Text($"{e.Key}:{slotname}");
             }
-            SeperatorText("off track cards");
+            SeperatorText("inventory");
+            foreach (var e in Inventory.Cards.Where( x=> x.Value != null))
+            {
+                Text($"{e.Key}:{e.Value.Name}");
+            }
+            SeperatorText("discard");
             foreach (var e in DiscardStack)
             {
                 Text($"{e.Name}");
