@@ -185,7 +185,7 @@ public static class Logic
         }
         else
         {
-            callingEvent.Cancelled = true;
+            callingEvent.Value.self.Cancelled = true;
             yield return null;
         }
     }

@@ -87,11 +87,16 @@ public static class Keywords
     [KeywordBinding("lootable")]
     public static IEnumerator Lootable(int eventID, Systems.Logic.EventData? d)
     {
+        //Note that post-discard we actually aren't on the track to act
+        //so we are pre-discard here, meaning we never actually get discard if lootable
         var callingEvent = Systems.Logic.FindEventWithID(eventID);
         var card = Dungeon.AllCards[d.cardID];
+        callingEvent.Value.parent.Cancelled = true; //we cancel our discard because we go straight to inventory
         if (!Dungeon.Inventory.TryAddToInventory(card))
         {
-            callingEvent.Cancelled = true;
+            callingEvent.Value.self.Cancelled = true; //this cancels lootable if we cant actually loot
+            //if we cant loot, this gets discarded instead
+            callingEvent.Value.parent.Cancelled = false; //we cancel our discard because we go straight to inventory
         }
         yield return null;
     }

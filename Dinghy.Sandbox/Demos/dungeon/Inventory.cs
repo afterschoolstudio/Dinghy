@@ -63,7 +63,7 @@ public class Inventory
         var index = GridCells.IndexOf(target);
         if (Cards[index] != null)
         {
-            Depot.Generated.dungeon.logicTriggers.use.Emit(Systems.Logic.RootEvent, postExecution: move =>
+            Depot.Generated.dungeon.logicTriggers.use.Emit(Systems.Logic.RootEvent, new Systems.Logic.EventData(Cards[index].ID), postExecution: move =>
             {
                 RemoveFromInventory(Cards[index]);
             });
@@ -76,7 +76,7 @@ public class Inventory
         if (hasTargetPos)
         {
             var targetPos = Cards.First(x => x.Value == null).Key;
-            Cards.Add(targetPos,c);
+            Cards[targetPos] = c;
             GridCells[targetPos].DebugText = c.Name;
         }
 
@@ -89,7 +89,7 @@ public class Inventory
         if (hasTargetPos)
         {
             var targetPos = Cards.First(x => x.Value == c).Key;
-            Cards.Remove(targetPos);
+            Cards[targetPos] = null;
             GridCells[targetPos].DebugText = "";
         }
     }

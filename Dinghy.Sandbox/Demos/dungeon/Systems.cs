@@ -27,9 +27,9 @@ public partial class Systems
         static int EventCounter = 1;
         public static int GetCurrentEventCounter() => EventCounter;
 
-        public static Event FindEventWithID(int id)
+        public static (Event self, Event parent)? FindEventWithID(int id)
         {
-            Event result = FindInNode(RootEvent);
+            var result = FindInNode(RootEvent);
             if (result == null)
             {
                 Console.WriteLine("Unable to find node with id: " + id);
@@ -38,20 +38,20 @@ public partial class Systems
             
             //
 
-            Event FindInNode(Logic.Event e)
+            (Event,Event)? FindInNode(Logic.Event e)
             {
                 if (e.Index == id)
                 {
-                    return e; // In case the root itself is the event we're looking for
+                    return (e,RootEvent); // In case the root itself is the event we're looking for
                 }
         
                 foreach (var c in e.ChildEvents)
                 {
                     if (c.Index == id)
                     {
-                        return c; // Found the event, return it
+                        return (c,e); // Found the event, return it
                     }
-                    Event found = FindInNode(c); // Continue searching in the child
+                    (Event,Event)? found = FindInNode(c); // Continue searching in the child
                     if (found != null)
                     {
                         return found; // If found in a deeper level, return the found event
@@ -194,6 +194,14 @@ fz:{Frozen}`""]";
         bool GetNextEvent(Logic.Event node, out Logic.Event nextEvent)
         {
             nextEvent = null;
+
+            if (node.Cancelled && !node.Complete)
+            {
+                node.OnComplete?.Invoke();
+                node.Complete = true;
+                return false;
+            }
+            
             if (node == null || (node.Complete && !node.Frozen))
             {
                 return false; // Node is either null or fully processed, so return null.

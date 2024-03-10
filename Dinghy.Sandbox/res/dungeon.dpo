@@ -342,7 +342,7 @@
                     "implemented": false,
                     "trigger": {
                         "guid": "1a1a5431-b35c-45d0-9d53-4ad72c67f3c2",
-                        "phase": "post",
+                        "phase": "pre",
                         "trigger": "06284345-de25-4fa3-88db-740e89b01dc4",
                         "target": "self"
                     }
