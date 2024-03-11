@@ -78,6 +78,7 @@ public class Inventory
             var targetPos = Cards.First(x => x.Value == null).Key;
             Cards[targetPos] = c;
             GridCells[targetPos].DebugText = c.Name;
+            return true;
         }
 
         return false;

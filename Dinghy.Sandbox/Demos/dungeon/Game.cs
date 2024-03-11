@@ -61,7 +61,10 @@ public class Dungeon : Scene
         }, onComplete: () =>
         {
             Console.WriteLine("init draw complete");
-            Coroutines.Start(Track.MoveTrackCardsToLatestTrackPositions(),"initial track card movement");
+            Logic.MetaEvents.UpdateCardPositions.Emit(Systems.Logic.RootEvent, onComplete: () =>
+            {
+                Console.WriteLine("init pos update complete");
+            });
         });
     }
 
@@ -177,7 +180,10 @@ public class Dungeon : Scene
             }
         }, onComplete: () =>
         {
-            Coroutines.Start(Track.MoveTrackCardsToLatestTrackPositions(),"initial track card movement");
+            Logic.MetaEvents.UpdateCardPositions.Emit(Systems.Logic.RootEvent, onComplete: () =>
+            {
+                Console.WriteLine("init pos update complete");
+            });
         });
     }
 

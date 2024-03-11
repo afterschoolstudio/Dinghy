@@ -37,28 +37,14 @@ public class Player
     public void Move(Action onComplete = null)
     {
         Console.WriteLine("player initirated move, spawning move");
+        var targetDiscard = Dungeon.Track.Cards[0];
         Depot.Generated.dungeon.logicTriggers.move.Emit(Systems.Logic.RootEvent, postExecution: move =>
         {
-            move.Frozen = true;
-            Depot.Generated.dungeon.logicTriggers.discard.Emit(move,new Systems.Logic.EventData(Dungeon.Track.Cards[0].ID), postExecution:discard =>
-            {
-                discard.Frozen = true;
-                Coroutines.Start(Dungeon.Track.MoveTrackCardsToLatestTrackPositions(),"player movement card update after discard",() =>
-                {
-                    Depot.Generated.dungeon.logicTriggers.draw.Emit(discard,onComplete: () =>
-                    {
-                        Coroutines.Start(Dungeon.Track.MoveTrackCardsToLatestTrackPositions(),
-                            "player movement card update after draw",
-                            () =>
-                            {
-                                move.Frozen = false;
-                                discard.Frozen = false;
-                            });
-                    });
-                    
-                });
-            });
-        }, onComplete:onComplete);
+            Depot.Generated.dungeon.logicTriggers.discard.Emit(move,new Systems.Logic.EventData(Dungeon.Track.Cards[0].ID));
+        }, onComplete: () =>
+        {
+            Logic.MetaEvents.UpdateAndFillTrack.Emit(Systems.Logic.RootEvent, onComplete: onComplete);
+        });
     }
 
     public void Wait(Action onComplete = null)
@@ -66,7 +52,10 @@ public class Player
         Depot.Generated.dungeon.logicTriggers.wait.Emit(Systems.Logic.RootEvent, postExecution: e =>
         {
             Dungeon.Track.Act(e);
-        }, onComplete:onComplete);
+        }, onComplete: () =>
+        {
+            Logic.MetaEvents.UpdateAndFillTrack.Emit(Systems.Logic.RootEvent, onComplete: onComplete);
+        });
     }
     
     public void DamageTrackCards(List<DeckCard> cards, Action onComplete = null)
@@ -78,6 +67,9 @@ public class Player
                 Depot.Generated.dungeon.logicTriggers.attackedByPlayer.Emit(e,new Systems.Logic.EventData(cardID:card.ID));
             }
             Dungeon.Track.Act(e);
-        }, onComplete: onComplete);
+        }, onComplete: () =>
+        {
+            Logic.MetaEvents.UpdateAndFillTrack.Emit(Systems.Logic.RootEvent, onComplete: onComplete);
+        });
     }
 }

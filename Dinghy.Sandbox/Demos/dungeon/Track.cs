@@ -21,6 +21,11 @@ public class Track
         }
         return positions.Any();
     }
+
+    public bool ContainsCard(DeckCard c)
+    {
+        return Cards.Any(x => x.Value == c);
+    }
     
     
 

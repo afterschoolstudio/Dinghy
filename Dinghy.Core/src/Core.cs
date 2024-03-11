@@ -511,7 +511,7 @@ public static partial class Engine
         // }
             DebugOverlay.Update(DeltaTime);
         
-        var text = "abcdefghijklmnopqrstuvwxyz";
+        var text = "MYSTERY DUNGEON HAND";
         var scale = new Vector2(1, 1);
         
         var font = fontSystem.GetFont(48*App.dpi_scale());

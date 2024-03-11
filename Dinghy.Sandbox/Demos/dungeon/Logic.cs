@@ -39,7 +39,9 @@ public static class Logic
         PlayerAttacking,
         CardsActing,
         DeathReap,
-        DrawingMultipleCards
+        DrawingMultipleCards,
+        UpdateCardPositions,
+        UpdateAndFillTrack
     }
 
     public static Systems.Logic.Event Emit(
@@ -66,6 +68,34 @@ public static class Logic
     {
         if (LogicBindingDict.TryGetValue(logicEvent.ID, out MethodInfo methodInfo))
         {
+            //attach pre-events to the parent so they execute before the main phase of this event
+            foreach (var trackCard in Dungeon.Track.Cards.Where(x => x.Value != null))
+            {
+                foreach (var keyword in trackCard.Value!.Keywords)
+                {
+                    if (keyword.trigger.trigger == logicEvent &&
+                        keyword.trigger.phase == Depot.Generated.dungeon.keywords.triggerProps.phase_ENUM.pre &&
+                        ValidateKeywordTriggerTarget(trackCard.Value!, keyword, data)
+                       )
+                    {
+                        keyword.Emit(parent,data);
+                    }
+                }
+            }
+            foreach (var invCard in Dungeon.Inventory.Cards.Where(x => x.Value != null))
+            {
+                foreach (var keyword in invCard.Value!.Keywords)
+                {
+                    if (keyword.trigger.trigger == logicEvent &&
+                        keyword.trigger.phase == Depot.Generated.dungeon.keywords.triggerProps.phase_ENUM.pre &&
+                        ValidateKeywordTriggerTarget(invCard.Value!, keyword, data)
+                       )
+                    {
+                        keyword.Emit(parent,data);
+                    }
+                }
+            }
+            
             var main = new Systems.Logic.Event(logicEvent.ID, data,(IEnumerator)methodInfo.Invoke(null, [Systems.Logic.GetCurrentEventCounter(),data]), 
                 e =>
             {
@@ -82,27 +112,26 @@ public static class Logic
                             keyword.Emit(e,data);
                         }
                     }
-
                 }
+                foreach (var invCard in Dungeon.Inventory.Cards.Where(x => x.Value != null))
+                {
+                    foreach (var keyword in invCard.Value!.Keywords)
+                    {
+                        if (keyword.trigger.trigger == logicEvent &&
+                            keyword.trigger.phase == Depot.Generated.dungeon.keywords.triggerProps.phase_ENUM.post &&
+                            ValidateKeywordTriggerTarget(invCard.Value!, keyword, data)
+                           )
+                        {
+                            keyword.Emit(parent,data);
+                        }
+                    }
+                }
+                
                 postExecution?.Invoke(e);
             }, onComplete);
             
             parent.ChildEvents.Add(main);
-            //attach pre-events to our event
-            foreach (var trackCard in Dungeon.Track.Cards.Where(x => x.Value != null))
-            {
-                foreach (var keyword in trackCard.Value!.Keywords)
-                {
-                    if (keyword.trigger.trigger == logicEvent &&
-                        keyword.trigger.phase == Depot.Generated.dungeon.keywords.triggerProps.phase_ENUM.pre &&
-                        ValidateKeywordTriggerTarget(trackCard.Value!, keyword, data)
-                       )
-                    {
-                        keyword.Emit(main,data);
-                    }
-                }
-
-            }
+            
 
             return main;
         }
@@ -192,9 +221,21 @@ public static class Logic
     [LogicBinding("discard")]
     public static IEnumerator Discard(int eventID, Systems.Logic.EventData? d)
     {
+        //NOTE: we assume that discard is only used for cards in the track
         var card = Dungeon.AllCards[d.cardID];
-        Dungeon.DiscardStack.Add(card);
-        Dungeon.Track.RemoveTrackCard(card);
+        var callingEvent = Systems.Logic.FindEventWithID(eventID);
+
+        if (Dungeon.Track.ContainsCard(card))
+        {
+            Dungeon.DiscardStack.Add(card);
+            Dungeon.Track.RemoveTrackCard(card);
+        }
+        else
+        {
+            callingEvent.Value.self.Cancelled = true;
+            //discard is no longer valid
+
+        }
         yield return null;
     }
     [LogicBinding("attackedByPlayer")]
@@ -236,7 +277,7 @@ public static class Logic
                 droppedCard.Entity.Active = true;
             }
             
-            yield return Dungeon.Track.MoveTrackCardsToLatestTrackPositions();
+            // yield return Dungeon.Track.MoveTrackCardsToLatestTrackPositions();
         }
         yield return null;
     }
@@ -292,5 +333,29 @@ public static class Logic
     public static IEnumerator DrawingMultipleCards(int eventID, Systems.Logic.EventData? d)
     {
         yield return null;
+    }
+    
+    [LogicBinding(MetaEvents.UpdateAndFillTrack)]
+    public static IEnumerator UpdateAndFillTrack(int eventID, Systems.Logic.EventData? d)
+    {
+        var callingEvent = Systems.Logic.FindEventWithID(eventID);
+        MetaEvents.UpdateCardPositions.Emit(callingEvent.Value.self, postExecution: updateCardPos =>
+        {
+            var openSpots = Dungeon.Track.Cards.Count(x => x.Value == null);
+            for (int i = 0; i < openSpots; i++)
+            {
+                Depot.Generated.dungeon.logicTriggers.draw.Emit(updateCardPos,postExecution: drawEvent =>
+                {
+                    MetaEvents.UpdateCardPositions.Emit(drawEvent);
+                });
+            }
+        });
+        yield return null;
+    }
+    
+    [LogicBinding(MetaEvents.UpdateCardPositions)]
+    public static IEnumerator UpdateCardPositions(int eventID, Systems.Logic.EventData? d)
+    {
+        yield return Dungeon.Track.MoveTrackCardsToLatestTrackPositions();
     }
 }

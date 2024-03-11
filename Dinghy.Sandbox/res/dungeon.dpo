@@ -43,7 +43,7 @@
                     "name": "health",
                     "min": -10000,
                     "max": 100000,
-                    "defaultValue": 0,
+                    "defaultValue": 1,
                     "iconName": "newInt",
                     "configurable": {
                         "name": "text",
@@ -157,19 +157,14 @@
                             "guid": "4cb6f05d-d72a-4efc-ae94-9c8d2531d25c",
                             "keyword": "ee102472-7bd5-47c8-a83e-180d696c775d",
                             "id": "0"
-                        },
-                        {
-                            "guid": "97feee04-7a42-458b-9ba8-6f4a22d25a89",
-                            "keyword": "127b7b57-eebb-4931-9bc1-1cfb7cbda4ba",
-                            "id": "1"
                         }
                     ],
                     "dropTable": [
                         {
-                            "guid": "f8c61015-107c-4775-b5d1-de12d713289b",
+                            "guid": "abe6df98-9fd5-4972-9874-12b4872b1cf4",
                             "dropOption": "e6eec356-9f65-4936-a3a0-b371c524fd4e",
-                            "id": "0",
-                            "weight": 100
+                            "weight": 100,
+                            "id": "0"
                         }
                     ]
                 },
@@ -189,26 +184,11 @@
                     "dropTable": []
                 },
                 {
-                    "guid": "5115ec2a-90a4-4173-9cbc-fa7b7e68d09d",
-                    "id": "sword",
-                    "damage": 0,
-                    "damageable": false,
-                    "health": 1,
-                    "keywords": [
-                        {
-                            "guid": "549ddbdd-1baa-40f6-899e-d114eec79613",
-                            "keyword": "dc186624-641f-4999-82a6-d998d971a4f0",
-                            "id": "0"
-                        }
-                    ],
-                    "dropTable": []
-                },
-                {
                     "guid": "e6eec356-9f65-4936-a3a0-b371c524fd4e",
                     "id": "food",
                     "damage": 0,
                     "damageable": true,
-                    "health": 0,
+                    "health": 1,
                     "keywords": [
                         {
                             "guid": "fa0223fa-4ea0-4750-b9c2-6c10be2c1dcf",
@@ -373,7 +353,7 @@
                     "implemented": false,
                     "trigger": {
                         "guid": "72f2934e-5fc8-4085-8518-d9d4e7410a61",
-                        "phase": "post",
+                        "phase": "pre",
                         "trigger": "015b6677-c84e-4b4f-9423-2d6b8b0661a3",
                         "target": "self"
                     }

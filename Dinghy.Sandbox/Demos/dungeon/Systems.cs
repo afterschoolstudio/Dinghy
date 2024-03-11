@@ -70,7 +70,6 @@ public partial class Systems
             public bool Executed;
             public bool Complete;
             public bool Cancelled;
-            public bool Frozen = false;
             public IEnumerator ExecutionRoutine { get; protected set; }
             private Action<Event> PostExecution;
             public Action OnComplete;
@@ -94,10 +93,11 @@ public partial class Systems
 
             public string GetDebugName()
             {
+                var activeNodeString = ActiveEvent == this ? ":::activeEvent" : "";
                 return @$"{Index}[""`{Name}
-cp:{Complete}
-ex:{Executed}
-fz:{Frozen}`""]";
+complete:{Complete}
+cancelled:{Cancelled}
+executed:{Executed}`""]{activeNodeString}";
             }
         }
     }
@@ -117,7 +117,7 @@ fz:{Frozen}`""]";
         while(true)
         {
             //prune the logic tree
-            Logic.RootEvent.ChildEvents.RemoveAll(x => x.Complete && !x.Frozen);
+            Logic.RootEvent.ChildEvents.RemoveAll(x => x.Complete);
 
             //reap dead cards
             if (Logic.RootEvent.ChildEvents.Any())
@@ -153,8 +153,7 @@ fz:{Frozen}`""]";
                                 }
                                 else
                                 {
-                                    Coroutines.Start(Dungeon.Track.MoveTrackCardsToLatestTrackPositions(),
-                                        "card movement post destroy");
+                                    dungeon.Logic.MetaEvents.UpdateCardPositions.Emit(Logic.RootEvent);
                                 }
                             });
                         }
@@ -176,6 +175,8 @@ fz:{Frozen}`""]";
                 {
                     ExecutedEvents.Add(ActiveEvent);
                     ActiveEvent.Executed = true;
+                    UpdateDebugGraph();
+
                     if (!ActiveEvent.Cancelled)
                     {
                         //we only spawn post events if our main event was a success
@@ -195,14 +196,16 @@ fz:{Frozen}`""]";
         {
             nextEvent = null;
 
-            if (node.Cancelled && !node.Complete)
+            if (!node.Complete && node.Cancelled)
             {
+                //if we happened to cancel this elsewhere we mark this as complete and invoke complete
+                //it does not get executed/postexecution called
                 node.OnComplete?.Invoke();
                 node.Complete = true;
                 return false;
             }
             
-            if (node == null || (node.Complete && !node.Frozen))
+            if (node == null || node.Complete)
             {
                 return false; // Node is either null or fully processed, so return null.
             }
@@ -228,7 +231,7 @@ fz:{Frozen}`""]";
             // If this point is reached, all children are executed or complete, so mark this node as complete
             // nodes can also explicitly be marked as non-Compleatable in order for exeuction to basically keep trying at that node position
             // this is useful for waiting on animation type stuff
-            if (!node.Complete && !node.Frozen)
+            if (!node.Complete)
             {
                 node.OnComplete?.Invoke();
                 node.Complete = true;
@@ -252,6 +255,7 @@ fz:{Frozen}`""]";
         StringBuilder sb = new StringBuilder();
         sb.AppendLine("```mermaid");
         sb.AppendLine("flowchart TD");
+        sb.AppendLine("classDef activeEvent fill:#f96");
         GetNodeRelations(Logic.RootEvent);
         sb.AppendLine("```");
         return sb.ToString();
