@@ -6,6 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>preview</LangVersion>
+        <AssemblyName>MYSTERYDUNGEONHAND</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
