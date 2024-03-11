@@ -48,6 +48,10 @@ public static class Keywords
     public static IEnumerator Rejuvenate(int eventID, Systems.Logic.EventData? d)
     {
         Dungeon.Player.Health += 1;
+        if (Dungeon.Player.Health > Dungeon.Player.MaxHealth)
+        {
+            Dungeon.Player.Health = Dungeon.Player.MaxHealth;
+        }
         yield return null;
     }
         
@@ -72,9 +76,8 @@ public static class Keywords
     [KeywordBinding("obstacle")]
     public static IEnumerator Obstacle(int eventID, Systems.Logic.EventData? d)
     {
-        // need to tie this into global state
-        // parent.Cancelled = !Dungeon.Track.Cards.Any(x =>
-        //     x.Value != null && !x.Value.Keywords.Contains(Depot.Generated.dungeon.keywords.obstacle));
+        var callingEvent = Systems.Logic.FindEventWithID(eventID);
+        callingEvent.Value.parent.Cancelled = true;
         yield return null;
     }
     [KeywordBinding("exit")]

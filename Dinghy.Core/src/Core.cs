@@ -511,18 +511,18 @@ public static partial class Engine
         // }
             DebugOverlay.Update(DeltaTime);
         
-        var text = "MYSTERY DUNGEON HAND";
-        var scale = new Vector2(1, 1);
-        
-        var font = fontSystem.GetFont(48*App.dpi_scale());
-        var size = font.MeasureString(text, scale, characterSpacing:10.1f);
-        var normalized_font_pivot = new Vector2(size.X / 2.0f, size.Y / 2.0f);
-        font.DrawText(fontRenderer, text, new Vector2(Engine.Width/2f, Engine.Height/2f), FSColor.LightCoral);
-        foreach (var tex in fontRenderer._textureManager.CreatedFontTextures)
-        {
-            tex.PumpDraw();
-        }
-        // drawDebugText(DebugFont.C64,$"{t}ms \ne: {GlobalScene.Entities.Count} \n {InputSystem.MouseX},{InputSystem.MouseY} \n {DebugTextStr}");
+        // var text = "MYSTERY DUNGEON HAND";
+        // var scale = new Vector2(1, 1);
+        //
+        // var font = fontSystem.GetFont(48*App.dpi_scale());
+        // var size = font.MeasureString(text, scale, characterSpacing:10.1f);
+        // var normalized_font_pivot = new Vector2(size.X / 2.0f, size.Y / 2.0f);
+        // font.DrawText(fontRenderer, text, new Vector2(Engine.Width/2f, Engine.Height/2f), FSColor.LightCoral);
+        // foreach (var tex in fontRenderer._textureManager.CreatedFontTextures)
+        // {
+        //     tex.PumpDraw();
+        // }
+        drawDebugText(DebugFont.C64,$"MYSTERY DUNGEON HAND PROTOTYPE");
 
         // setting this to load instead of clear allows us to toggle sokol_gp clearing
         state.pass_action.colors.e0.load_action = sg_load_action.SG_LOADACTION_LOAD;
@@ -583,7 +583,7 @@ public static partial class Engine
     static void drawDebugText(DebugFont f, string debugText)
     {
         DebugText.canvas(Width*0.5f, Height*0.5f);
-        DebugText.origin(0.0f, 2.0f);
+        DebugText.origin(10.0f, 2.0f);
         DebugText.home();
         printFont(debugText);
 

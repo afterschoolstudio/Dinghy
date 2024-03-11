@@ -163,8 +163,14 @@
                         {
                             "guid": "abe6df98-9fd5-4972-9874-12b4872b1cf4",
                             "dropOption": "e6eec356-9f65-4936-a3a0-b371c524fd4e",
-                            "weight": 100,
+                            "weight": 90,
                             "id": "0"
+                        },
+                        {
+                            "guid": "1579430a-eae0-4f45-8b9a-8e3fecb75e78",
+                            "dropOption": "",
+                            "weight": 5,
+                            "id": "1"
                         }
                     ]
                 },
@@ -298,7 +304,7 @@
                     "implemented": true,
                     "trigger": {
                         "guid": "cef2c037-05bb-4a13-91bd-161b391c7ec7",
-                        "phase": "post",
+                        "phase": "pre",
                         "trigger": "06284345-de25-4fa3-88db-740e89b01dc4",
                         "target": "self"
                     }

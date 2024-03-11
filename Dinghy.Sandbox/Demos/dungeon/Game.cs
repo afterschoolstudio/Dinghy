@@ -26,6 +26,7 @@ public class Dungeon : Scene
     public static Effects Effects = new Effects();
 
     public static int CurrentFloor = 1;
+    public static bool GameSetup = false;
     public override void Create()
     {
         Keywords.InitBindings();
@@ -64,6 +65,7 @@ public class Dungeon : Scene
             Logic.MetaEvents.UpdateCardPositions.Emit(Systems.Logic.RootEvent, onComplete: () =>
             {
                 Console.WriteLine("init pos update complete");
+                GameSetup = true;
             });
         });
     }
@@ -147,6 +149,7 @@ public class Dungeon : Scene
 
     public static void NextDungeonRoom()
     {
+        GameSetup = false;
         Console.WriteLine("next dungeon room");
         CurrentFloor++;
         //fetch all valid cards for destructions
@@ -183,6 +186,7 @@ public class Dungeon : Scene
             Logic.MetaEvents.UpdateCardPositions.Emit(Systems.Logic.RootEvent, onComplete: () =>
             {
                 Console.WriteLine("init pos update complete");
+                GameSetup = true;
             });
         });
     }
@@ -204,99 +208,77 @@ public class Dungeon : Scene
             Menu("Dungeon", () => {
                 Checkbox("Don't Damage Enemies", ref ActiveDebugOptions.DontDamageEnemies);
                 Checkbox("Player Invincible", ref ActiveDebugOptions.Invincible);
+                Checkbox("Show Piles", ref ActiveDebugOptions.ShowPiles);
                 Button($"Reset", buttonSize, Init);
             });
         });
 
-        Window("game",ImGuiWindowFlags_.ImGuiWindowFlags_NoTitleBar, () =>
+        if (GameSetup)
         {
-            if (Player.Dead)
+            var window_flags = ImGuiWindowFlags_.ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_.ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_.ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_.ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_.ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_.ImGuiWindowFlags_NoNav;
+            SetNextWindowPosition(new Vector2(10,110));
+            Window("game", window_flags, () =>
             {
-                Text($"player died");
-                Button($"Reset", buttonSize, Init);
-                return;
-            }
-            Text($"HP: {Player.Health}/{Player.MaxHealth}");
-            Text($"Fullness:{Player.Fullness}");
+                if (Player.Dead)
+                {
+                    Text($"player died");
+                    Button($"Reset", buttonSize, Init);
+                    return;
+                }
 
-            Button($"Move", buttonSize, () =>
-            {
-                Events.Commands.Execute?.Invoke(new PlayerInputCommands.Move());
+                Text($"HP: {Player.Health}/{Player.MaxHealth}");
+                Text($"Fullness:{Player.Fullness}");
+                Text($"Current Floor:{CurrentFloor}");
+
+                if (Track.Cards[0] != null && !Track.Cards[0].Keywords.Any(x => x.ID == "obstacle"))
+                {
+                    Button($"Move", buttonSize,
+                        () => { Events.Commands.Execute?.Invoke(new PlayerInputCommands.Move()); });
+                }
+
+                Button($"Wait", buttonSize, () => { Events.Commands.Execute?.Invoke(new PlayerInputCommands.Wait()); });
+
+                SeperatorText("track cards");
+                foreach (var e in Track.Cards)
+                {
+                    var slotname = e.Value != null ? e.Value.Name : "Empty";
+                    Text($"{e.Key}:{slotname}");
+                }
+
+                SeperatorText("inventory");
+                foreach (var e in Inventory.Cards.Where(x => x.Value != null))
+                {
+                    Text($"{e.Key}:{e.Value.Name}");
+                }
+
+                SeperatorText("discard");
+                foreach (var e in DiscardStack)
+                {
+                    Text($"{e.Name}");
+                }
+
+                SeperatorText("graveyard");
+                foreach (var e in Graveyard)
+                {
+                    Text($"{e.Name}");
+                }
+
+                if (ActiveDebugOptions.ShowPiles)
+                {
+                    SeperatorText("deck cards");
+                    foreach (var e in Deck.Cards)
+                    {
+                        Text($"{Deck.Cards.IndexOf(e)}:{e.Name}");
+                    }
+                }
             });
-            // if (!Track.Cards.All(x => x.IsObstacle))
-            // {
-                //DONE shouldnt be able to move if all track cards are obstacles
-                //DONE moving heals
-                //DONE moving increases hunger
-                //moving gets an attack of opportuninty if "trapped"
-                //DONE move cycles a card from track (if possible)
-                //DONE move draws if able
-            // }
-            // else
-            // {
-            //     Text($"cant move, all are obstacles");
-            // }
-                
-            Button($"Wait", buttonSize, () =>
-            {
-                Events.Commands.Execute?.Invoke(new PlayerInputCommands.Wait());
-                //DONE waiting increases hunger
-                //DONE enemies move close
-                //DONE enemies that can attack attack
-                //cooldowns,buffs,debuffs progress, etc.
-            });
-            
-            //attacking attacks targeted things (if targetable)
-            //attack can change based on weapons (weapons have durability)
-            //attacked things will drop stuff
-            
-            //dropped things may go into inventory or can be picked up immediately
-            //picking up counts as an action
-            
-            
-            SeperatorText("track cards");
-            foreach (var e in Track.Cards)
-            {
-                var slotname = e.Value != null ? e.Value.Name : "Empty";
-                Text($"{e.Key}:{slotname}");
-            }
-            SeperatorText("inventory");
-            foreach (var e in Inventory.Cards.Where( x=> x.Value != null))
-            {
-                Text($"{e.Key}:{e.Value.Name}");
-            }
-            SeperatorText("discard");
-            foreach (var e in DiscardStack)
-            {
-                Text($"{e.Name}");
-            }
-            SeperatorText("graveyard");
-            foreach (var e in Graveyard)
-            {
-                Text($"{e.Name}");
-            }
-            SeperatorText("deck cards");
-            foreach (var e in Deck.Cards)
-            {
-                Text($"{Deck.Cards.IndexOf(e)}:{e.Name}");
-            }
-        });
-        // Quick.DrawEditGUIForObject("shake params",ref Shake);
+        }
     }
-
-    // public static ShakeParams Shake = new();
-    // public class ShakeParams
-    // {
-    //     public float Multiplier = 1f;
-    //     public float BaseShake = 1f;
-    //     public float Tick = 0.001f;
-    //     public float Decay = 0.1f;
-    //     public float DeathTime = 1f;
-    // }
 
     public class DebugOptions
     {
         public bool DontDamageEnemies;
         public bool Invincible;
+        public bool ShowPiles;
     }
 }
