@@ -341,15 +341,15 @@ public static partial class Engine
         // font_state.ctx = Fontstash.create(&font_desc);
         // Fontstash.destroy(font_state.ctx);
         
-        var settings = new FontSystemSettings
-        {
-            FontResolutionFactor = 2,
-            KernelWidth = 2,
-            KernelHeight = 2
-        };
-
-        fontSystem = new FontSystem(settings);
-        fontSystem.AddFont(File.ReadAllBytes(@"data/fonts/hack/Hack-Bold.ttf"));
+        // var settings = new FontSystemSettings
+        // {
+        //     FontResolutionFactor = 2,
+        //     KernelWidth = 2,
+        //     KernelHeight = 2
+        // };
+        //
+        // fontSystem = new FontSystem(settings);
+        // fontSystem.AddFont(File.ReadAllBytes(@"data/fonts/hack/Hack-Bold.ttf"));
         
         GlobalScene.Mount(-1);
         GlobalScene.Load(() => {GlobalScene.Start();});
@@ -447,14 +447,7 @@ public static partial class Engine
 
         fixed (sg_imgui_t* ctx = &gfx_dbgui)
         {
-            var db_title = System.Text.Encoding.UTF8.GetBytes("debug window");
-            var other_title = System.Text.Encoding.UTF8.GetBytes("hello imgui");
-            var label = System.Text.Encoding.UTF8.GetBytes("label");
-            fixed (byte* ptr = db_title,other_ptr = other_title, label_ptr = label)
-            {
-                var txt = "sokol debug"u8;
-                GfxDebugGUI.draw(ctx);
-            }
+            GfxDebugGUI.draw(ctx);
         }
         
         float ratio = Width/(float)Height;
@@ -506,10 +499,10 @@ public static partial class Engine
             }
         }
         
-        // if (drawDebugOverlay)
-        // {
-        // }
+        if (drawDebugOverlay)
+        { 
             DebugOverlay.Update(DeltaTime);
+        }
         
         // var text = "MYSTERY DUNGEON HAND";
         // var scale = new Vector2(1, 1);
@@ -583,7 +576,7 @@ public static partial class Engine
     static void drawDebugText(DebugFont f, string debugText)
     {
         DebugText.canvas(Width*0.5f, Height*0.5f);
-        DebugText.origin(10.0f, 2.0f);
+        DebugText.origin(0.5f, 2.0f);
         DebugText.home();
         printFont(debugText);
 
