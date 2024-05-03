@@ -4,6 +4,8 @@ using Dinghy.Internal.STB;
 
 namespace Dinghy;
 
+public record SpriteData(Resources.Texture Texture, Rect Rect);
+public record AnimatedSpriteData(Resources.Texture Texture, HashSet<Animation> Animations);
 public static class Resources
 {
     // Resources are types that are loadable

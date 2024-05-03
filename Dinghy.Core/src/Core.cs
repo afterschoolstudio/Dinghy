@@ -43,7 +43,6 @@ public static partial class Engine
         //update
         InputSystem,
         new SceneSystem(),
-        new ManagedComponentSystem(),
         new CoroutineSystem(),
         new CollisionSystem(),
         new CollisionCallbackSystem(),

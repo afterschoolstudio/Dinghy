@@ -28,33 +28,6 @@ public interface ICleanupSystem
     void Cleanup();
 }
 
-public class ManagedComponentSystem : DSystem, IPreUpdateSystem, IPostUpdateSystem, IUpdateSystem
-{
-    QueryDescription query = new QueryDescription().WithAll<Active,ManagedComponent>();      // Should have all specified components
-    public void PreUpdate(double dt)
-    {
-        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e, ref Active a, ref ManagedComponent c) =>
-        {
-            if (!a.active) { return;}
-            c.managedComponent.PreUpdate();
-        });
-    }
-    public void Update(double dt)
-    {
-        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e,ref Active a,  ref ManagedComponent c) => {
-            if (!a.active) { return;}
-            c.managedComponent.Update();
-        });
-    }
-    public void PostUpdate(double dt)
-    {
-        Engine.ECSWorld.Query(in query, (Arch.Core.Entity e,ref Active a,  ref ManagedComponent c) => {
-            if (!a.active) { return;}
-            c.managedComponent.PostUpdate();
-        });
-    }
-}
-
 public class EntityUpdateSystem : DSystem, IUpdateSystem
 {
     QueryDescription query = new QueryDescription().WithAll<Active,UpdateListener>();
