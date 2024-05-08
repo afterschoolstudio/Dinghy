@@ -20,7 +20,24 @@
     <ItemGroup>
       <PackageReference Include="Bullseye" Version="5.0.0" />
       <PackageReference Include="SimpleExec" Version="12.0.0" />
+      <PackageReference Include="Vezel.Zig.Toolsets.osx-arm64" Version="0.12.0.1">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Vezel.Zig.Toolsets.osx-x64" Version="0.12.0.1">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Vezel.Zig.Toolsets.win-x64" Version="0.12.0.1">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
     </ItemGroup>
+
+    <Target Name="ExportPropertiesToEnvironmentVariables" BeforeTargets="Build">
+        <Message Text="Exporting Zig Properties to env path" Importance="high" />
+        <WriteLinesToFile File="$(IntermediateOutputPath)properties.env" Lines="ZigToolsetPath=$(ZigToolsetPath);ZigExePath=$(ZigExePath);ZigLibPath=$(ZigLibPath);ZigDocPath=$(ZigDocPath)" Overwrite="true" />
+    </Target>
 
 
 </Project>

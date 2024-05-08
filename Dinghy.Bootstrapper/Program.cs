@@ -1,6 +1,6 @@
-﻿using Bullseye.Internal;
-using System.Collections.Generic;
+﻿using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using static Bullseye.Targets;
 using static SimpleExec.Command;
 
@@ -226,13 +226,56 @@ string bindgenpath(string libName,string rspFileName) => Path.Combine(projectDir
 string buildpath(string libName) => Path.Combine(projectDir, $"libs/{libName}/build/build.zig");
 Console.WriteLine(buildpath("sokol"));
 
+var envFilePath = Path.Combine(projectDir, "obj", "Debug", "net8.0", "properties.env");
+if (File.Exists(envFilePath))
+{
+    var envFile = File.ReadAllLines(envFilePath);
+    foreach (var line in envFile)
+    {
+        var parts = line.Split("=",2);
+        if (parts.Length == 2)
+        {
+            Environment.SetEnvironmentVariable(parts[0], parts[1]);
+        }
+    }
+}
+var ZigToolsetPath = Environment.GetEnvironmentVariable("ZigToolsetPath");
+var ZigExePath = Environment.GetEnvironmentVariable("ZigExePath");
+var ZigLibPath = Environment.GetEnvironmentVariable("ZigLibPath");
+var ZigDocPath = Environment.GetEnvironmentVariable("ZigDocPath");
+string pattern = @"vezel\.zig\.toolsets\.([\w-]+)"; //extract whatever RID we resolve to (multiple packages overwrite the same env vars)
+Match match = Regex.Match(ZigToolsetPath, pattern);
+var resolvedPropertyPath = "";
+if (match.Success)
+{
+    resolvedPropertyPath = match.Groups[1].Value;
+}
+else
+{
+    Console.WriteLine("unable to resolve resolved zigpattern rid from package with path: " + ZigToolsetPath);
+    return;
+}
+
+//need to update paths to be the RID of the active dev machine - we assume that the zig toolset nuget package is installed for the RID of the dev machine
+// currently support osx-x64, osx-arm64, win-x64
+ZigToolsetPath = ZigToolsetPath.Replace(resolvedPropertyPath, RuntimeInformation.RuntimeIdentifier);
+ZigExePath = ZigExePath.Replace(resolvedPropertyPath, RuntimeInformation.RuntimeIdentifier);
+ZigLibPath = ZigLibPath.Replace(resolvedPropertyPath, RuntimeInformation.RuntimeIdentifier);
+ZigDocPath = ZigDocPath.Replace(resolvedPropertyPath, RuntimeInformation.RuntimeIdentifier);
+
+//log zig vars
+Console.WriteLine($"ZigToolsetPath: {ZigToolsetPath}");
+Console.WriteLine($"ZigExePath: {ZigExePath}");
+Console.WriteLine($"ZigLibPath: {ZigLibPath}");
+Console.WriteLine($"ZigDocPath: {ZigDocPath}");
+
 foreach (var l in buildLibs)
 {
     //sokol - build the lib and bindgen everything
     //sokol:build - builds the lib
     //sokol:bindgen - binds all the libs
     //sokol:bindgen:libname - binds the specified lib
-    Target($"{l.libName}:build", () => Run("zig",$"build --build-file {buildpath(l.libName)}"));
+    Target($"{l.libName}:build", () => Run(ZigExePath,$"build --build-file {buildpath(l.libName)}"));
 
     var reqRsps = new List<string>();
     foreach (var rsp in l.bindgen)
