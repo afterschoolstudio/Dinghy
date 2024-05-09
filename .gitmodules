@@ -13,3 +13,6 @@
 [submodule "Dinghy.Bootstrapper/libs/cimgui/src/cimgui"]
 	path = Dinghy.Bootstrapper/libs/cimgui/src/cimgui
 	url = https://github.com/cimgui/cimgui
+[submodule "Dinghy.Bootstrapper/libs/emsdk"]
+	path = Dinghy.Bootstrapper/libs/emsdk
+	url = https://github.com/dotnet/emsdk.git
