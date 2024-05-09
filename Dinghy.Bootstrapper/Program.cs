@@ -276,6 +276,7 @@ foreach (var l in buildLibs)
     //sokol:bindgen - binds all the libs
     //sokol:bindgen:libname - binds the specified lib
     Target($"{l.libName}:build", () => Run(ZigExePath,$"build --build-file {buildpath(l.libName)}"));
+    Target($"{l.libName}:build:wasm", () => Run(ZigExePath,$"build -Dtarget=wasm32-emscripten --build-file {buildpath(l.libName)}"));
 
     var reqRsps = new List<string>();
     foreach (var rsp in l.bindgen)

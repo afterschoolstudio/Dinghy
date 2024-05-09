@@ -31,7 +31,6 @@ pub fn resolveSokolBackend(backend: SokolBackend, target: std.Target) SokolBacke
 }
 
 pub fn build(b: *Build) !void {
-    // const opt_use_wasm = b.option(bool, "wasm", "Force WebAssembly (default: false)") orelse false;
     const opt_use_gl = b.option(bool, "gl", "Force OpenGL (default: false)") orelse false;
     const opt_use_wgpu = b.option(bool, "wgpu", "Force WebGPU (default: false, web only)") orelse false;
     const opt_use_x11 = b.option(bool, "x11", "Force X11 (default: true, Linux only)") orelse true;
