@@ -42,25 +42,48 @@ pub fn build(b: *Build) !void {
     const optimize = b.standardOptimizeOption(.{});
     const emsdk = b.dependency("emsdk", .{});
 
-    const dll = b.addSharedLibrary(.{
-        .name = "sokol",
-        .target = target,
-        .optimize = optimize,
-        .link_libc = true,
-    });
-    dll.linkLibCpp();
-    // dll.linkLibC();
+    if (!target.result.isWasm()) {
+        const dll = b.addSharedLibrary(.{
+            .name = "sokol",
+            .target = target,
+            .optimize = optimize,
+            .link_libc = true,
+        });
+        dll.linkLibCpp();
+        // dll.linkLibC();
 
-    try buildLibSokol(b, dll, .{
-        .target = target,
-        .optimize = optimize,
-        .backend = sokol_backend,
-        .use_wayland = opt_use_wayland,
-        .use_x11 = opt_use_x11,
-        .use_egl = opt_use_egl,
-        .emsdk = emsdk,
-    });
-    b.installArtifact(dll);
+        try buildLibSokol(b, dll, .{
+            .target = target,
+            .optimize = optimize,
+            .backend = sokol_backend,
+            .use_wayland = opt_use_wayland,
+            .use_x11 = opt_use_x11,
+            .use_egl = opt_use_egl,
+            .emsdk = emsdk,
+        });
+        b.installArtifact(dll);
+    } else {
+        //wasm uses a static lib
+        const lib = b.addStaticLibrary(.{
+            .name = "sokol",
+            .target = target,
+            .optimize = optimize,
+            .link_libc = true,
+        });
+        // lib.linkLibCpp(); bad that maybe cant do this?
+        // lib.linkLibC();
+
+        try buildLibSokol(b, lib, .{
+            .target = target,
+            .optimize = optimize,
+            .backend = sokol_backend,
+            .use_wayland = opt_use_wayland,
+            .use_x11 = opt_use_x11,
+            .use_egl = opt_use_egl,
+            .emsdk = emsdk,
+        });
+        b.installArtifact(lib);
+    }
 }
 
 // build the sokol C headers
