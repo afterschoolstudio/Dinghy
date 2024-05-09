@@ -98,6 +98,7 @@ pub const LibSokolOptions = struct {
 };
 pub fn buildLibSokol(b: *Build, lib: *Step.Compile, options: LibSokolOptions) !void {
     if (options.target.result.isWasm()) {
+        b.lib_dir = "../Dinghy.Core/runtimes/wasi-wasm/native";
         // make sure we're building for the wasm32-emscripten target, not wasm32-freestanding
         if (lib.rootModuleTarget().os.tag != .emscripten) {
             std.log.err("Please build with 'zig build -Dtarget=wasm32-emscripten", .{});
