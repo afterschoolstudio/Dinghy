@@ -1,13 +1,14 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=012827C7_002D99EA_002D4276_002D8A54_002D0AE7E5CB5533_002Fd_003Asrc_002Fd_003Agenerated_002Fd_003Alib_002Fd_003Asokol_002Ff_003ASokol_002EImGUI_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	
-	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;
-  &lt;Assembly Path="C:\Users\kyle\Workspace\Dinghy\Dinghy.Core\libs\sokol.dll" /&gt;
-  &lt;Assembly Path="C:\Program Files\dotnet\shared\Microsoft.NETCore.App\7.0.11\System.Private.CoreLib.dll" /&gt;
-  &lt;Assembly Path="C:\Users\kyle\Workspace\Dinghy\Dinghy.Core\bin\Debug\net7.0\Dinghy.dll" /&gt;
-  &lt;Assembly Path="\Users\kyle\.nuget\packages\arch\1.2.7\lib\net7.0\Arch.dll" /&gt;
-  &lt;Assembly Path="C:\Users\kyle\Workspace\Dinghy\Dinghy.Sandbox\bin\Debug\net8.0\Dinghy.dll" /&gt;
-  &lt;Assembly Path="/Users/kyle/Workspace/Dinghy/Depot.SourceGenerator/bin/Release/netstandard2.0/Depot.SourceGenerator.dll" /&gt;
+	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
+  &lt;Assembly Path="C:\Users\kyle\Workspace\Dinghy\Dinghy.Core\libs\sokol.dll" /&gt;&#xD;
+  &lt;Assembly Path="C:\Program Files\dotnet\shared\Microsoft.NETCore.App\7.0.11\System.Private.CoreLib.dll" /&gt;&#xD;
+  &lt;Assembly Path="C:\Users\kyle\Workspace\Dinghy\Dinghy.Core\bin\Debug\net7.0\Dinghy.dll" /&gt;&#xD;
+  &lt;Assembly Path="\Users\kyle\.nuget\packages\arch\1.2.7\lib\net7.0\Arch.dll" /&gt;&#xD;
+  &lt;Assembly Path="C:\Users\kyle\Workspace\Dinghy\Dinghy.Sandbox\bin\Debug\net8.0\Dinghy.dll" /&gt;&#xD;
+  &lt;Assembly Path="\Users\kyle\Workspace\Dinghy\Depot.SourceGenerator\bin\Release\netstandard2.0\Depot.SourceGenerator.dll" /&gt;&#xD;
+  &lt;Assembly Path="C:\Users\kylek\Workspace\Dinghy\Dinghy.Core\runtimes\win-x64\native\sokol.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
 	
 	</wpf:ResourceDictionary>

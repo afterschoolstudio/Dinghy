@@ -90,9 +90,21 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "5c37b9b1c41926e4",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "fonts.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
         ],
-        "currentTab": 6
+        "currentTab": 7
       }
     ],
     "direction": "vertical"
@@ -166,7 +178,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "dev/native interop notes.md",
+                "file": "fonts.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -183,7 +195,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "dev/native interop notes.md",
+                "file": "fonts.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -206,7 +218,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "dev/native interop notes.md"
+                "file": "fonts.md"
               }
             }
           }
@@ -228,10 +240,11 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "08c700e092fbefbd",
+  "active": "5c37b9b1c41926e4",
   "lastOpenFiles": [
-    "ideas.md",
     "dev/native interop notes.md",
+    "fonts.md",
+    "ideas.md",
     "shaders.md",
     "source generators.md",
     "_currentstructure.md",
@@ -257,7 +270,6 @@
     "ui/sdf.md",
     "networking.md",
     "lygia.md",
-    "scriban.md",
     "ui",
     "references/buildscripts",
     "references",
