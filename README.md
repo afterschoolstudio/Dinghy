@@ -1,0 +1,1 @@
+this was the original development repo for the c# game engine zinc (old name "dinghy"). this repo only exists as a historical record of the original work. all development now happens over in the multiple repos in the [zinc-framework org](https://github.com/zinc-framework). this repo is archived and no longer maintained.
